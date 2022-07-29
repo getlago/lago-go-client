@@ -1,6 +1,8 @@
 package lago
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 )
 
@@ -44,21 +46,36 @@ func (c *Client) BillableMetric() *BillableMetricRequest {
 }
 
 func (bmr *BillableMetricRequest) Create(billableMetricInput *BillableMetricInput) (*BillableMetric, *Error) {
-	resp, err := bmr.client.HttpClient.
-		R().
-		SetError(&Error{}).
-		SetResult(&BillableMetricResult{}).
-		SetBody(billableMetricInput).
-		Post("billable_metrics")
+	clientRequest := &ClientRequest{
+		Path:   "billable_metrics",
+		Result: &BillableMetricResult{},
+		Body:   billableMetricInput,
+	}
+
+	result, err := bmr.client.Post(clientRequest)
 	if err != nil {
-		return nil, &Error{Err: err}
+		return nil, err
 	}
 
-	if resp.IsError() {
-		return nil, resp.Error().(*Error)
+	billableMetricResult := result.(*BillableMetricResult)
+
+	return billableMetricResult.BillableMetric, nil
+}
+
+func (bmr *BillableMetricRequest) Update(billableMetricInput *BillableMetricInput) (*BillableMetric, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "billable_metrics", billableMetricInput.Code)
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &BillableMetricResult{},
+		Body:   billableMetricInput,
 	}
 
-	billableMetricResult := resp.Result().(*BillableMetricResult)
+	result, err := bmr.client.Put(clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	billableMetricResult := result.(*BillableMetricResult)
 
 	return billableMetricResult.BillableMetric, nil
 }
