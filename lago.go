@@ -15,6 +15,12 @@ type Client struct {
 	HttpClient *resty.Client
 }
 
+type ClientRequest struct {
+	Path   string
+	Result interface{}
+	Body   interface{}
+}
+
 func New() *Client {
 	url := fmt.Sprintf("%s%s", baseURL, apiPath)
 
@@ -38,4 +44,38 @@ func (c *Client) SetBaseURL(url string) *Client {
 	c.HttpClient = c.HttpClient.SetBaseURL(customURL)
 
 	return c
+}
+
+func (c *Client) Post(cr *ClientRequest) (interface{}, *Error) {
+	resp, err := c.HttpClient.R().
+		SetError(&Error{}).
+		SetResult(cr.Result).
+		SetBody(cr.Body).
+		Post(cr.Path)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	if resp.IsError() {
+		return nil, resp.Error().(*Error)
+	}
+
+	return resp.Result(), nil
+}
+
+func (c *Client) Put(cr *ClientRequest) (interface{}, *Error) {
+	resp, err := c.HttpClient.R().
+		SetError(&Error{}).
+		SetResult(cr.Result).
+		SetBody(cr.Body).
+		Put(cr.Path)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	if resp.IsError() {
+		return nil, resp.Error().(*Error)
+	}
+
+	return resp.Result(), nil
 }
