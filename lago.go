@@ -46,6 +46,22 @@ func (c *Client) SetBaseURL(url string) *Client {
 	return c
 }
 
+func (c *Client) Get(cr *ClientRequest) (interface{}, *Error) {
+	resp, err := c.HttpClient.R().
+		SetError(&Error{}).
+		SetResult(cr.Result).
+		Get(cr.Path)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	if resp.IsError() {
+		return nil, resp.Error().(*Error)
+	}
+
+	return resp.Result(), nil
+}
+
 func (c *Client) Post(cr *ClientRequest) (interface{}, *Error) {
 	resp, err := c.HttpClient.R().
 		SetError(&Error{}).
@@ -69,6 +85,22 @@ func (c *Client) Put(cr *ClientRequest) (interface{}, *Error) {
 		SetResult(cr.Result).
 		SetBody(cr.Body).
 		Put(cr.Path)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	if resp.IsError() {
+		return nil, resp.Error().(*Error)
+	}
+
+	return resp.Result(), nil
+}
+
+func (c *Client) Delete(cr *ClientRequest) (interface{}, *Error) {
+	resp, err := c.HttpClient.R().
+		SetError(&Error{}).
+		SetResult(cr.Result).
+		Delete(cr.Path)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}

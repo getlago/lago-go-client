@@ -31,6 +31,11 @@ type BillableMetricInput struct {
 	FieldName       string          `json:"field_name"`
 }
 
+type BillableMetricListInput struct {
+	PerPage int `json:"per_page,omitempty"`
+	Page    int `json:"page,omitempty"`
+}
+
 type BillableMetricResult struct {
 	BillableMetric *BillableMetric `json:"billable_metric"`
 }
@@ -43,6 +48,39 @@ func (c *Client) BillableMetric() *BillableMetricRequest {
 	return &BillableMetricRequest{
 		client: c,
 	}
+}
+
+func (bmr *BillableMetricRequest) Get(billableMetricID string) (*BillableMetric, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "billable_metrics", billableMetricID)
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &BillableMetricResult{},
+	}
+
+	result, err := bmr.client.Get(clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	billableMetricResult := result.(*BillableMetricResult)
+
+	return billableMetricResult.BillableMetric, nil
+}
+
+func (bmr *BillableMetricRequest) GetList(billableMetricListInput *BillableMetricListInput) (*BillableMetricResult, *Error) {
+	clientRequest := &ClientRequest{
+		Path:   "billable_metrics",
+		Result: &BillableMetricResult{},
+	}
+
+	result, err := bmr.client.Get(clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	billableMetricResult := result.(*BillableMetricResult)
+
+	return billableMetricResult, nil
 }
 
 func (bmr *BillableMetricRequest) Create(billableMetricInput *BillableMetricInput) (*BillableMetric, *Error) {
@@ -71,6 +109,23 @@ func (bmr *BillableMetricRequest) Update(billableMetricInput *BillableMetricInpu
 	}
 
 	result, err := bmr.client.Put(clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	billableMetricResult := result.(*BillableMetricResult)
+
+	return billableMetricResult.BillableMetric, nil
+}
+
+func (bmr *BillableMetricRequest) Delete(billableMetricID string) (*BillableMetric, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "billable_metrics", billableMetricID)
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &BillableMetricResult{},
+	}
+
+	result, err := bmr.client.Delete(clientRequest)
 	if err != nil {
 		return nil, err
 	}
