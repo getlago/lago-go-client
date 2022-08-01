@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -32,12 +33,14 @@ type BillableMetricInput struct {
 }
 
 type BillableMetricListInput struct {
-	PerPage int `json:"per_page,omitempty"`
-	Page    int `json:"page,omitempty"`
+	PerPage int `json:"per_page,omitempty,string"`
+	Page    int `json:"page,omitempty,string"`
 }
 
 type BillableMetricResult struct {
-	BillableMetric *BillableMetric `json:"billable_metric"`
+	BillableMetric  *BillableMetric  `json:"billable_metric,omitempty"`
+	BillableMetrics []BillableMetric `json:"billable_metrics,omitempty"`
+	Meta            Metadata         `json:"meta,omitempty"`
 }
 
 type BillableMetric struct {
@@ -68,14 +71,23 @@ func (bmr *BillableMetricRequest) Get(billableMetricID string) (*BillableMetric,
 }
 
 func (bmr *BillableMetricRequest) GetList(billableMetricListInput *BillableMetricListInput) (*BillableMetricResult, *Error) {
-	clientRequest := &ClientRequest{
-		Path:   "billable_metrics",
-		Result: &BillableMetricResult{},
+	jsonQueryParams, err := json.Marshal(billableMetricListInput)
+	if err != nil {
+		return nil, &Error{Err: err}
 	}
 
-	result, err := bmr.client.Get(clientRequest)
+	queryParams := make(map[string]string)
+	json.Unmarshal(jsonQueryParams, &queryParams)
+
+	clientRequest := &ClientRequest{
+		Path:        "billable_metrics",
+		QueryParams: queryParams,
+		Result:      &BillableMetricResult{},
+	}
+
+	result, clientErr := bmr.client.Get(clientRequest)
 	if err != nil {
-		return nil, err
+		return nil, clientErr
 	}
 
 	billableMetricResult := result.(*BillableMetricResult)
@@ -118,8 +130,8 @@ func (bmr *BillableMetricRequest) Update(billableMetricInput *BillableMetricInpu
 	return billableMetricResult.BillableMetric, nil
 }
 
-func (bmr *BillableMetricRequest) Delete(billableMetricID string) (*BillableMetric, *Error) {
-	subPath := fmt.Sprintf("%s/%s", "billable_metrics", billableMetricID)
+func (bmr *BillableMetricRequest) Delete(billableMetricCode string) (*BillableMetric, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "billable_metrics", billableMetricCode)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &BillableMetricResult{},
