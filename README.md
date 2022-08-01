@@ -7,7 +7,8 @@ import "github.com/getlago/lago-go-client/v1"
 
 func main() {
   lagoClient := lago.New().
-    SetApiKey("MY_API_KEY")
+    SetApiKey("MY_API_KEY").
+    SetDebug(true)
 
   // If you want to use your API url for self hosted version
   lagoClient := lago.New().
