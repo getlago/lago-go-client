@@ -15,11 +15,29 @@ const (
 	Canceled   SubscriptionStatus = "canceled"
 )
 
+type SubscriptionRequest struct {
+	client *Client
+}
+
+type SubscriptionResult struct {
+	Subscription *Subscription `json:"subscription,omitempty"`
+}
+
+type SubscriptionParams struct {
+	Subscription *SubscriptionInput `json:"subscription"`
+}
+
+type SubscriptionInput struct {
+	CustomerID string `json:"customer_id,omitempty"`
+	PlanCode   string `json:"plan_code,omitempty"`
+}
+
 type Subscription struct {
 	LagoID         uuid.UUID `json:"lago_id"`
 	LagoCustomerID uuid.UUID `json:"lago_customer_id"`
 	CustomerID     string    `json:"customer_id"`
-	PlanCode       string    `json:"plan_code"`
+
+	PlanCode string `json:"plan_code"`
 
 	Status SubscriptionStatus `json:"status"`
 
@@ -29,7 +47,50 @@ type Subscription struct {
 	TerminatedAt *time.Time `json:"terminated_at"`
 }
 
-type SubscriptionInput struct {
-	CustomerID string `json:"customer_id"`
-	PlanCode   string `json:"plan_code"`
+func (c *Client) Subscription() *SubscriptionRequest {
+	return &SubscriptionRequest{
+		client: c,
+	}
+}
+
+func (sr *SubscriptionRequest) Create(subscriptionInput *SubscriptionInput) (*Subscription, *Error) {
+	subscriptionParam := &SubscriptionParams{
+		Subscription: subscriptionInput,
+	}
+
+	clientRequest := &ClientRequest{
+		Path:   "subscriptions",
+		Result: &SubscriptionResult{},
+		Body:   subscriptionParam,
+	}
+
+	result, err := sr.client.Post(clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	subscriptionResult := result.(*SubscriptionResult)
+
+	return subscriptionResult.Subscription, nil
+}
+
+func (sr *SubscriptionRequest) Terminate(customerID string) (*Subscription, *Error) {
+	subscriptionInput := &SubscriptionInput{
+		CustomerID: customerID,
+	}
+
+	clientRequest := &ClientRequest{
+		Path:   "subscriptions",
+		Result: &SubscriptionResult{},
+		Body:   subscriptionInput,
+	}
+
+	result, err := sr.client.Delete(clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	subscriptionResult := result.(*SubscriptionResult)
+
+	return subscriptionResult.Subscription, nil
 }

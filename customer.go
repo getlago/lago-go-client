@@ -1,30 +1,77 @@
 package lago
 
 import (
-	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 )
 
+type CustomerPaymentProvider string
+
+const (
+	PaymentProviderStripe CustomerPaymentProvider = "stripe"
+)
+
 type CustomerParams struct {
-	Customer CustomerInput `json:"customer"`
+	Customer *CustomerInput `json:"customer"`
 }
 
 type CustomerResult struct {
-	Customer Customer `json:"customer"`
+	Customer *Customer `json:"customer"`
 }
 
 type CustomerInput struct {
-	CustomerID string `json:"customer_id"`
-	Name       string `json:"name"`
-	Email      string `json:"email"`
+	CustomerID           string                            `json:"customer_id,omitempty"`
+	Name                 string                            `json:"name,omitempty"`
+	Email                string                            `json:"email,omitempty"`
+	AddressLine1         string                            `json:"address_line_1,omitempty"`
+	AddressLine2         string                            `json:"address_line_2,omitempty"`
+	City                 string                            `json:"city,omitempty"`
+	Zipcode              string                            `json:"zipcode,omitempty"`
+	State                string                            `json:"state,omitempty"`
+	Country              string                            `json:"country,omitempty"`
+	LegalName            string                            `json:"legal_name,omitempty"`
+	LegalNumber          string                            `json:"legal_number,omitempty"`
+	Phone                string                            `json:"phone,omitempty"`
+	URL                  string                            `json:"url,omitempty"`
+	BillingConfiguration CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
+	VatRate              float32                           `json:"vat_rate,omitempty"`
+}
+
+type CustomerBillingConfigurationInput struct {
+	PaymentProvider    CustomerPaymentProvider `json:"payment_provider,omitempty"`
+	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
+	Sync               bool                    `json:"sync,omitempty"`
+}
+
+type CustomerBillingConfiguration struct {
+	PaymentProvider    CustomerPaymentProvider `json:"payment_provider,omitempty"`
+	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
 }
 
 type Customer struct {
-	LagoID     uuid.UUID `json:"lago_id"`
-	CustomerID string    `json:"customer_id"`
-	Name       string    `json:"name"`
-	Email      string    `json:"email"`
+	LagoID       uuid.UUID `json:"lago_id,omitempty"`
+	SequentialID int       `json:"sequential_id,omitempty"`
+	CustomerID   string    `json:"customer_id,omitempty"`
+	Slug         string    `json:"slug,omitempty"`
+
+	Name                 string                       `json:"name,omitempty"`
+	Email                string                       `json:"email,omitempty"`
+	AddressLine1         string                       `json:"address_line1,omitempty"`
+	AddressLine2         string                       `json:"address_line2,omitempty"`
+	City                 string                       `json:"city,omitempty"`
+	State                string                       `json:"state,omitempty"`
+	Zipcode              string                       `json:"zipcode,omitempty"`
+	Country              string                       `json:"country,omitempty"`
+	LegalName            string                       `json:"legal_name,omitempty"`
+	LegalNumber          string                       `json:"legal_number,omitempty"`
+	LogoURL              string                       `json:"logo_url,omitempty"`
+	Phone                string                       `json:"phone,omitempty"`
+	URL                  string                       `json:"url,omitempty"`
+	BillingConfiguration CustomerBillingConfiguration `json:"billing_configuration,omitempty"`
+	VatRate              float32                      `json:"vat_rate,omitempty"`
+
+	CreatedAt time.Time `json:"created_at,omitempty"`
 }
 
 type CustomerRequest struct {
@@ -37,20 +84,29 @@ func (c *Client) Customer() *CustomerRequest {
 	}
 }
 
-func (cr *CustomerRequest) Create(ci *CustomerInput) *Customer {
-	cp := &CustomerParams{
-		Customer: *ci,
+func (cr *CustomerRequest) Create(customerInput *CustomerInput) (*Customer, *Error) {
+	customerParams := &CustomerParams{
+		Customer: customerInput,
 	}
 
-	resp, err := cr.client.HttpClient.R().
-		SetBody(*cp).
-		SetResult(&Customer{}).
-		Post("customers")
+	clientRequest := &ClientRequest{
+		Path:   "customers",
+		Result: &CustomerResult{},
+		Body:   customerParams,
+	}
+
+	result, err := cr.client.Post(clientRequest)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	fmt.Println(resp)
+	customerResult := result.(*CustomerResult)
 
-	return nil
+	return customerResult.Customer, nil
+}
+
+// NOTE: Update endpoint does not exists, actually we use the create endpoint with the
+// same customerID to update a customer
+func (cr *CustomerRequest) Update(customerInput *CustomerInput) (*Customer, *Error) {
+	return cr.Create(customerInput)
 }

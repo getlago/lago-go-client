@@ -105,6 +105,27 @@ func (c *Client) Post(cr *ClientRequest) (interface{}, *Error) {
 	return resp.Result(), nil
 }
 
+func (c *Client) PostWithoutResult(cr *ClientRequest) *Error {
+	resp, err := c.HttpClient.R().
+		SetError(&Error{}).
+		SetBody(cr.Body).
+		Post(cr.Path)
+	if err != nil {
+		return &Error{Err: err}
+	}
+
+	if c.Debug {
+		fmt.Println("REQUEST: ", resp.Request.RawRequest)
+		fmt.Println("RESPONSE: ", resp.String())
+	}
+
+	if resp.IsError() {
+		return resp.Error().(*Error)
+	}
+
+	return nil
+}
+
 func (c *Client) Put(cr *ClientRequest) (interface{}, *Error) {
 	resp, err := c.HttpClient.R().
 		SetError(&Error{}).
@@ -131,6 +152,7 @@ func (c *Client) Delete(cr *ClientRequest) (interface{}, *Error) {
 	resp, err := c.HttpClient.R().
 		SetError(&Error{}).
 		SetResult(cr.Result).
+		SetBody(cr.Body).
 		Delete(cr.Path)
 	if err != nil {
 		return nil, &Error{Err: err}
