@@ -55,7 +55,7 @@ type Coupon struct {
 }
 
 type AppliedCouponResult struct {
-	AppliedCoupon *AppliedCoupon
+	AppliedCoupon *AppliedCoupon `json:"applied_coupon,omitempty"`
 }
 
 type ApplyCouponParams struct {
@@ -192,7 +192,7 @@ func (cr *CouponRequest) Delete(couponCode string) (*Coupon, *Error) {
 	return couponResult.Coupon, nil
 }
 
-func (cr *CouponRequest) Apply(applyCouponInput *ApplyCouponInput) (*AppliedCoupon, *Error) {
+func (cr *CouponRequest) ApplyToCustomer(applyCouponInput *ApplyCouponInput) (*AppliedCoupon, *Error) {
 	applyCouponParams := &ApplyCouponParams{
 		AppliedCoupon: applyCouponInput,
 	}
