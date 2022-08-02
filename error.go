@@ -4,10 +4,11 @@ type ErrorCode string
 
 const (
 	ErrorCodeAlreadyExist ErrorCode = "value_already_exist"
+	ErrorCodeInvalidValue
 )
 
 type ErrorDetail struct {
-	ErrorCode []ErrorCode `json:"code"`
+	ErrorCode []ErrorCode `json:"code,omitempty"`
 }
 
 type Error struct {
