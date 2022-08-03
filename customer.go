@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -18,6 +19,10 @@ type CustomerParams struct {
 
 type CustomerResult struct {
 	Customer *Customer `json:"customer"`
+}
+
+type CustomerUsageResult struct {
+	CustomerUsage *CustomerUsage `json:"customer_usage"`
 }
 
 type CustomerInput struct {
@@ -47,6 +52,30 @@ type CustomerBillingConfigurationInput struct {
 type CustomerBillingConfiguration struct {
 	PaymentProvider    CustomerPaymentProvider `json:"payment_provider,omitempty"`
 	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
+}
+
+type CustomerChargeUsage struct {
+	Units          string   `json:"units,omitempty"`
+	AmountCents    int      `json:"amount_cents,omitempty"`
+	AmountCurrency Currency `json:"amount_currency,omitempty"`
+
+	Charge         *Charge         `json:"charge,omitempty"`
+	BillableMetric *BillableMetric `json:"billable_metric,omitempty"`
+}
+
+type CustomerUsage struct {
+	FromDate    string `json:"from_date,omitempty"`
+	ToDate      string `json:"to_date,omitempty"`
+	IssuingDate string `json:"issuing_date,omitempty"`
+
+	AmountCents         int      `json:"amount_cents,omitempty"`
+	AmountCurrency      Currency `json:"amount_currency,omitempty"`
+	TotalAmountCents    int      `json:"total_amount_cents,omitempty"`
+	TotalAmountCurrency Currency `json:"total_amount_currency,omitempty"`
+	VatAmountCents      int      `json:"vat_amount_cents,omitempty"`
+	VatAmountCurrency   Currency `json:"vat_amount_currency,omitempty"`
+
+	ChargesUsage []CustomerChargeUsage `json:"charges_usage,omitempty"`
 }
 
 type Customer struct {
@@ -109,4 +138,21 @@ func (cr *CustomerRequest) Create(customerInput *CustomerInput) (*Customer, *Err
 // same customerID to update a customer
 func (cr *CustomerRequest) Update(customerInput *CustomerInput) (*Customer, *Error) {
 	return cr.Create(customerInput)
+}
+
+func (cr *CustomerRequest) CurrentUsage(customerID string) (*CustomerUsage, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", customerID, "current_usage")
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &CustomerUsageResult{},
+	}
+
+	result, err := cr.client.Get(clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	currentUsageResult := result.(*CustomerUsageResult)
+
+	return currentUsageResult.CustomerUsage, nil
 }
