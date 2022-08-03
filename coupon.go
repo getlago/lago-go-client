@@ -79,7 +79,7 @@ type AppliedCoupon struct {
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"amount_currency,omitempty"`
 
-	ExpirationDate time.Time `json:"expiration_date,omitempty`
+	ExpirationDate string    `json:"expiration_date,omitempty"`
 	TerminatedAt   time.Time `json:"terminated_at,omitempty"`
 }
 
