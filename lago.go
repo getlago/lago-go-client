@@ -126,6 +126,26 @@ func (c *Client) PostWithoutResult(cr *ClientRequest) *Error {
 	return nil
 }
 
+func (c *Client) PostWithoutBody(cr *ClientRequest) (interface{}, *Error) {
+	resp, err := c.HttpClient.R().
+		SetError(&Error{}).
+		Post(cr.Path)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	if c.Debug {
+		fmt.Println("REQUEST: ", resp.Request.RawRequest)
+		fmt.Println("RESPONSE: ", resp.String())
+	}
+
+	if resp.IsError() {
+		return nil, resp.Error().(*Error)
+	}
+
+	return resp.Result(), nil
+}
+
 func (c *Client) Put(cr *ClientRequest) (interface{}, *Error) {
 	resp, err := c.HttpClient.R().
 		SetError(&Error{}).

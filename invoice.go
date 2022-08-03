@@ -13,9 +13,9 @@ type InvoiceFeeItemType string
 type InvoiceCreditItemType string
 
 const (
-	InvoicePending   InvoiceStatus = "pending"
-	InvoiceSucceeded InvoiceStatus = "succeeded"
-	InvoiceFailed    InvoiceStatus = "failed"
+	InvoiceStatusPending   InvoiceStatus = "pending"
+	InvoiceStatusSucceeded InvoiceStatus = "succeeded"
+	InvoiceStatusFailed    InvoiceStatus = "failed"
 )
 
 const (
@@ -36,6 +36,15 @@ type InvoiceResult struct {
 	Invoice  *Invoice  `json:"invoice,omitempty"`
 	Invoices []Invoice `json:"invoices,omitempty"`
 	Meta     Metadata  `json:"meta,omitempty"`
+}
+
+type InvoiceParams struct {
+	Invoice *InvoiceInput `json:"invoice"`
+}
+
+type InvoiceInput struct {
+	LagoID uuid.UUID     `json:"lago_id,omitempty"`
+	Status InvoiceStatus `json:"status,omitempty"`
 }
 
 type InvoiceListInput struct {
@@ -146,4 +155,47 @@ func (ir *InvoiceRequest) GetList(invoiceListInput *InvoiceListInput) (*InvoiceR
 	invoiceResult := result.(*InvoiceResult)
 
 	return invoiceResult, nil
+}
+
+func (ir *InvoiceRequest) Update(invoiceInput *InvoiceInput) (*Invoice, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "invoices", invoiceInput.LagoID)
+	invoiceParams := &InvoiceParams{
+		Invoice: invoiceInput,
+	}
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &InvoiceResult{},
+		Body:   invoiceParams,
+	}
+
+	result, err := ir.client.Put(clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	invoiceResult := result.(*InvoiceResult)
+
+	return invoiceResult.Invoice, nil
+}
+
+func (ir *InvoiceRequest) Download(invoiceID string) (*Invoice, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "download")
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &InvoiceResult{},
+	}
+
+	result, err := ir.client.PostWithoutBody(clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	if result != nil {
+		invoiceResult := result.(*InvoiceResult)
+
+		return invoiceResult.Invoice, nil
+	}
+
+	return nil, nil
 }
