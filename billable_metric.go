@@ -53,8 +53,8 @@ func (c *Client) BillableMetric() *BillableMetricRequest {
 	}
 }
 
-func (bmr *BillableMetricRequest) Get(billableMetricID string) (*BillableMetric, *Error) {
-	subPath := fmt.Sprintf("%s/%s", "billable_metrics", billableMetricID)
+func (bmr *BillableMetricRequest) Get(billableMetricCode string) (*BillableMetric, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "billable_metrics", billableMetricCode)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &BillableMetricResult{},
