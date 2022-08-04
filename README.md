@@ -2,13 +2,13 @@
 ## Installation
 
 ```shell
-go get github.com/getlago/lago-go-client/v1
+go get github.com/getlago/lago-go-client@v0.1.0-alpha.1
 ```
 
 ## Usage
 
 ```golang
-import "github.com/getlago/lago-go-client/v1"
+import "github.com/getlago/lago-go-client"
 
 func main() {
   lagoClient := lago.New().
