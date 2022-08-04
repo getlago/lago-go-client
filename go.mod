@@ -1,4 +1,4 @@
-module github.com/getlago/lago-go-client/v1
+module github.com/getlago/lago-go-client
 
 go 1.18
 
