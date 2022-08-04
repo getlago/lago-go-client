@@ -3,7 +3,6 @@ package lago
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -51,8 +50,8 @@ type InvoiceListInput struct {
 	PerPage int `json:"per_page,omitempty,string"`
 	Page    int `json:"page,omitempty,string"`
 
-	IssuingDateFrom *time.Time `json:"issuing_date_from,omitempty"`
-	IssuingDateTo   *time.Time `json:"issuing_date_to,omitempty"`
+	IssuingDateFrom string `json:"issuing_date_from,omitempty"`
+	IssuingDateTo   string `json:"issuing_date_to,omitempty"`
 }
 
 type InvoiceFeeItem struct {
