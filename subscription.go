@@ -15,11 +15,11 @@ const (
 	Canceled   SubscriptionStatus = "canceled"
 )
 
-type SubscriptionBillingTime string
+type BillingTime string
 
 const (
-	Anniversary SubscriptionBillingTime = "anniversary"
-	Calendar    SubscriptionBillingTime = "calendar"
+	Anniversary BillingTime = "anniversary"
+	Calendar    BillingTime = "calendar"
 )
 
 type SubscriptionRequest struct {
@@ -35,9 +35,9 @@ type SubscriptionParams struct {
 }
 
 type SubscriptionInput struct {
-	CustomerID  string                  `json:"customer_id,omitempty"`
-	PlanCode    string                  `json:"plan_code,omitempty"`
-	BillingTime SubscriptionBillingTime `json:"billing_time,omitempty"`
+	CustomerID  string      `json:"customer_id,omitempty"`
+	PlanCode    string      `json:"plan_code,omitempty"`
+	BillingTime BillingTime `json:"billing_time,omitempty"`
 }
 
 type Subscription struct {
@@ -47,8 +47,8 @@ type Subscription struct {
 
 	PlanCode string `json:"plan_code"`
 
-	Status      SubscriptionStatus      `json:"status"`
-	BillingTime SubscriptionBillingTime `json:"billing_time"`
+	Status      SubscriptionStatus `json:"status"`
+	BillingTime BillingTime        `json:"billing_time"`
 
 	CreatedAt    *time.Time `json:"created_at"`
 	StartedAt    *time.Time `json:"started_at"`
