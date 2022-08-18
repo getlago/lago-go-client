@@ -47,8 +47,9 @@ type Subscription struct {
 
 	PlanCode string `json:"plan_code"`
 
-	Status      SubscriptionStatus `json:"status"`
-	BillingTime BillingTime        `json:"billing_time"`
+	Status           SubscriptionStatus `json:"status"`
+	BillingTime      BillingTime        `json:"billing_time"`
+	SubscriptionDate string             `json:"subscription_date"`
 
 	CreatedAt    *time.Time `json:"created_at"`
 	StartedAt    *time.Time `json:"started_at"`
