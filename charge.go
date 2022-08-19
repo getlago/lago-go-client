@@ -20,6 +20,5 @@ type Charge struct {
 	LagoBillableMetricID uuid.UUID         `json:"lago_billable_metric_id,omitempty"`
 	ChargeModel          ChargeModel       `json:"charge_model,omitempty"`
 	CreatedAt            time.Time         `json:"created_at,omitempty"`
-	AmountCurrency       Currency          `json:"amount_currency,omitempty"`
 	Properties           map[string]string `json:"properties,omitempty"`
 }
