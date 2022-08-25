@@ -30,10 +30,11 @@ const (
 )
 
 type PlanChargeInput struct {
-	BillableMetricID uuid.UUID         `json:"billable_metric_id,omitempty"`
-	AmountCurrency   Currency          `json:"amount_currency,omitempty"`
-	ChargeModel      ChargeModel       `json:"charge_model,omitempty"`
-	Properties       map[string]string `json:"properties"`
+	LagoID           *uuid.UUID             `json:"id,omitempty"`
+	BillableMetricID uuid.UUID              `json:"billable_metric_id,omitempty"`
+	AmountCurrency   Currency               `json:"amount_currency,omitempty"`
+	ChargeModel      ChargeModel            `json:"charge_model,omitempty"`
+	Properties       map[string]interface{} `json:"properties"`
 }
 
 type PlanInput struct {
