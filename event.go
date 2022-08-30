@@ -10,7 +10,7 @@ type EventParams struct {
 
 type EventInput struct {
 	TransactionID string            `json:"transaction_id,omitempty"`
-	CustomerID    string            `json:"customer_id,omitempty"`
+	ExternalCustomerID    string    `json:"external_customer_id,omitempty"`
 	Code          string            `json:"code,omitempty"`
 	Timestamp     int64             `json:"timestamp,omitempty"`
 	Properties    map[string]string `json:"properties,omitempty"`
