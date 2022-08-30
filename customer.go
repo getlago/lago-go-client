@@ -26,7 +26,7 @@ type CustomerUsageResult struct {
 }
 
 type CustomerInput struct {
-	CustomerID           string                            `json:"customer_id,omitempty"`
+	ExternalID           string                            `json:"external_id,omitempty"`
 	Name                 string                            `json:"name,omitempty"`
 	Email                string                            `json:"email,omitempty"`
 	AddressLine1         string                            `json:"address_line_1,omitempty"`
@@ -81,7 +81,7 @@ type CustomerUsage struct {
 type Customer struct {
 	LagoID       uuid.UUID `json:"lago_id,omitempty"`
 	SequentialID int       `json:"sequential_id,omitempty"`
-	CustomerID   string    `json:"customer_id,omitempty"`
+	ExternalID   string    `json:"external_id,omitempty"`
 	Slug         string    `json:"slug,omitempty"`
 
 	Name                 string                       `json:"name,omitempty"`
@@ -135,13 +135,13 @@ func (cr *CustomerRequest) Create(customerInput *CustomerInput) (*Customer, *Err
 }
 
 // NOTE: Update endpoint does not exists, actually we use the create endpoint with the
-// same customerID to update a customer
+// same externalID to update a customer
 func (cr *CustomerRequest) Update(customerInput *CustomerInput) (*Customer, *Error) {
 	return cr.Create(customerInput)
 }
 
-func (cr *CustomerRequest) CurrentUsage(customerID string) (*CustomerUsage, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s", "customers", customerID, "current_usage")
+func (cr *CustomerRequest) CurrentUsage(externalCustomerID string) (*CustomerUsage, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "current_usage")
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &CustomerUsageResult{},
