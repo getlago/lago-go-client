@@ -35,7 +35,7 @@ type SubscriptionParams struct {
 }
 
 type SubscriptionInput struct {
-	CustomerID  string      `json:"customer_id,omitempty"`
+	ExternalCustomerID  string  `json:"external_customer_id,omitempty"`
 	PlanCode    string      `json:"plan_code,omitempty"`
 	BillingTime BillingTime `json:"billing_time,omitempty"`
 }
@@ -43,7 +43,7 @@ type SubscriptionInput struct {
 type Subscription struct {
 	LagoID         uuid.UUID `json:"lago_id"`
 	LagoCustomerID uuid.UUID `json:"lago_customer_id"`
-	CustomerID     string    `json:"customer_id"`
+	ExternalCustomerID     string `json:"external_customer_id"`
 
 	PlanCode string `json:"plan_code"`
 
@@ -84,9 +84,9 @@ func (sr *SubscriptionRequest) Create(subscriptionInput *SubscriptionInput) (*Su
 	return subscriptionResult.Subscription, nil
 }
 
-func (sr *SubscriptionRequest) Terminate(customerID string) (*Subscription, *Error) {
+func (sr *SubscriptionRequest) Terminate(externalCustomerID string) (*Subscription, *Error) {
 	subscriptionInput := &SubscriptionInput{
-		CustomerID: customerID,
+		ExternalCustomerID: externalCustomerID,
 	}
 
 	clientRequest := &ClientRequest{
