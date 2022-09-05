@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -18,7 +19,9 @@ type CustomerParams struct {
 }
 
 type CustomerResult struct {
-	Customer *Customer `json:"customer"`
+	Customer  *Customer  `json:"customer"`
+	Customers []Customer `json:"customers,omitempty"`
+	Meta      Metadata   `json:"medata,omitempty"`
 }
 
 type CustomerUsageResult struct {
@@ -41,6 +44,11 @@ type CustomerInput struct {
 	URL                  string                            `json:"url,omitempty"`
 	BillingConfiguration CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
 	VatRate              float32                           `json:"vat_rate,omitempty"`
+}
+
+type CustomerListInput struct {
+	PerPage int `json:"per_page,omitempty,string"`
+	Page    int `json:"page,omitempty,string"`
 }
 
 type CustomerBillingConfigurationInput struct {
@@ -155,4 +163,46 @@ func (cr *CustomerRequest) CurrentUsage(externalCustomerID string) (*CustomerUsa
 	currentUsageResult := result.(*CustomerUsageResult)
 
 	return currentUsageResult.CustomerUsage, nil
+}
+
+func (cr *CustomerRequest) Get(externalCustomerID string) (*Customer, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "customers", externalCustomerID)
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &CustomerResult{},
+	}
+
+	result, err := cr.client.Get(clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	customerResult := result.(*CustomerResult)
+
+	return customerResult.Customer, nil
+}
+
+func (cr *CustomerRequest) GetList(customerListInput *CustomerListInput) (*CustomerResult, *Error) {
+	jsonQueryParams, err := json.Marshal(customerListInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	queryParams := make(map[string]string)
+	json.Unmarshal(jsonQueryParams, &queryParams)
+
+	clientRequest := &ClientRequest{
+		Path:        "customers",
+		QueryParams: queryParams,
+		Result:      &CustomerResult{},
+	}
+
+	result, clientErr := cr.client.Get(clientRequest)
+	if err != nil {
+		return nil, clientErr
+	}
+
+	customerResult := result.(*CustomerResult)
+
+	return customerResult, nil
 }
