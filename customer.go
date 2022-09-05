@@ -165,8 +165,8 @@ func (cr *CustomerRequest) CurrentUsage(externalCustomerID string) (*CustomerUsa
 	return currentUsageResult.CustomerUsage, nil
 }
 
-func (cr *CustomerRequest) Get(externalID string) (*Customer, *Error) {
-	subPath := fmt.Sprintf("%s/%s", "customers", externalID)
+func (cr *CustomerRequest) Get(externalCustomerID string) (*Customer, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "customers", externalCustomerID)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &CustomerResult{},
