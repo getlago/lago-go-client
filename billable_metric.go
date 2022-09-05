@@ -14,10 +14,11 @@ type BillableMetricRequest struct {
 type AggregationType string
 
 const (
-	CountAggregation       AggregationType = "count_agg"
-	SumAggregation         AggregationType = "sum_agg"
-	MaxAggregation         AggregationType = "max_agg"
-	UniqueCountAggregation AggregationType = "unique_count_agg"
+	CountAggregation          AggregationType = "count_agg"
+	SumAggregation            AggregationType = "sum_agg"
+	MaxAggregation            AggregationType = "max_agg"
+	UniqueCountAggregation    AggregationType = "unique_count_agg"
+	RecurringCountAggregation AggregationType = "recurring_count_agg"
 )
 
 type BillableMetricParams struct {
