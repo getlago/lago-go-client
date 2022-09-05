@@ -63,7 +63,7 @@ type ApplyCouponParams struct {
 }
 
 type ApplyCouponInput struct {
-	CustomerID     string   `json:"customer_id,omitempty"`
+	ExternalCustomerID     string   `json:"external_customer_id,omitempty"`
 	CouponCode     string   `json:"coupon_code,omitempty"`
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"amount_currency,omitempty"`
@@ -72,7 +72,7 @@ type ApplyCouponInput struct {
 type AppliedCoupon struct {
 	LagoID         uuid.UUID `json:"lago_id,omitempty"`
 	LagoCouponID   uuid.UUID `json:"lago_coupon_id,omitempty"`
-	CustomerID     string    `json:"customer_id,omitempty"`
+	ExternalCustomerID     string    `json:"external_customer_id,omitempty"`
 	LagoCustomerID uuid.UUID `json:"lago_customer_id,omitempty"`
 
 	CouponCode     string   `json:"coupon_code,omitempty"`
