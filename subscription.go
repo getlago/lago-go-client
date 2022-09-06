@@ -9,10 +9,10 @@ import (
 type SubscriptionStatus string
 
 const (
-	Active     SubscriptionStatus = "active"
-	Pending    SubscriptionStatus = "pending"
-	Terminated SubscriptionStatus = "terminated"
-	Canceled   SubscriptionStatus = "canceled"
+	SubscriptionStatusActive     SubscriptionStatus = "active"
+	SubscriptionStatusPending    SubscriptionStatus = "pending"
+	SubscriptionStatusTerminated SubscriptionStatus = "terminated"
+	SubscriptionStatusCanceled   SubscriptionStatus = "canceled"
 )
 
 type BillingTime string
@@ -35,15 +35,15 @@ type SubscriptionParams struct {
 }
 
 type SubscriptionInput struct {
-	ExternalCustomerID  string  `json:"external_customer_id,omitempty"`
-	PlanCode    string      `json:"plan_code,omitempty"`
-	BillingTime BillingTime `json:"billing_time,omitempty"`
+	ExternalCustomerID string      `json:"external_customer_id,omitempty"`
+	PlanCode           string      `json:"plan_code,omitempty"`
+	BillingTime        BillingTime `json:"billing_time,omitempty"`
 }
 
 type Subscription struct {
-	LagoID         uuid.UUID `json:"lago_id"`
-	LagoCustomerID uuid.UUID `json:"lago_customer_id"`
-	ExternalCustomerID     string `json:"external_customer_id"`
+	LagoID             uuid.UUID `json:"lago_id"`
+	LagoCustomerID     uuid.UUID `json:"lago_customer_id"`
+	ExternalCustomerID string    `json:"external_customer_id"`
 
 	PlanCode string `json:"plan_code"`
 
