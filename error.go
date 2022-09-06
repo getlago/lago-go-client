@@ -5,6 +5,7 @@ type ErrorCode string
 const (
 	ErrorCodeAlreadyExist ErrorCode = "value_already_exist"
 	ErrorCodeInvalidValue
+	ErrorTypeAssert ErrorCode = "error_type_assert"
 )
 
 type ErrorDetail struct {
