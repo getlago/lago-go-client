@@ -1,24 +1,23 @@
 package lago
 
 import (
-	"encoding/json"
-	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 )
 
-type Status string
+type WalletStatus string
 
 const (
-	Pending  Status = "pending"
-	Settled  Status = "settled"
+	WalletStatusPending WalletStatus = "pending"
+	WalletStatusSettled WalletStatus = "settled"
 )
 
 type TransactionType string
 
 const (
-	Outbound  TransactionType = "outbound"
-	Inbound   TransactionType = "inbound"
+	Outbound TransactionType = "outbound"
+	Inbound  TransactionType = "inbound"
 )
 
 type WalletTransactionRequest struct {
@@ -30,9 +29,9 @@ type WalletTransactionParams struct {
 }
 
 type WalletTransactionInput struct {
-	WalletId            string   `json:"wallet_id,omitempty"`
-	PaidCredits         string   `json:"paid_credits,omitempty"`
-	GrantedCredits      string   `json:"granted_credits,omitempty"`
+	WalletId       string `json:"wallet_id,omitempty"`
+	PaidCredits    string `json:"paid_credits,omitempty"`
+	GrantedCredits string `json:"granted_credits,omitempty"`
 }
 
 type WalletTransactionResult struct {
@@ -40,14 +39,14 @@ type WalletTransactionResult struct {
 }
 
 type WalletTransaction struct {
-    LagoID            uuid.UUID        `json:"lago_id,omitempty"`
-    LagoWalletID      uuid.UUID        `json:"lago_wallet_id,omitempty"`
-    Status            Status           `json:"status,omitempty"`
-    TransactionType   TransactionType  `json:"transaction_type,omitempty"`
-    Amount            string           `json:"amount,omitempty"`
-    CreditAmount      string          ` json:"credit_amount,omitempty"`
-    CreatedAt         time.Time        `json:"created_at,omitempty"`
-    SettledAt         time.Time        `json:"settled_at,omitempty"`
+	LagoID          uuid.UUID       `json:"lago_id,omitempty"`
+	LagoWalletID    uuid.UUID       `json:"lago_wallet_id,omitempty"`
+	Status          WalletStatus    `json:"status,omitempty"`
+	TransactionType TransactionType `json:"transaction_type,omitempty"`
+	Amount          string          `json:"amount,omitempty"`
+	CreditAmount    string          ` json:"credit_amount,omitempty"`
+	CreatedAt       time.Time       `json:"created_at,omitempty"`
+	SettledAt       time.Time       `json:"settled_at,omitempty"`
 }
 
 func (c *Client) WalletTransaction() *WalletTransactionRequest {
@@ -68,7 +67,7 @@ func (bmr *WalletTransactionRequest) Create(walletTransactionInput *WalletTransa
 		return nil, err
 	}
 
-	walletTransactionResult := result.(*WalletTransactionResult)
+	walletTransactionResult := result.(*WalletTransaction)
 
-	return walletTransactionResult.WalletTransactions, nil
+	return walletTransactionResult, nil
 }

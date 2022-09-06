@@ -3,6 +3,7 @@ package lago
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -23,18 +24,18 @@ type WalletParams struct {
 }
 
 type WalletInput struct {
-    RateAmount          string   `json:"rate_amount,omitempty"`
-	Name                string   `json:"name,omitempty"`
-	PaidCredits         string   `json:"paid_credits,omitempty"`
-	GrantedCredits      string   `json:"granted_credits,omitempty"`
-	ExpirationDate      string   `json:"expiration_date,omitempty"`
-	ExternalCustomerId  string   `json:"external_customer_id,omitempty"`
+	RateAmount         string `json:"rate_amount,omitempty"`
+	Name               string `json:"name,omitempty"`
+	PaidCredits        string `json:"paid_credits,omitempty"`
+	GrantedCredits     string `json:"granted_credits,omitempty"`
+	ExpirationDate     string `json:"expiration_date,omitempty"`
+	ExternalCustomerId string `json:"external_customer_id,omitempty"`
 }
 
 type WalletListInput struct {
-	PerPage             int `json:"per_page,omitempty,string"`
-	Page                int `json:"page,omitempty,string"`
-	ExternalCustomerID  int `json:"external_customer_id,omitempty,string"`
+	PerPage            int `json:"per_page,omitempty,string"`
+	Page               int `json:"page,omitempty,string"`
+	ExternalCustomerID int `json:"external_customer_id,omitempty,string"`
 }
 
 type WalletResult struct {
@@ -44,21 +45,21 @@ type WalletResult struct {
 }
 
 type Wallet struct {
-	LagoID                uuid.UUID        `json:"lago_id,omitempty"`
-    LagoCustomerID        uuid.UUID        `json:"lago_customer_id,omitempty"`
-    ExternalCustomerID    string           `json:"external_customer_id,omitempty"`
-    Status                Status           `json:"status,omitempty"`
-    Currency              string           `json:"currency,omitempty"`
-    Name                  string           `json:"name,omitempty"`
-    RateAmount            string           `json:"rate_amount,omitempty"`
-    CreditsBalance        string           `json:"credits_balance,omitempty"`
-    Balance               string           `json:"balance,omitempty"`
-    ConsumedCredits       string           `json:"consumed_credits,omitempty"`
-    CreatedAt             time.Time        `json:"created_at,omitempty"`
-    ExpirationDate        time.Time        `json:"expiration_date,omitempty"`
-    LastBalanceSyncAt     time.Time        `json:"last_balance_sync_at,omitempty"`
-    LastConsumedCreditAt  time.Time        `json:"last_consumed_credit_at,omitempty"`
-    TerminatedAt          time.Time        `json:"terminated_at,omitempty"`
+	LagoID               uuid.UUID `json:"lago_id,omitempty"`
+	LagoCustomerID       uuid.UUID `json:"lago_customer_id,omitempty"`
+	ExternalCustomerID   string    `json:"external_customer_id,omitempty"`
+	Status               Status    `json:"status,omitempty"`
+	Currency             string    `json:"currency,omitempty"`
+	Name                 string    `json:"name,omitempty"`
+	RateAmount           string    `json:"rate_amount,omitempty"`
+	CreditsBalance       string    `json:"credits_balance,omitempty"`
+	Balance              string    `json:"balance,omitempty"`
+	ConsumedCredits      string    `json:"consumed_credits,omitempty"`
+	CreatedAt            time.Time `json:"created_at,omitempty"`
+	ExpirationDate       time.Time `json:"expiration_date,omitempty"`
+	LastBalanceSyncAt    time.Time `json:"last_balance_sync_at,omitempty"`
+	LastConsumedCreditAt time.Time `json:"last_consumed_credit_at,omitempty"`
+	TerminatedAt         time.Time `json:"terminated_at,omitempty"`
 }
 
 func (c *Client) Wallet() *WalletRequest {
