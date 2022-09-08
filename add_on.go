@@ -106,7 +106,10 @@ func (adr *AddOnRequest) GetList(addOnListInput *AddOnListInput) (*AddOnResult, 
 	}
 
 	queryParams := make(map[string]string)
-	json.Unmarshal(jsonQueryparams, &queryParams)
+	err = json.Unmarshal(jsonQueryparams, &queryParams)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
 
 	clientRequest := &ClientRequest{
 		Path:        "add_ons",
