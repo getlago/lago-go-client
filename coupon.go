@@ -114,8 +114,7 @@ func (cr *CouponRequest) GetList(couponListInput *CouponListInput) (*CouponResul
 	}
 
 	queryParams := make(map[string]string)
-	err = json.Unmarshal(jsonQueryParams, &queryParams)
-	if err != nil {
+	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
 		return nil, &Error{Err: err}
 	}
 

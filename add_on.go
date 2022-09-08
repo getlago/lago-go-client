@@ -106,8 +106,7 @@ func (adr *AddOnRequest) GetList(addOnListInput *AddOnListInput) (*AddOnResult, 
 	}
 
 	queryParams := make(map[string]string)
-	err = json.Unmarshal(jsonQueryparams, &queryParams)
-	if err != nil {
+	if err = json.Unmarshal(jsonQueryparams, &queryParams); err != nil {
 		return nil, &Error{Err: err}
 	}
 
