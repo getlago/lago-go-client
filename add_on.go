@@ -57,17 +57,17 @@ type ApplyAddOnParams struct {
 }
 
 type ApplyAddOnInput struct {
-	ExternalCustomerID     string   `json:"external_customer_id,omitempty"`
-	AddOnCode      string   `json:"add_on_code,omitempty"`
-	AmountCents    int      `json:"amount_cents,omitempty"`
-	AmountCurrency Currency `json:"amount_currency,omitempty"`
+	ExternalCustomerID string   `json:"external_customer_id,omitempty"`
+	AddOnCode          string   `json:"add_on_code,omitempty"`
+	AmountCents        int      `json:"amount_cents,omitempty"`
+	AmountCurrency     Currency `json:"amount_currency,omitempty"`
 }
 
 type AppliedAddOn struct {
-	LagoID         uuid.UUID `json:"lago_id,omitempty"`
-	LagoAddOnID    uuid.UUID `json:"lago_add_on_id,omitempty"`
-	LagoCustomerID uuid.UUID `json:"lago_customer_id,omitempty"`
-	ExternalCustomerID     string    `json:"external_customer_id,omitempty"`
+	LagoID             uuid.UUID `json:"lago_id,omitempty"`
+	LagoAddOnID        uuid.UUID `json:"lago_add_on_id,omitempty"`
+	LagoCustomerID     uuid.UUID `json:"lago_customer_id,omitempty"`
+	ExternalCustomerID string    `json:"external_customer_id,omitempty"`
 
 	AddOnCode      string   `json:"add_on_code,omitempty"`
 	AmountCents    int      `json:"amount_cents,omitempty"`
