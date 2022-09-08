@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/google/uuid"
@@ -27,7 +28,9 @@ type SubscriptionRequest struct {
 }
 
 type SubscriptionResult struct {
-	Subscription *Subscription `json:"subscription,omitempty"`
+	Subscription  *Subscription  `json:"subscription,omitempty"`
+	Subscriptions []Subscription `json:"subscriptions,omitempty"`
+	Meta          Metadata       `json:"meta,omitempty"`
 }
 
 type SubscriptionParams struct {
@@ -38,6 +41,12 @@ type SubscriptionInput struct {
 	ExternalCustomerID string      `json:"external_customer_id,omitempty"`
 	PlanCode           string      `json:"plan_code,omitempty"`
 	BillingTime        BillingTime `json:"billing_time,omitempty"`
+}
+
+type SubscriptionListInput struct {
+	ExternalCustomerID string `json:"external_customer_id,omitempty"`
+	PerPage            int    `json:"per_page,omitempty,string"`
+	Page               int    `json:"page,omitempty,string"`
 }
 
 type Subscription struct {
@@ -103,4 +112,29 @@ func (sr *SubscriptionRequest) Terminate(externalCustomerID string) (*Subscripti
 	subscriptionResult := result.(*SubscriptionResult)
 
 	return subscriptionResult.Subscription, nil
+}
+
+func (sr *SubscriptionRequest) GetList(subscriptionListInput SubscriptionListInput) (*SubscriptionResult, *Error) {
+	jsonQueryParams, err := json.Marshal(subscriptionListInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	queryParams := make(map[string]string)
+	json.Unmarshal(jsonQueryParams, &queryParams)
+
+	clientRequest := &ClientRequest{
+		Path:        "subscriptions",
+		QueryParams: queryParams,
+		Result:      &PlanResult{},
+	}
+
+	result, clientErr := sr.client.Get(clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
+	}
+
+	subscriptionResult := result.(*SubscriptionResult)
+
+	return subscriptionResult, nil
 }
