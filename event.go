@@ -1,5 +1,7 @@
 package lago
 
+import "context"
+
 type EventRequest struct {
 	client *Client
 }
@@ -22,7 +24,7 @@ func (c *Client) Event() *EventRequest {
 	}
 }
 
-func (er *EventRequest) Create(eventInput *EventInput) *Error {
+func (er *EventRequest) Create(ctx context.Context, eventInput *EventInput) *Error {
 	eventParams := &EventParams{
 		Event: eventInput,
 	}
@@ -32,7 +34,7 @@ func (er *EventRequest) Create(eventInput *EventInput) *Error {
 		Body: eventParams,
 	}
 
-	err := er.client.PostWithoutResult(clientRequest)
+	err := er.client.PostWithoutResult(ctx, clientRequest)
 	if err != nil {
 		return err
 	}

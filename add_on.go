@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -82,14 +83,14 @@ func (c *Client) AddOn() *AddOnRequest {
 	}
 }
 
-func (adr *AddOnRequest) Get(addOnCode string) (*AddOn, *Error) {
+func (adr *AddOnRequest) Get(ctx context.Context, addOnCode string) (*AddOn, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "add_ons", addOnCode)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &AddOnResult{},
 	}
 
-	result, err := adr.client.Get(clientRequest)
+	result, err := adr.client.Get(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +100,7 @@ func (adr *AddOnRequest) Get(addOnCode string) (*AddOn, *Error) {
 	return addOnResult.AddOn, nil
 }
 
-func (adr *AddOnRequest) GetList(addOnListInput *AddOnListInput) (*AddOnResult, *Error) {
+func (adr *AddOnRequest) GetList(ctx context.Context, addOnListInput *AddOnListInput) (*AddOnResult, *Error) {
 	jsonQueryparams, err := json.Marshal(addOnListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
@@ -114,7 +115,7 @@ func (adr *AddOnRequest) GetList(addOnListInput *AddOnListInput) (*AddOnResult, 
 		Result:      &AddOnResult{},
 	}
 
-	result, clientErr := adr.client.Get(clientRequest)
+	result, clientErr := adr.client.Get(ctx, clientRequest)
 	if clientErr != nil {
 		return nil, clientErr
 	}
@@ -124,7 +125,7 @@ func (adr *AddOnRequest) GetList(addOnListInput *AddOnListInput) (*AddOnResult, 
 	return addOnResult, nil
 }
 
-func (adr *AddOnRequest) Create(addOnInput *AddOnInput) (*AddOn, *Error) {
+func (adr *AddOnRequest) Create(ctx context.Context, addOnInput *AddOnInput) (*AddOn, *Error) {
 	addOnParams := &AddOnParams{
 		AddOn: addOnInput,
 	}
@@ -135,7 +136,7 @@ func (adr *AddOnRequest) Create(addOnInput *AddOnInput) (*AddOn, *Error) {
 		Body:   addOnParams,
 	}
 
-	result, err := adr.client.Post(clientRequest)
+	result, err := adr.client.Post(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +146,7 @@ func (adr *AddOnRequest) Create(addOnInput *AddOnInput) (*AddOn, *Error) {
 	return addOnResult.AddOn, nil
 }
 
-func (adr *AddOnRequest) Update(addOnInput *AddOnInput) (*AddOn, *Error) {
+func (adr *AddOnRequest) Update(ctx context.Context, addOnInput *AddOnInput) (*AddOn, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "add_ons", addOnInput.Code)
 	addOnParams := &AddOnParams{
 		AddOn: addOnInput,
@@ -157,7 +158,7 @@ func (adr *AddOnRequest) Update(addOnInput *AddOnInput) (*AddOn, *Error) {
 		Body:   addOnParams,
 	}
 
-	result, err := adr.client.Put(clientRequest)
+	result, err := adr.client.Put(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -167,7 +168,7 @@ func (adr *AddOnRequest) Update(addOnInput *AddOnInput) (*AddOn, *Error) {
 	return addOnResult.AddOn, nil
 }
 
-func (adr *AddOnRequest) Delete(addOnCode string) (*AddOn, *Error) {
+func (adr *AddOnRequest) Delete(ctx context.Context, addOnCode string) (*AddOn, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "add_ons", addOnCode)
 
 	clientRequest := &ClientRequest{
@@ -175,7 +176,7 @@ func (adr *AddOnRequest) Delete(addOnCode string) (*AddOn, *Error) {
 		Result: &AddOnResult{},
 	}
 
-	result, err := adr.client.Delete(clientRequest)
+	result, err := adr.client.Delete(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (adr *AddOnRequest) Delete(addOnCode string) (*AddOn, *Error) {
 	return addOnResult.AddOn, nil
 }
 
-func (adr *AddOnRequest) ApplyToCustomer(applyAddOnInput *ApplyAddOnInput) (*AppliedAddOn, *Error) {
+func (adr *AddOnRequest) ApplyToCustomer(ctx context.Context, applyAddOnInput *ApplyAddOnInput) (*AppliedAddOn, *Error) {
 	applyAddOnParams := &ApplyAddOnParams{
 		AppliedAddOn: applyAddOnInput,
 	}
@@ -196,7 +197,7 @@ func (adr *AddOnRequest) ApplyToCustomer(applyAddOnInput *ApplyAddOnInput) (*App
 		Body:   applyAddOnParams,
 	}
 
-	result, err := adr.client.Post(clientRequest)
+	result, err := adr.client.Post(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}

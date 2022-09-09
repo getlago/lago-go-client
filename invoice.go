@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
@@ -114,14 +115,14 @@ func (c *Client) Invoice() *InvoiceRequest {
 	}
 }
 
-func (ir *InvoiceRequest) Get(invoiceID string) (*Invoice, *Error) {
+func (ir *InvoiceRequest) Get(ctx context.Context, invoiceID string) (*Invoice, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "invoices", invoiceID)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &InvoiceResult{},
 	}
 
-	result, err := ir.client.Get(clientRequest)
+	result, err := ir.client.Get(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +132,7 @@ func (ir *InvoiceRequest) Get(invoiceID string) (*Invoice, *Error) {
 	return invoiceResult.Invoice, nil
 }
 
-func (ir *InvoiceRequest) GetList(invoiceListInput *InvoiceListInput) (*InvoiceResult, *Error) {
+func (ir *InvoiceRequest) GetList(ctx context.Context, invoiceListInput *InvoiceListInput) (*InvoiceResult, *Error) {
 	jsonQueryParams, err := json.Marshal(invoiceListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
@@ -146,7 +147,7 @@ func (ir *InvoiceRequest) GetList(invoiceListInput *InvoiceListInput) (*InvoiceR
 		Result:      &InvoiceResult{},
 	}
 
-	result, clientErr := ir.client.Get(clientRequest)
+	result, clientErr := ir.client.Get(ctx, clientRequest)
 	if clientErr != nil {
 		return nil, clientErr
 	}
@@ -156,7 +157,7 @@ func (ir *InvoiceRequest) GetList(invoiceListInput *InvoiceListInput) (*InvoiceR
 	return invoiceResult, nil
 }
 
-func (ir *InvoiceRequest) Update(invoiceInput *InvoiceInput) (*Invoice, *Error) {
+func (ir *InvoiceRequest) Update(ctx context.Context, invoiceInput *InvoiceInput) (*Invoice, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "invoices", invoiceInput.LagoID)
 	invoiceParams := &InvoiceParams{
 		Invoice: invoiceInput,
@@ -168,7 +169,7 @@ func (ir *InvoiceRequest) Update(invoiceInput *InvoiceInput) (*Invoice, *Error) 
 		Body:   invoiceParams,
 	}
 
-	result, err := ir.client.Put(clientRequest)
+	result, err := ir.client.Put(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -178,14 +179,14 @@ func (ir *InvoiceRequest) Update(invoiceInput *InvoiceInput) (*Invoice, *Error) 
 	return invoiceResult.Invoice, nil
 }
 
-func (ir *InvoiceRequest) Download(invoiceID string) (*Invoice, *Error) {
+func (ir *InvoiceRequest) Download(ctx context.Context, invoiceID string) (*Invoice, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "download")
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &InvoiceResult{},
 	}
 
-	result, err := ir.client.PostWithoutBody(clientRequest)
+	result, err := ir.client.PostWithoutBody(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
@@ -73,7 +74,7 @@ func (c *Client) Plan() *PlanRequest {
 	}
 }
 
-func (pr *PlanRequest) Get(planCode string) (*Plan, *Error) {
+func (pr *PlanRequest) Get(ctx context.Context, planCode string) (*Plan, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "plans", planCode)
 
 	clientRequest := &ClientRequest{
@@ -81,7 +82,7 @@ func (pr *PlanRequest) Get(planCode string) (*Plan, *Error) {
 		Result: &PlanResult{},
 	}
 
-	result, err := pr.client.Get(clientRequest)
+	result, err := pr.client.Get(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +92,7 @@ func (pr *PlanRequest) Get(planCode string) (*Plan, *Error) {
 	return planResult.Plan, nil
 }
 
-func (pr *PlanRequest) GetList(planListInput *PlanListInput) (*PlanResult, *Error) {
+func (pr *PlanRequest) GetList(ctx context.Context, planListInput *PlanListInput) (*PlanResult, *Error) {
 	jsonQueryParams, err := json.Marshal(planListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
@@ -106,7 +107,7 @@ func (pr *PlanRequest) GetList(planListInput *PlanListInput) (*PlanResult, *Erro
 		Result:      &PlanResult{},
 	}
 
-	result, clientErr := pr.client.Get(clientRequest)
+	result, clientErr := pr.client.Get(ctx, clientRequest)
 	if clientErr != nil {
 		return nil, clientErr
 	}
@@ -116,7 +117,7 @@ func (pr *PlanRequest) GetList(planListInput *PlanListInput) (*PlanResult, *Erro
 	return planResult, nil
 }
 
-func (pr *PlanRequest) Create(planInput *PlanInput) (*Plan, *Error) {
+func (pr *PlanRequest) Create(ctx context.Context, planInput *PlanInput) (*Plan, *Error) {
 	planParams := &PlanParams{
 		Plan: planInput,
 	}
@@ -127,7 +128,7 @@ func (pr *PlanRequest) Create(planInput *PlanInput) (*Plan, *Error) {
 		Body:   planParams,
 	}
 
-	result, err := pr.client.Post(clientRequest)
+	result, err := pr.client.Post(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +138,7 @@ func (pr *PlanRequest) Create(planInput *PlanInput) (*Plan, *Error) {
 	return planResult.Plan, nil
 }
 
-func (pr *PlanRequest) Update(planInput *PlanInput) (*Plan, *Error) {
+func (pr *PlanRequest) Update(ctx context.Context, planInput *PlanInput) (*Plan, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "plans", planInput.Code)
 	planParams := &PlanParams{
 		Plan: planInput,
@@ -149,7 +150,7 @@ func (pr *PlanRequest) Update(planInput *PlanInput) (*Plan, *Error) {
 		Body:   planParams,
 	}
 
-	result, err := pr.client.Put(clientRequest)
+	result, err := pr.client.Put(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +160,7 @@ func (pr *PlanRequest) Update(planInput *PlanInput) (*Plan, *Error) {
 	return planResult.Plan, nil
 }
 
-func (pr *PlanRequest) Delete(planCode string) (*Plan, *Error) {
+func (pr *PlanRequest) Delete(ctx context.Context, planCode string) (*Plan, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "plans", planCode)
 
 	clientRequest := &ClientRequest{
@@ -167,7 +168,7 @@ func (pr *PlanRequest) Delete(planCode string) (*Plan, *Error) {
 		Result: &PlanResult{},
 	}
 
-	result, err := pr.client.Delete(clientRequest)
+	result, err := pr.client.Delete(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
