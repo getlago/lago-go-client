@@ -1,6 +1,9 @@
 package lago
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type OrganizationRequest struct {
 	client *Client
@@ -54,7 +57,7 @@ func (c *Client) Organization() *OrganizationRequest {
 	}
 }
 
-func (or *OrganizationRequest) Update(organizationInput *OrganizationInput) (*Organization, *Error) {
+func (or *OrganizationRequest) Update(ctx context.Context, organizationInput *OrganizationInput) (*Organization, *Error) {
 	organizationParams := &OrganizationParams{
 		Organization: organizationInput,
 	}
@@ -65,7 +68,7 @@ func (or *OrganizationRequest) Update(organizationInput *OrganizationInput) (*Or
 		Body:   organizationParams,
 	}
 
-	result, err := or.client.Put(clientRequest)
+	result, err := or.client.Put(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}

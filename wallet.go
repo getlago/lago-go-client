@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -68,14 +69,14 @@ func (c *Client) Wallet() *WalletRequest {
 	}
 }
 
-func (bmr *WalletRequest) Get(walletId string) (*Wallet, *Error) {
+func (bmr *WalletRequest) Get(ctx context.Context, walletId string) (*Wallet, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "wallets", walletId)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &WalletResult{},
 	}
 
-	result, err := bmr.client.Get(clientRequest)
+	result, err := bmr.client.Get(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func (bmr *WalletRequest) Get(walletId string) (*Wallet, *Error) {
 	return walletResult.Wallet, nil
 }
 
-func (bmr *WalletRequest) GetList(walletListInput *WalletListInput) (*WalletResult, *Error) {
+func (bmr *WalletRequest) GetList(ctx context.Context, walletListInput *WalletListInput) (*WalletResult, *Error) {
 	jsonQueryParams, err := json.Marshal(walletListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
@@ -102,7 +103,7 @@ func (bmr *WalletRequest) GetList(walletListInput *WalletListInput) (*WalletResu
 		Result:      &WalletResult{},
 	}
 
-	result, clientErr := bmr.client.Get(clientRequest)
+	result, clientErr := bmr.client.Get(ctx, clientRequest)
 	if err != nil {
 		return nil, clientErr
 	}
@@ -112,14 +113,14 @@ func (bmr *WalletRequest) GetList(walletListInput *WalletListInput) (*WalletResu
 	return walletResult, nil
 }
 
-func (bmr *WalletRequest) Create(walletInput *WalletInput) (*Wallet, *Error) {
+func (bmr *WalletRequest) Create(ctx context.Context, walletInput *WalletInput) (*Wallet, *Error) {
 	clientRequest := &ClientRequest{
 		Path:   "wallets",
 		Result: &WalletResult{},
 		Body:   walletInput,
 	}
 
-	result, err := bmr.client.Post(clientRequest)
+	result, err := bmr.client.Post(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +130,7 @@ func (bmr *WalletRequest) Create(walletInput *WalletInput) (*Wallet, *Error) {
 	return walletResult.Wallet, nil
 }
 
-func (bmr *WalletRequest) Update(walletInput *WalletInput, walletId string) (*Wallet, *Error) {
+func (bmr *WalletRequest) Update(ctx context.Context, walletInput *WalletInput, walletId string) (*Wallet, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "wallets", walletId)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
@@ -137,7 +138,7 @@ func (bmr *WalletRequest) Update(walletInput *WalletInput, walletId string) (*Wa
 		Body:   walletInput,
 	}
 
-	result, err := bmr.client.Put(clientRequest)
+	result, err := bmr.client.Put(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -147,14 +148,14 @@ func (bmr *WalletRequest) Update(walletInput *WalletInput, walletId string) (*Wa
 	return walletResult.Wallet, nil
 }
 
-func (bmr *WalletRequest) Delete(walletId string) (*Wallet, *Error) {
+func (bmr *WalletRequest) Delete(ctx context.Context, walletId string) (*Wallet, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "wallets", walletId)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &WalletResult{},
 	}
 
-	result, err := bmr.client.Delete(clientRequest)
+	result, err := bmr.client.Delete(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}

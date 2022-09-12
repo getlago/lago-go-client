@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/go-resty/resty/v2"
@@ -61,8 +62,9 @@ func (c *Client) SetDebug(debug bool) *Client {
 	return c
 }
 
-func (c *Client) Get(cr *ClientRequest) (interface{}, *Error) {
+func (c *Client) Get(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
 	resp, err := c.HttpClient.R().
+		SetContext(ctx).
 		SetError(&Error{}).
 		SetResult(cr.Result).
 		SetQueryParams(cr.QueryParams).
@@ -83,8 +85,9 @@ func (c *Client) Get(cr *ClientRequest) (interface{}, *Error) {
 	return resp.Result(), nil
 }
 
-func (c *Client) Post(cr *ClientRequest) (interface{}, *Error) {
+func (c *Client) Post(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
 	resp, err := c.HttpClient.R().
+		SetContext(ctx).
 		SetError(&Error{}).
 		SetResult(cr.Result).
 		SetBody(cr.Body).
@@ -105,8 +108,9 @@ func (c *Client) Post(cr *ClientRequest) (interface{}, *Error) {
 	return resp.Result(), nil
 }
 
-func (c *Client) PostWithoutResult(cr *ClientRequest) *Error {
+func (c *Client) PostWithoutResult(ctx context.Context, cr *ClientRequest) *Error {
 	resp, err := c.HttpClient.R().
+		SetContext(ctx).
 		SetError(&Error{}).
 		SetBody(cr.Body).
 		Post(cr.Path)
@@ -126,8 +130,9 @@ func (c *Client) PostWithoutResult(cr *ClientRequest) *Error {
 	return nil
 }
 
-func (c *Client) PostWithoutBody(cr *ClientRequest) (interface{}, *Error) {
+func (c *Client) PostWithoutBody(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
 	resp, err := c.HttpClient.R().
+		SetContext(ctx).
 		SetError(&Error{}).
 		Post(cr.Path)
 	if err != nil {
@@ -146,8 +151,9 @@ func (c *Client) PostWithoutBody(cr *ClientRequest) (interface{}, *Error) {
 	return resp.Result(), nil
 }
 
-func (c *Client) Put(cr *ClientRequest) (interface{}, *Error) {
+func (c *Client) Put(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
 	resp, err := c.HttpClient.R().
+		SetContext(ctx).
 		SetError(&Error{}).
 		SetResult(cr.Result).
 		SetBody(cr.Body).
@@ -168,8 +174,9 @@ func (c *Client) Put(cr *ClientRequest) (interface{}, *Error) {
 	return resp.Result(), nil
 }
 
-func (c *Client) Delete(cr *ClientRequest) (interface{}, *Error) {
+func (c *Client) Delete(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
 	resp, err := c.HttpClient.R().
+		SetContext(ctx).
 		SetError(&Error{}).
 		SetResult(cr.Result).
 		SetBody(cr.Body).

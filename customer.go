@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -121,7 +122,7 @@ func (c *Client) Customer() *CustomerRequest {
 	}
 }
 
-func (cr *CustomerRequest) Create(customerInput *CustomerInput) (*Customer, *Error) {
+func (cr *CustomerRequest) Create(ctx context.Context, customerInput *CustomerInput) (*Customer, *Error) {
 	customerParams := &CustomerParams{
 		Customer: customerInput,
 	}
@@ -132,7 +133,7 @@ func (cr *CustomerRequest) Create(customerInput *CustomerInput) (*Customer, *Err
 		Body:   customerParams,
 	}
 
-	result, err := cr.client.Post(clientRequest)
+	result, err := cr.client.Post(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -144,18 +145,18 @@ func (cr *CustomerRequest) Create(customerInput *CustomerInput) (*Customer, *Err
 
 // NOTE: Update endpoint does not exists, actually we use the create endpoint with the
 // same externalID to update a customer
-func (cr *CustomerRequest) Update(customerInput *CustomerInput) (*Customer, *Error) {
-	return cr.Create(customerInput)
+func (cr *CustomerRequest) Update(ctx context.Context, customerInput *CustomerInput) (*Customer, *Error) {
+	return cr.Create(ctx, customerInput)
 }
 
-func (cr *CustomerRequest) CurrentUsage(externalCustomerID string) (*CustomerUsage, *Error) {
+func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID string) (*CustomerUsage, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "current_usage")
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &CustomerUsageResult{},
 	}
 
-	result, err := cr.client.Get(clientRequest)
+	result, err := cr.client.Get(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -165,14 +166,14 @@ func (cr *CustomerRequest) CurrentUsage(externalCustomerID string) (*CustomerUsa
 	return currentUsageResult.CustomerUsage, nil
 }
 
-func (cr *CustomerRequest) Get(externalCustomerID string) (*Customer, *Error) {
+func (cr *CustomerRequest) Get(ctx context.Context, externalCustomerID string) (*Customer, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "customers", externalCustomerID)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &CustomerResult{},
 	}
 
-	result, err := cr.client.Get(clientRequest)
+	result, err := cr.client.Get(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -182,7 +183,7 @@ func (cr *CustomerRequest) Get(externalCustomerID string) (*Customer, *Error) {
 	return customerResult.Customer, nil
 }
 
-func (cr *CustomerRequest) GetList(customerListInput *CustomerListInput) (*CustomerResult, *Error) {
+func (cr *CustomerRequest) GetList(ctx context.Context, customerListInput *CustomerListInput) (*CustomerResult, *Error) {
 	jsonQueryParams, err := json.Marshal(customerListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
@@ -199,7 +200,7 @@ func (cr *CustomerRequest) GetList(customerListInput *CustomerListInput) (*Custo
 		Result:      &CustomerResult{},
 	}
 
-	result, clientErr := cr.client.Get(clientRequest)
+	result, clientErr := cr.client.Get(ctx, clientRequest)
 	if err != nil {
 		return nil, clientErr
 	}
