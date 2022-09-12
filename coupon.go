@@ -114,7 +114,9 @@ func (cr *CouponRequest) GetList(couponListInput *CouponListInput) (*CouponResul
 	}
 
 	queryParams := make(map[string]string)
-	json.Unmarshal(jsonQueryParams, &queryParams)
+	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
+		return nil, &Error{Err: err}
+	}
 
 	clientRequest := &ClientRequest{
 		Path:        "plans",
