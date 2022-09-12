@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
@@ -54,14 +55,14 @@ func (c *Client) BillableMetric() *BillableMetricRequest {
 	}
 }
 
-func (bmr *BillableMetricRequest) Get(billableMetricCode string) (*BillableMetric, *Error) {
+func (bmr *BillableMetricRequest) Get(ctx context.Context, billableMetricCode string) (*BillableMetric, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "billable_metrics", billableMetricCode)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &BillableMetricResult{},
 	}
 
-	result, err := bmr.client.Get(clientRequest)
+	result, err := bmr.client.Get(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +72,7 @@ func (bmr *BillableMetricRequest) Get(billableMetricCode string) (*BillableMetri
 	return billableMetricResult.BillableMetric, nil
 }
 
-func (bmr *BillableMetricRequest) GetList(billableMetricListInput *BillableMetricListInput) (*BillableMetricResult, *Error) {
+func (bmr *BillableMetricRequest) GetList(ctx context.Context, billableMetricListInput *BillableMetricListInput) (*BillableMetricResult, *Error) {
 	jsonQueryParams, err := json.Marshal(billableMetricListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
@@ -88,7 +89,7 @@ func (bmr *BillableMetricRequest) GetList(billableMetricListInput *BillableMetri
 		Result:      &BillableMetricResult{},
 	}
 
-	result, clientErr := bmr.client.Get(clientRequest)
+	result, clientErr := bmr.client.Get(ctx, clientRequest)
 	if err != nil {
 		return nil, clientErr
 	}
@@ -98,14 +99,14 @@ func (bmr *BillableMetricRequest) GetList(billableMetricListInput *BillableMetri
 	return billableMetricResult, nil
 }
 
-func (bmr *BillableMetricRequest) Create(billableMetricInput *BillableMetricInput) (*BillableMetric, *Error) {
+func (bmr *BillableMetricRequest) Create(ctx context.Context, billableMetricInput *BillableMetricInput) (*BillableMetric, *Error) {
 	clientRequest := &ClientRequest{
 		Path:   "billable_metrics",
 		Result: &BillableMetricResult{},
 		Body:   billableMetricInput,
 	}
 
-	result, err := bmr.client.Post(clientRequest)
+	result, err := bmr.client.Post(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +116,7 @@ func (bmr *BillableMetricRequest) Create(billableMetricInput *BillableMetricInpu
 	return billableMetricResult.BillableMetric, nil
 }
 
-func (bmr *BillableMetricRequest) Update(billableMetricInput *BillableMetricInput) (*BillableMetric, *Error) {
+func (bmr *BillableMetricRequest) Update(ctx context.Context, billableMetricInput *BillableMetricInput) (*BillableMetric, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "billable_metrics", billableMetricInput.Code)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
@@ -123,7 +124,7 @@ func (bmr *BillableMetricRequest) Update(billableMetricInput *BillableMetricInpu
 		Body:   billableMetricInput,
 	}
 
-	result, err := bmr.client.Put(clientRequest)
+	result, err := bmr.client.Put(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -133,14 +134,14 @@ func (bmr *BillableMetricRequest) Update(billableMetricInput *BillableMetricInpu
 	return billableMetricResult.BillableMetric, nil
 }
 
-func (bmr *BillableMetricRequest) Delete(billableMetricCode string) (*BillableMetric, *Error) {
+func (bmr *BillableMetricRequest) Delete(ctx context.Context, billableMetricCode string) (*BillableMetric, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "billable_metrics", billableMetricCode)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &BillableMetricResult{},
 	}
 
-	result, err := bmr.client.Delete(clientRequest)
+	result, err := bmr.client.Delete(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}

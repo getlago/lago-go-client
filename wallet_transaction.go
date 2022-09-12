@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -55,14 +56,14 @@ func (c *Client) WalletTransaction() *WalletTransactionRequest {
 	}
 }
 
-func (bmr *WalletTransactionRequest) Create(walletTransactionInput *WalletTransactionInput) (*WalletTransaction, *Error) {
+func (bmr *WalletTransactionRequest) Create(ctx context.Context, walletTransactionInput *WalletTransactionInput) (*WalletTransaction, *Error) {
 	clientRequest := &ClientRequest{
 		Path:   "wallet_transactions",
 		Result: &WalletTransactionResult{},
 		Body:   walletTransactionInput,
 	}
 
-	result, err := bmr.client.Post(clientRequest)
+	result, err := bmr.client.Post(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}

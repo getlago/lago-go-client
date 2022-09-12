@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -89,7 +90,7 @@ func (c *Client) Coupon() *CouponRequest {
 	}
 }
 
-func (cr *CouponRequest) Get(couponCode string) (*Coupon, *Error) {
+func (cr *CouponRequest) Get(ctx context.Context, couponCode string) (*Coupon, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "coupons", couponCode)
 
 	clientRequest := &ClientRequest{
@@ -97,7 +98,7 @@ func (cr *CouponRequest) Get(couponCode string) (*Coupon, *Error) {
 		Result: &CouponResult{},
 	}
 
-	result, err := cr.client.Get(clientRequest)
+	result, err := cr.client.Get(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +108,7 @@ func (cr *CouponRequest) Get(couponCode string) (*Coupon, *Error) {
 	return couponResult.Coupon, nil
 }
 
-func (cr *CouponRequest) GetList(couponListInput *CouponListInput) (*CouponResult, *Error) {
+func (cr *CouponRequest) GetList(ctx context.Context, couponListInput *CouponListInput) (*CouponResult, *Error) {
 	jsonQueryParams, err := json.Marshal(couponListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
@@ -124,7 +125,7 @@ func (cr *CouponRequest) GetList(couponListInput *CouponListInput) (*CouponResul
 		Result:      &CouponResult{},
 	}
 
-	result, clientErr := cr.client.Get(clientRequest)
+	result, clientErr := cr.client.Get(ctx, clientRequest)
 	if clientErr != nil {
 		return nil, clientErr
 	}
@@ -134,7 +135,7 @@ func (cr *CouponRequest) GetList(couponListInput *CouponListInput) (*CouponResul
 	return couponResult, nil
 }
 
-func (cr *CouponRequest) Create(couponInput *CouponInput) (*Coupon, *Error) {
+func (cr *CouponRequest) Create(ctx context.Context, couponInput *CouponInput) (*Coupon, *Error) {
 	couponParams := &CouponParams{
 		Coupon: couponInput,
 	}
@@ -145,7 +146,7 @@ func (cr *CouponRequest) Create(couponInput *CouponInput) (*Coupon, *Error) {
 		Body:   couponParams,
 	}
 
-	result, err := cr.client.Post(clientRequest)
+	result, err := cr.client.Post(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +156,7 @@ func (cr *CouponRequest) Create(couponInput *CouponInput) (*Coupon, *Error) {
 	return couponResult.Coupon, nil
 }
 
-func (cr *CouponRequest) Update(couponInput *CouponInput) (*Coupon, *Error) {
+func (cr *CouponRequest) Update(ctx context.Context, couponInput *CouponInput) (*Coupon, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "coupons", couponInput.Code)
 	couponParams := &CouponParams{
 		Coupon: couponInput,
@@ -167,7 +168,7 @@ func (cr *CouponRequest) Update(couponInput *CouponInput) (*Coupon, *Error) {
 		Body:   couponParams,
 	}
 
-	result, err := cr.client.Put(clientRequest)
+	result, err := cr.client.Put(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -177,14 +178,14 @@ func (cr *CouponRequest) Update(couponInput *CouponInput) (*Coupon, *Error) {
 	return couponResult.Coupon, nil
 }
 
-func (cr *CouponRequest) Delete(couponCode string) (*Coupon, *Error) {
+func (cr *CouponRequest) Delete(ctx context.Context, couponCode string) (*Coupon, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "coupons", couponCode)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &CouponResult{},
 	}
 
-	result, err := cr.client.Delete(clientRequest)
+	result, err := cr.client.Delete(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -194,7 +195,7 @@ func (cr *CouponRequest) Delete(couponCode string) (*Coupon, *Error) {
 	return couponResult.Coupon, nil
 }
 
-func (cr *CouponRequest) ApplyToCustomer(applyCouponInput *ApplyCouponInput) (*AppliedCoupon, *Error) {
+func (cr *CouponRequest) ApplyToCustomer(ctx context.Context, applyCouponInput *ApplyCouponInput) (*AppliedCoupon, *Error) {
 	applyCouponParams := &ApplyCouponParams{
 		AppliedCoupon: applyCouponInput,
 	}
@@ -205,7 +206,7 @@ func (cr *CouponRequest) ApplyToCustomer(applyCouponInput *ApplyCouponInput) (*A
 		Body:   applyCouponParams,
 	}
 
-	result, err := cr.client.Post(clientRequest)
+	result, err := cr.client.Post(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}

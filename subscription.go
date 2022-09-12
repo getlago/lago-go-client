@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"context"
 	"encoding/json"
 	"time"
 
@@ -72,7 +73,7 @@ func (c *Client) Subscription() *SubscriptionRequest {
 	}
 }
 
-func (sr *SubscriptionRequest) Create(subscriptionInput *SubscriptionInput) (*Subscription, *Error) {
+func (sr *SubscriptionRequest) Create(ctx context.Context, subscriptionInput *SubscriptionInput) (*Subscription, *Error) {
 	subscriptionParam := &SubscriptionParams{
 		Subscription: subscriptionInput,
 	}
@@ -83,7 +84,7 @@ func (sr *SubscriptionRequest) Create(subscriptionInput *SubscriptionInput) (*Su
 		Body:   subscriptionParam,
 	}
 
-	result, err := sr.client.Post(clientRequest)
+	result, err := sr.client.Post(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +94,7 @@ func (sr *SubscriptionRequest) Create(subscriptionInput *SubscriptionInput) (*Su
 	return subscriptionResult.Subscription, nil
 }
 
-func (sr *SubscriptionRequest) Terminate(externalCustomerID string) (*Subscription, *Error) {
+func (sr *SubscriptionRequest) Terminate(ctx context.Context, externalCustomerID string) (*Subscription, *Error) {
 	subscriptionInput := &SubscriptionInput{
 		ExternalCustomerID: externalCustomerID,
 	}
@@ -104,7 +105,7 @@ func (sr *SubscriptionRequest) Terminate(externalCustomerID string) (*Subscripti
 		Body:   subscriptionInput,
 	}
 
-	result, err := sr.client.Delete(clientRequest)
+	result, err := sr.client.Delete(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +115,7 @@ func (sr *SubscriptionRequest) Terminate(externalCustomerID string) (*Subscripti
 	return subscriptionResult.Subscription, nil
 }
 
-func (sr *SubscriptionRequest) GetList(subscriptionListInput SubscriptionListInput) (*SubscriptionResult, *Error) {
+func (sr *SubscriptionRequest) GetList(ctx context.Context, subscriptionListInput SubscriptionListInput) (*SubscriptionResult, *Error) {
 	jsonQueryParams, err := json.Marshal(subscriptionListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
@@ -131,7 +132,7 @@ func (sr *SubscriptionRequest) GetList(subscriptionListInput SubscriptionListInp
 		Result:      &PlanResult{},
 	}
 
-	result, clientErr := sr.client.Get(clientRequest)
+	result, clientErr := sr.client.Get(ctx, clientRequest)
 	if clientErr != nil {
 		return nil, clientErr
 	}
