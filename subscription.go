@@ -129,7 +129,7 @@ func (sr *SubscriptionRequest) GetList(ctx context.Context, subscriptionListInpu
 	clientRequest := &ClientRequest{
 		Path:        "subscriptions",
 		QueryParams: queryParams,
-		Result:      &PlanResult{},
+		Result:      &SubscriptionResult{},
 	}
 
 	result, clientErr := sr.client.Get(ctx, clientRequest)
@@ -137,7 +137,10 @@ func (sr *SubscriptionRequest) GetList(ctx context.Context, subscriptionListInpu
 		return nil, clientErr
 	}
 
-	subscriptionResult := result.(*SubscriptionResult)
+	subscriptionResult, ok := result.(*SubscriptionResult)
+	if !ok {
+		return nil, &Error{Err: ErrorTypeAssert}
+	}
 
 	return subscriptionResult, nil
 }
