@@ -20,3 +20,7 @@ type Error struct {
 
 	ErrorDetail ErrorDetail `json:"error_details"`
 }
+
+func (e ErrorCode) Error() string {
+	return string(e)
+}
