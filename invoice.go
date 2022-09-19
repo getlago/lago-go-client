@@ -102,8 +102,8 @@ type Invoice struct {
 	ChargesFromDate string `json:"charges_from_date,omitempty"`
 	IssuingDate     string `json:"issuing_date,omitempty"`
 
-	Customer     *Customer      `json:"customer,omitempty"`
-	Subscription []Subscription `json:"subscriptions,omitempty"`
+	Customer      *Customer      `json:"customer,omitempty"`
+	Subscriptions []Subscription `json:"subscriptions,omitempty"`
 
 	Fees    []InvoiceFee    `json:"fees,omitempty"`
 	Credits []InvoiceCredit `json:"credits,omitempty"`
