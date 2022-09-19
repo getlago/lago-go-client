@@ -42,6 +42,7 @@ type SubscriptionInput struct {
 	ExternalCustomerID string      `json:"external_customer_id,omitempty"`
 	PlanCode           string      `json:"plan_code,omitempty"`
 	BillingTime        BillingTime `json:"billing_time,omitempty"`
+	ExternalID         string      `json:"external_id"`
 }
 
 type SubscriptionListInput struct {
