@@ -55,6 +55,7 @@ type Subscription struct {
 	LagoID             uuid.UUID `json:"lago_id"`
 	LagoCustomerID     uuid.UUID `json:"lago_customer_id"`
 	ExternalCustomerID string    `json:"external_customer_id"`
+	ExternalID         string    `json:"external_id"`
 
 	PlanCode string `json:"plan_code"`
 
