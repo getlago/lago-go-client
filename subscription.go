@@ -100,9 +100,9 @@ func (sr *SubscriptionRequest) Create(ctx context.Context, subscriptionInput *Su
 	return subscriptionResult.Subscription, nil
 }
 
-func (sr *SubscriptionRequest) Terminate(ctx context.Context, externalCustomerID string) (*Subscription, *Error) {
+func (sr *SubscriptionRequest) Terminate(ctx context.Context, externalID string) (*Subscription, *Error) {
 	subscriptionInput := &SubscriptionInput{
-		ExternalCustomerID: externalCustomerID,
+		ExternalID: externalID,
 	}
 
 	clientRequest := &ClientRequest{
