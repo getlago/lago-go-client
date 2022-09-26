@@ -16,6 +16,20 @@ const (
 	CouponExpirationNoExpiration CouponExpiration = "no_expiration"
 )
 
+type CouponCalculationType string
+
+const (
+	CouponTypeFixedAmount    CouponCalculationType = "fixed_amount"
+	CouponTypePercentage     CouponCalculationType = "percentage"
+)
+
+type CouponFrequency string
+
+const (
+	CouponFrequencyOnce      CouponFrequency = "once"
+	CouponFrequencyRecurring CouponFrequency = "recurring"
+)
+
 type CouponRequest struct {
 	client *Client
 }
@@ -31,12 +45,16 @@ type CouponParams struct {
 }
 
 type CouponInput struct {
-	Name               string           `json:"name,omitempty"`
-	Code               string           `json:"code,omitempty"`
-	AmountCents        int              `json:"amount_cents,omitempty"`
-	AmountCurrency     Currency         `json:"amount_currency,omitempty"`
-	Expiration         CouponExpiration `json:"expiration,omitempty"`
-	ExpirationDuration int              `json:"expiration_duration,omitempty"`
+	Name               string                   `json:"name,omitempty"`
+	Code               string                   `json:"code,omitempty"`
+	AmountCents        int                      `json:"amount_cents,omitempty"`
+	AmountCurrency     Currency                 `json:"amount_currency,omitempty"`
+	Expiration         CouponExpiration         `json:"expiration,omitempty"`
+    ExpirationDate     string                   `json:"expiration_date,omitempty"`
+    PercentageRate     float32                  `json:"percentage_rate,omitempty"`
+    CouponType         CouponCalculationType    `json:"coupon_type,omitempty"`
+    Frequency          CouponFrequency          `json:"frequency,omitempty"`
+    FrequencyDuration  int                      `json:"frequency_duration,omitempty"`
 }
 
 type CouponListInput struct {
@@ -45,14 +63,18 @@ type CouponListInput struct {
 }
 
 type Coupon struct {
-	LagoID             uuid.UUID        `json:"lago_id,omitempty"`
-	Name               string           `json:"name,omitempty"`
-	Code               string           `json:"code,omitempty"`
-	AmountCents        int              `json:"amount_cents,omitempty"`
-	AmountCurrency     Currency         `json:"amount_currency,omitempty"`
-	Expiration         CouponExpiration `json:"expiration,omitempty"`
-	ExpirationDuration int              `json:"expiration_duration,omitempty"`
-	CreatedAt          time.Time        `json:"created_at,omitempty"`
+	LagoID             uuid.UUID             `json:"lago_id,omitempty"`
+	Name               string                `json:"name,omitempty"`
+	Code               string                `json:"code,omitempty"`
+	AmountCents        int                   `json:"amount_cents,omitempty"`
+	AmountCurrency     Currency              `json:"amount_currency,omitempty"`
+	Expiration         CouponExpiration      `json:"expiration,omitempty"`
+	ExpirationDate     string                `json:"expiration_date,omitempty"`
+	PercentageRate     float32               `json:"percentage_rate,omitempty"`
+    CouponType         CouponCalculationType `json:"coupon_type,omitempty"`
+    Frequency          CouponFrequency       `json:"frequency,omitempty"`
+    FrequencyDuration  int                   `json:"frequency_duration,omitempty"`
+	CreatedAt          time.Time             `json:"created_at,omitempty"`
 }
 
 type AppliedCouponResult struct {
@@ -64,10 +86,13 @@ type ApplyCouponParams struct {
 }
 
 type ApplyCouponInput struct {
-	ExternalCustomerID string   `json:"external_customer_id,omitempty"`
-	CouponCode         string   `json:"coupon_code,omitempty"`
-	AmountCents        int      `json:"amount_cents,omitempty"`
-	AmountCurrency     Currency `json:"amount_currency,omitempty"`
+	ExternalCustomerID string           `json:"external_customer_id,omitempty"`
+	CouponCode         string           `json:"coupon_code,omitempty"`
+	AmountCents        int              `json:"amount_cents,omitempty"`
+	AmountCurrency     Currency         `json:"amount_currency,omitempty"`
+	PercentageRate     float32          `json:"percentage_rate,omitempty"`
+    Frequency          CouponFrequency  `json:"frequency,omitempty"`
+    FrequencyDuration  int              `json:"frequency_duration,omitempty"`
 }
 
 type AppliedCoupon struct {
@@ -82,6 +107,10 @@ type AppliedCoupon struct {
 
 	ExpirationDate string    `json:"expiration_date,omitempty"`
 	TerminatedAt   time.Time `json:"terminated_at,omitempty"`
+
+	PercentageRate     float32          `json:"percentage_rate,omitempty"`
+    Frequency          CouponFrequency  `json:"frequency,omitempty"`
+    FrequencyDuration  int              `json:"frequency_duration,omitempty"`
 }
 
 func (c *Client) Coupon() *CouponRequest {
