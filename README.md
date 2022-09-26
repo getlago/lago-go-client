@@ -1,4 +1,7 @@
 # Lago Go Client
+
+This is a Go wrapper for Lago API
+
 ## Installation
 
 ```shell
@@ -7,32 +10,21 @@ go get github.com/getlago/lago-go-client@v0.1.0-alpha.1
 
 ## Usage
 
-```golang
-import "github.com/getlago/lago-go-client"
-
-func main() {
-  lagoClient := lago.New().
-    SetApiKey("MY_API_KEY").
-    // SetDebug will log the RAW request and RAW response
-    SetDebug(true)
-
-  // If you want to use your API url for self hosted version
-  lagoClient := lago.New().
-    SetBaseURL("https://my.url").
-    SetApiKey("MY_API_KEY")
-}
-```
+Check the [lago API reference](https://doc.getlago.com/docs/api/intro)
 
 ## Development
 
 - Fork the repository
-- Open a Pull Request 
+- Open a Pull Request
 
 ## Documentation
-The Lago documentation is available at doc.getlago.com.
+
+The Lago documentation is available at [doc.getlago.com](https://doc.getlago.com/docs/api/intro).
 
 ## Contributing
-The contribution documentation is available here
+
+The contribution documentation is available [here](https://github.com/getlago/lago-go-client/blob/main/CONTRIBUTING.md)
 
 ## License
-Lago GO client is distributed under AGPL-3.0.
+
+Lago Go client is distributed under [AGPL-3.0](LICENSE).

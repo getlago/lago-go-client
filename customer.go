@@ -43,6 +43,7 @@ type CustomerInput struct {
 	LegalNumber          string                            `json:"legal_number,omitempty"`
 	Phone                string                            `json:"phone,omitempty"`
 	URL                  string                            `json:"url,omitempty"`
+	Currency             Currency                          `json:"currency,omitempty"`
 	BillingConfiguration CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
 	VatRate              float32                           `json:"vat_rate,omitempty"`
 }
@@ -108,6 +109,7 @@ type Customer struct {
 	URL                  string                       `json:"url,omitempty"`
 	BillingConfiguration CustomerBillingConfiguration `json:"billing_configuration,omitempty"`
 	VatRate              float32                      `json:"vat_rate,omitempty"`
+	Currency             Currency                     `json:"currency,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 }
