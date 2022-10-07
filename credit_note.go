@@ -32,8 +32,9 @@ type CreditNoteResult struct {
 }
 
 type CreditListInput struct {
-	PerPage int `json:"per_page,omitempty,string"`
-	Page    int `json:"page,omitempty,string"`
+	PerPage            int    `json:"per_page,omitempty,string"`
+	Page               int    `json:"page,omitempty,string"`
+	ExternalCustomerID string `json:"external_customer_id,omitempty"`
 }
 
 type CreditNoteItem struct {
@@ -44,19 +45,23 @@ type CreditNoteItem struct {
 }
 
 type CreditNote struct {
-	LagoID                  uuid.UUID        `json:"lago_id,omitempty"`
-	SequentialID            int              `json:"sequential_id,omitempty"`
-	Number                  string           `json:"number,omitempty"`
-	LagoInvoiceID           uuid.UUID        `json:"lago_invoice_id,omitempty"`
-	InvoiceNumber           string           `json:"invoice_number,omitempty"`
-	Status                  CreditNoteStatus `json:"status,omitempty"`
-	Reason                  CreditNoteReason `json:"reason,omitempty"`
-	AmountCents             int              `json:"amount_cents,omitempty"`
-	AmountCurrency          Currency         `json:"amount_currency,omitempty"`
-	RemainingAmountCents    int              `json:"remaining_amount_cents,omitempty"`
-	RemainingAmountCurrency Currency         `json:"remaining_amount_currency,omitempty"`
-	CreatedAt               time.Time        `json:"created_at,omitempty"`
-	UpdatedAt               time.Time        `json:"updated_at,omitempty"`
+	LagoID        uuid.UUID        `json:"lago_id,omitempty"`
+	SequentialID  int              `json:"sequential_id,omitempty"`
+	Number        string           `json:"number,omitempty"`
+	LagoInvoiceID uuid.UUID        `json:"lago_invoice_id,omitempty"`
+	InvoiceNumber string           `json:"invoice_number,omitempty"`
+	Status        CreditNoteStatus `json:"status,omitempty"`
+	Reason        CreditNoteReason `json:"reason,omitempty"`
+
+	AmountCents             int      `json:"amount_cents,omitempty"`
+	AmountCurrency          Currency `json:"amount_currency,omitempty"`
+	RemainingAmountCents    int      `json:"remaining_amount_cents,omitempty"`
+	RemainingAmountCurrency Currency `json:"remaining_amount_currency,omitempty"`
+
+	FileURL string `json:"file_url,omitempty"`
+
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 
 	Items []CreditNoteItem `json:"items,omitempty"`
 }
@@ -83,6 +88,27 @@ func (cr *CreditNoteRequest) Get(ctx context.Context, creditNoteID uuid.UUID) (*
 	creditNoteResult := result.(*CreditNoteResult)
 
 	return creditNoteResult.CreditNote, nil
+}
+
+func (cr *CreditNoteRequest) Download(ctx context.Context, creditNoteID string) (*CreditNote, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "credit_notes", creditNoteID, "download")
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &CreditNoteResult{},
+	}
+
+	result, err := cr.client.PostWithoutBody(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	if result != nil {
+		creditNoteResult := result.(*CreditNoteResult)
+
+		return creditNoteResult.CreditNote, nil
+	}
+
+	return nil, nil
 }
 
 func (cr *CreditNoteRequest) GetList(ctx context.Context, creditNoteListInput *CreditListInput) (*CreditNoteResult, *Error) {
