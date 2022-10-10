@@ -9,12 +9,12 @@ import (
 	"github.com/google/uuid"
 )
 
-type CreditNoteStatus string
+type CreditNoteCreditStatus string
 type CreditNoteReason string
 
 const (
-	CreditNoteStatusAvailable CreditNoteStatus = "available"
-	CreditNoteStatusConsumed  CreditNoteStatus = "consumed"
+	CreditNoteCreditStatusAvailable CreditNoteCreditStatus = "available"
+	CreditNoteCreditStatusConsumed  CreditNoteCreditStatus = "consumed"
 )
 
 const (
@@ -50,13 +50,16 @@ type CreditNote struct {
 	Number        string           `json:"number,omitempty"`
 	LagoInvoiceID uuid.UUID        `json:"lago_invoice_id,omitempty"`
 	InvoiceNumber string           `json:"invoice_number,omitempty"`
-	Status        CreditNoteStatus `json:"status,omitempty"`
 	Reason        CreditNoteReason `json:"reason,omitempty"`
 
-	AmountCents             int      `json:"amount_cents,omitempty"`
-	AmountCurrency          Currency `json:"amount_currency,omitempty"`
-	RemainingAmountCents    int      `json:"remaining_amount_cents,omitempty"`
-	RemainingAmountCurrency Currency `json:"remaining_amount_currency,omitempty"`
+	Status CreditNoteCreditStatus `json:"status,omitempty"`
+
+	TotalAmountCents      int      `json:"total_amount_cents,omitempty"`
+	TotalAmountCurrency   Currency `json:"total_amount_currency,omitempty"`
+	CreditAmountCents     int      `json:"credit_amount_cents,omitempty"`
+	CreditAmountCurrency  Currency `json:"credit_amount_currency,omitempty"`
+	BalanceAmountCents    int      `json:"balance_amount_cents,omitempty"`
+	BalanceAmountCurrency Currency `json:"balance_amount_currency,omitempty"`
 
 	FileURL string `json:"file_url,omitempty"`
 
