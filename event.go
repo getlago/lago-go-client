@@ -11,11 +11,12 @@ type EventParams struct {
 }
 
 type EventInput struct {
-	TransactionID      string            `json:"transaction_id,omitempty"`
-	ExternalCustomerID string            `json:"external_customer_id,omitempty"`
-	Code               string            `json:"code,omitempty"`
-	Timestamp          int64             `json:"timestamp,omitempty"`
-	Properties         map[string]string `json:"properties,omitempty"`
+	TransactionID          string            `json:"transaction_id,omitempty"`
+	ExternalCustomerID     string            `json:"external_customer_id,omitempty"`
+	ExternalSubscriptionID string            `json:"external_subscription_id,omitempty"`
+	Code                   string            `json:"code,omitempty"`
+	Timestamp              int64             `json:"timestamp,omitempty"`
+	Properties             map[string]string `json:"properties,omitempty"`
 }
 
 func (c *Client) Event() *EventRequest {
