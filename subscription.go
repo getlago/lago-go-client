@@ -3,6 +3,7 @@ package lago
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -102,14 +103,11 @@ func (sr *SubscriptionRequest) Create(ctx context.Context, subscriptionInput *Su
 }
 
 func (sr *SubscriptionRequest) Terminate(ctx context.Context, externalID string) (*Subscription, *Error) {
-	subscriptionInput := &SubscriptionInput{
-		ExternalID: externalID,
-	}
+	subPath := fmt.Sprintf("%s/%s", "subscriptions", externalID)
 
 	clientRequest := &ClientRequest{
-		Path:   "subscriptions",
+		Path:   subPath,
 		Result: &SubscriptionResult{},
-		Body:   subscriptionInput,
 	}
 
 	result, err := sr.client.Delete(ctx, clientRequest)
