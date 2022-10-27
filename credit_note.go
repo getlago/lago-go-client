@@ -10,6 +10,7 @@ import (
 )
 
 type CreditNoteCreditStatus string
+type CreditNoteRefundStatus string
 type CreditNoteReason string
 
 const (
@@ -18,11 +19,25 @@ const (
 )
 
 const (
-	CreditNoteReasonOverpaid CreditNoteReason = "overpaid"
+	CreditNoteRefundStatusPending  CreditNoteRefundStatus = "pending"
+	CreditNoteRefundStatusRefunded CreditNoteRefundStatus = "refunded"
+)
+
+const (
+	CreditNoteReasonDuplicatedCharge      CreditNoteReason = "duplicated_charge"
+	CreditNoteReasonProductUnsatisfactory CreditNoteReason = "product_unsatisfactory"
+	CreditNoteReasonOrderChange           CreditNoteReason = "order_change"
+	CreditNoteReasonOrderCancellation     CreditNoteReason = "order_cancellation"
+	CreditNoteReasonFraudulentCharge      CreditNoteReason = "fraudulent_charge"
+	CreditNoteReasonOther                 CreditNoteReason = "other"
 )
 
 type CreditNoteRequest struct {
 	client *Client
+}
+
+type CreditNoteParams struct {
+	CreditNote *CreditNoteInput `json:"credit_note"`
 }
 
 type CreditNoteResult struct {
@@ -52,7 +67,8 @@ type CreditNote struct {
 	InvoiceNumber string           `json:"invoice_number,omitempty"`
 	Reason        CreditNoteReason `json:"reason,omitempty"`
 
-	Status CreditNoteCreditStatus `json:"status,omitempty"`
+	CreditStatus CreditNoteCreditStatus `json:"credit_status,omitempty"`
+	RefundStatus CreditNoteRefundStatus `json:"refund_status,omitempty"`
 
 	TotalAmountCents      int      `json:"total_amount_cents,omitempty"`
 	TotalAmountCurrency   Currency `json:"total_amount_currency,omitempty"`
@@ -60,6 +76,8 @@ type CreditNote struct {
 	CreditAmountCurrency  Currency `json:"credit_amount_currency,omitempty"`
 	BalanceAmountCents    int      `json:"balance_amount_cents,omitempty"`
 	BalanceAmountCurrency Currency `json:"balance_amount_currency,omitempty"`
+	RefundAmountCents     int      `json:"refund_amount_cents,omitempty"`
+	RefundAmountCurrency  Currency `json:"refund_amount_currency,omitempty"`
 
 	FileURL string `json:"file_url,omitempty"`
 
@@ -67,6 +85,27 @@ type CreditNote struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 
 	Items []CreditNoteItem `json:"items,omitempty"`
+}
+
+type CreditNoteItemInput struct {
+	LagoFeeID         uuid.UUID `json:"fee_id,omitempty"`
+	CreditAmountCents int       `json:"credit_amount_cents,omitempty"`
+	RefundAmountCents int       `json:"refund_amount_cents,omitempty"`
+}
+
+type CreditNoteInput struct {
+	LagoInvoiceID uuid.UUID             `json:"invoice_id,omitempty"`
+	Reason        CreditNoteReason      `json:"reason,omitempty"`
+	Items         []CreditNoteItemInput `json:"items,omitempty"`
+}
+
+type CreditNoteUpdateInput struct {
+	LagoID       string                 `json:"id,omitempty"`
+	RefundStatus CreditNoteRefundStatus `json:"refund_status,omitempty"`
+}
+
+type CreditNoteUpdateParams struct {
+	CreditNote *CreditNoteUpdateInput `json:"credit_note"`
 }
 
 func (c *Client) CreditNote() *CreditNoteRequest {
@@ -139,4 +178,47 @@ func (cr *CreditNoteRequest) GetList(ctx context.Context, creditNoteListInput *C
 	creditNoteResult := result.(*CreditNoteResult)
 
 	return creditNoteResult, nil
+}
+
+func (cr *CreditNoteRequest) Create(ctx context.Context, creditNoteInput *CreditNoteInput) (*CreditNote, *Error) {
+	creditNoteParams := &CreditNoteParams{
+		CreditNote: creditNoteInput,
+	}
+
+	clientRequest := &ClientRequest{
+		Path:   "credit_notes",
+		Result: &CreditNoteResult{},
+		Body:   creditNoteParams,
+	}
+
+	result, err := cr.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	creditNoteResult := result.(*CreditNoteResult)
+
+	return creditNoteResult.CreditNote, nil
+}
+
+func (cr *CreditNoteRequest) Update(ctx context.Context, creditNoteUpdateInput *CreditNoteUpdateInput) (*CreditNote, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "credit_notes", creditNoteUpdateInput.LagoID)
+	creditNoteParams := &CreditNoteUpdateParams{
+		CreditNote: creditNoteUpdateInput,
+	}
+
+	ClientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &PlanResult{},
+		Body:   creditNoteParams,
+	}
+
+	result, err := cr.client.Put(ctx, ClientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	creditNoteResult := result.(*CreditNoteResult)
+
+	return creditNoteResult.CreditNote, nil
 }
