@@ -222,3 +222,21 @@ func (cr *CreditNoteRequest) Update(ctx context.Context, creditNoteUpdateInput *
 
 	return creditNoteResult.CreditNote, nil
 }
+
+func (cr *CreditNoteRequest) Void(ctx context.Context, creditNoteID string) (*CreditNote, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "credit_notes", creditNoteID, "void")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &CreditNoteResult{},
+	}
+
+	result, err := cr.client.Put(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	creditNoteResult := result.(*CreditNoteResult)
+
+	return creditNoteResult.CreditNote, nil
+}
