@@ -12,7 +12,8 @@ import (
 type CustomerPaymentProvider string
 
 const (
-	PaymentProviderStripe CustomerPaymentProvider = "stripe"
+	PaymentProviderStripe     CustomerPaymentProvider = "stripe"
+	PaymentProviderGocardless CustomerPaymentProvider = "gocardless"
 )
 
 type CustomerParams struct {
@@ -57,11 +58,13 @@ type CustomerBillingConfigurationInput struct {
 	PaymentProvider    CustomerPaymentProvider `json:"payment_provider,omitempty"`
 	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
 	Sync               bool                    `json:"sync,omitempty"`
+	SyncWithProvider   bool                    `json:"sync_with_provider,omitempty"`
 }
 
 type CustomerBillingConfiguration struct {
 	PaymentProvider    CustomerPaymentProvider `json:"payment_provider,omitempty"`
 	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
+	SyncWithProvider   bool                    `json:"sync_with_provider,omitempty"`
 }
 
 type CustomerChargeUsage struct {
