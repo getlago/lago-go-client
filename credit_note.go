@@ -70,14 +70,18 @@ type CreditNote struct {
 	CreditStatus CreditNoteCreditStatus `json:"credit_status,omitempty"`
 	RefundStatus CreditNoteRefundStatus `json:"refund_status,omitempty"`
 
-	TotalAmountCents      int      `json:"total_amount_cents,omitempty"`
-	TotalAmountCurrency   Currency `json:"total_amount_currency,omitempty"`
-	CreditAmountCents     int      `json:"credit_amount_cents,omitempty"`
-	CreditAmountCurrency  Currency `json:"credit_amount_currency,omitempty"`
-	BalanceAmountCents    int      `json:"balance_amount_cents,omitempty"`
-	BalanceAmountCurrency Currency `json:"balance_amount_currency,omitempty"`
-	RefundAmountCents     int      `json:"refund_amount_cents,omitempty"`
-	RefundAmountCurrency  Currency `json:"refund_amount_currency,omitempty"`
+	TotalAmountCents                  int      `json:"total_amount_cents,omitempty"`
+	TotalAmountCurrency               Currency `json:"total_amount_currency,omitempty"`
+	CreditAmountCents                 int      `json:"credit_amount_cents,omitempty"`
+	CreditAmountCurrency              Currency `json:"credit_amount_currency,omitempty"`
+	BalanceAmountCents                int      `json:"balance_amount_cents,omitempty"`
+	BalanceAmountCurrency             Currency `json:"balance_amount_currency,omitempty"`
+	RefundAmountCents                 int      `json:"refund_amount_cents,omitempty"`
+	RefundAmountCurrency              Currency `json:"refund_amount_currency,omitempty"`
+	VatAmountCents                    int      `json:"vat_amount_cents,omitempty"`
+	VatAmountCurrency                 Currency `json:"vat_amount_currency,omitempty"`
+	SubTotalVatExcludedAmountCents    int      `json:"sub_total_vat_excluded_amount_cents,omitempty"`
+	SubTotalVatExcludedAmountCurrency Currency `json:"sub_total_vat_excluded_amount_currency,omitempty"`
 
 	FileURL string `json:"file_url,omitempty"`
 
