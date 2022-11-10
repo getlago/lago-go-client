@@ -21,4 +21,10 @@ type Charge struct {
 	ChargeModel          ChargeModel            `json:"charge_model,omitempty"`
 	CreatedAt            time.Time              `json:"created_at,omitempty"`
 	Properties           map[string]interface{} `json:"properties,omitempty"`
+	GroupProperties      []GroupProperties      `json:"group_properties,omitempty"`
+}
+
+type GroupProperties struct {
+	GroupId uuid.UUID              `json:"group_id"`
+	Values  map[string]interface{} `json:"values"`
 }
