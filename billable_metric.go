@@ -27,11 +27,12 @@ type BillableMetricParams struct {
 }
 
 type BillableMetricInput struct {
-	Name            string          `json:"name,omitempty"`
-	Code            string          `json:"code,omitempty"`
-	Description     string          `json:"description,omitempty"`
-	AggregationType AggregationType `json:"aggregation_type,omitempty"`
-	FieldName       string          `json:"field_name"`
+	Name            string                 `json:"name,omitempty"`
+	Code            string                 `json:"code,omitempty"`
+	Description     string                 `json:"description,omitempty"`
+	AggregationType AggregationType        `json:"aggregation_type,omitempty"`
+	FieldName       string                 `json:"field_name"`
+	Group           map[string]interface{} `json:"group,omitempty"`
 }
 
 type BillableMetricListInput struct {
