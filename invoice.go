@@ -68,6 +68,8 @@ type InvoiceFee struct {
 	AmountCurrency    Currency `json:"amount_currency,omitempty"`
 	VatAmountCents    int      `json:"vat_amount_cents,omitempty"`
 	VatAmountCurrency Currency `json:"vat_amount_currency,omitempty"`
+	Units             float32  `json:"units,omitempty"`
+	EventsCount       int      `json:"events_count,omitempty"`
 }
 
 type InvoiceCreditItem struct {
