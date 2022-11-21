@@ -45,7 +45,6 @@ type CustomerInput struct {
 	URL                  string                            `json:"url,omitempty"`
 	Currency             Currency                          `json:"currency,omitempty"`
 	BillingConfiguration CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
-	VatRate              float32                           `json:"vat_rate,omitempty"`
 }
 
 type CustomerListInput struct {
@@ -57,11 +56,14 @@ type CustomerBillingConfigurationInput struct {
 	PaymentProvider    CustomerPaymentProvider `json:"payment_provider,omitempty"`
 	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
 	Sync               bool                    `json:"sync,omitempty"`
+	VatRate            float32                 `json:"vat_rate,omitempty"`
 }
 
 type CustomerBillingConfiguration struct {
 	PaymentProvider    CustomerPaymentProvider `json:"payment_provider,omitempty"`
 	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
+	Sync               bool                    `json:"sync,omitempty"`
+	VatRate            float32                 `json:"vat_rate,omitempty"`
 }
 
 type CustomerChargeUsage struct {
@@ -108,7 +110,6 @@ type Customer struct {
 	Phone                string                       `json:"phone,omitempty"`
 	URL                  string                       `json:"url,omitempty"`
 	BillingConfiguration CustomerBillingConfiguration `json:"billing_configuration,omitempty"`
-	VatRate              float32                      `json:"vat_rate,omitempty"`
 	Currency             Currency                     `json:"currency,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
