@@ -92,6 +92,10 @@ type CustomerUsage struct {
 	ChargesUsage []CustomerChargeUsage `json:"charges_usage,omitempty"`
 }
 
+type CustomerUsageInput struct {
+	ExternalSubscriptionID string `json:"external_subscription_id,omitempty"`
+}
+
 type Customer struct {
 	LagoID       uuid.UUID `json:"lago_id,omitempty"`
 	SequentialID int       `json:"sequential_id,omitempty"`
@@ -154,16 +158,28 @@ func (cr *CustomerRequest) Update(ctx context.Context, customerInput *CustomerIn
 	return cr.Create(ctx, customerInput)
 }
 
-func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID string) (*CustomerUsage, *Error) {
+func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID string, customerUsageInput *CustomerUsageInput) (*CustomerUsage, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "current_usage")
-	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &CustomerUsageResult{},
+
+	jsonQueryParams, err := json.Marshal(customerUsageInput)
+	if err != nil {
+		return nil, &Error{Err: err}
 	}
 
-	result, err := cr.client.Get(ctx, clientRequest)
+	queryParams := make(map[string]string)
+	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	clientRequest := &ClientRequest{
+		Path:        subPath,
+		QueryParams: queryParams,
+		Result:      &CustomerUsageResult{},
+	}
+
+	result, clientErr := cr.client.Get(ctx, clientRequest)
 	if err != nil {
-		return nil, err
+		return nil, clientErr
 	}
 
 	currentUsageResult := result.(*CustomerUsageResult)
