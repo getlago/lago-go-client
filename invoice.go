@@ -8,14 +8,14 @@ import (
 	"github.com/google/uuid"
 )
 
-type InvoiceStatus string
+type InvoicePaymentStatus string
 type InvoiceFeeItemType string
 type InvoiceCreditItemType string
 
 const (
-	InvoiceStatusPending   InvoiceStatus = "pending"
-	InvoiceStatusSucceeded InvoiceStatus = "succeeded"
-	InvoiceStatusFailed    InvoiceStatus = "failed"
+	InvoicePaymentStatusPending   InvoicePaymentStatus = "pending"
+	InvoicePaymentStatusSucceeded InvoicePaymentStatus = "succeeded"
+	InvoicePaymentStatusFailed    InvoicePaymentStatus = "failed"
 )
 
 const (
@@ -43,8 +43,8 @@ type InvoiceParams struct {
 }
 
 type InvoiceInput struct {
-	LagoID uuid.UUID     `json:"lago_id,omitempty"`
-	Status InvoiceStatus `json:"status,omitempty"`
+	LagoID        uuid.UUID            `json:"lago_id,omitempty"`
+	PaymentStatus InvoicePaymentStatus `json:"payment_status,omitempty"`
 }
 
 type InvoiceListInput struct {
@@ -90,7 +90,7 @@ type Invoice struct {
 	SequentialID int       `json:"sequential_id,omitempty"`
 	Number       string    `json:"number,omitempty"`
 
-	Status InvoiceStatus `json:"status,omitempty"`
+	PaymentStatus InvoicePaymentStatus `json:"payment_status,omitempty"`
 
 	AmountCents       int      `json:"amount_cents,omitempty"`
 	AmountCurrency    Currency `json:"amount_currency,omitempty"`
