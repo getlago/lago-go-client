@@ -129,7 +129,10 @@ func (ir *InvoiceRequest) Get(ctx context.Context, invoiceID string) (*Invoice, 
 		return nil, err
 	}
 
-	invoiceResult := result.(*InvoiceResult)
+	invoiceResult, ok := result.(*InvoiceResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return invoiceResult.Invoice, nil
 }
@@ -156,7 +159,10 @@ func (ir *InvoiceRequest) GetList(ctx context.Context, invoiceListInput *Invoice
 		return nil, clientErr
 	}
 
-	invoiceResult := result.(*InvoiceResult)
+	invoiceResult, ok := result.(*InvoiceResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return invoiceResult, nil
 }
@@ -178,7 +184,10 @@ func (ir *InvoiceRequest) Update(ctx context.Context, invoiceInput *InvoiceInput
 		return nil, err
 	}
 
-	invoiceResult := result.(*InvoiceResult)
+	invoiceResult, ok := result.(*InvoiceResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return invoiceResult.Invoice, nil
 }
@@ -196,7 +205,10 @@ func (ir *InvoiceRequest) Download(ctx context.Context, invoiceID string) (*Invo
 	}
 
 	if result != nil {
-		invoiceResult := result.(*InvoiceResult)
+		invoiceResult, ok := result.(*InvoiceResult)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
 
 		return invoiceResult.Invoice, nil
 	}

@@ -88,7 +88,10 @@ func (pr *PlanRequest) Get(ctx context.Context, planCode string) (*Plan, *Error)
 		return nil, err
 	}
 
-	planResult := result.(*PlanResult)
+	planResult, ok := result.(*PlanResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return planResult.Plan, nil
 }
@@ -115,7 +118,10 @@ func (pr *PlanRequest) GetList(ctx context.Context, planListInput *PlanListInput
 		return nil, clientErr
 	}
 
-	planResult := result.(*PlanResult)
+	planResult, ok := result.(*PlanResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return planResult, nil
 }
@@ -136,7 +142,10 @@ func (pr *PlanRequest) Create(ctx context.Context, planInput *PlanInput) (*Plan,
 		return nil, err
 	}
 
-	planResult := result.(*PlanResult)
+	planResult, ok := result.(*PlanResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return planResult.Plan, nil
 }
@@ -158,7 +167,10 @@ func (pr *PlanRequest) Update(ctx context.Context, planInput *PlanInput) (*Plan,
 		return nil, err
 	}
 
-	planResult := result.(*PlanResult)
+	planResult, ok := result.(*PlanResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return planResult.Plan, nil
 }
@@ -176,7 +188,10 @@ func (pr *PlanRequest) Delete(ctx context.Context, planCode string) (*Plan, *Err
 		return nil, err
 	}
 
-	planResult := result.(*PlanResult)
+	planResult, ok := result.(*PlanResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return planResult.Plan, nil
 }

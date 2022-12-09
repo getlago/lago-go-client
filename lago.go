@@ -79,7 +79,12 @@ func (c *Client) Get(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 	}
 
 	if resp.IsError() {
-		return nil, resp.Error().(*Error)
+		err, ok := resp.Error().(*Error)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return nil, err
 	}
 
 	return resp.Result(), nil
@@ -102,7 +107,12 @@ func (c *Client) Post(ctx context.Context, cr *ClientRequest) (interface{}, *Err
 	}
 
 	if resp.IsError() {
-		return nil, resp.Error().(*Error)
+		err, ok := resp.Error().(*Error)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return nil, err
 	}
 
 	return resp.Result(), nil
@@ -124,7 +134,12 @@ func (c *Client) PostWithoutResult(ctx context.Context, cr *ClientRequest) *Erro
 	}
 
 	if resp.IsError() {
-		return resp.Error().(*Error)
+		err, ok := resp.Error().(*Error)
+		if !ok {
+			return &ErrorTypeAssert
+		}
+
+		return err
 	}
 
 	return nil
@@ -145,7 +160,12 @@ func (c *Client) PostWithoutBody(ctx context.Context, cr *ClientRequest) (interf
 	}
 
 	if resp.IsError() {
-		return nil, resp.Error().(*Error)
+		err, ok := resp.Error().(*Error)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return nil, err
 	}
 
 	return resp.Result(), nil
@@ -168,7 +188,12 @@ func (c *Client) Put(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 	}
 
 	if resp.IsError() {
-		return nil, resp.Error().(*Error)
+		err, ok := resp.Error().(*Error)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return nil, err
 	}
 
 	return resp.Result(), nil
@@ -191,7 +216,12 @@ func (c *Client) Delete(ctx context.Context, cr *ClientRequest) (interface{}, *E
 	}
 
 	if resp.IsError() {
-		return nil, resp.Error().(*Error)
+		err, ok := resp.Error().(*Error)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return nil, err
 	}
 
 	return resp.Result(), nil

@@ -82,7 +82,10 @@ func (or *OrganizationRequest) Update(ctx context.Context, organizationInput *Or
 		return nil, err
 	}
 
-	organizationResult := result.(*OrganizationResult)
+	organizationResult, ok := result.(*OrganizationResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return organizationResult.Organization, nil
 }

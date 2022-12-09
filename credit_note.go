@@ -132,7 +132,10 @@ func (cr *CreditNoteRequest) Get(ctx context.Context, creditNoteID uuid.UUID) (*
 		return nil, err
 	}
 
-	creditNoteResult := result.(*CreditNoteResult)
+	creditNoteResult, ok := result.(*CreditNoteResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return creditNoteResult.CreditNote, nil
 }
@@ -150,7 +153,10 @@ func (cr *CreditNoteRequest) Download(ctx context.Context, creditNoteID string) 
 	}
 
 	if result != nil {
-		creditNoteResult := result.(*CreditNoteResult)
+		creditNoteResult, ok := result.(*CreditNoteResult)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
 
 		return creditNoteResult.CreditNote, nil
 	}
@@ -180,7 +186,10 @@ func (cr *CreditNoteRequest) GetList(ctx context.Context, creditNoteListInput *C
 		return nil, clientErr
 	}
 
-	creditNoteResult := result.(*CreditNoteResult)
+	creditNoteResult, ok := result.(*CreditNoteResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return creditNoteResult, nil
 }
@@ -201,7 +210,10 @@ func (cr *CreditNoteRequest) Create(ctx context.Context, creditNoteInput *Credit
 		return nil, err
 	}
 
-	creditNoteResult := result.(*CreditNoteResult)
+	creditNoteResult, ok := result.(*CreditNoteResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return creditNoteResult.CreditNote, nil
 }
@@ -223,7 +235,10 @@ func (cr *CreditNoteRequest) Update(ctx context.Context, creditNoteUpdateInput *
 		return nil, err
 	}
 
-	creditNoteResult := result.(*CreditNoteResult)
+	creditNoteResult, ok := result.(*CreditNoteResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return creditNoteResult.CreditNote, nil
 }
@@ -241,7 +256,10 @@ func (cr *CreditNoteRequest) Void(ctx context.Context, creditNoteID string) (*Cr
 		return nil, err
 	}
 
-	creditNoteResult := result.(*CreditNoteResult)
+	creditNoteResult, ok := result.(*CreditNoteResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return creditNoteResult.CreditNote, nil
 }

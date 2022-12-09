@@ -68,7 +68,10 @@ func (bmr *BillableMetricRequest) Get(ctx context.Context, billableMetricCode st
 		return nil, err
 	}
 
-	billableMetricResult := result.(*BillableMetricResult)
+	billableMetricResult, ok := result.(*BillableMetricResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return billableMetricResult.BillableMetric, nil
 }
@@ -95,7 +98,10 @@ func (bmr *BillableMetricRequest) GetList(ctx context.Context, billableMetricLis
 		return nil, clientErr
 	}
 
-	billableMetricResult := result.(*BillableMetricResult)
+	billableMetricResult, ok := result.(*BillableMetricResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return billableMetricResult, nil
 }
@@ -112,7 +118,10 @@ func (bmr *BillableMetricRequest) Create(ctx context.Context, billableMetricInpu
 		return nil, err
 	}
 
-	billableMetricResult := result.(*BillableMetricResult)
+	billableMetricResult, ok := result.(*BillableMetricResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return billableMetricResult.BillableMetric, nil
 }
@@ -130,7 +139,10 @@ func (bmr *BillableMetricRequest) Update(ctx context.Context, billableMetricInpu
 		return nil, err
 	}
 
-	billableMetricResult := result.(*BillableMetricResult)
+	billableMetricResult, ok := result.(*BillableMetricResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return billableMetricResult.BillableMetric, nil
 }
@@ -147,7 +159,10 @@ func (bmr *BillableMetricRequest) Delete(ctx context.Context, billableMetricCode
 		return nil, err
 	}
 
-	billableMetricResult := result.(*BillableMetricResult)
+	billableMetricResult, ok := result.(*BillableMetricResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return billableMetricResult.BillableMetric, nil
 }

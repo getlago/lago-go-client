@@ -70,7 +70,7 @@ func (bmr *WalletTransactionRequest) Create(ctx context.Context, walletTransacti
 
 	walletTransactionResult, ok := result.(*WalletTransactionResult)
 	if !ok {
-		return nil, err
+		return nil, &ErrorTypeAssert
 	}
 
 	return walletTransactionResult, nil

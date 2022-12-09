@@ -100,7 +100,10 @@ func (sr *SubscriptionRequest) Create(ctx context.Context, subscriptionInput *Su
 		return nil, err
 	}
 
-	subscriptionResult := result.(*SubscriptionResult)
+	subscriptionResult, ok := result.(*SubscriptionResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return subscriptionResult.Subscription, nil
 }
@@ -118,7 +121,10 @@ func (sr *SubscriptionRequest) Terminate(ctx context.Context, externalID string)
 		return nil, err
 	}
 
-	subscriptionResult := result.(*SubscriptionResult)
+	subscriptionResult, ok := result.(*SubscriptionResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return subscriptionResult.Subscription, nil
 }
@@ -147,7 +153,7 @@ func (sr *SubscriptionRequest) GetList(ctx context.Context, subscriptionListInpu
 
 	subscriptionResult, ok := result.(*SubscriptionResult)
 	if !ok {
-		return nil, &Error{Err: ErrorTypeAssert}
+		return nil, &ErrorTypeAssert
 	}
 
 	return subscriptionResult, nil

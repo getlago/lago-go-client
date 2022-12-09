@@ -81,7 +81,10 @@ func (bmr *WalletRequest) Get(ctx context.Context, walletId string) (*Wallet, *E
 		return nil, err
 	}
 
-	walletResult := result.(*WalletResult)
+	walletResult, ok := result.(*WalletResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return walletResult.Wallet, nil
 }
@@ -108,7 +111,10 @@ func (bmr *WalletRequest) GetList(ctx context.Context, walletListInput *WalletLi
 		return nil, clientErr
 	}
 
-	walletResult := result.(*WalletResult)
+	walletResult, ok := result.(*WalletResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return walletResult, nil
 }
@@ -125,7 +131,10 @@ func (bmr *WalletRequest) Create(ctx context.Context, walletInput *WalletInput) 
 		return nil, err
 	}
 
-	walletResult := result.(*WalletResult)
+	walletResult, ok := result.(*WalletResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return walletResult.Wallet, nil
 }
@@ -143,7 +152,10 @@ func (bmr *WalletRequest) Update(ctx context.Context, walletInput *WalletInput, 
 		return nil, err
 	}
 
-	walletResult := result.(*WalletResult)
+	walletResult, ok := result.(*WalletResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return walletResult.Wallet, nil
 }
@@ -160,7 +172,10 @@ func (bmr *WalletRequest) Delete(ctx context.Context, walletId string) (*Wallet,
 		return nil, err
 	}
 
-	walletResult := result.(*WalletResult)
+	walletResult, ok := result.(*WalletResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return walletResult.Wallet, nil
 }

@@ -143,7 +143,10 @@ func (cr *CustomerRequest) Create(ctx context.Context, customerInput *CustomerIn
 		return nil, err
 	}
 
-	customerResult := result.(*CustomerResult)
+	customerResult, ok := result.(*CustomerResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return customerResult.Customer, nil
 }
@@ -166,7 +169,10 @@ func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID 
 		return nil, err
 	}
 
-	currentUsageResult := result.(*CustomerUsageResult)
+	currentUsageResult, ok := result.(*CustomerUsageResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return currentUsageResult.CustomerUsage, nil
 }
@@ -183,7 +189,10 @@ func (cr *CustomerRequest) Get(ctx context.Context, externalCustomerID string) (
 		return nil, err
 	}
 
-	customerResult := result.(*CustomerResult)
+	customerResult, ok := result.(*CustomerResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return customerResult.Customer, nil
 }
@@ -210,7 +219,10 @@ func (cr *CustomerRequest) GetList(ctx context.Context, customerListInput *Custo
 		return nil, clientErr
 	}
 
-	customerResult := result.(*CustomerResult)
+	customerResult, ok := result.(*CustomerResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return customerResult, nil
 }

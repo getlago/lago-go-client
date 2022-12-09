@@ -162,7 +162,10 @@ func (cr *CouponRequest) Get(ctx context.Context, couponCode string) (*Coupon, *
 		return nil, err
 	}
 
-	couponResult := result.(*CouponResult)
+	couponResult, ok := result.(*CouponResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return couponResult.Coupon, nil
 }
@@ -189,7 +192,10 @@ func (cr *CouponRequest) GetList(ctx context.Context, couponListInput *CouponLis
 		return nil, clientErr
 	}
 
-	couponResult := result.(*CouponResult)
+	couponResult, ok := result.(*CouponResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return couponResult, nil
 }
@@ -210,7 +216,10 @@ func (cr *CouponRequest) Create(ctx context.Context, couponInput *CouponInput) (
 		return nil, err
 	}
 
-	couponResult := result.(*CouponResult)
+	couponResult, ok := result.(*CouponResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return couponResult.Coupon, nil
 }
@@ -232,7 +241,10 @@ func (cr *CouponRequest) Update(ctx context.Context, couponInput *CouponInput) (
 		return nil, err
 	}
 
-	couponResult := result.(*CouponResult)
+	couponResult, ok := result.(*CouponResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return couponResult.Coupon, nil
 }
@@ -249,7 +261,10 @@ func (cr *CouponRequest) Delete(ctx context.Context, couponCode string) (*Coupon
 		return nil, err
 	}
 
-	couponResult := result.(*CouponResult)
+	couponResult, ok := result.(*CouponResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return couponResult.Coupon, nil
 }
@@ -276,7 +291,10 @@ func (cr *AppliedCouponRequest) GetList(ctx context.Context, appliedCouponListIn
 		return nil, clientErr
 	}
 
-	appliedCouponResult := result.(*AppliedCouponResult)
+	appliedCouponResult, ok := result.(*AppliedCouponResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return appliedCouponResult, nil
 }
@@ -297,7 +315,10 @@ func (cr *CouponRequest) ApplyToCustomer(ctx context.Context, applyCouponInput *
 		return nil, err
 	}
 
-	appliedCouponResult := result.(*AppliedCouponResult)
+	appliedCouponResult, ok := result.(*AppliedCouponResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return appliedCouponResult.AppliedCoupon, nil
 }
