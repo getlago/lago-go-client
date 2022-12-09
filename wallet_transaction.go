@@ -7,11 +7,11 @@ import (
 	"github.com/google/uuid"
 )
 
-type WalletStatus string
+type WalletTransactionStatus string
 
 const (
-	WalletStatusPending WalletStatus = "pending"
-	WalletStatusSettled WalletStatus = "settled"
+	WalletTransactionStatusPending WalletTransactionStatus = "pending"
+	WalletTransactionStatusSettled WalletTransactionStatus = "settled"
 )
 
 type TransactionType string
@@ -40,14 +40,14 @@ type WalletTransactionResult struct {
 }
 
 type WalletTransaction struct {
-	LagoID          uuid.UUID       `json:"lago_id,omitempty"`
-	LagoWalletID    uuid.UUID       `json:"lago_wallet_id,omitempty"`
-	Status          WalletStatus    `json:"status,omitempty"`
-	TransactionType TransactionType `json:"transaction_type,omitempty"`
-	Amount          string          `json:"amount,omitempty"`
-	CreditAmount    string          ` json:"credit_amount,omitempty"`
-	CreatedAt       time.Time       `json:"created_at,omitempty"`
-	SettledAt       time.Time       `json:"settled_at,omitempty"`
+	LagoID          uuid.UUID               `json:"lago_id,omitempty"`
+	LagoWalletID    uuid.UUID               `json:"lago_wallet_id,omitempty"`
+	Status          WalletTransactionStatus `json:"status,omitempty"`
+	TransactionType TransactionType         `json:"transaction_type,omitempty"`
+	Amount          string                  `json:"amount,omitempty"`
+	CreditAmount    string                  ` json:"credit_amount,omitempty"`
+	CreatedAt       time.Time               `json:"created_at,omitempty"`
+	SettledAt       time.Time               `json:"settled_at,omitempty"`
 }
 
 func (c *Client) WalletTransaction() *WalletTransactionRequest {
@@ -56,7 +56,7 @@ func (c *Client) WalletTransaction() *WalletTransactionRequest {
 	}
 }
 
-func (bmr *WalletTransactionRequest) Create(ctx context.Context, walletTransactionInput *WalletTransactionInput) (*WalletTransaction, *Error) {
+func (bmr *WalletTransactionRequest) Create(ctx context.Context, walletTransactionInput *WalletTransactionInput) (*WalletTransactionResult, *Error) {
 	clientRequest := &ClientRequest{
 		Path:   "wallet_transactions",
 		Result: &WalletTransactionResult{},
@@ -68,7 +68,7 @@ func (bmr *WalletTransactionRequest) Create(ctx context.Context, walletTransacti
 		return nil, err
 	}
 
-	walletTransactionResult := result.(*WalletTransaction)
+	walletTransactionResult := result.(*WalletTransactionResult)
 
 	return walletTransactionResult, nil
 }
