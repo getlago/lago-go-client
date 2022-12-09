@@ -68,7 +68,10 @@ func (bmr *WalletTransactionRequest) Create(ctx context.Context, walletTransacti
 		return nil, err
 	}
 
-	walletTransactionResult := result.(*WalletTransactionResult)
+	walletTransactionResult, ok := result.(*WalletTransactionResult)
+	if !ok {
+		return nil, err
+	}
 
 	return walletTransactionResult, nil
 }
