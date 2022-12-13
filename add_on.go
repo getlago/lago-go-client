@@ -95,7 +95,10 @@ func (adr *AddOnRequest) Get(ctx context.Context, addOnCode string) (*AddOn, *Er
 		return nil, err
 	}
 
-	addOnResult := result.(*AddOnResult)
+	addOnResult, ok := result.(*AddOnResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return addOnResult.AddOn, nil
 }
@@ -122,7 +125,10 @@ func (adr *AddOnRequest) GetList(ctx context.Context, addOnListInput *AddOnListI
 		return nil, clientErr
 	}
 
-	addOnResult := result.(*AddOnResult)
+	addOnResult, ok := result.(*AddOnResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return addOnResult, nil
 }
@@ -143,7 +149,10 @@ func (adr *AddOnRequest) Create(ctx context.Context, addOnInput *AddOnInput) (*A
 		return nil, err
 	}
 
-	addOnResult := result.(*AddOnResult)
+	addOnResult, ok := result.(*AddOnResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return addOnResult.AddOn, nil
 }
@@ -165,7 +174,10 @@ func (adr *AddOnRequest) Update(ctx context.Context, addOnInput *AddOnInput) (*A
 		return nil, err
 	}
 
-	addOnResult := result.(*AddOnResult)
+	addOnResult, ok := result.(*AddOnResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return addOnResult.AddOn, nil
 }
@@ -183,7 +195,10 @@ func (adr *AddOnRequest) Delete(ctx context.Context, addOnCode string) (*AddOn, 
 		return nil, err
 	}
 
-	addOnResult := result.(*AddOnResult)
+	addOnResult, ok := result.(*AddOnResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return addOnResult.AddOn, nil
 }
@@ -204,7 +219,10 @@ func (adr *AddOnRequest) ApplyToCustomer(ctx context.Context, applyAddOnInput *A
 		return nil, err
 	}
 
-	appliedAddOnResult := result.(*AppliedAddOnResult)
+	appliedAddOnResult, ok := result.(*AppliedAddOnResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return appliedAddOnResult.AppliedAddOn, nil
 }

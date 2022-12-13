@@ -1,12 +1,22 @@
 package lago
 
+import (
+	"errors"
+	"net/http"
+)
+
 type ErrorCode string
 
 const (
 	ErrorCodeAlreadyExist ErrorCode = "value_already_exist"
 	ErrorCodeInvalidValue
-	ErrorTypeAssert ErrorCode = "error_type_assert"
 )
+
+var ErrorTypeAssert = Error{
+	Err:            errors.New("type assertion failed"),
+	HTTPStatusCode: http.StatusUnprocessableEntity,
+	Msg:            "type assertion failed",
+}
 
 type ErrorDetail struct {
 	ErrorCode []ErrorCode `json:"code,omitempty"`

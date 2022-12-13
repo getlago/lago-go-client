@@ -58,7 +58,10 @@ func (cr *GroupRequest) GetList(ctx context.Context, groupListInput *GroupListIn
 		return nil, clientErr
 	}
 
-	groupResult := result.(*GroupResult)
+	groupResult, ok := result.(*GroupResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
 
 	return groupResult, nil
 }
