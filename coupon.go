@@ -65,6 +65,7 @@ type CouponInput struct {
 	PercentageRate    float32               `json:"percentage_rate,omitempty"`
 	CouponType        CouponCalculationType `json:"coupon_type,omitempty"`
 	Frequency         CouponFrequency       `json:"frequency,omitempty"`
+	Reusable          bool                  `json:"reusable,omitempty"`
 	FrequencyDuration int                   `json:"frequency_duration,omitempty"`
 }
 
@@ -84,6 +85,7 @@ type Coupon struct {
 	PercentageRate    float32               `json:"percentage_rate,omitempty"`
 	CouponType        CouponCalculationType `json:"coupon_type,omitempty"`
 	Frequency         CouponFrequency       `json:"frequency,omitempty"`
+	Reusable          bool                  `json:"reusable,omitempty"`
 	FrequencyDuration int                   `json:"frequency_duration,omitempty"`
 	CreatedAt         time.Time             `json:"created_at,omitempty"`
 }
