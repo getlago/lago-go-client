@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -47,7 +48,14 @@ type BillableMetricResult struct {
 }
 
 type BillableMetric struct {
-	LagoID uuid.UUID `json:"lago_id"`
+	LagoID          uuid.UUID              `json:"lago_id"`
+	Name            string                 `json:"name,omitempty"`
+	Code            string                 `json:"code,omitempty"`
+	Description     string                 `json:"description,omitempty"`
+	AggregationType AggregationType        `json:"aggregation_type,omitempty"`
+	FieldName       string                 `json:"field_name"`
+	CreatedAt       time.Time              `json:"created_at,omitempty"`
+	Group           map[string]interface{} `json:"group,omitempty"`
 }
 
 func (c *Client) BillableMetric() *BillableMetricRequest {
