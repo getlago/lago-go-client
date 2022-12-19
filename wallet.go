@@ -25,12 +25,12 @@ type WalletParams struct {
 }
 
 type WalletInput struct {
-	RateAmount         string `json:"rate_amount,omitempty"`
-	Name               string `json:"name,omitempty"`
-	PaidCredits        string `json:"paid_credits,omitempty"`
-	GrantedCredits     string `json:"granted_credits,omitempty"`
-	ExpirationDate     string `json:"expiration_date,omitempty"`
-	ExternalCustomerId string `json:"external_customer_id,omitempty"`
+	RateAmount         string     `json:"rate_amount,omitempty"`
+	Name               string     `json:"name,omitempty"`
+	PaidCredits        string     `json:"paid_credits,omitempty"`
+	GrantedCredits     string     `json:"granted_credits,omitempty"`
+	ExpirationAt       *time.Time `json:"expiration_at,omitempty"`
+	ExternalCustomerId string     `json:"external_customer_id,omitempty"`
 }
 
 type WalletListInput struct {

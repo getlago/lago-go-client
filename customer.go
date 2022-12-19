@@ -45,6 +45,7 @@ type CustomerInput struct {
 	Phone                string                            `json:"phone,omitempty"`
 	URL                  string                            `json:"url,omitempty"`
 	Currency             Currency                          `json:"currency,omitempty"`
+	Timezone             string                            `json:"timezone,omitempty"`
 	BillingConfiguration CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
 }
 
@@ -78,9 +79,9 @@ type CustomerChargeUsage struct {
 }
 
 type CustomerUsage struct {
-	FromDate    string `json:"from_date,omitempty"`
-	ToDate      string `json:"to_date,omitempty"`
-	IssuingDate string `json:"issuing_date,omitempty"`
+	FromDatetime time.Time `json:"from_datetime,omitempty"`
+	ToDatetime   time.Time `json:"to_datetime,omitempty"`
+	IssuingDate  string    `json:"issuing_date,omitempty"`
 
 	AmountCents         int      `json:"amount_cents,omitempty"`
 	AmountCurrency      Currency `json:"amount_currency,omitempty"`
@@ -117,6 +118,8 @@ type Customer struct {
 	URL                  string                       `json:"url,omitempty"`
 	BillingConfiguration CustomerBillingConfiguration `json:"billing_configuration,omitempty"`
 	Currency             Currency                     `json:"currency,omitempty"`
+	Timezone             string                       `json:"timezone,omitempty"`
+	ApplicableTimezone   string                       `json:"applicable_timezone,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 }

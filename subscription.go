@@ -42,7 +42,7 @@ type SubscriptionParams struct {
 type SubscriptionInput struct {
 	ExternalCustomerID string      `json:"external_customer_id,omitempty"`
 	PlanCode           string      `json:"plan_code,omitempty"`
-	SubscriptionDate   string      `json:"subscription_date,omitempty"`
+	SubscriptionAt     *time.Time  `json:"subscription_at,omitempty"`
 	BillingTime        BillingTime `json:"billing_time,omitempty"`
 	ExternalID         string      `json:"external_id"`
 	Name               string      `json:"name"`
@@ -64,9 +64,9 @@ type Subscription struct {
 
 	Name string `json:"name"`
 
-	Status           SubscriptionStatus `json:"status"`
-	BillingTime      BillingTime        `json:"billing_time"`
-	SubscriptionDate string             `json:"subscription_date"`
+	Status         SubscriptionStatus `json:"status"`
+	BillingTime    BillingTime        `json:"billing_time"`
+	SubscriptionAt *time.Time         `json:"subscription_at"`
 
 	PreviousPlanCode  string `json:"previous_plan_code"`
 	NextPlanCode      string `json:"next_plan_code"`
