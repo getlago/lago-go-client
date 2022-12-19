@@ -29,7 +29,7 @@ type WalletInput struct {
 	Name               string     `json:"name,omitempty"`
 	PaidCredits        string     `json:"paid_credits,omitempty"`
 	GrantedCredits     string     `json:"granted_credits,omitempty"`
-	ExpirationAt       *time.Time `json:"expiration_date,omitempty"`
+	ExpirationAt       *time.Time `json:"expiration_at,omitempty"`
 	ExternalCustomerId string     `json:"external_customer_id,omitempty"`
 }
 
