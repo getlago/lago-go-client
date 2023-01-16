@@ -8,9 +8,15 @@ import (
 	"github.com/google/uuid"
 )
 
+type InvoiceStatus string
 type InvoicePaymentStatus string
 type InvoiceFeeItemType string
 type InvoiceCreditItemType string
+
+const (
+	InvoiceStatusDraft     InvoiceStatus = "draft"
+	InvoiceStatusFinalized InvoiceStatus = "finalized"
+)
 
 const (
 	InvoicePaymentStatusPending   InvoicePaymentStatus = "pending"
@@ -90,6 +96,7 @@ type Invoice struct {
 	SequentialID int       `json:"sequential_id,omitempty"`
 	Number       string    `json:"number,omitempty"`
 
+	Status        InvoiceStatus        `json:"status,omitempty"`
 	PaymentStatus InvoicePaymentStatus `json:"payment_status,omitempty"`
 
 	AmountCents       int      `json:"amount_cents,omitempty"`
@@ -200,6 +207,54 @@ func (ir *InvoiceRequest) Download(ctx context.Context, invoiceID string) (*Invo
 	}
 
 	result, err := ir.client.PostWithoutBody(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	if result != nil {
+		invoiceResult, ok := result.(*InvoiceResult)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return invoiceResult.Invoice, nil
+	}
+
+	return nil, nil
+}
+
+func (ir *InvoiceRequest) Refresh(ctx context.Context, invoiceID string) (*Invoice, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "refresh")
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &InvoiceResult{},
+	}
+
+	result, err := ir.client.Put(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	if result != nil {
+		invoiceResult, ok := result.(*InvoiceResult)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return invoiceResult.Invoice, nil
+	}
+
+	return nil, nil
+}
+
+func (ir *InvoiceRequest) Finalize(ctx context.Context, invoiceID string) (*Invoice, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "finalize")
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &InvoiceResult{},
+	}
+
+	result, err := ir.client.Put(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
