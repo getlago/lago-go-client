@@ -215,3 +215,27 @@ func (ir *InvoiceRequest) Download(ctx context.Context, invoiceID string) (*Invo
 
 	return nil, nil
 }
+
+func (ir *InvoiceRequest) Refresh(ctx context.Context, invoiceID string) (*Invoice, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "refresh")
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &InvoiceResult{},
+	}
+
+	result, err := ir.client.Put(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	if result != nil {
+		invoiceResult, ok := result.(*InvoiceResult)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return invoiceResult.Invoice, nil
+	}
+
+	return nil, nil
+}
