@@ -8,9 +8,15 @@ import (
 	"github.com/google/uuid"
 )
 
+type InvoiceStatus string
 type InvoicePaymentStatus string
 type InvoiceFeeItemType string
 type InvoiceCreditItemType string
+
+const (
+	InvoiceStatusDraft     InvoiceStatus = "draft"
+	InvoiceStatusFinalized InvoiceStatus = "finalized"
+)
 
 const (
 	InvoicePaymentStatusPending   InvoicePaymentStatus = "pending"
@@ -90,6 +96,7 @@ type Invoice struct {
 	SequentialID int       `json:"sequential_id,omitempty"`
 	Number       string    `json:"number,omitempty"`
 
+	Status        InvoiceStatus        `json:"status,omitempty"`
 	PaymentStatus InvoicePaymentStatus `json:"payment_status,omitempty"`
 
 	AmountCents       int      `json:"amount_cents,omitempty"`
