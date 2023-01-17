@@ -55,6 +55,7 @@ type CustomerListInput struct {
 }
 
 type CustomerBillingConfigurationInput struct {
+	InvoiceGracePeriod int                     `json:"invoice_grace_period,omitempty"`
 	PaymentProvider    CustomerPaymentProvider `json:"payment_provider,omitempty"`
 	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
 	Sync               bool                    `json:"sync,omitempty"`
@@ -63,6 +64,7 @@ type CustomerBillingConfigurationInput struct {
 }
 
 type CustomerBillingConfiguration struct {
+	InvoiceGracePeriod int                     `json:"invoice_grace_period,omitempty"`
 	PaymentProvider    CustomerPaymentProvider `json:"payment_provider,omitempty"`
 	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
 	SyncWithProvider   bool                    `json:"sync_with_provider,omitempty"`

@@ -14,13 +14,15 @@ type OrganizationParams struct {
 }
 
 type OrganizationBillingConfigurationInput struct {
-	InvoiceFooter string  `json:"invoice_footer,omitempty"`
-	VatRate       float32 `json:"vat_rate,omitempty"`
+	InvoiceGracePeriod int     `json:"invoice_grace_period,omitempty"`
+	InvoiceFooter      string  `json:"invoice_footer,omitempty"`
+	VatRate            float32 `json:"vat_rate,omitempty"`
 }
 
 type OrganizationBillingConfiguration struct {
-	InvoiceFooter string  `json:"invoice_footer,omitempty"`
-	VatRate       float32 `json:"vat_rate,omitempty"`
+	InvoiceGracePeriod int     `json:"invoice_grace_period,omitempty"`
+	InvoiceFooter      string  `json:"invoice_footer,omitempty"`
+	VatRate            float32 `json:"vat_rate,omitempty"`
 }
 
 type OrganizationInput struct {
