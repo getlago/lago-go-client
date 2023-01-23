@@ -2,6 +2,8 @@ package lago
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -25,6 +27,14 @@ type WalletTransactionRequest struct {
 	client *Client
 }
 
+type WalletTransactionListInput struct {
+	PerPage         int                     `json:"per_page,omitempty,string"`
+	Page            int                     `json:"page,omitempty,string"`
+	WalletId        string                  `json:"wallet_id,omitempty"`
+	Status          WalletTransactionStatus `json:"status,omitempty"`
+	TransactionType TransactionType         `json:"transaction_type,omitempty"`
+}
+
 type WalletTransactionParams struct {
 	WalletTransactionInput *WalletTransactionInput
 }
@@ -37,6 +47,7 @@ type WalletTransactionInput struct {
 
 type WalletTransactionResult struct {
 	WalletTransactions []WalletTransaction `json:"wallet_transactions,omitempty"`
+	Meta               Metadata            `json:"meta,omitempty"`
 }
 
 type WalletTransaction struct {
@@ -56,16 +67,47 @@ func (c *Client) WalletTransaction() *WalletTransactionRequest {
 	}
 }
 
-func (bmr *WalletTransactionRequest) Create(ctx context.Context, walletTransactionInput *WalletTransactionInput) (*WalletTransactionResult, *Error) {
+func (wtr *WalletTransactionRequest) Create(ctx context.Context, walletTransactionInput *WalletTransactionInput) (*WalletTransactionResult, *Error) {
 	clientRequest := &ClientRequest{
 		Path:   "wallet_transactions",
 		Result: &WalletTransactionResult{},
 		Body:   walletTransactionInput,
 	}
 
-	result, err := bmr.client.Post(ctx, clientRequest)
+	result, err := wtr.client.Post(ctx, clientRequest)
 	if err != nil {
 		return nil, err
+	}
+
+	walletTransactionResult, ok := result.(*WalletTransactionResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return walletTransactionResult, nil
+}
+
+func (wtr *WalletTransactionRequest) GetList(ctx context.Context, walletTransactionListInput *WalletTransactionListInput) (*WalletTransactionResult, *Error) {
+	jsonQueryParams, err := json.Marshal(walletTransactionListInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	queryParams := make(map[string]string)
+	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	subPath := fmt.Sprintf("%s/%s/%s", "wallets", walletTransactionListInput.WalletId, "wallet_transactions")
+	clientRequest := &ClientRequest{
+		Path:        subPath,
+		QueryParams: queryParams,
+		Result:      &WalletTransactionResult{},
+	}
+
+	result, clientErr := wtr.client.Get(ctx, clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
 	}
 
 	walletTransactionResult, ok := result.(*WalletTransactionResult)
