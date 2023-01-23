@@ -48,14 +48,16 @@ type BillableMetricResult struct {
 }
 
 type BillableMetric struct {
-	LagoID          uuid.UUID              `json:"lago_id"`
-	Name            string                 `json:"name,omitempty"`
-	Code            string                 `json:"code,omitempty"`
-	Description     string                 `json:"description,omitempty"`
-	AggregationType AggregationType        `json:"aggregation_type,omitempty"`
-	FieldName       string                 `json:"field_name"`
-	CreatedAt       time.Time              `json:"created_at,omitempty"`
-	Group           map[string]interface{} `json:"group,omitempty"`
+	LagoID                   uuid.UUID              `json:"lago_id"`
+	Name                     string                 `json:"name,omitempty"`
+	Code                     string                 `json:"code,omitempty"`
+	Description              string                 `json:"description,omitempty"`
+	AggregationType          AggregationType        `json:"aggregation_type,omitempty"`
+	FieldName                string                 `json:"field_name"`
+	CreatedAt                time.Time              `json:"created_at,omitempty"`
+	Group                    map[string]interface{} `json:"group,omitempty"`
+	ActiveSubscriptionsCount int                    `json:"active_subscriptions_count,omitempty"`
+	DraftInvoicesCount       int                    `json:"draft_invoices_count,omitempty"`
 }
 
 func (c *Client) BillableMetric() *BillableMetricRequest {
