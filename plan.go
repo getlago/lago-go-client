@@ -57,16 +57,18 @@ type PlanListInput struct {
 }
 
 type Plan struct {
-	LagoID            uuid.UUID    `json:"lago_id"`
-	Name              string       `json:"name,omitempty"`
-	Code              string       `json:"code,omitempty"`
-	Interval          PlanInterval `json:"interval,omitempty"`
-	Description       string       `json:"description,omitempty"`
-	AmountCents       int          `json:"amount_cents,omitempty"`
-	AmountCurrency    Currency     `json:"amount_currency,omitempty"`
-	PayInAdvance      bool         `json:"pay_in_advance,omitempty"`
-	BillChargeMonthly bool         `json:"bill_charge_monthly,omitempty"`
-	Charges           []Charge     `json:"charges,omitempty"`
+	LagoID                   uuid.UUID    `json:"lago_id"`
+	Name                     string       `json:"name,omitempty"`
+	Code                     string       `json:"code,omitempty"`
+	Interval                 PlanInterval `json:"interval,omitempty"`
+	Description              string       `json:"description,omitempty"`
+	AmountCents              int          `json:"amount_cents,omitempty"`
+	AmountCurrency           Currency     `json:"amount_currency,omitempty"`
+	PayInAdvance             bool         `json:"pay_in_advance,omitempty"`
+	BillChargeMonthly        bool         `json:"bill_charge_monthly,omitempty"`
+	ActiveSubscriptionsCount int          `json:"active_subscriptions_count,omitempty"`
+	DraftInvoicesCount       int          `json:"draft_invoices_count,omitempty"`
+	Charges                  []Charge     `json:"charges,omitempty"`
 }
 
 func (c *Client) Plan() *PlanRequest {
