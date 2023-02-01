@@ -55,6 +55,10 @@ type CouponParams struct {
 	Coupon *CouponInput `json:"coupon"`
 }
 
+type LimitationInput struct {
+	PlanCodes []string `json:"plan_codes,omitempty"`
+}
+
 type CouponInput struct {
 	Name              string                `json:"name,omitempty"`
 	Code              string                `json:"code,omitempty"`
@@ -67,6 +71,7 @@ type CouponInput struct {
 	Frequency         CouponFrequency       `json:"frequency,omitempty"`
 	Reusable          bool                  `json:"reusable,omitempty"`
 	FrequencyDuration int                   `json:"frequency_duration,omitempty"`
+	AppliesTo         LimitationInput       `json:"applies_to,omitempty"`
 }
 
 type CouponListInput struct {
@@ -86,6 +91,8 @@ type Coupon struct {
 	CouponType        CouponCalculationType `json:"coupon_type,omitempty"`
 	Frequency         CouponFrequency       `json:"frequency,omitempty"`
 	Reusable          bool                  `json:"reusable,omitempty"`
+	LimitedPlans      bool                  `json:"limited_plans,omitempty"`
+	PlanCodes         []string              `json:"plan_codes,omitempty"`
 	FrequencyDuration int                   `json:"frequency_duration,omitempty"`
 	CreatedAt         time.Time             `json:"created_at,omitempty"`
 }
