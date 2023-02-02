@@ -2,7 +2,7 @@
 
 This is a Go wrapper for Lago API
 
-[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://spdx.org/licenses/MIT.html)
 
 ## Installation
 
@@ -29,4 +29,4 @@ The contribution documentation is available [here](https://github.com/getlago/la
 
 ## License
 
-Lago Go client is distributed under [AGPL-3.0](LICENSE).
+Lago Go client is distributed under [MIT license](LICENSE).
