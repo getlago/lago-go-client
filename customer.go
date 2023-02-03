@@ -198,6 +198,26 @@ func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID 
 	return currentUsageResult.CustomerUsage, nil
 }
 
+func (cr *CustomerRequest) Delete(ctx context.Context, externalCustomerID string) (*Customer, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "customers", externalCustomerID)
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &CustomerResult{},
+	}
+
+	result, err := cr.client.Delete(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	customerResult, ok := result.(*CustomerResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return customerResult.Customer, nil
+}
+
 func (cr *CustomerRequest) Get(ctx context.Context, externalCustomerID string) (*Customer, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "customers", externalCustomerID)
 	clientRequest := &ClientRequest{
