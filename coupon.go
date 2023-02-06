@@ -324,3 +324,23 @@ func (cr *CouponRequest) ApplyToCustomer(ctx context.Context, applyCouponInput *
 
 	return appliedCouponResult.AppliedCoupon, nil
 }
+
+func (acr *AppliedCouponRequest) AppliedCouponDelete(ctx context.Context, externalCustomerId string, couponCode string) (*AppliedCoupon, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s", "customers", externalCustomerId, "coupons", couponCode)
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &AppliedCouponResult{},
+	}
+
+	result, err := acr.client.Delete(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	appliedCouponResult, ok := result.(*AppliedCouponResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return appliedCouponResult.AppliedCoupon, nil
+}
