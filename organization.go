@@ -17,12 +17,14 @@ type OrganizationBillingConfigurationInput struct {
 	InvoiceGracePeriod int     `json:"invoice_grace_period,omitempty"`
 	InvoiceFooter      string  `json:"invoice_footer,omitempty"`
 	VatRate            float32 `json:"vat_rate,omitempty"`
+	DocumentLocale     string  `json:"document_locale,omitempty"`
 }
 
 type OrganizationBillingConfiguration struct {
 	InvoiceGracePeriod int     `json:"invoice_grace_period,omitempty"`
 	InvoiceFooter      string  `json:"invoice_footer,omitempty"`
 	VatRate            float32 `json:"vat_rate,omitempty"`
+	DocumentLocale     string  `json:"document_locale,omitempty"`
 }
 
 type OrganizationInput struct {

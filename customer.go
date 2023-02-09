@@ -61,6 +61,7 @@ type CustomerBillingConfigurationInput struct {
 	Sync               bool                    `json:"sync,omitempty"`
 	SyncWithProvider   bool                    `json:"sync_with_provider,omitempty"`
 	VatRate            float32                 `json:"vat_rate,omitempty"`
+	DocumentLocale     string                  `json:"document_locale,omitempty"`
 }
 
 type CustomerBillingConfiguration struct {
@@ -69,6 +70,7 @@ type CustomerBillingConfiguration struct {
 	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
 	SyncWithProvider   bool                    `json:"sync_with_provider,omitempty"`
 	VatRate            float32                 `json:"vat_rate,omitempty"`
+	DocumentLocale     string                  `json:"document_locale,omitempty"`
 }
 
 type CustomerChargeUsage struct {
