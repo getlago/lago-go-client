@@ -332,8 +332,8 @@ func (cr *CouponRequest) ApplyToCustomer(ctx context.Context, applyCouponInput *
 	return appliedCouponResult.AppliedCoupon, nil
 }
 
-func (acr *AppliedCouponRequest) AppliedCouponDelete(ctx context.Context, externalCustomerId string, couponCode string) (*AppliedCoupon, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s/%s", "customers", externalCustomerId, "coupons", couponCode)
+func (acr *AppliedCouponRequest) AppliedCouponDelete(ctx context.Context, externalCustomerId string, appliedCouponId string) (*AppliedCoupon, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s", "customers", externalCustomerId, "applied_coupons", appliedCouponId)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &AppliedCouponResult{},
