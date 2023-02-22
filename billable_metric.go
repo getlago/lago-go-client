@@ -24,7 +24,7 @@ const (
 )
 
 type BillableMetricParams struct {
-	BillableMetricInput *BillableMetricInput
+	BillableMetricInput *BillableMetricInput `json:"billable_metric,omitempty"`
 }
 
 type BillableMetricInput struct {
@@ -117,10 +117,13 @@ func (bmr *BillableMetricRequest) GetList(ctx context.Context, billableMetricLis
 }
 
 func (bmr *BillableMetricRequest) Create(ctx context.Context, billableMetricInput *BillableMetricInput) (*BillableMetric, *Error) {
+
 	clientRequest := &ClientRequest{
 		Path:   "billable_metrics",
 		Result: &BillableMetricResult{},
-		Body:   billableMetricInput,
+		Body: &BillableMetricParams{
+			BillableMetricInput: billableMetricInput,
+		},
 	}
 
 	result, err := bmr.client.Post(ctx, clientRequest)
@@ -141,7 +144,9 @@ func (bmr *BillableMetricRequest) Update(ctx context.Context, billableMetricInpu
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &BillableMetricResult{},
-		Body:   billableMetricInput,
+		Body: &BillableMetricParams{
+			BillableMetricInput: billableMetricInput,
+		},
 	}
 
 	result, err := bmr.client.Put(ctx, clientRequest)
