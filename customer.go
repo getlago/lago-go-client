@@ -30,6 +30,21 @@ type CustomerUsageResult struct {
 	CustomerUsage *CustomerUsage `json:"customer_usage"`
 }
 
+type CustomerMetadataInput struct {
+	LagoID           *uuid.UUID `json:"id,omitempty"`
+	Key              string     `json:"key,omitempty"`
+	Value            string     `json:"value,omitempty"`
+	DisplayInInvoice bool       `json:"display_in_invoice,omitempty"`
+}
+
+type MetadataResponse struct {
+	LagoID           uuid.UUID `json:"lago_id,omitempty"`
+	Key              string    `json:"key,omitempty"`
+	Value            string    `json:"value,omitempty"`
+	DisplayInInvoice bool      `json:"display_in_invoice,omitempty"`
+	CreatedAt        time.Time `json:"created_at,omitempty"`
+}
+
 type CustomerInput struct {
 	ExternalID           string                            `json:"external_id,omitempty"`
 	Name                 string                            `json:"name,omitempty"`
@@ -46,6 +61,7 @@ type CustomerInput struct {
 	URL                  string                            `json:"url,omitempty"`
 	Currency             Currency                          `json:"currency,omitempty"`
 	Timezone             string                            `json:"timezone,omitempty"`
+	Metadata             []CustomerMetadataInput           `json:"metadata,omitempty"`
 	BillingConfiguration CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
 }
 
@@ -121,6 +137,7 @@ type Customer struct {
 	Phone                string                       `json:"phone,omitempty"`
 	URL                  string                       `json:"url,omitempty"`
 	BillingConfiguration CustomerBillingConfiguration `json:"billing_configuration,omitempty"`
+	Metadata             []MetadataResponse           `json:"metadata,omitempty"`
 	Currency             Currency                     `json:"currency,omitempty"`
 	Timezone             string                       `json:"timezone,omitempty"`
 	ApplicableTimezone   string                       `json:"applicable_timezone,omitempty"`
