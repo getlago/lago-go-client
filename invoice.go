@@ -10,7 +10,6 @@ import (
 
 type InvoiceStatus string
 type InvoicePaymentStatus string
-type InvoiceFeeItemType string
 type InvoiceCreditItemType string
 
 const (
@@ -22,12 +21,6 @@ const (
 	InvoicePaymentStatusPending   InvoicePaymentStatus = "pending"
 	InvoicePaymentStatusSucceeded InvoicePaymentStatus = "succeeded"
 	InvoicePaymentStatusFailed    InvoicePaymentStatus = "failed"
-)
-
-const (
-	InvoiceFeeItemSubscription InvoiceFeeItemType = "subscription"
-	InvoiceFeeItemCharge       InvoiceFeeItemType = "charge"
-	InvoiceFeeItemAddOn        InvoiceFeeItemType = "add_on"
 )
 
 const (
@@ -59,23 +52,6 @@ type InvoiceListInput struct {
 
 	IssuingDateFrom string `json:"issuing_date_from,omitempty"`
 	IssuingDateTo   string `json:"issuing_date_to,omitempty"`
-}
-
-type InvoiceFeeItem struct {
-	Type InvoiceFeeItemType `json:"type,omitempty"`
-	Code string             `json:"code,omitempty"`
-	Name string             `json:"name,omitempty"`
-}
-
-type InvoiceFee struct {
-	Item InvoiceFeeItem `json:"item,omitempty"`
-
-	AmountCents       int      `json:"amount_cents,omitempty"`
-	AmountCurrency    Currency `json:"amount_currency,omitempty"`
-	VatAmountCents    int      `json:"vat_amount_cents,omitempty"`
-	VatAmountCurrency Currency `json:"vat_amount_currency,omitempty"`
-	Units             float32  `json:"units,omitempty,string"`
-	EventsCount       int      `json:"events_count,omitempty"`
 }
 
 type InvoiceCreditItem struct {
@@ -114,7 +90,7 @@ type Invoice struct {
 	Customer      *Customer      `json:"customer,omitempty"`
 	Subscriptions []Subscription `json:"subscriptions,omitempty"`
 
-	Fees    []InvoiceFee    `json:"fees,omitempty"`
+	Fees    []Fee           `json:"fees,omitempty"`
 	Credits []InvoiceCredit `json:"credits,omitempty"`
 }
 
