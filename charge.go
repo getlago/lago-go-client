@@ -20,6 +20,7 @@ type Charge struct {
 	LagoBillableMetricID uuid.UUID              `json:"lago_billable_metric_id,omitempty"`
 	ChargeModel          ChargeModel            `json:"charge_model,omitempty"`
 	CreatedAt            time.Time              `json:"created_at,omitempty"`
+	Instant              bool                   `json:"instant,omitempty"`
 	Properties           map[string]interface{} `json:"properties,omitempty"`
 	GroupProperties      []GroupProperties      `json:"group_properties,omitempty"`
 }

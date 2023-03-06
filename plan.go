@@ -35,6 +35,7 @@ type PlanChargeInput struct {
 	BillableMetricID uuid.UUID              `json:"billable_metric_id,omitempty"`
 	AmountCurrency   Currency               `json:"amount_currency,omitempty"`
 	ChargeModel      ChargeModel            `json:"charge_model,omitempty"`
+	Instant          bool                   `json:"instant,omitempty"`
 	Properties       map[string]interface{} `json:"properties"`
 	GroupProperties  []GroupProperties      `json:"group_properties,omitempty"`
 }
