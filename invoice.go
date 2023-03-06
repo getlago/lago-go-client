@@ -48,9 +48,23 @@ type InvoiceParams struct {
 	Invoice *InvoiceInput `json:"invoice"`
 }
 
+type InvoiceMetadataInput struct {
+	LagoID *uuid.UUID `json:"id,omitempty"`
+	Key    string     `json:"key,omitempty"`
+	Value  string     `json:"value,omitempty"`
+}
+
+type InvoiceMetadataResponse struct {
+	LagoID    uuid.UUID `json:"lago_id,omitempty"`
+	Key       string    `json:"key,omitempty"`
+	Value     string    `json:"value,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+}
+
 type InvoiceInput struct {
-	LagoID        uuid.UUID            `json:"lago_id,omitempty"`
-	PaymentStatus InvoicePaymentStatus `json:"payment_status,omitempty"`
+	LagoID        uuid.UUID              `json:"lago_id,omitempty"`
+	PaymentStatus InvoicePaymentStatus   `json:"payment_status,omitempty"`
+	Metadata      []InvoiceMetadataInput `json:"metadata,omitempty"`
 }
 
 type InvoiceListInput struct {
@@ -96,8 +110,9 @@ type Invoice struct {
 	SequentialID int       `json:"sequential_id,omitempty"`
 	Number       string    `json:"number,omitempty"`
 
-	Status        InvoiceStatus        `json:"status,omitempty"`
-	PaymentStatus InvoicePaymentStatus `json:"payment_status,omitempty"`
+	Status        InvoiceStatus             `json:"status,omitempty"`
+	PaymentStatus InvoicePaymentStatus      `json:"payment_status,omitempty"`
+	Metadata      []InvoiceMetadataResponse `json:"metadata,omitempty"`
 
 	AmountCents       int      `json:"amount_cents,omitempty"`
 	AmountCurrency    Currency `json:"amount_currency,omitempty"`
