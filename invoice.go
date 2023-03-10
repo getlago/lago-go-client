@@ -94,16 +94,25 @@ type InvoiceFee struct {
 }
 
 type InvoiceCreditItem struct {
-	Type InvoiceCreditItemType `json:"type,omitempty"`
-	Code string                `json:"code,omitempty"`
-	Name string                `json:"name,omitempty"`
+	LagoID uuid.UUID             `json:"lago_id,omitempty"`
+	Type   InvoiceCreditItemType `json:"type,omitempty"`
+	Code   string                `json:"code,omitempty"`
+	Name   string                `json:"name,omitempty"`
+}
+
+type InvoiceSummary struct {
+	LagoID        uuid.UUID            `json:"lago_id,omitempty"`
+	PaymentStatus InvoicePaymentStatus `json:"payment_status,omitempty"`
 }
 
 type InvoiceCredit struct {
 	Item InvoiceCreditItem `json:"item,omitempty"`
 
-	AmountCents    int      `json:"amount_cents,omitempty"`
-	AmountCurrency Currency `json:"amount_currency,omitempty"`
+	Invoice InvoiceSummary `json:"invoice,omitempty"`
+
+	LagoID         uuid.UUID `json:"lago_id,omitempty"`
+	AmountCents    int       `json:"amount_cents,omitempty"`
+	AmountCurrency Currency  `json:"amount_currency,omitempty"`
 }
 
 type Invoice struct {

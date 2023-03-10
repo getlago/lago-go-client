@@ -144,6 +144,8 @@ type AppliedCoupon struct {
 
 	AmountCentsRemaining       int `json:"amount_cents_remaining,omitempty"`
 	FrequencyDurationRemaining int `json:"frequency_duration_remaining,omitempty"`
+
+	Credits []InvoiceCredit `json:"credits,omitempty"`
 }
 
 func (c *Client) Coupon() *CouponRequest {
