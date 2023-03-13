@@ -53,10 +53,10 @@ type CreditListInput struct {
 }
 
 type CreditNoteItem struct {
-	LagoID         uuid.UUID  `json:"lago_id,omitempty"`
-	AmountCents    int        `json:"amount_cents,omitempty"`
-	AmountCurrency Currency   `json:"amount_currency,omitempty"`
-	Fee            InvoiceFee `json:"fee,omitempty"`
+	LagoID         uuid.UUID `json:"lago_id,omitempty"`
+	AmountCents    int       `json:"amount_cents,omitempty"`
+	AmountCurrency Currency  `json:"amount_currency,omitempty"`
+	Fee            Fee       `json:"fee,omitempty"`
 }
 
 type CreditNote struct {
