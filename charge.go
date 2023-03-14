@@ -18,6 +18,7 @@ const (
 type Charge struct {
 	LagoID               uuid.UUID              `json:"lago_id,omitempty"`
 	LagoBillableMetricID uuid.UUID              `json:"lago_billable_metric_id,omitempty"`
+	BillableMetricCode   string                 `json:"billable_metric_code,omitempty"`
 	ChargeModel          ChargeModel            `json:"charge_model,omitempty"`
 	CreatedAt            time.Time              `json:"created_at,omitempty"`
 	Properties           map[string]interface{} `json:"properties,omitempty"`

@@ -58,6 +58,7 @@ type BillableMetric struct {
 	Group                    map[string]interface{} `json:"group,omitempty"`
 	ActiveSubscriptionsCount int                    `json:"active_subscriptions_count,omitempty"`
 	DraftInvoicesCount       int                    `json:"draft_invoices_count,omitempty"`
+	PlansCount               int                    `json:"plans_count,omitempty"`
 }
 
 func (c *Client) BillableMetric() *BillableMetricRequest {
