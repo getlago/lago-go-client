@@ -34,10 +34,12 @@ type Fee struct {
 	LagoID      uuid.UUID `json:"lago_id,omitempty"`
 	LagoGroupID uuid.UUID `json:"lago_group_id,omitempty"`
 
-	AmountCents       int    `json:"amount_cents,omitempty"`
-	AmountCurrency    string `json:"amount_currenty,omitempty"`
-	VatAmountCents    int    `json:"vat_amount_cents,omitempty"`
-	VatAmountCurrency string `json:"vat_amount_currency,omitempty"`
+	AmountCents         int    `json:"amount_cents,omitempty"`
+	AmountCurrency      string `json:"amount_currenty,omitempty"`
+	VatAmountCents      int    `json:"vat_amount_cents,omitempty"`
+	VatAmountCurrency   string `json:"vat_amount_currency,omitempty"`
+	TotalAmountCents    int    `json:"total_amount_cents,omitempty"`
+	TotalAmountCurrency string `json:"total_amount_currency,omitempty"`
 
 	Units       float32 `json:"units,omitempty"`
 	EventsCount int     `json:"events_count,omitempty"`
