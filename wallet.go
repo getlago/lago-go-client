@@ -26,6 +26,7 @@ type WalletParams struct {
 
 type WalletInput struct {
 	RateAmount         string     `json:"rate_amount,omitempty"`
+	Currency           Currency   `json:"currency,omitempty"`
 	Name               string     `json:"name,omitempty"`
 	PaidCredits        string     `json:"paid_credits,omitempty"`
 	GrantedCredits     string     `json:"granted_credits,omitempty"`
@@ -50,7 +51,7 @@ type Wallet struct {
 	LagoCustomerID       uuid.UUID `json:"lago_customer_id,omitempty"`
 	ExternalCustomerID   string    `json:"external_customer_id,omitempty"`
 	Status               Status    `json:"status,omitempty"`
-	Currency             string    `json:"currency,omitempty"`
+	Currency             Currency  `json:"currency,omitempty"`
 	Name                 string    `json:"name,omitempty"`
 	RateAmount           string    `json:"rate_amount,omitempty"`
 	CreditsBalance       string    `json:"credits_balance,omitempty"`
