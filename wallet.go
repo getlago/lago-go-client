@@ -21,7 +21,7 @@ type WalletRequest struct {
 }
 
 type WalletParams struct {
-	WalletInput *WalletInput
+	WalletInput *WalletInput `json:"wallet"`
 }
 
 type WalletInput struct {
@@ -120,10 +120,14 @@ func (bmr *WalletRequest) GetList(ctx context.Context, walletListInput *WalletLi
 }
 
 func (bmr *WalletRequest) Create(ctx context.Context, walletInput *WalletInput) (*Wallet, *Error) {
+	walletParams := &WalletParams{
+		WalletInput: walletInput,
+	}
+
 	clientRequest := &ClientRequest{
 		Path:   "wallets",
 		Result: &WalletResult{},
-		Body:   walletInput,
+		Body:   walletParams,
 	}
 
 	result, err := bmr.client.Post(ctx, clientRequest)
