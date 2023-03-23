@@ -233,9 +233,9 @@ func (cr *CustomerRequest) PortalUrl(ctx context.Context, externalCustomerID str
 		Result: &CustomerPortalUrlResult{},
 	}
 
-	result, clientErr := cr.client.Get(ctx, clientRequest)
+	result, err := cr.client.Get(ctx, clientRequest)
 	if err != nil {
-		return nil, clientErr
+		return nil, err
 	}
 
 	portalUrlResult, ok := result.(*CustomerPortalUrlResult)
