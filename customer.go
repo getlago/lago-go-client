@@ -225,7 +225,7 @@ func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID 
 	return currentUsageResult.CustomerUsage, nil
 }
 
-func (cr *CustomerRequest) PortalUrl(ctx context.Context, externalCustomerID string) (string, *Error) {
+func (cr *CustomerRequest) PortalUrl(ctx context.Context, externalCustomerID string) (*string, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "portal_url")
 
 	clientRequest := &ClientRequest{
