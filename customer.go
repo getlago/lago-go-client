@@ -30,6 +30,10 @@ type CustomerUsageResult struct {
 	CustomerUsage *CustomerUsage `json:"customer_usage"`
 }
 
+type CustomerPortalUrlResult struct {
+	Customer *CustomerPortalUrl `json:"customer"`
+}
+
 type CustomerMetadataInput struct {
 	LagoID           *uuid.UUID `json:"id,omitempty"`
 	Key              string     `json:"key,omitempty"`
@@ -111,6 +115,10 @@ type CustomerUsage struct {
 	VatAmountCurrency   Currency `json:"vat_amount_currency,omitempty"`
 
 	ChargesUsage []CustomerChargeUsage `json:"charges_usage,omitempty"`
+}
+
+type CustomerPortalUrl struct {
+	PortalUrl string `json:"portal_url,omitempty"`
 }
 
 type CustomerUsageInput struct {
@@ -215,6 +223,27 @@ func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID 
 	}
 
 	return currentUsageResult.CustomerUsage, nil
+}
+
+func (cr *CustomerRequest) PortalUrl(ctx context.Context, externalCustomerID string) (string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "portal_url")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &CustomerPortalUrlResult{},
+	}
+
+	result, clientErr := cr.client.Get(ctx, clientRequest)
+	if err != nil {
+		return nil, clientErr
+	}
+
+	portalUrlResult, ok := result.(*CustomerPortalUrlResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return portalUrlResult.Customer.PortalUrl, nil
 }
 
 func (cr *CustomerRequest) Delete(ctx context.Context, externalCustomerID string) (*Customer, *Error) {
