@@ -31,7 +31,7 @@ type CustomerUsageResult struct {
 }
 
 type CustomerPortalUrlResult struct {
-	Customer *CustomerPortalUrl `json:"customer"`
+	CustomerPortalUrl *CustomerPortalUrl `json:"customer"`
 }
 
 type CustomerMetadataInput struct {
@@ -225,7 +225,7 @@ func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID 
 	return currentUsageResult.CustomerUsage, nil
 }
 
-func (cr *CustomerRequest) PortalUrl(ctx context.Context, externalCustomerID string) (*string, *Error) {
+func (cr *CustomerRequest) PortalUrl(ctx context.Context, externalCustomerID string) (*CustomerPortalUrl, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "portal_url")
 
 	clientRequest := &ClientRequest{
@@ -243,7 +243,7 @@ func (cr *CustomerRequest) PortalUrl(ctx context.Context, externalCustomerID str
 		return nil, &ErrorTypeAssert
 	}
 
-	return portalUrlResult.Customer.PortalUrl, nil
+	return portalUrlResult.CustomerPortalUrl, nil
 }
 
 func (cr *CustomerRequest) Delete(ctx context.Context, externalCustomerID string) (*Customer, *Error) {
