@@ -21,6 +21,7 @@ type FeeRequest struct {
 
 type FeeResult struct {
 	Fee  *Fee     `json:"fee,omitempty"`
+	Fees []Fee    `json:"fees,omitempty"`
 	Meta Metadata `json:"meta,omitempty"`
 }
 
