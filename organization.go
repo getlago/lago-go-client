@@ -41,6 +41,7 @@ type OrganizationInput struct {
 	LegalNumber  string `json:"legal_number,omitempty"`
 	WebhookURL   string `json:"webhook_url,omitempty"`
 	Timezone     string `json:"timezone,omitempty"`
+	EmailSettings [string] `json:"email_settings",omitempty`
 
 	BillingConfiguration OrganizationBillingConfigurationInput `json:"billing_configuration,omitempty"`
 }
@@ -62,6 +63,7 @@ type Organization struct {
 	LegalName            string                           `json:"legal_name,omitempty"`
 	LegalNumber          string                           `json:"legal_number,omitempty"`
 	Timezone             string                           `json:"timezone,omitempty"`
+	EmailSettings 			 [string]													`json:"email_settings,omitempty`
 	BillingConfiguration OrganizationBillingConfiguration `json:"billing_configuration,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
