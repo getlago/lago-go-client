@@ -57,7 +57,7 @@ Here's a list of Lago's elements:
 #### The different clients
 
 - [lago/client/go](https://github.com/getlago/lago-go-client) - Lago's Go Client (you are here 📍)
-- [lago/client/javascript](https://github.com/getlago/lago-javascript-client) - Lago's Nodejs Client
+- [lago/client/javascript](https://github.com/getlago/lago-javascript-client) - Lago's Javascript Client
 - [lago/client/python](https://github.com/getlago/lago-python-client) - Lago's Python Client
 - [lago/client/ruby](https://github.com/getlago/lago-ruby-client) - Lago's Ruby Client
 
