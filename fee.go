@@ -96,6 +96,8 @@ type Fee struct {
 	VatAmountCurrency   string `json:"vat_amount_currency,omitempty"`
 	TotalAmountCents    int    `json:"total_amount_cents,omitempty"`
 	TotalAmountCurrency string `json:"total_amount_currency,omitempty"`
+	FromDate            string `json:"from_date,omitempty"`
+	ToDate              string `json:"to_date,omitempty"`
 
 	Units       float32 `json:"units,omitempty"`
 	EventsCount int     `json:"events_count,omitempty"`
