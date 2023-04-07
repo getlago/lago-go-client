@@ -35,6 +35,7 @@ type PlanChargeInput struct {
 	BillableMetricID uuid.UUID              `json:"billable_metric_id,omitempty"`
 	AmountCurrency   Currency               `json:"amount_currency,omitempty"`
 	ChargeModel      ChargeModel            `json:"charge_model,omitempty"`
+	Instant          bool                   `json:"instant,omitempty"`
 	Properties       map[string]interface{} `json:"properties"`
 	GroupProperties  []GroupProperties      `json:"group_properties,omitempty"`
 }
@@ -44,10 +45,10 @@ type PlanInput struct {
 	Code              string            `json:"code,omitempty"`
 	Interval          PlanInterval      `json:"interval,omitempty"`
 	Description       string            `json:"description,omitempty"`
-	AmountCents       int               `json:"amount_cents,omitempty"`
+	AmountCents       int               `json:"amount_cents"`
 	AmountCurrency    Currency          `json:"amount_currency,omitempty"`
-	PayInAdvance      bool              `json:"pay_in_advance,omitempty"`
-	BillChargeMonthly bool              `json:"bill_charge_monthly,omitempty"`
+	PayInAdvance      bool              `json:"pay_in_advance"`
+	BillChargeMonthly bool              `json:"bill_charge_monthly"`
 	Charges           []PlanChargeInput `json:"charges,omitempty"`
 }
 
