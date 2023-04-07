@@ -36,7 +36,7 @@ type WalletTransactionListInput struct {
 }
 
 type WalletTransactionParams struct {
-	WalletTransactionInput *WalletTransactionInput
+	WalletTransactionInput *WalletTransactionInput `json:"wallet_transaction"`
 }
 
 type WalletTransactionInput struct {
@@ -68,12 +68,15 @@ func (c *Client) WalletTransaction() *WalletTransactionRequest {
 }
 
 func (wtr *WalletTransactionRequest) Create(ctx context.Context, walletTransactionInput *WalletTransactionInput) (*WalletTransactionResult, *Error) {
+	walletTransactionParams := &WalletTransactionParams{
+		WalletTransactionInput: walletTransactionInput,
+	}
+
 	clientRequest := &ClientRequest{
 		Path:   "wallet_transactions",
 		Result: &WalletTransactionResult{},
-		Body:   walletTransactionInput,
+		Body:   walletTransactionParams,
 	}
-
 	result, err := wtr.client.Post(ctx, clientRequest)
 	if err != nil {
 		return nil, err
