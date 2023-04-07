@@ -99,8 +99,8 @@ type Fee struct {
 	FromDate            string `json:"from_date,omitempty"`
 	ToDate              string `json:"to_date,omitempty"`
 
-	Units       float32 `json:"units,omitempty"`
-	EventsCount int     `json:"events_count,omitempty"`
+	Units       string `json:"units,omitempty"`
+	EventsCount int    `json:"events_count,omitempty"`
 
 	PaymentStatus FeePaymentStatus `json:"payment_status,omitempty"`
 
