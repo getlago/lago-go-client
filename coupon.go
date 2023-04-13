@@ -56,7 +56,8 @@ type CouponParams struct {
 }
 
 type LimitationInput struct {
-	PlanCodes []string `json:"plan_codes,omitempty"`
+	PlanCodes           []string `json:"plan_codes,omitempty"`
+	BillableMetricCodes []string `json:"billable_metric_codes,omitempty"`
 }
 
 type CouponInput struct {
@@ -80,21 +81,23 @@ type CouponListInput struct {
 }
 
 type Coupon struct {
-	LagoID            uuid.UUID             `json:"lago_id,omitempty"`
-	Name              string                `json:"name,omitempty"`
-	Code              string                `json:"code,omitempty"`
-	AmountCents       int                   `json:"amount_cents,omitempty"`
-	AmountCurrency    Currency              `json:"amount_currency,omitempty"`
-	Expiration        CouponExpiration      `json:"expiration,omitempty"`
-	ExpirationDate    string                `json:"expiration_date,omitempty"`
-	PercentageRate    float32               `json:"percentage_rate,omitempty"`
-	CouponType        CouponCalculationType `json:"coupon_type,omitempty"`
-	Frequency         CouponFrequency       `json:"frequency,omitempty"`
-	Reusable          bool                  `json:"reusable,omitempty"`
-	LimitedPlans      bool                  `json:"limited_plans,omitempty"`
-	PlanCodes         []string              `json:"plan_codes,omitempty"`
-	FrequencyDuration int                   `json:"frequency_duration,omitempty"`
-	CreatedAt         time.Time             `json:"created_at,omitempty"`
+	LagoID                 uuid.UUID             `json:"lago_id,omitempty"`
+	Name                   string                `json:"name,omitempty"`
+	Code                   string                `json:"code,omitempty"`
+	AmountCents            int                   `json:"amount_cents,omitempty"`
+	AmountCurrency         Currency              `json:"amount_currency,omitempty"`
+	Expiration             CouponExpiration      `json:"expiration,omitempty"`
+	ExpirationDate         string                `json:"expiration_date,omitempty"`
+	PercentageRate         float32               `json:"percentage_rate,omitempty"`
+	CouponType             CouponCalculationType `json:"coupon_type,omitempty"`
+	Frequency              CouponFrequency       `json:"frequency,omitempty"`
+	Reusable               bool                  `json:"reusable,omitempty"`
+	LimitedPlans           bool                  `json:"limited_plans,omitempty"`
+	PlanCodes              []string              `json:"plan_codes,omitempty"`
+	LimitedBillableMetrics bool                  `json:"limited_billable_metrics,omitempty"`
+	BillableMetricCodes    []string              `json:"billable_metric_codes,omitempty"`
+	FrequencyDuration      int                   `json:"frequency_duration,omitempty"`
+	CreatedAt              time.Time             `json:"created_at,omitempty"`
 }
 
 type AppliedCouponResult struct {
