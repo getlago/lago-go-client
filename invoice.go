@@ -9,9 +9,16 @@ import (
 	"github.com/google/uuid"
 )
 
+type InvoiceType string
 type InvoiceStatus string
 type InvoicePaymentStatus string
 type InvoiceCreditItemType string
+
+const (
+	SubscriptionInvoiceType InvoiceType = "subscription"
+	AddOnInvoiceType        InvoiceType = "add_on"
+	CreditInvoiceType       InvoiceType = "credit"
+)
 
 const (
 	InvoiceStatusDraft     InvoiceStatus = "draft"
@@ -67,6 +74,10 @@ type InvoiceListInput struct {
 
 	IssuingDateFrom string `json:"issuing_date_from,omitempty"`
 	IssuingDateTo   string `json:"issuing_date_to,omitempty"`
+
+	ExternalCustomerId string               `json:"external_customer_id,omitempty"`
+	Status             InvoiceStatus        `json:"status,omitempty"`
+	PaymentStatus      InvoicePaymentStatus `json:"payment_status,omitempty"`
 }
 
 type InvoiceCreditItem struct {
@@ -96,21 +107,27 @@ type Invoice struct {
 	SequentialID int       `json:"sequential_id,omitempty"`
 	Number       string    `json:"number,omitempty"`
 
-	Status        InvoiceStatus             `json:"status,omitempty"`
-	PaymentStatus InvoicePaymentStatus      `json:"payment_status,omitempty"`
-	Metadata      []InvoiceMetadataResponse `json:"metadata,omitempty"`
+	IssuingDate string `json:"issuing_date,omitempty"`
 
-	AmountCents       int      `json:"amount_cents,omitempty"`
-	AmountCurrency    Currency `json:"amount_currency,omitempty"`
-	VatAmountCents    int      `json:"vat_amount_cents,omitempty"`
-	VatAmountCurrency Currency `json:"vat_amount_currency,omitempty"`
+	InvoiceType   InvoiceType          `json:"invoice_type,omitempty"`
+	Status        InvoiceStatus        `json:"status,omitempty"`
+	PaymentStatus InvoicePaymentStatus `json:"payment_status,omitempty"`
 
-	FileURL string `json:"file_url,omitempty"`
+	AmountCents          int      `json:"amount_cents,omitempty"`
+	AmountCurrency       Currency `json:"amount_currency,omitempty"`
+	VatAmountCents       int      `json:"vat_amount_cents,omitempty"`
+	VatAmountCurrency    Currency `json:"vat_amount_currency,omitempty"`
+	CreditAmountCents    int      `json:"credit_amount_cents,omitempty"`
+	CreditAmountCurrency Currency `json:"credit_amount_currency,omitempty"`
+	TotalAmountCents     int      `json:"total_amount_cents,omitempty"`
+	TotalAmountCurrency  Currency `json:"total_amount_currency,omitempty"`
+
+	FileURL  string                    `json:"file_url,omitempty"`
+	Metadata []InvoiceMetadataResponse `json:"metadata,omitempty"`
 
 	FromDate        string `json:"from_date,omitempty"`
 	ToDate          string `json:"to_date,omitempty"`
 	ChargesFromDate string `json:"charges_from_date,omitempty"`
-	IssuingDate     string `json:"issuing_date,omitempty"`
 
 	Customer      *Customer      `json:"customer,omitempty"`
 	Subscriptions []Subscription `json:"subscriptions,omitempty"`
