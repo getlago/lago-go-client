@@ -110,7 +110,7 @@ type AppliedCouponListInput struct {
 	PerPage            int                 `json:"per_page,omitempty,string"`
 	Page               int                 `json:"page,omitempty,string"`
 	Status             AppliedCouponStatus `json:"status,omitempty,string"`
-	ExternalCustomerId string              `json:"external_customer_id,omitempty,string"`
+	ExternalCustomerID string              `json:"external_customer_id,omitempty,string"`
 }
 
 type ApplyCouponParams struct {
@@ -337,8 +337,8 @@ func (cr *CouponRequest) ApplyToCustomer(ctx context.Context, applyCouponInput *
 	return appliedCouponResult.AppliedCoupon, nil
 }
 
-func (acr *AppliedCouponRequest) AppliedCouponDelete(ctx context.Context, externalCustomerId string, appliedCouponId string) (*AppliedCoupon, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s/%s", "customers", externalCustomerId, "applied_coupons", appliedCouponId)
+func (acr *AppliedCouponRequest) AppliedCouponDelete(ctx context.Context, externalCustomerID string, appliedCouponID string) (*AppliedCoupon, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s", "customers", externalCustomerID, "applied_coupons", appliedCouponID)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &AppliedCouponResult{},

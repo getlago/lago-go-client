@@ -30,7 +30,7 @@ type WalletTransactionRequest struct {
 type WalletTransactionListInput struct {
 	PerPage         int                     `json:"per_page,omitempty,string"`
 	Page            int                     `json:"page,omitempty,string"`
-	WalletId        string                  `json:"wallet_id,omitempty"`
+	WalletID        string                  `json:"wallet_id,omitempty"`
 	Status          WalletTransactionStatus `json:"status,omitempty"`
 	TransactionType TransactionType         `json:"transaction_type,omitempty"`
 }
@@ -40,7 +40,7 @@ type WalletTransactionParams struct {
 }
 
 type WalletTransactionInput struct {
-	WalletId       string `json:"wallet_id,omitempty"`
+	WalletID       string `json:"wallet_id,omitempty"`
 	PaidCredits    string `json:"paid_credits,omitempty"`
 	GrantedCredits string `json:"granted_credits,omitempty"`
 }
@@ -101,7 +101,7 @@ func (wtr *WalletTransactionRequest) GetList(ctx context.Context, walletTransact
 		return nil, &Error{Err: err}
 	}
 
-	subPath := fmt.Sprintf("%s/%s/%s", "wallets", walletTransactionListInput.WalletId, "wallet_transactions")
+	subPath := fmt.Sprintf("%s/%s/%s", "wallets", walletTransactionListInput.WalletID, "wallet_transactions")
 	clientRequest := &ClientRequest{
 		Path:        subPath,
 		QueryParams: queryParams,

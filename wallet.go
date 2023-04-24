@@ -31,7 +31,7 @@ type WalletInput struct {
 	PaidCredits        string     `json:"paid_credits,omitempty"`
 	GrantedCredits     string     `json:"granted_credits,omitempty"`
 	ExpirationAt       *time.Time `json:"expiration_at,omitempty"`
-	ExternalCustomerId string     `json:"external_customer_id,omitempty"`
+	ExternalCustomerID string     `json:"external_customer_id,omitempty"`
 }
 
 type WalletListInput struct {
@@ -71,8 +71,8 @@ func (c *Client) Wallet() *WalletRequest {
 	}
 }
 
-func (bmr *WalletRequest) Get(ctx context.Context, walletId string) (*Wallet, *Error) {
-	subPath := fmt.Sprintf("%s/%s", "wallets", walletId)
+func (bmr *WalletRequest) Get(ctx context.Context, walletID string) (*Wallet, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "wallets", walletID)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &WalletResult{},
@@ -145,8 +145,8 @@ func (bmr *WalletRequest) Create(ctx context.Context, walletInput *WalletInput) 
 	return walletResult.Wallet, nil
 }
 
-func (bmr *WalletRequest) Update(ctx context.Context, walletInput *WalletInput, walletId string) (*Wallet, *Error) {
-	subPath := fmt.Sprintf("%s/%s", "wallets", walletId)
+func (bmr *WalletRequest) Update(ctx context.Context, walletInput *WalletInput, walletID string) (*Wallet, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "wallets", walletID)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &WalletResult{},
@@ -166,8 +166,8 @@ func (bmr *WalletRequest) Update(ctx context.Context, walletInput *WalletInput, 
 	return walletResult.Wallet, nil
 }
 
-func (bmr *WalletRequest) Delete(ctx context.Context, walletId string) (*Wallet, *Error) {
-	subPath := fmt.Sprintf("%s/%s", "wallets", walletId)
+func (bmr *WalletRequest) Delete(ctx context.Context, walletID string) (*Wallet, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "wallets", walletID)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &WalletResult{},
