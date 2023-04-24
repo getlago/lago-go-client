@@ -59,8 +59,8 @@ type FeeListInput struct {
 	FeeType       FeeType          `json:"fee_type,omitempty"`
 	PaymentStatus FeePaymentStatus `json:"payment_status,omitempty"`
 
-	ExternalSubscriptionId string `json:"external_subscription_id,omitempty"`
-	ExternalCustomerId     string `json:"external_customer_id,omitempty"`
+	ExternalSubscriptionID string `json:"external_subscription_id,omitempty"`
+	ExternalCustomerID     string `json:"external_customer_id,omitempty"`
 
 	BillableMetricCode string `json:"billable_metric_code,omitempty"`
 

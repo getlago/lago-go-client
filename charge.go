@@ -27,6 +27,6 @@ type Charge struct {
 }
 
 type GroupProperties struct {
-	GroupId uuid.UUID              `json:"group_id"`
+	GroupID uuid.UUID              `json:"group_id"`
 	Values  map[string]interface{} `json:"values"`
 }

@@ -75,7 +75,7 @@ type InvoiceListInput struct {
 	IssuingDateFrom string `json:"issuing_date_from,omitempty"`
 	IssuingDateTo   string `json:"issuing_date_to,omitempty"`
 
-	ExternalCustomerId string               `json:"external_customer_id,omitempty"`
+	ExternalCustomerID string               `json:"external_customer_id,omitempty"`
 	Status             InvoiceStatus        `json:"status,omitempty"`
 	PaymentStatus      InvoicePaymentStatus `json:"payment_status,omitempty"`
 }
