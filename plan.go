@@ -36,6 +36,7 @@ type PlanChargeInput struct {
 	AmountCurrency   Currency               `json:"amount_currency,omitempty"`
 	ChargeModel      ChargeModel            `json:"charge_model,omitempty"`
 	Instant          bool                   `json:"instant,omitempty"`
+	MinAmountCents   int                    `json:"min_amount_cents,omitempty"`
 	Properties       map[string]interface{} `json:"properties"`
 	GroupProperties  []GroupProperties      `json:"group_properties,omitempty"`
 }

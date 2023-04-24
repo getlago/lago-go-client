@@ -22,6 +22,7 @@ type Charge struct {
 	ChargeModel          ChargeModel            `json:"charge_model,omitempty"`
 	CreatedAt            time.Time              `json:"created_at,omitempty"`
 	Instant              bool                   `json:"instant,omitempty"`
+	MinAmountCents       int                    `json:"min_amount_cents,omitempty"`
 	Properties           map[string]interface{} `json:"properties,omitempty"`
 	GroupProperties      []GroupProperties      `json:"group_properties,omitempty"`
 }
