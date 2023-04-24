@@ -100,6 +100,7 @@ type InvoiceCredit struct {
 	LagoID         uuid.UUID `json:"lago_id,omitempty"`
 	AmountCents    int       `json:"amount_cents,omitempty"`
 	AmountCurrency Currency  `json:"amount_currency,omitempty"`
+	BeforeVAT      bool      `json:"before_vat,omitempty"`
 }
 
 type Invoice struct {
