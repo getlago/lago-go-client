@@ -67,7 +67,7 @@ type CouponInput struct {
 	AmountCurrency    Currency              `json:"amount_currency,omitempty"`
 	Expiration        CouponExpiration      `json:"expiration,omitempty"`
 	ExpirationAt      *time.Time            `json:"expiration_at,omitempty"`
-	PercentageRate    float32               `json:"percentage_rate,omitempty"`
+	PercentageRate    float64               `json:"percentage_rate,omitempty,string"`
 	CouponType        CouponCalculationType `json:"coupon_type,omitempty"`
 	Frequency         CouponFrequency       `json:"frequency,omitempty"`
 	Reusable          bool                  `json:"reusable,omitempty"`
@@ -88,7 +88,7 @@ type Coupon struct {
 	AmountCurrency         Currency              `json:"amount_currency,omitempty"`
 	Expiration             CouponExpiration      `json:"expiration,omitempty"`
 	ExpirationDate         string                `json:"expiration_date,omitempty"`
-	PercentageRate         float32               `json:"percentage_rate,omitempty"`
+	PercentageRate         float64               `json:"percentage_rate,omitempty,string"`
 	CouponType             CouponCalculationType `json:"coupon_type,omitempty"`
 	Frequency              CouponFrequency       `json:"frequency,omitempty"`
 	Reusable               bool                  `json:"reusable,omitempty"`
@@ -122,7 +122,7 @@ type ApplyCouponInput struct {
 	CouponCode         string          `json:"coupon_code,omitempty"`
 	AmountCents        int             `json:"amount_cents,omitempty"`
 	AmountCurrency     Currency        `json:"amount_currency,omitempty"`
-	PercentageRate     float32         `json:"percentage_rate,omitempty"`
+	PercentageRate     float64         `json:"percentage_rate,omitempty,string"`
 	Frequency          CouponFrequency `json:"frequency,omitempty"`
 	FrequencyDuration  int             `json:"frequency_duration,omitempty"`
 }
@@ -141,7 +141,7 @@ type AppliedCoupon struct {
 	ExpirationDate string    `json:"expiration_date,omitempty"`
 	TerminatedAt   time.Time `json:"terminated_at,omitempty"`
 
-	PercentageRate    float32         `json:"percentage_rate,omitempty"`
+	PercentageRate    float64         `json:"percentage_rate,omitempty,string"`
 	Frequency         CouponFrequency `json:"frequency,omitempty"`
 	FrequencyDuration int             `json:"frequency_duration,omitempty"`
 
