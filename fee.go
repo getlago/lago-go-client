@@ -88,6 +88,8 @@ type Fee struct {
 	LagoID                 uuid.UUID `json:"lago_id,omitempty"`
 	LagoGroupID            uuid.UUID `json:"lago_group_id,omitempty"`
 	LagoInvoiceID          uuid.UUID `json:"lago_invoice_id,omitempty"`
+	LagoTrueUpFeeID        uuid.UUID `json:"lago_true_up_fee_id,omitempty"`
+	LagoTrueUpParentFeeID  uuid.UUID `json:"lago_true_up_parent_fee_id,omitempty"`
 	ExternalSubscriptionID string    `json:"external_subscription_id,omitempty"`
 
 	AmountCents         int    `json:"amount_cents,omitempty"`
