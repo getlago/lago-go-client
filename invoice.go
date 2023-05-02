@@ -113,27 +113,35 @@ type Invoice struct {
 	Status        InvoiceStatus        `json:"status,omitempty"`
 	PaymentStatus InvoicePaymentStatus `json:"payment_status,omitempty"`
 
-	AmountCents          int      `json:"amount_cents,omitempty"`
-	AmountCurrency       Currency `json:"amount_currency,omitempty"`
-	VatAmountCents       int      `json:"vat_amount_cents,omitempty"`
-	VatAmountCurrency    Currency `json:"vat_amount_currency,omitempty"`
-	CreditAmountCents    int      `json:"credit_amount_cents,omitempty"`
-	CreditAmountCurrency Currency `json:"credit_amount_currency,omitempty"`
-	TotalAmountCents     int      `json:"total_amount_cents,omitempty"`
-	TotalAmountCurrency  Currency `json:"total_amount_currency,omitempty"`
+	Currency Currency `json:"currency,omitempty"`
 
-	FileURL  string                    `json:"file_url,omitempty"`
-	Metadata []InvoiceMetadataResponse `json:"metadata,omitempty"`
+	FeesAmountCents                int `json:"fees_amount_cents,omitempty"`
+	VatAmountCents                 int `json:"vat_amount_cents,omitempty"`
+	CouponsAmountCents             int `json:"coupons_amount_cents,omitempty"`
+	CreditNotesAmountCents         int `json:"credit_notes_amount_cents,omitempty"`
+	SubTotalVatExcludedAmountCents int `json:"sub_total_vat_excluded_amount_cents,omitempty"`
+	SubTotalVatIncludedAmountCents int `json:"sub_total_vat_included_amount_cents,omitempty"`
+	TotalAmountCents               int `json:"total_amount_cents,omitempty"`
+	PrepaidCreditAmountCents       int `json:"prepaid_credit_amount_cents,omitempty"`
 
-	FromDate        string `json:"from_date,omitempty"`
-	ToDate          string `json:"to_date,omitempty"`
-	ChargesFromDate string `json:"charges_from_date,omitempty"`
+	FileURL       string                    `json:"file_url,omitempty"`
+	Metadata      []InvoiceMetadataResponse `json:"metadata,omitempty"`
+	VersionNumber int                       `json:"version_number,omitempty"`
 
 	Customer      *Customer      `json:"customer,omitempty"`
 	Subscriptions []Subscription `json:"subscriptions,omitempty"`
 
 	Fees    []Fee           `json:"fees,omitempty"`
 	Credits []InvoiceCredit `json:"credits,omitempty"`
+
+	// Deprecated: Will be removed in the future
+	Legacy               bool     `json:"legacy,omitempty"`
+	AmountCurrency       Currency `json:"amount_currency,omitempty"`
+	AmountCents          int      `json:"amount_cents,omitempty"`
+	CreditAmountCents    int      `json:"credit_amount_cents,omitempty"`
+	CreditAmountCurrency Currency `json:"credit_amount_currency,omitempty"`
+	TotalAmountCurrency  Currency `json:"total_amount_currency,omitempty"`
+	VatAmountCurrency    Currency `json:"vat_amount_currency,omitempty"`
 }
 
 func (c *Client) Invoice() *InvoiceRequest {
