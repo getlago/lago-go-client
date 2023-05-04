@@ -110,7 +110,7 @@ type AppliedCouponListInput struct {
 	PerPage            int                 `json:"per_page,omitempty,string"`
 	Page               int                 `json:"page,omitempty,string"`
 	Status             AppliedCouponStatus `json:"status,omitempty,string"`
-	ExternalCustomerID string              `json:"external_customer_id,omitempty,string"`
+	ExternalCustomerID string              `json:"external_customer_id,omitempty"`
 }
 
 type ApplyCouponParams struct {
