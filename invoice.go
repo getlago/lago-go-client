@@ -49,10 +49,21 @@ type InvoiceParams struct {
 	Invoice *InvoiceInput `json:"invoice"`
 }
 
+type InvoiceOneOffParams struct {
+	Invoice *InvoiceOneOffInput `json:"invoice"`
+}
+
 type InvoiceMetadataInput struct {
 	LagoID *uuid.UUID `json:"id,omitempty"`
 	Key    string     `json:"key,omitempty"`
 	Value  string     `json:"value,omitempty"`
+}
+
+type InvoiceFeesInput struct {
+	AddOnCode       string  `json:"add_on_code,omitempty"`
+	UnitAmountCents int     `json:"unit_amount_cents,omitempty"`
+	Description     string  `json:"description,omitempty"`
+	Units           float32 `json:"units,omitempty"`
 }
 
 type InvoiceMetadataResponse struct {
@@ -66,6 +77,12 @@ type InvoiceInput struct {
 	LagoID        uuid.UUID              `json:"lago_id,omitempty"`
 	PaymentStatus InvoicePaymentStatus   `json:"payment_status,omitempty"`
 	Metadata      []InvoiceMetadataInput `json:"metadata,omitempty"`
+}
+
+type InvoiceOneOffInput struct {
+	ExternalCustomerId string             `json:"external_customer_id,omitempty"`
+	Currency           string             `json:"currency,omitempty"`
+	Fees               []InvoiceFeesInput `json:"fees,omitempty"`
 }
 
 type InvoiceListInput struct {
@@ -199,6 +216,30 @@ func (ir *InvoiceRequest) GetList(ctx context.Context, invoiceListInput *Invoice
 	}
 
 	return invoiceResult, nil
+}
+
+func (ir *InvoiceRequest) Create(ctx context.Context, oneOffInput *InvoiceOneOffInput) (*Invoice, *Error) {
+	invoiceOneOffParams := &InvoiceOneOffParams{
+		Invoice: oneOffInput,
+	}
+
+	clientRequest := &ClientRequest{
+		Path:   "invoices",
+		Result: &InvoiceResult{},
+		Body:   invoiceOneOffParams,
+	}
+
+	result, err := ir.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	invoiceResult, ok := result.(*InvoiceResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return invoiceResult.Invoice, nil
 }
 
 func (ir *InvoiceRequest) Update(ctx context.Context, invoiceInput *InvoiceInput) (*Invoice, *Error) {

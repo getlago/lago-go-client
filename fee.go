@@ -93,7 +93,8 @@ type Fee struct {
 	ExternalSubscriptionID string    `json:"external_subscription_id,omitempty"`
 
 	AmountCents         int    `json:"amount_cents,omitempty"`
-	AmountCurrency      string `json:"amount_currenty,omitempty"`
+	UnitAmountCents     int    `json:"unit_amount_cents,omitempty"`
+	AmountCurrency      string `json:"amount_currency,omitempty"`
 	VatAmountCents      int    `json:"vat_amount_cents,omitempty"`
 	VatAmountCurrency   string `json:"vat_amount_currency,omitempty"`
 	TotalAmountCents    int    `json:"total_amount_cents,omitempty"`
@@ -102,6 +103,7 @@ type Fee struct {
 	ToDate              string `json:"to_date,omitempty"`
 
 	Units       string `json:"units,omitempty"`
+	Description string `json:"description,omitempty"`
 	EventsCount int    `json:"events_count,omitempty"`
 
 	PaymentStatus FeePaymentStatus `json:"payment_status,omitempty"`
