@@ -50,7 +50,7 @@ type InvoiceParams struct {
 }
 
 type InvoiceOneOffParams struct {
-	Invoice *OneOffInput `json:"invoice"`
+	Invoice *InvoiceOneOffInput `json:"invoice"`
 }
 
 type InvoiceMetadataInput struct {
@@ -79,7 +79,7 @@ type InvoiceInput struct {
 	Metadata      []InvoiceMetadataInput `json:"metadata,omitempty"`
 }
 
-type OneOffInput struct {
+type InvoiceOneOffInput struct {
 	ExternalCustomerId string             `json:"external_customer_id,omitempty"`
 	Currency           string             `json:"currency,omitempty"`
 	Fees               []InvoiceFeesInput `json:"fees,omitempty"`
@@ -217,7 +217,7 @@ func (ir *InvoiceRequest) GetList(ctx context.Context, invoiceListInput *Invoice
 	return invoiceResult, nil
 }
 
-func (ir *InvoiceRequest) Create(ctx context.Context, oneOffInput *OneOffInput) (*Invoice, *Error) {
+func (ir *InvoiceRequest) Create(ctx context.Context, oneOffInput *InvoiceOneOffInput) (*Invoice, *Error) {
 	invoiceOneOffParams := &InvoiceOneOffParams{
 		Invoice: oneOffInput,
 	}
