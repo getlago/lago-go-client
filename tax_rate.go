@@ -18,10 +18,11 @@ type TaxRateParams struct {
 }
 
 type TaxRateInput struct {
-	Name        string  `json:"name,omitempty"`
-	Code        string  `json:"code,omitempty"`
-	Value       float32 `json:"value,omitempty"`
-	Description string  `json:"description,omitempty"`
+	Name             string  `json:"name,omitempty"`
+	Code             string  `json:"code,omitempty"`
+	Value            float32 `json:"value,omitempty"`
+	Description      string  `json:"description,omitempty"`
+	AppliedByDefault bool    `json:"applied_by_default,omitempty"`
 }
 
 type TaxRateListInput struct {
@@ -36,13 +37,14 @@ type TaxRateResult struct {
 }
 
 type TaxRate struct {
-	LagoID         uuid.UUID `json:"lago_id,omitempty"`
-	Name           string    `json:"name,omitempty"`
-	Code           string    `json:"code,omitempty"`
-	Value          float32   `json:"value,omitempty"`
-	Description    string    `json:"description,omitempty"`
-	CustomersCount int       `json:"customers_count,omitempty"`
-	CreatedAt      time.Time `json:"created_at,omitempty"`
+	LagoID           uuid.UUID `json:"lago_id,omitempty"`
+	Name             string    `json:"name,omitempty"`
+	Code             string    `json:"code,omitempty"`
+	Value            float32   `json:"value,omitempty"`
+	Description      string    `json:"description,omitempty"`
+	CustomersCount   int       `json:"customers_count,omitempty"`
+	AppliedByDefault bool      `json:"applied_by_default,omitempty"`
+	CreatedAt        time.Time `json:"created_at,omitempty"`
 }
 
 func (c *Client) TaxRate() *TaxRateRequest {
