@@ -99,6 +99,7 @@ type Fee struct {
 	VatAmountCurrency   string `json:"vat_amount_currency,omitempty"`
 	TotalAmountCents    int    `json:"total_amount_cents,omitempty"`
 	TotalAmountCurrency string `json:"total_amount_currency,omitempty"`
+	PayInAdvance        bool   `json:"pay_in_advance,omitempty"`
 	FromDate            string `json:"from_date,omitempty"`
 	ToDate              string `json:"to_date,omitempty"`
 
