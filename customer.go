@@ -150,6 +150,8 @@ type Customer struct {
 	Timezone             string                       `json:"timezone,omitempty"`
 	ApplicableTimezone   string                       `json:"applicable_timezone,omitempty"`
 
+	Taxes []Tax `json:"taxes,omitempty"`
+
 	CreatedAt time.Time `json:"created_at,omitempty"`
 }
 
