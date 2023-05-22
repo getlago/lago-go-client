@@ -22,7 +22,7 @@ type TaxInput struct {
 	Code             string  `json:"code,omitempty"`
 	Rate             float32 `json:"rate,omitempty"`
 	Description      string  `json:"description,omitempty"`
-	AppliedByDefault bool    `json:"applied_by_default,omitempty"`
+	AppliedToOrganization bool    `json:"applied_to_organization,omitempty"`
 }
 
 type TaxListInput struct {
