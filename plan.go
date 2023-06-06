@@ -51,6 +51,7 @@ type PlanInput struct {
 	AmountCurrency    Currency          `json:"amount_currency,omitempty"`
 	PayInAdvance      bool              `json:"pay_in_advance"`
 	BillChargeMonthly bool              `json:"bill_charge_monthly"`
+	TrialPeriod       bool              `json:"trial_period"`
 	Charges           []PlanChargeInput `json:"charges,omitempty"`
 }
 
