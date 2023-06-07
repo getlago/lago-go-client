@@ -7,10 +7,10 @@ import (
 	"encoding/base64"
 	"encoding/pem"
 	"errors"
+	"fmt"
 	"net/http"
-	"strings"
 
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/golang-jwt/jwt/v5"
 )
 
 type WebhookRequest struct {
@@ -90,11 +90,21 @@ func (wr *WebhookRequest) ValidateSignature(ctx context.Context, signature strin
 		return false, err
 	}
 
-	parts := strings.Split(signature, ".")
-	verifyErr := jwt.SigningMethodRS256.Verify(strings.Join(parts[0:2], "."), parts[2], publicKey)
-	if verifyErr != nil {
-		return false, nil
+	token, parseErr := jwt.Parse(signature, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+		}
+		return publicKey, nil
+	})
+	if parseErr != nil {
+		return false, &Error{
+			Err:            parseErr,
+			HTTPStatusCode: http.StatusInternalServerError,
+			Msg:            "cannot parse token",
+		}
 	}
 
-	return true, nil
+	println(fmt.Printf("token: %+v", token))
+
+	return token.Valid, nil
 }
