@@ -63,11 +63,18 @@ func (c *Client) SetDebug(debug bool) *Client {
 }
 
 func (c *Client) Get(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
-	resp, err := c.HttpClient.R().
+	hasResult := cr.Result != nil
+
+	request := c.HttpClient.R().
 		SetContext(ctx).
 		SetError(&Error{}).
-		SetResult(cr.Result).
-		SetQueryParams(cr.QueryParams).
+		SetQueryParams(cr.QueryParams)
+
+	if hasResult {
+		request.SetResult(cr.Result)
+	}
+
+	resp, err := request.
 		Get(cr.Path)
 	if err != nil {
 		return nil, &Error{Err: err}
@@ -87,7 +94,11 @@ func (c *Client) Get(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 		return nil, err
 	}
 
-	return resp.Result(), nil
+	if hasResult {
+		return resp.Result(), nil
+	}
+
+	return resp.String(), nil
 }
 
 func (c *Client) Post(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
@@ -97,6 +108,7 @@ func (c *Client) Post(ctx context.Context, cr *ClientRequest) (interface{}, *Err
 		SetResult(cr.Result).
 		SetBody(cr.Body).
 		Post(cr.Path)
+
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
