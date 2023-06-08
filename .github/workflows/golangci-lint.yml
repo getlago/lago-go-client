@@ -15,10 +15,14 @@ jobs:
     name: lint
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - uses: actions/setup-go@v4
         with:
-          go-version: 1.18
-      - uses: actions/checkout@v3
+          go-version-file: go.mod
+          # The builtin cache feature ensures that installing golangci-lint
+          # is consistently fast.
+          cache: true
+          cache-dependency-path: go.sum
       - name: install-golangci-lint
         # Install golangci-lint from source instead of using
         # golangci-lint-action to ensure the golangci-lint binary is built with
