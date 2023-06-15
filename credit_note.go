@@ -59,6 +59,20 @@ type CreditNoteItem struct {
 	Fee            Fee       `json:"fee,omitempty"`
 }
 
+type CreditNoteAppliedTax struct {
+	LagoId           uuid.UUID `json:"lago_id,omitempty"`
+	LagoCreditNoteId uuid.UUID `json:"lago_credit_note_id,omitempty"`
+	LagoTaxId        uuid.UUID `json:"lago_tax_id,omitempty"`
+	TaxName          string    `json:"tax_name,omitempty"`
+	TaxCode          string    `json:"tax_code,omitempty"`
+	TaxRate          float32   `json:"tax_rate,omitempty,string"`
+	TaxDescription   string    `json:"tax_description,omitempty"`
+	AmountCents      int       `json:"amount_cents,omitempty"`
+	AmountCurrency   Currency  `json:"amount_currency,omitempty"`
+	BaseAmountCents  int       `json:"base_amount_cents,omitempty"`
+	CreatedAt        time.Time `json:"created_at,omitempty"`
+}
+
 type CreditNote struct {
 	LagoID        uuid.UUID        `json:"lago_id,omitempty"`
 	SequentialID  int              `json:"sequential_id,omitempty"`
@@ -70,14 +84,15 @@ type CreditNote struct {
 	CreditStatus CreditNoteCreditStatus `json:"credit_status,omitempty"`
 	RefundStatus CreditNoteRefundStatus `json:"refund_status,omitempty"`
 
-	Currency                       Currency `json:"currency,omitempty"`
-	TotalAmountCents               int      `json:"total_amount_cents,omitempty"`
-	CreditAmountCents              int      `json:"credit_amount_cents,omitempty"`
-	BalanceAmountCents             int      `json:"balance_amount_cents,omitempty"`
-	RefundAmountCents              int      `json:"refund_amount_cents,omitempty"`
-	VatAmountCents                 int      `json:"vat_amount_cents,omitempty"`
-	SubTotalVatExcludedAmountCents int      `json:"sub_total_vat_excluded_amount_cents,omitempty"`
-	CouponsAdjustementAmountCents  int      `json:"coupons_adjustement_amount_cents,omitempty"`
+	Currency                          Currency `json:"currency,omitempty"`
+	TotalAmountCents                  int      `json:"total_amount_cents,omitempty"`
+	CreditAmountCents                 int      `json:"credit_amount_cents,omitempty"`
+	BalanceAmountCents                int      `json:"balance_amount_cents,omitempty"`
+	RefundAmountCents                 int      `json:"refund_amount_cents,omitempty"`
+	TaxesAmountCents                  int      `json:"taxes_amount_cents,omitempty"`
+	TaxesRate                         float32  `json:"taxes_rate,omitempty,string"`
+	SubTotalExcludingTaxesAmountCents int      `json:"sub_total_excluding_taxes_amount_cents,omitempty"`
+	CouponsAdjustementAmountCents     int      `json:"coupons_adjustement_amount_cents,omitempty"`
 
 	FileURL string `json:"file_url,omitempty"`
 
@@ -91,7 +106,9 @@ type CreditNote struct {
 	CreditAmountCurrency              Currency `json:"credit_amount_currency,omitempty"`
 	BalanceAmountCurrency             Currency `json:"balance_amount_currency,omitempty"`
 	RefundAmountCurrency              Currency `json:"refund_amount_currency,omitempty"`
+	VatAmountCents                    int      `json:"vat_amount_cents,omitempty"`
 	VatAmountCurrency                 Currency `json:"vat_amount_currency,omitempty"`
+	SubTotalVatExcludedAmountCents    int      `json:"sub_total_vat_excluded_amount_cents,omitempty"`
 	SubTotalVatExcludedAmountCurrency Currency `json:"sub_total_vat_excluded_amount_currency,omitempty"`
 }
 

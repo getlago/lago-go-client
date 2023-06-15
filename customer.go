@@ -81,7 +81,6 @@ type CustomerBillingConfigurationInput struct {
 	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
 	Sync               bool                    `json:"sync,omitempty"`
 	SyncWithProvider   bool                    `json:"sync_with_provider,omitempty"`
-	VatRate            *float32                `json:"vat_rate"`
 	DocumentLocale     string                  `json:"document_locale,omitempty"`
 }
 
@@ -90,7 +89,6 @@ type CustomerBillingConfiguration struct {
 	PaymentProvider    CustomerPaymentProvider `json:"payment_provider,omitempty"`
 	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
 	SyncWithProvider   bool                    `json:"sync_with_provider,omitempty"`
-	VatRate            *float32                `json:"vat_rate"`
 	DocumentLocale     string                  `json:"document_locale,omitempty"`
 }
 
@@ -104,16 +102,13 @@ type CustomerChargeUsage struct {
 }
 
 type CustomerUsage struct {
-	FromDatetime time.Time `json:"from_datetime,omitempty"`
-	ToDatetime   time.Time `json:"to_datetime,omitempty"`
-	IssuingDate  string    `json:"issuing_date,omitempty"`
-
-	AmountCents         int      `json:"amount_cents,omitempty"`
-	AmountCurrency      Currency `json:"amount_currency,omitempty"`
-	TotalAmountCents    int      `json:"total_amount_cents,omitempty"`
-	TotalAmountCurrency Currency `json:"total_amount_currency,omitempty"`
-	VatAmountCents      int      `json:"vat_amount_cents,omitempty"`
-	VatAmountCurrency   Currency `json:"vat_amount_currency,omitempty"`
+	FromDatetime     time.Time `json:"from_datetime,omitempty"`
+	ToDatetime       time.Time `json:"to_datetime,omitempty"`
+	IssuingDate      string    `json:"issuing_date,omitempty"`
+	Currency         Currency  `json:"currency,omitempty"`
+	AmountCents      int       `json:"amount_cents,omitempty"`
+	TotalAmountCents int       `json:"total_amount_cents,omitempty"`
+	TaxesAmountCents int       `json:"taxes_amount_cents,omitempty"`
 
 	ChargesUsage []CustomerChargeUsage `json:"charges_usage,omitempty"`
 }

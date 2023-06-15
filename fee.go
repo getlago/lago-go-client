@@ -84,6 +84,19 @@ type FeeItem struct {
 	ItemType   FeeItemType `json:"item_type,omitempty"`
 }
 
+type FeeAppliedTax struct {
+	LagoId         uuid.UUID `json:"lago_id,omitempty"`
+	LagoFeeId      uuid.UUID `json:"lago_fee_id,omitempty"`
+	LagoTaxId      uuid.UUID `json:"lago_tax_id,omitempty"`
+	TaxName        string    `json:"tax_name,omitempty"`
+	TaxCode        string    `json:"tax_code,omitempty"`
+	TaxRate        float32   `json:"tax_rate,omitempty,string"`
+	TaxDescription string    `json:"tax_description,omitempty"`
+	AmountCents    int       `json:"amount_cents,omitempty"`
+	AmountCurrency Currency  `json:"amount_currency,omitempty"`
+	CreatedAt      time.Time `json:"created_at,omitempty"`
+}
+
 type Fee struct {
 	LagoID                 uuid.UUID `json:"lago_id,omitempty"`
 	LagoGroupID            uuid.UUID `json:"lago_group_id,omitempty"`
@@ -92,17 +105,17 @@ type Fee struct {
 	LagoTrueUpParentFeeID  uuid.UUID `json:"lago_true_up_parent_fee_id,omitempty"`
 	ExternalSubscriptionID string    `json:"external_subscription_id,omitempty"`
 
-	AmountCents         int    `json:"amount_cents,omitempty"`
-	UnitAmountCents     int    `json:"unit_amount_cents,omitempty"`
-	AmountCurrency      string `json:"amount_currency,omitempty"`
-	VatAmountCents      int    `json:"vat_amount_cents,omitempty"`
-	VatAmountCurrency   string `json:"vat_amount_currency,omitempty"`
-	TotalAmountCents    int    `json:"total_amount_cents,omitempty"`
-	TotalAmountCurrency string `json:"total_amount_currency,omitempty"`
-	PayInAdvance        bool   `json:"pay_in_advance,omitempty"`
-	Invoiceable         bool   `json:"invoiceable,omitempty"`
-	FromDate            string `json:"from_date,omitempty"`
-	ToDate              string `json:"to_date,omitempty"`
+	AmountCents         int     `json:"amount_cents,omitempty"`
+	UnitAmountCents     int     `json:"unit_amount_cents,omitempty"`
+	AmountCurrency      string  `json:"amount_currency,omitempty"`
+	TaxesAmountCents    int     `json:"taxes_amount_cents,omitempty"`
+	TaxesRate           float32 `json:"taxes_rate,omitempty,string"`
+	TotalAmountCents    int     `json:"total_amount_cents,omitempty"`
+	TotalAmountCurrency string  `json:"total_amount_currency,omitempty"`
+	PayInAdvance        bool    `json:"pay_in_advance,omitempty"`
+	Invoiceable         bool    `json:"invoiceable,omitempty"`
+	FromDate            string  `json:"from_date,omitempty"`
+	ToDate              string  `json:"to_date,omitempty"`
 
 	Units       string `json:"units,omitempty"`
 	Description string `json:"description,omitempty"`
@@ -115,7 +128,8 @@ type Fee struct {
 	FailedAt    time.Time `json:"failed_at,omitempty"`
 	RefundedAt  time.Time `json:"refunded_at,omitempty"`
 
-	Item FeeItem `json:"item,omitempty"`
+	Item         FeeItem         `json:"item,omitempty"`
+	AppliedTaxes []FeeAppliedTax `json:"applied_taxes,omitempty"`
 }
 
 func (c *Client) Fee() *FeeRequest {

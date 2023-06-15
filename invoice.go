@@ -120,6 +120,19 @@ type InvoiceCredit struct {
 	BeforeVAT      bool      `json:"before_vat,omitempty"`
 }
 
+type InvoiceAppliedTax struct {
+	LagoId         uuid.UUID `json:"lago_id,omitempty"`
+	LagoInvoiceId  uuid.UUID `json:"lago_invoice_id,omitempty"`
+	LagoTaxId      uuid.UUID `json:"lago_tax_id,omitempty"`
+	TaxName        string    `json:"tax_name,omitempty"`
+	TaxCode        string    `json:"tax_code,omitempty"`
+	TaxRate        float32   `json:"tax_rate,omitempty,string"`
+	TaxDescription string    `json:"tax_description,omitempty"`
+	AmountCents    int       `json:"amount_cents,omitempty"`
+	AmountCurrency Currency  `json:"amount_currency,omitempty"`
+	CreatedAt      time.Time `json:"created_at,omitempty"`
+}
+
 type Invoice struct {
 	LagoID       uuid.UUID `json:"lago_id,omitempty"`
 	SequentialID int       `json:"sequential_id,omitempty"`
@@ -133,14 +146,14 @@ type Invoice struct {
 
 	Currency Currency `json:"currency,omitempty"`
 
-	FeesAmountCents                int `json:"fees_amount_cents,omitempty"`
-	VatAmountCents                 int `json:"vat_amount_cents,omitempty"`
-	CouponsAmountCents             int `json:"coupons_amount_cents,omitempty"`
-	CreditNotesAmountCents         int `json:"credit_notes_amount_cents,omitempty"`
-	SubTotalVatExcludedAmountCents int `json:"sub_total_vat_excluded_amount_cents,omitempty"`
-	SubTotalVatIncludedAmountCents int `json:"sub_total_vat_included_amount_cents,omitempty"`
-	TotalAmountCents               int `json:"total_amount_cents,omitempty"`
-	PrepaidCreditAmountCents       int `json:"prepaid_credit_amount_cents,omitempty"`
+	FeesAmountCents                   int `json:"fees_amount_cents,omitempty"`
+	TaxesAmountCents                  int `json:"taxes_amount_cents,omitempty"`
+	CouponsAmountCents                int `json:"coupons_amount_cents,omitempty"`
+	CreditNotesAmountCents            int `json:"credit_notes_amount_cents,omitempty"`
+	SubTotalExcludingTaxesAmountCents int `json:"sub_total_excluding_taxes_amount_cents,omitempty"`
+	SubTotalIncludingTaxesAmountCents int `json:"sub_total_including_taxes_amount_cents,omitempty"`
+	TotalAmountCents                  int `json:"total_amount_cents,omitempty"`
+	PrepaidCreditAmountCents          int `json:"prepaid_credit_amount_cents,omitempty"`
 
 	FileURL       string                    `json:"file_url,omitempty"`
 	Metadata      []InvoiceMetadataResponse `json:"metadata,omitempty"`
@@ -149,17 +162,21 @@ type Invoice struct {
 	Customer      *Customer      `json:"customer,omitempty"`
 	Subscriptions []Subscription `json:"subscriptions,omitempty"`
 
-	Fees    []Fee           `json:"fees,omitempty"`
-	Credits []InvoiceCredit `json:"credits,omitempty"`
+	Fees         []Fee               `json:"fees,omitempty"`
+	Credits      []InvoiceCredit     `json:"credits,omitempty"`
+	AppliedTaxes []InvoiceAppliedTax `json:"applied_taxes,omitempty"`
 
 	// Deprecated: Will be removed in the future
-	Legacy               bool     `json:"legacy,omitempty"`
-	AmountCurrency       Currency `json:"amount_currency,omitempty"`
-	AmountCents          int      `json:"amount_cents,omitempty"`
-	CreditAmountCents    int      `json:"credit_amount_cents,omitempty"`
-	CreditAmountCurrency Currency `json:"credit_amount_currency,omitempty"`
-	TotalAmountCurrency  Currency `json:"total_amount_currency,omitempty"`
-	VatAmountCurrency    Currency `json:"vat_amount_currency,omitempty"`
+	Legacy                         bool     `json:"legacy,omitempty"`
+	AmountCurrency                 Currency `json:"amount_currency,omitempty"`
+	AmountCents                    int      `json:"amount_cents,omitempty"`
+	CreditAmountCents              int      `json:"credit_amount_cents,omitempty"`
+	CreditAmountCurrency           Currency `json:"credit_amount_currency,omitempty"`
+	TotalAmountCurrency            Currency `json:"total_amount_currency,omitempty"`
+	VatAmountCents                 int      `json:"vat_amount_cents,omitempty"`
+	VatAmountCurrency              Currency `json:"vat_amount_currency,omitempty"`
+	SubTotalVatExcludedAmountCents int      `json:"sub_total_vat_excluded_amount_cents,omitempty"`
+	SubTotalVatIncludedAmountCents int      `json:"sub_total_vat_included_amount_cents,omitempty"`
 }
 
 func (c *Client) Invoice() *InvoiceRequest {
