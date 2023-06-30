@@ -63,6 +63,7 @@ type LimitationInput struct {
 type CouponInput struct {
 	Name              string                `json:"name,omitempty"`
 	Code              string                `json:"code,omitempty"`
+	Description       string                `json:"description,omitempty"`
 	AmountCents       int                   `json:"amount_cents,omitempty"`
 	AmountCurrency    Currency              `json:"amount_currency,omitempty"`
 	Expiration        CouponExpiration      `json:"expiration,omitempty"`
@@ -84,6 +85,7 @@ type Coupon struct {
 	LagoID                 uuid.UUID             `json:"lago_id,omitempty"`
 	Name                   string                `json:"name,omitempty"`
 	Code                   string                `json:"code,omitempty"`
+	Description            string                `json:"description,omitempty"`
 	AmountCents            int                   `json:"amount_cents,omitempty"`
 	AmountCurrency         Currency              `json:"amount_currency,omitempty"`
 	Expiration             CouponExpiration      `json:"expiration,omitempty"`
