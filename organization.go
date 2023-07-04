@@ -62,6 +62,8 @@ type Organization struct {
 	LegalName               string   `json:"legal_name,omitempty"`
 	LegalNumber             string   `json:"legal_number,omitempty"`
 	TaxIdentificationNumber string   `json:"tax_identification_number,omitempty"`
+	WebhookURL              string   `json:"webhook_url,omitempty"`
+	WebhookURLs             []string `json:"webhook_urls,omitempty"`
 	Timezone                string   `json:"timezone,omitempty"`
 	EmailSettings           []string `json:"email_settings,omitempty"`
 
