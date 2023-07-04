@@ -84,10 +84,10 @@ func (wr *WebhookRequest) GetPublicKey(ctx context.Context) (*rsa.PublicKey, *Er
 	return rsaPublicKey, nil
 }
 
-func (wr *WebhookRequest) ValidateSignature(ctx context.Context, signature string) (bool, *Error) {
+func (wr *WebhookRequest) parseSignature(ctx context.Context, signature string) (*jwt.Token, *Error) {
 	publicKey, err := wr.GetPublicKey(ctx)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
 	token, parseErr := jwt.Parse(signature, func(token *jwt.Token) (interface{}, error) {
@@ -97,14 +97,37 @@ func (wr *WebhookRequest) ValidateSignature(ctx context.Context, signature strin
 		return publicKey, nil
 	})
 	if parseErr != nil {
-		return false, &Error{
+		return nil, &Error{
 			Err:            parseErr,
 			HTTPStatusCode: http.StatusInternalServerError,
 			Msg:            "cannot parse token",
 		}
 	}
 
-	println(fmt.Printf("token: %+v", token))
+	return token, nil
+}
 
-	return token.Valid, nil
+func (wr *WebhookRequest) ValidateSignature(ctx context.Context, signature string) (bool, *Error) {
+	if token, err := wr.parseSignature(ctx, signature); err == nil && token.Valid {
+		return true, nil
+	} else {
+		return false, err
+	}
+}
+
+func (wr *WebhookRequest) ValidateBody(ctx context.Context, signature string, body string) (bool, *Error) {
+	if token, err := wr.parseSignature(ctx, signature); err == nil && token.Valid {
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			return false, &Error{
+				Err:            errors.New("error casting claims"),
+				HTTPStatusCode: http.StatusInternalServerError,
+				Msg:            "cannot parse token",
+			}
+		}
+
+		return claims["data"] == body, nil
+	} else {
+		return false, err
+	}
 }
