@@ -26,6 +26,8 @@ type Charge struct {
 	MinAmountCents       int                    `json:"min_amount_cents,omitempty"`
 	Properties           map[string]interface{} `json:"properties,omitempty"`
 	GroupProperties      []GroupProperties      `json:"group_properties,omitempty"`
+
+	Taxes []Tax `json:"tax,omitempty"`
 }
 
 type GroupProperties struct {

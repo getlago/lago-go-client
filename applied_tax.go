@@ -17,7 +17,7 @@ type AppliedTaxParams struct {
 }
 
 type AppliedTaxInput struct {
-	TaxCode string `json:"tax__code,omitempty"`
+	TaxCode string `json:"tax_code,omitempty"`
 }
 
 type AppliedTaxResult struct {
@@ -51,7 +51,7 @@ func (adr *AppliedTaxRequest) Create(ctx context.Context, externalCustomerID str
 	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "applied_taxes")
 	clientRequest := &ClientRequest{
 		Path:   subPath,
-		Result: &TaxResult{},
+		Result: &AppliedTaxResult{},
 		Body:   appliedTaxParams,
 	}
 
