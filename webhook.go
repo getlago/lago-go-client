@@ -38,7 +38,7 @@ func (wr *WebhookRequest) GetPublicKey(ctx context.Context) (*rsa.PublicKey, *Er
 		return nil, &Error{
 			Err:            errors.New("response is not a string"),
 			HTTPStatusCode: http.StatusInternalServerError,
-			Msg:            "response is not a string",
+			Message:        "response is not a string",
 		}
 	}
 
@@ -48,7 +48,7 @@ func (wr *WebhookRequest) GetPublicKey(ctx context.Context) (*rsa.PublicKey, *Er
 		return nil, &Error{
 			Err:            decodeErr,
 			HTTPStatusCode: http.StatusInternalServerError,
-			Msg:            "cannot decode the key",
+			Message:        "cannot decode the key",
 		}
 	}
 
@@ -58,7 +58,7 @@ func (wr *WebhookRequest) GetPublicKey(ctx context.Context) (*rsa.PublicKey, *Er
 		return nil, &Error{
 			Err:            errors.New("Failed to decode PEM block containing public key"),
 			HTTPStatusCode: http.StatusInternalServerError,
-			Msg:            "Failed to decode PEM block containing public key",
+			Message:        "Failed to decode PEM block containing public key",
 		}
 	}
 
@@ -68,7 +68,7 @@ func (wr *WebhookRequest) GetPublicKey(ctx context.Context) (*rsa.PublicKey, *Er
 		return nil, &Error{
 			Err:            parseErr,
 			HTTPStatusCode: http.StatusInternalServerError,
-			Msg:            "Failed to to parse the public key",
+			Message:        "Failed to to parse the public key",
 		}
 	}
 
@@ -77,7 +77,7 @@ func (wr *WebhookRequest) GetPublicKey(ctx context.Context) (*rsa.PublicKey, *Er
 		return nil, &Error{
 			Err:            errors.New("Unexpected type of public key"),
 			HTTPStatusCode: http.StatusInternalServerError,
-			Msg:            "Unexpected type of public key",
+			Message:        "Unexpected type of public key",
 		}
 	}
 
@@ -100,7 +100,7 @@ func (wr *WebhookRequest) parseSignature(ctx context.Context, signature string) 
 		return nil, &Error{
 			Err:            parseErr,
 			HTTPStatusCode: http.StatusInternalServerError,
-			Msg:            "cannot parse token",
+			Message:        "cannot parse token",
 		}
 	}
 
@@ -122,7 +122,7 @@ func (wr *WebhookRequest) ValidateBody(ctx context.Context, signature string, bo
 			return false, &Error{
 				Err:            errors.New("error casting claims"),
 				HTTPStatusCode: http.StatusInternalServerError,
-				Msg:            "cannot parse token",
+				Message:        "cannot parse token",
 			}
 		}
 
