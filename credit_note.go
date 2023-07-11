@@ -65,7 +65,7 @@ type CreditNoteAppliedTax struct {
 	LagoTaxId        uuid.UUID `json:"lago_tax_id,omitempty"`
 	TaxName          string    `json:"tax_name,omitempty"`
 	TaxCode          string    `json:"tax_code,omitempty"`
-	TaxRate          float32   `json:"tax_rate,omitempty,string"`
+	TaxRate          float32   `json:"tax_rate,omitempty"`
 	TaxDescription   string    `json:"tax_description,omitempty"`
 	AmountCents      int       `json:"amount_cents,omitempty"`
 	AmountCurrency   Currency  `json:"amount_currency,omitempty"`
@@ -90,7 +90,7 @@ type CreditNote struct {
 	BalanceAmountCents                int      `json:"balance_amount_cents,omitempty"`
 	RefundAmountCents                 int      `json:"refund_amount_cents,omitempty"`
 	TaxesAmountCents                  int      `json:"taxes_amount_cents,omitempty"`
-	TaxesRate                         float32  `json:"taxes_rate,omitempty,string"`
+	TaxesRate                         float32  `json:"taxes_rate,omitempty"`
 	SubTotalExcludingTaxesAmountCents int      `json:"sub_total_excluding_taxes_amount_cents,omitempty"`
 	CouponsAdjustementAmountCents     int      `json:"coupons_adjustement_amount_cents,omitempty"`
 

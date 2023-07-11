@@ -90,7 +90,7 @@ type FeeAppliedTax struct {
 	LagoTaxId      uuid.UUID `json:"lago_tax_id,omitempty"`
 	TaxName        string    `json:"tax_name,omitempty"`
 	TaxCode        string    `json:"tax_code,omitempty"`
-	TaxRate        float32   `json:"tax_rate,omitempty,string"`
+	TaxRate        float32   `json:"tax_rate,omitempty"`
 	TaxDescription string    `json:"tax_description,omitempty"`
 	AmountCents    int       `json:"amount_cents,omitempty"`
 	AmountCurrency Currency  `json:"amount_currency,omitempty"`
@@ -109,7 +109,7 @@ type Fee struct {
 	UnitAmountCents     int     `json:"unit_amount_cents,omitempty"`
 	AmountCurrency      string  `json:"amount_currency,omitempty"`
 	TaxesAmountCents    int     `json:"taxes_amount_cents,omitempty"`
-	TaxesRate           float32 `json:"taxes_rate,omitempty,string"`
+	TaxesRate           float32 `json:"taxes_rate,omitempty"`
 	TotalAmountCents    int     `json:"total_amount_cents,omitempty"`
 	TotalAmountCurrency string  `json:"total_amount_currency,omitempty"`
 	PayInAdvance        bool    `json:"pay_in_advance,omitempty"`
