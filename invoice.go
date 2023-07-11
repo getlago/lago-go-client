@@ -126,7 +126,7 @@ type InvoiceAppliedTax struct {
 	LagoTaxId      uuid.UUID `json:"lago_tax_id,omitempty"`
 	TaxName        string    `json:"tax_name,omitempty"`
 	TaxCode        string    `json:"tax_code,omitempty"`
-	TaxRate        float32   `json:"tax_rate,omitempty,string"`
+	TaxRate        float32   `json:"tax_rate,omitempty"`
 	TaxDescription string    `json:"tax_description,omitempty"`
 	AmountCents    int       `json:"amount_cents,omitempty"`
 	AmountCurrency Currency  `json:"amount_currency,omitempty"`
