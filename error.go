@@ -15,20 +15,17 @@ const (
 var ErrorTypeAssert = Error{
 	Err:            errors.New("type assertion failed"),
 	HTTPStatusCode: http.StatusUnprocessableEntity,
-	Msg:            "type assertion failed",
-}
-
-type ErrorDetail struct {
-	ErrorCode []ErrorCode `json:"code,omitempty"`
+	Message:        "Type assertion failed",
 }
 
 type Error struct {
 	Err error `json:"-"`
 
 	HTTPStatusCode int    `json:"status"`
-	Msg            string `json:"message"`
+	Message        string `json:"error"`
+	ErrorCode      string `json:"code"`
 
-	ErrorDetail ErrorDetail `json:"error_details"`
+	ErrorDetail map[string][]string `json:"error_details,omitempty"`
 }
 
 func (e ErrorCode) Error() string {
