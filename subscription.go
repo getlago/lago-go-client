@@ -48,11 +48,17 @@ type SubscriptionInput struct {
 	Name               string      `json:"name"`
 }
 
+type SubscriptionTerminateInput struct {
+	ExternalID string `json:"external_id,omitempty"`
+	Status		 string `json:"status,omitempty"`
+}
+
 type SubscriptionListInput struct {
-	ExternalCustomerID string `json:"external_customer_id,omitempty"`
-	PlanCode           string `json:"plan_code,omitempty"`
-	PerPage            int    `json:"per_page,omitempty,string"`
-	Page               int    `json:"page,omitempty,string"`
+	ExternalCustomerID string   `json:"external_customer_id,omitempty"`
+	PlanCode           string   `json:"plan_code,omitempty"`
+	PerPage            int      `json:"per_page,omitempty,string"`
+	Page               int      `json:"page,omitempty,string"`
+	Status             []string `json:"status,omitempty"`
 }
 
 type Subscription struct {
@@ -109,17 +115,28 @@ func (sr *SubscriptionRequest) Create(ctx context.Context, subscriptionInput *Su
 	return subscriptionResult.Subscription, nil
 }
 
-func (sr *SubscriptionRequest) Terminate(ctx context.Context, externalID string) (*Subscription, *Error) {
-	subPath := fmt.Sprintf("%s/%s", "subscriptions", externalID)
+func (sr *SubscriptionRequest) Terminate(ctx context.Context, subscriptionTerminateInput SubscriptionTerminateInput) (*Subscription, *Error) {
+	jsonQueryParams, err := json.Marshal(subscriptionTerminateInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	subPath := fmt.Sprintf("%s/%s", "subscriptions", subscriptionTerminateInput.ExternalID)
+
+	queryParams := make(map[string]string)
+	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
+		return nil, &Error{Err: err}
+	}
 
 	clientRequest := &ClientRequest{
 		Path:   subPath,
+		QueryParams: queryParams,
 		Result: &SubscriptionResult{},
 	}
 
-	result, err := sr.client.Delete(ctx, clientRequest)
-	if err != nil {
-		return nil, err
+	result, clientErr := sr.client.Delete(ctx, clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
 	}
 
 	subscriptionResult, ok := result.(*SubscriptionResult)
