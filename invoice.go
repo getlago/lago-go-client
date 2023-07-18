@@ -121,16 +121,17 @@ type InvoiceCredit struct {
 }
 
 type InvoiceAppliedTax struct {
-	LagoId         uuid.UUID `json:"lago_id,omitempty"`
-	LagoInvoiceId  uuid.UUID `json:"lago_invoice_id,omitempty"`
-	LagoTaxId      uuid.UUID `json:"lago_tax_id,omitempty"`
-	TaxName        string    `json:"tax_name,omitempty"`
-	TaxCode        string    `json:"tax_code,omitempty"`
-	TaxRate        float32   `json:"tax_rate,omitempty"`
-	TaxDescription string    `json:"tax_description,omitempty"`
-	AmountCents    int       `json:"amount_cents,omitempty"`
-	AmountCurrency Currency  `json:"amount_currency,omitempty"`
-	CreatedAt      time.Time `json:"created_at,omitempty"`
+	LagoId          uuid.UUID `json:"lago_id,omitempty"`
+	LagoInvoiceId   uuid.UUID `json:"lago_invoice_id,omitempty"`
+	LagoTaxId       uuid.UUID `json:"lago_tax_id,omitempty"`
+	TaxName         string    `json:"tax_name,omitempty"`
+	TaxCode         string    `json:"tax_code,omitempty"`
+	TaxRate         float32   `json:"tax_rate,omitempty"`
+	TaxDescription  string    `json:"tax_description,omitempty"`
+	AmountCents     int       `json:"amount_cents,omitempty"`
+	AmountCurrency  Currency  `json:"amount_currency,omitempty"`
+	FeesAmountCents int       `json:"fees_amount_cents,omitempty"`
+	CreatedAt       time.Time `json:"created_at,omitempty"`
 }
 
 type Invoice struct {
