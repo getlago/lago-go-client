@@ -23,6 +23,7 @@ type Charge struct {
 	CreatedAt            time.Time              `json:"created_at,omitempty"`
 	PayInAdvance         bool                   `json:"pay_in_advance,omitempty"`
 	Invoiceable          bool                   `json:"invoiceable,omitempty"`
+	Prorated             bool                   `json:"prorated,omitempty"`
 	MinAmountCents       int                    `json:"min_amount_cents,omitempty"`
 	Properties           map[string]interface{} `json:"properties,omitempty"`
 	GroupProperties      []GroupProperties      `json:"group_properties,omitempty"`
