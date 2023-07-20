@@ -13,6 +13,7 @@ const (
 	GraduatedChargeModel  ChargeModel = "graduated"
 	PackageChargeModel    ChargeModel = "package"
 	PercentageChargeModel ChargeModel = "percentage"
+	VolumneChargeModel    ChargeModel = "volume"
 )
 
 type Charge struct {
