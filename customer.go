@@ -68,6 +68,7 @@ type CustomerInput struct {
 	Timezone                string                            `json:"timezone,omitempty"`
 	Metadata                []CustomerMetadataInput           `json:"metadata,omitempty"`
 	BillingConfiguration    CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
+	TaxCodes                []string                          `json:"tax_codes,omitempty"`
 }
 
 type CustomerListInput struct {

@@ -55,6 +55,7 @@ type PlanInput struct {
 	BillChargeMonthly bool              `json:"bill_charge_monthly"`
 	TrialPeriod       float32           `json:"trial_period"`
 	Charges           []PlanChargeInput `json:"charges,omitempty"`
+	TaxCodes          []string          `json:"tax_codes,omitempty"`
 }
 
 type PlanListInput struct {
