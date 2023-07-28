@@ -32,6 +32,7 @@ type BillableMetricInput struct {
 	Code            string                 `json:"code,omitempty"`
 	Description     string                 `json:"description,omitempty"`
 	AggregationType AggregationType        `json:"aggregation_type,omitempty"`
+	Recurring       bool                   `json:"recurring,omitempty"`
 	FieldName       string                 `json:"field_name"`
 	Group           map[string]interface{} `json:"group,omitempty"`
 }
@@ -52,6 +53,7 @@ type BillableMetric struct {
 	Name                     string                 `json:"name,omitempty"`
 	Code                     string                 `json:"code,omitempty"`
 	Description              string                 `json:"description,omitempty"`
+	Recurring                bool                   `json:"recurring,omitempty"`
 	AggregationType          AggregationType        `json:"aggregation_type,omitempty"`
 	FieldName                string                 `json:"field_name"`
 	CreatedAt                time.Time              `json:"created_at,omitempty"`
