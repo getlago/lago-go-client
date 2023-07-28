@@ -41,6 +41,8 @@ type PlanChargeInput struct {
 	MinAmountCents   int                    `json:"min_amount_cents,omitempty"`
 	Properties       map[string]interface{} `json:"properties"`
 	GroupProperties  []GroupProperties      `json:"group_properties,omitempty"`
+
+	TaxCodes []string `json:"tax_codes,omitempty"`
 }
 
 type PlanInput struct {
@@ -54,6 +56,7 @@ type PlanInput struct {
 	BillChargeMonthly bool              `json:"bill_charge_monthly"`
 	TrialPeriod       float32           `json:"trial_period"`
 	Charges           []PlanChargeInput `json:"charges,omitempty"`
+	TaxCodes          []string          `json:"tax_codes,omitempty"`
 }
 
 type PlanListInput struct {
@@ -74,6 +77,8 @@ type Plan struct {
 	ActiveSubscriptionsCount int          `json:"active_subscriptions_count,omitempty"`
 	DraftInvoicesCount       int          `json:"draft_invoices_count,omitempty"`
 	Charges                  []Charge     `json:"charges,omitempty"`
+
+	Taxes []Tax `json:"taxes,omitempty"`
 }
 
 func (c *Client) Plan() *PlanRequest {
