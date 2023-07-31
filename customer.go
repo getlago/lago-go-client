@@ -61,6 +61,7 @@ type CustomerInput struct {
 	Country                 string                            `json:"country,omitempty"`
 	LegalName               string                            `json:"legal_name,omitempty"`
 	LegalNumber             string                            `json:"legal_number,omitempty"`
+	NetPaymentTerm          int                               `json:"net_payment_term,omitempty"`
 	TaxIdentificationNumber string                            `json:"tax_identification_number,omitempty"`
 	Phone                   string                            `json:"phone,omitempty"`
 	URL                     string                            `json:"url,omitempty"`
@@ -138,6 +139,7 @@ type Customer struct {
 	Country                 string                       `json:"country,omitempty"`
 	LegalName               string                       `json:"legal_name,omitempty"`
 	LegalNumber             string                       `json:"legal_number,omitempty"`
+	NetPaymentTerm          int                          `json:"net_payment_term,omitempty"`
 	TaxIdentificationNumber string                       `json:"tax_identification_number,omitempty"`
 	LogoURL                 string                       `json:"logo_url,omitempty"`
 	Phone                   string                       `json:"phone,omitempty"`

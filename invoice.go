@@ -139,7 +139,8 @@ type Invoice struct {
 	SequentialID int       `json:"sequential_id,omitempty"`
 	Number       string    `json:"number,omitempty"`
 
-	IssuingDate string `json:"issuing_date,omitempty"`
+	IssuingDate    string `json:"issuing_date,omitempty"`
+	PaymentDueDate string `json:"payment_due_date,omitempty"`
 
 	InvoiceType   InvoiceType          `json:"invoice_type,omitempty"`
 	Status        InvoiceStatus        `json:"status,omitempty"`
@@ -155,6 +156,7 @@ type Invoice struct {
 	SubTotalIncludingTaxesAmountCents int `json:"sub_total_including_taxes_amount_cents,omitempty"`
 	TotalAmountCents                  int `json:"total_amount_cents,omitempty"`
 	PrepaidCreditAmountCents          int `json:"prepaid_credit_amount_cents,omitempty"`
+	NetPaymentTerm      					    int `json:"net_payment_term,omitempty"`
 
 	FileURL       string                    `json:"file_url,omitempty"`
 	Metadata      []InvoiceMetadataResponse `json:"metadata,omitempty"`
