@@ -60,10 +60,11 @@ type InvoiceMetadataInput struct {
 }
 
 type InvoiceFeesInput struct {
-	AddOnCode       string  `json:"add_on_code,omitempty"`
-	UnitAmountCents int     `json:"unit_amount_cents,omitempty"`
-	Description     string  `json:"description,omitempty"`
-	Units           float32 `json:"units,omitempty"`
+	AddOnCode       string   `json:"add_on_code,omitempty"`
+	UnitAmountCents int      `json:"unit_amount_cents,omitempty"`
+	Description     string   `json:"description,omitempty"`
+	Units           float32  `json:"units,omitempty"`
+	TaxCodes        []string `json:"tax_codes,omitempty"`
 }
 
 type InvoiceMetadataResponse struct {
@@ -156,7 +157,7 @@ type Invoice struct {
 	SubTotalIncludingTaxesAmountCents int `json:"sub_total_including_taxes_amount_cents,omitempty"`
 	TotalAmountCents                  int `json:"total_amount_cents,omitempty"`
 	PrepaidCreditAmountCents          int `json:"prepaid_credit_amount_cents,omitempty"`
-	NetPaymentTerm      					    int `json:"net_payment_term,omitempty"`
+	NetPaymentTerm                    int `json:"net_payment_term,omitempty"`
 
 	FileURL       string                    `json:"file_url,omitempty"`
 	Metadata      []InvoiceMetadataResponse `json:"metadata,omitempty"`
