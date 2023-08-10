@@ -9,6 +9,13 @@ import (
 	"github.com/google/uuid"
 )
 
+type SignatureAlgo string
+
+const (
+	JWT  SignatureAlgo = "jwt"
+	HMac SignatureAlgo = "hmac"
+)
+
 type WebhookEndpointRequest struct {
 	client *Client
 }
@@ -18,7 +25,8 @@ type WebhookEndpointParams struct {
 }
 
 type WebhookEndpointInput struct {
-	WebhookURL string `json:"webhook_url,omitempty"`
+	WebhookURL    string        `json:"webhook_url,omitempty"`
+	SignatureAlgo SignatureAlgo `json:"signature_algo,omitempty"`
 }
 
 type WebhookEndpointListInput struct {
@@ -33,10 +41,11 @@ type WebhookEndpointResult struct {
 }
 
 type WebhookEndpoint struct {
-	LagoID             uuid.UUID `json:"lago_id,omitempty"`
-	LagoOrganizationID uuid.UUID `json:"lago_organization_id,omitempty"`
-	WebhookURL         string    `json:"webhook_url,omitempty"`
-	CreatedAt          time.Time `json:"created_at,omitempty"`
+	LagoID             uuid.UUID     `json:"lago_id,omitempty"`
+	LagoOrganizationID uuid.UUID     `json:"lago_organization_id,omitempty"`
+	WebhookURL         string        `json:"webhook_url,omitempty"`
+	SignatureAlgo      SignatureAlgo `json:"signature_algo,omitempty"`
+	CreatedAt          time.Time     `json:"created_at,omitempty"`
 }
 
 func (c *Client) WebhookEndpoint() *WebhookEndpointRequest {
