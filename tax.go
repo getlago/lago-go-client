@@ -42,7 +42,7 @@ type Tax struct {
 	LagoID                uuid.UUID `json:"lago_id,omitempty"`
 	Name                  string    `json:"name,omitempty"`
 	Code                  string    `json:"code,omitempty"`
-	Rate                  float32   `json:"rate,omitempty"`
+	Rate                  float32   `json:"rate"`
 	Description           string    `json:"description,omitempty"`
 	CustomersCount        int       `json:"customers_count,omitempty"`
 	PlansCount            int       `json:"plans_count,omitempty"`
