@@ -18,11 +18,11 @@ type TaxParams struct {
 }
 
 type TaxInput struct {
-	Name                  string  `json:"name,omitempty"`
-	Code                  string  `json:"code,omitempty"`
-	Rate                  float32 `json:"rate,omitempty"`
-	Description           string  `json:"description,omitempty"`
-	AppliedToOrganization bool    `json:"applied_to_organization,omitempty"`
+	Name                  string   `json:"name,omitempty"`
+	Code                  string   `json:"code,omitempty"`
+	Rate                  *float32 `json:"rate,omitempty"`
+	Description           string   `json:"description,omitempty"`
+	AppliedToOrganization bool     `json:"applied_to_organization,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 }
@@ -42,7 +42,7 @@ type Tax struct {
 	LagoID                uuid.UUID `json:"lago_id,omitempty"`
 	Name                  string    `json:"name,omitempty"`
 	Code                  string    `json:"code,omitempty"`
-	Rate                  float32   `json:"rate"`
+	Rate                  float32   `json:"rate,omitempty"`
 	Description           string    `json:"description,omitempty"`
 	CustomersCount        int       `json:"customers_count,omitempty"`
 	PlansCount            int       `json:"plans_count,omitempty"`
