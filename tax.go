@@ -44,6 +44,7 @@ type Tax struct {
 	Code                  string    `json:"code,omitempty"`
 	Rate                  float32   `json:"rate,omitempty"`
 	Description           string    `json:"description,omitempty"`
+	AddOnsCount           int       `json:"add_ons_count,omitempty"`
 	CustomersCount        int       `json:"customers_count,omitempty"`
 	PlansCount            int       `json:"plans_count,omitempty"`
 	ChargesCount          int       `json:"charges_count,omitempty"`

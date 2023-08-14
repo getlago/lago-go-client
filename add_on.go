@@ -24,6 +24,8 @@ type AddOnInput struct {
 
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"amount_currency,omitempty"`
+
+	TaxCodes []string `json:"tax_codes,omitempty"`
 }
 
 type AddOnListInput struct {
@@ -45,6 +47,8 @@ type AddOn struct {
 
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"amount_currency,omitempty"`
+
+	Taxes []Tax `json:"tax,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 }
