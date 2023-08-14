@@ -18,11 +18,11 @@ type TaxParams struct {
 }
 
 type TaxInput struct {
-	Name                  string  `json:"name,omitempty"`
-	Code                  string  `json:"code,omitempty"`
-	Rate                  float32 `json:"rate,omitempty"`
-	Description           string  `json:"description,omitempty"`
-	AppliedToOrganization bool    `json:"applied_to_organization,omitempty"`
+	Name                  string   `json:"name,omitempty"`
+	Code                  string   `json:"code,omitempty"`
+	Rate                  *float32 `json:"rate,omitempty"`
+	Description           string   `json:"description,omitempty"`
+	AppliedToOrganization bool     `json:"applied_to_organization,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 }
