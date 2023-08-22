@@ -9,11 +9,12 @@ import (
 type ChargeModel string
 
 const (
-	StandardChargeModel   ChargeModel = "standard"
-	GraduatedChargeModel  ChargeModel = "graduated"
-	PackageChargeModel    ChargeModel = "package"
-	PercentageChargeModel ChargeModel = "percentage"
-	VolumeChargeModel     ChargeModel = "volume"
+	StandardChargeModel            ChargeModel = "standard"
+	GraduatedChargeModel           ChargeModel = "graduated"
+	GraduatedPercentageChargeModel ChargeModel = "graduated_percentage"
+	PackageChargeModel             ChargeModel = "package"
+	PercentageChargeModel          ChargeModel = "percentage"
+	VolumeChargeModel              ChargeModel = "volume"
 )
 
 type Charge struct {
