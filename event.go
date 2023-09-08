@@ -15,7 +15,7 @@ type EventInput struct {
 	ExternalCustomerID     string                 `json:"external_customer_id,omitempty"`
 	ExternalSubscriptionID string                 `json:"external_subscription_id,omitempty"`
 	Code                   string                 `json:"code,omitempty"`
-	Timestamp              int64                  `json:"timestamp,omitempty"`
+	Timestamp              string                 `json:"timestamp,omitempty"`
 	Properties             map[string]interface{} `json:"properties,omitempty"`
 }
 

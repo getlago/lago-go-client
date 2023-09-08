@@ -21,6 +21,13 @@ const (
 	MaxAggregation            AggregationType = "max_agg"
 	UniqueCountAggregation    AggregationType = "unique_count_agg"
 	RecurringCountAggregation AggregationType = "recurring_count_agg"
+	WeightedSumAggregation    AggregationType = "weighted_sum_agg"
+)
+
+type WeightedInterval string
+
+const (
+	SecondsInterval WeightedInterval = "seconds"
 )
 
 type BillableMetricParams struct {
@@ -28,13 +35,14 @@ type BillableMetricParams struct {
 }
 
 type BillableMetricInput struct {
-	Name            string                 `json:"name,omitempty"`
-	Code            string                 `json:"code,omitempty"`
-	Description     string                 `json:"description,omitempty"`
-	AggregationType AggregationType        `json:"aggregation_type,omitempty"`
-	Recurring       bool                   `json:"recurring,omitempty"`
-	FieldName       string                 `json:"field_name"`
-	Group           map[string]interface{} `json:"group,omitempty"`
+	Name             string                 `json:"name,omitempty"`
+	Code             string                 `json:"code,omitempty"`
+	Description      string                 `json:"description,omitempty"`
+	AggregationType  AggregationType        `json:"aggregation_type,omitempty"`
+	Recurring        bool                   `json:"recurring,omitempty"`
+	FieldName        string                 `json:"field_name"`
+	WeightedInterval WeightedInterval       `json:"weighted_interval,omitempty"`
+	Group            map[string]interface{} `json:"group,omitempty"`
 }
 
 type BillableMetricListInput struct {
@@ -57,6 +65,7 @@ type BillableMetric struct {
 	AggregationType          AggregationType        `json:"aggregation_type,omitempty"`
 	FieldName                string                 `json:"field_name"`
 	CreatedAt                time.Time              `json:"created_at,omitempty"`
+	WeightedInterval         *WeightedInterval      `json:"weighted_interval,omitempty"`
 	Group                    map[string]interface{} `json:"group,omitempty"`
 	ActiveSubscriptionsCount int                    `json:"active_subscriptions_count,omitempty"`
 	DraftInvoicesCount       int                    `json:"draft_invoices_count,omitempty"`
