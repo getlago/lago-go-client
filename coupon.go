@@ -89,7 +89,7 @@ type Coupon struct {
 	AmountCents            int                   `json:"amount_cents,omitempty"`
 	AmountCurrency         Currency              `json:"amount_currency,omitempty"`
 	Expiration             CouponExpiration      `json:"expiration,omitempty"`
-	ExpirationDate         string                `json:"expiration_date,omitempty"`
+	ExpirationAt           *time.Time            `json:"expiration_at,omitempty"`
 	PercentageRate         float64               `json:"percentage_rate,omitempty,string"`
 	CouponType             CouponCalculationType `json:"coupon_type,omitempty"`
 	Frequency              CouponFrequency       `json:"frequency,omitempty"`
@@ -100,6 +100,7 @@ type Coupon struct {
 	BillableMetricCodes    []string              `json:"billable_metric_codes,omitempty"`
 	FrequencyDuration      int                   `json:"frequency_duration,omitempty"`
 	CreatedAt              time.Time             `json:"created_at,omitempty"`
+	TerminatedAt           *time.Time            `json:"terminated_at,omitempty"`
 }
 
 type AppliedCouponResult struct {
