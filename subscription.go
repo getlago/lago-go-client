@@ -50,7 +50,7 @@ type SubscriptionInput struct {
 
 type SubscriptionTerminateInput struct {
 	ExternalID string `json:"external_id,omitempty"`
-	Status		 string `json:"status,omitempty"`
+	Status     string `json:"status,omitempty"`
 }
 
 type SubscriptionListInput struct {
@@ -129,14 +129,35 @@ func (sr *SubscriptionRequest) Terminate(ctx context.Context, subscriptionTermin
 	}
 
 	clientRequest := &ClientRequest{
-		Path:   subPath,
+		Path:        subPath,
 		QueryParams: queryParams,
-		Result: &SubscriptionResult{},
+		Result:      &SubscriptionResult{},
 	}
 
 	result, clientErr := sr.client.Delete(ctx, clientRequest)
 	if clientErr != nil {
 		return nil, clientErr
+	}
+
+	subscriptionResult, ok := result.(*SubscriptionResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return subscriptionResult.Subscription, nil
+}
+
+func (sr *SubscriptionRequest) Get(ctx context.Context, subscriptionExternalId string) (*Subscription, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "subscriptions", subscriptionExternalId)
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &SubscriptionResult{},
+	}
+
+	result, err := sr.client.Get(ctx, clientRequest)
+	if err != nil {
+		return nil, err
 	}
 
 	subscriptionResult, ok := result.(*SubscriptionResult)
