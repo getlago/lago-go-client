@@ -19,7 +19,7 @@ type AddOnParams struct {
 
 type AddOnInput struct {
 	Name								string `json:"name,omitempty"`
-	InvoiceDisplayName	string `json:"invoice_display_name"`
+	InvoiceDisplayName	string `json:"invoice_display_name,omitempty"`
 	Code								string `json:"code,omitempty"`
 	Description					string `json:"description,omitempty"`
 
@@ -43,7 +43,7 @@ type AddOnResult struct {
 type AddOn struct {
 	LagoID							uuid.UUID `json:"lago_id,omitempty"`
 	Name								string    `json:"name,omitempty"`
-	InvoiceDisplayName	string    `json:"invoice_display_name"`
+	InvoiceDisplayName	string    `json:"invoice_display_name,omitempty"`
 	Code								string    `json:"code,omitempty"`
 	Description					string    `json:"description,omitempty"`
 

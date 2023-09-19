@@ -48,7 +48,7 @@ type PlanChargeInput struct {
 
 type PlanInput struct {
 	Name              	string            `json:"name,omitempty"`
-	InvoiceDisplayName	string            `json:"invoice_display_name"`
+	InvoiceDisplayName	string            `json:"invoice_display_name,omitempty"`
 	Code              	string            `json:"code,omitempty"`
 	Interval          	PlanInterval      `json:"interval,omitempty"`
 	Description       	string            `json:"description,omitempty"`
@@ -69,7 +69,7 @@ type PlanListInput struct {
 type Plan struct {
 	LagoID                   uuid.UUID    `json:"lago_id"`
 	Name                     string       `json:"name,omitempty"`
-	InvoiceDisplayName       string       `json:"invoice_display_name"`
+	InvoiceDisplayName       string       `json:"invoice_display_name,omitempty"`
 	Code                     string       `json:"code,omitempty"`
 	Interval                 PlanInterval `json:"interval,omitempty"`
 	Description              string       `json:"description,omitempty"`
