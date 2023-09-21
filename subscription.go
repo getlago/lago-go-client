@@ -43,6 +43,7 @@ type SubscriptionInput struct {
 	ExternalCustomerID string      `json:"external_customer_id,omitempty"`
 	PlanCode           string      `json:"plan_code,omitempty"`
 	SubscriptionAt     *time.Time  `json:"subscription_at,omitempty"`
+	EndingAt           *time.Time  `json:"ending_at,omitempty"`
 	BillingTime        BillingTime `json:"billing_time,omitempty"`
 	ExternalID         string      `json:"external_id"`
 	Name               string      `json:"name"`
@@ -50,7 +51,7 @@ type SubscriptionInput struct {
 
 type SubscriptionTerminateInput struct {
 	ExternalID string `json:"external_id,omitempty"`
-	Status		 string `json:"status,omitempty"`
+	Status     string `json:"status,omitempty"`
 }
 
 type SubscriptionListInput struct {
@@ -74,6 +75,7 @@ type Subscription struct {
 	Status         SubscriptionStatus `json:"status"`
 	BillingTime    BillingTime        `json:"billing_time"`
 	SubscriptionAt *time.Time         `json:"subscription_at"`
+	EndingAt       *time.Time         `json:"ending_at"`
 
 	PreviousPlanCode  string `json:"previous_plan_code"`
 	NextPlanCode      string `json:"next_plan_code"`
@@ -129,9 +131,9 @@ func (sr *SubscriptionRequest) Terminate(ctx context.Context, subscriptionTermin
 	}
 
 	clientRequest := &ClientRequest{
-		Path:   subPath,
+		Path:        subPath,
 		QueryParams: queryParams,
-		Result: &SubscriptionResult{},
+		Result:      &SubscriptionResult{},
 	}
 
 	result, clientErr := sr.client.Delete(ctx, clientRequest)
