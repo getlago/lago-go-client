@@ -149,6 +149,27 @@ func (sr *SubscriptionRequest) Terminate(ctx context.Context, subscriptionTermin
 	return subscriptionResult.Subscription, nil
 }
 
+func (sr *SubscriptionRequest) Get(ctx context.Context, subscriptionExternalId string) (*Subscription, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "subscriptions", subscriptionExternalId)
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &SubscriptionResult{},
+	}
+
+	result, err := sr.client.Get(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	subscriptionResult, ok := result.(*SubscriptionResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return subscriptionResult.Subscription, nil
+}
+
 func (sr *SubscriptionRequest) GetList(ctx context.Context, subscriptionListInput SubscriptionListInput) (*SubscriptionResult, *Error) {
 	jsonQueryParams, err := json.Marshal(subscriptionListInput)
 	if err != nil {
