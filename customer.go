@@ -30,6 +30,11 @@ type CustomerUsageResult struct {
 	CustomerUsage *CustomerUsage `json:"customer_usage"`
 }
 
+type CustomerPastUsageResult struct {
+	UsagePeriods []CustomerUsage `json:"usage_periods"`
+	Meta         Metadata        `json:"metadata"`
+}
+
 type CustomerPortalUrlResult struct {
 	CustomerPortalUrl *CustomerPortalUrl `json:"customer"`
 }
@@ -96,6 +101,7 @@ type CustomerBillingConfiguration struct {
 
 type CustomerChargeUsage struct {
 	Units          string   `json:"units,omitempty"`
+	EventsCount    int      `json:"events_count"`
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"amount_currency,omitempty"`
 
@@ -107,6 +113,7 @@ type CustomerUsage struct {
 	FromDatetime     time.Time `json:"from_datetime,omitempty"`
 	ToDatetime       time.Time `json:"to_datetime,omitempty"`
 	IssuingDate      string    `json:"issuing_date,omitempty"`
+	LagoInvoiceID    string    `json:"lago_invoice_id,omitempty"`
 	Currency         Currency  `json:"currency,omitempty"`
 	AmountCents      int       `json:"amount_cents,omitempty"`
 	TotalAmountCents int       `json:"total_amount_cents,omitempty"`
@@ -121,6 +128,12 @@ type CustomerPortalUrl struct {
 
 type CustomerUsageInput struct {
 	ExternalSubscriptionID string `json:"external_subscription_id,omitempty"`
+}
+
+type CustomerPastUsageInput struct {
+	ExternalSubscriptionID string `json:"external_subscription_id"`
+	BillableMetricCode     string `json:"billable_metric_code,omitempty"`
+	PeriodsCount           int    `json:"periods_count,omitempty"`
 }
 
 type Customer struct {
@@ -226,6 +239,38 @@ func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID 
 	}
 
 	return currentUsageResult.CustomerUsage, nil
+}
+
+func (cr *CustomerRequest) PastUsage(ctx context.Context, externalCustomerID string, customerPastUsageInput *CustomerPastUsageInput) (*CustomerPastUsageResult, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "past_usage")
+
+	jsonQueryParams, err := json.Marshal(customerPastUsageInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	queryParams := make(map[string]string)
+	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	clientRequest := &ClientRequest{
+		Path:        subPath,
+		QueryParams: queryParams,
+		Result:      &CustomerPastUsageResult{},
+	}
+
+	result, clientErr := cr.client.Get(ctx, clientRequest)
+	if err != nil {
+		return nil, clientErr
+	}
+
+	pastUsageResult, ok := result.(*CustomerPastUsageResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return pastUsageResult, nil
 }
 
 func (cr *CustomerRequest) PortalUrl(ctx context.Context, externalCustomerID string) (*CustomerPortalUrl, *Error) {
