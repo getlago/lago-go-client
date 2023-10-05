@@ -18,9 +18,10 @@ type AddOnParams struct {
 }
 
 type AddOnInput struct {
-	Name        string `json:"name,omitempty"`
-	Code        string `json:"code,omitempty"`
-	Description string `json:"description,omitempty"`
+	Name								string `json:"name,omitempty"`
+	InvoiceDisplayName	string `json:"invoice_display_name,omitempty"`
+	Code								string `json:"code,omitempty"`
+	Description					string `json:"description,omitempty"`
 
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"amount_currency,omitempty"`
@@ -40,10 +41,11 @@ type AddOnResult struct {
 }
 
 type AddOn struct {
-	LagoID      uuid.UUID `json:"lago_id,omitempty"`
-	Name        string    `json:"name,omitempty"`
-	Code        string    `json:"code,omitempty"`
-	Description string    `json:"description,omitempty"`
+	LagoID							uuid.UUID `json:"lago_id,omitempty"`
+	Name								string    `json:"name,omitempty"`
+	InvoiceDisplayName	string    `json:"invoice_display_name,omitempty"`
+	Code								string    `json:"code,omitempty"`
+	Description					string    `json:"description,omitempty"`
 
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"amount_currency,omitempty"`

@@ -25,6 +25,7 @@ type Charge struct {
 	CreatedAt            time.Time              `json:"created_at,omitempty"`
 	PayInAdvance         bool                   `json:"pay_in_advance,omitempty"`
 	Invoiceable          bool                   `json:"invoiceable,omitempty"`
+	InvoiceDisplayName   string                 `json:"invoice_display_name,omitempty"`
 	Prorated             bool                   `json:"prorated,omitempty"`
 	MinAmountCents       int                    `json:"min_amount_cents,omitempty"`
 	Properties           map[string]interface{} `json:"properties,omitempty"`
@@ -34,6 +35,7 @@ type Charge struct {
 }
 
 type GroupProperties struct {
-	GroupID uuid.UUID              `json:"group_id"`
-	Values  map[string]interface{} `json:"values"`
+	GroupID             uuid.UUID              `json:"group_id"`
+	Values              map[string]interface{} `json:"values"`
+	InvoiceDisplayName  string                 `json:"invoice_display_name,omitempty"`
 }

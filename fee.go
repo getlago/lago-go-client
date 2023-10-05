@@ -77,11 +77,12 @@ type FeeListInput struct {
 }
 
 type FeeItem struct {
-	Type       FeeType     `json:"type,omitempty"`
-	Code       string      `json:"code,omitempty"`
-	Name       string      `json:"name,omitempty"`
-	LagoItemID uuid.UUID   `json:"lago_item_id,omitempty"`
-	ItemType   FeeItemType `json:"item_type,omitempty"`
+	Type       							FeeType     `json:"type,omitempty"`
+	Code       							string      `json:"code,omitempty"`
+	Name      							string      `json:"name,omitempty"`
+	InvoiceDisplayName			string      `json:"invoice_display_name,omitempty"`
+	LagoItemID 							uuid.UUID   `json:"lago_item_id,omitempty"`
+	ItemType   							FeeItemType `json:"item_type,omitempty"`
 }
 
 type FeeAppliedTax struct {
@@ -116,6 +117,7 @@ type Fee struct {
 	Invoiceable         bool    `json:"invoiceable,omitempty"`
 	FromDate            string  `json:"from_date,omitempty"`
 	ToDate              string  `json:"to_date,omitempty"`
+	InvoiceDisplayName	string  `json:"invoice_display_name,omitempty"`
 
 	Units       string `json:"units,omitempty"`
 	Description string `json:"description,omitempty"`
