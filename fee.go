@@ -81,6 +81,7 @@ type FeeItem struct {
 	Code       							string      `json:"code,omitempty"`
 	Name      							string      `json:"name,omitempty"`
 	InvoiceDisplayName			string      `json:"invoice_display_name,omitempty"`
+	GroupInvoiceDisplayName	string      `json:"group_invoice_display_name,omitempty"`
 	LagoItemID 							uuid.UUID   `json:"lago_item_id,omitempty"`
 	ItemType   							FeeItemType `json:"item_type,omitempty"`
 }
