@@ -39,14 +39,37 @@ type SubscriptionParams struct {
 	Subscription *SubscriptionInput `json:"subscription"`
 }
 
+type ChargeOverridesInput struct {
+	ID                 *uuid.UUID             `json:"id,omitempty"`
+	AmountCurrency     Currency               `json:"amount_currency,omitempty"`
+	InvoiceDisplayName string                 `json:"invoice_display_name,omitempty"`
+	MinAmountCents     int                    `json:"min_amount_cents,omitempty"`
+	Properties         map[string]interface{} `json:"properties"`
+	GroupProperties    []GroupProperties      `json:"group_properties,omitempty"`
+	TaxCodes           []string               `json:"tax_codes,omitempty"`
+}
+
+type PlanOverridesInput struct {
+	Name               string                 `json:"name,omitempty"`
+	InvoiceDisplayName string                 `json:"invoice_display_name,omitempty"`
+	Code               string                 `json:"code,omitempty"`
+	Description        string                 `json:"description,omitempty"`
+	AmountCents        int                    `json:"amount_cents"`
+	AmountCurrency     Currency               `json:"amount_currency,omitempty"`
+	TrialPeriod        float32                `json:"trial_period"`
+	Charges            []ChargeOverridesInput `json:"charges,omitempty"`
+	TaxCodes           []string               `json:"tax_codes,omitempty"`
+}
+
 type SubscriptionInput struct {
-	ExternalCustomerID string      `json:"external_customer_id,omitempty"`
-	PlanCode           string      `json:"plan_code,omitempty"`
-	SubscriptionAt     *time.Time  `json:"subscription_at,omitempty"`
-	EndingAt           *time.Time  `json:"ending_at,omitempty"`
-	BillingTime        BillingTime `json:"billing_time,omitempty"`
-	ExternalID         string      `json:"external_id"`
-	Name               string      `json:"name"`
+	ExternalCustomerID string             `json:"external_customer_id,omitempty"`
+	PlanCode           string             `json:"plan_code,omitempty"`
+	SubscriptionAt     *time.Time         `json:"subscription_at,omitempty"`
+	EndingAt           *time.Time         `json:"ending_at,omitempty"`
+	BillingTime        BillingTime        `json:"billing_time,omitempty"`
+	PlanOverrides      PlanOverridesInput `json:"plan_overrides,omitempty"`
+	ExternalID         string             `json:"external_id"`
+	Name               string             `json:"name"`
 }
 
 type SubscriptionTerminateInput struct {
