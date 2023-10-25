@@ -104,6 +104,8 @@ type Subscription struct {
 	NextPlanCode      string `json:"next_plan_code"`
 	DowngradePlanDate string `json:"downgrade_plan_date"`
 
+	Plan *Plan `json:"plan,omitempty"`
+
 	CreatedAt    *time.Time `json:"created_at"`
 	StartedAt    *time.Time `json:"started_at"`
 	CanceledAt   *time.Time `json:"canceled_at"`
