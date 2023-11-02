@@ -46,6 +46,10 @@ type CreditNoteResult struct {
 	Meta        Metadata     `json:"meta,omitempty"`
 }
 
+type CreditNoteEstimatedResult struct {
+	CreditNoteEstimated *CreditNoteEstimated `json:"credit_note_estimated"`
+}
+
 type CreditListInput struct {
 	PerPage            int    `json:"per_page,omitempty,string"`
 	Page               int    `json:"page,omitempty,string"`
@@ -92,7 +96,7 @@ type CreditNote struct {
 	TaxesAmountCents                  int      `json:"taxes_amount_cents,omitempty"`
 	TaxesRate                         float32  `json:"taxes_rate,omitempty"`
 	SubTotalExcludingTaxesAmountCents int      `json:"sub_total_excluding_taxes_amount_cents,omitempty"`
-	CouponsAdjustementAmountCents     int      `json:"coupons_adjustement_amount_cents,omitempty"`
+	CouponsAdjustmentAmountCents      int      `json:"coupons_adjustment_amount_cents,omitempty"`
 
 	FileURL string `json:"file_url,omitempty"`
 
@@ -110,6 +114,38 @@ type CreditNote struct {
 	VatAmountCurrency                 Currency `json:"vat_amount_currency,omitempty"`
 	SubTotalVatExcludedAmountCents    int      `json:"sub_total_vat_excluded_amount_cents,omitempty"`
 	SubTotalVatExcludedAmountCurrency Currency `json:"sub_total_vat_excluded_amount_currency,omitempty"`
+}
+
+type CreditNoteEstimated struct {
+	LagoInvoiceID uuid.UUID `json:"lago_invoice_id,omitempty"`
+	InvoiceNumber string    `json:"invoice_number,omitempty"`
+
+	Currency                          Currency `json:"currency,omitempty"`
+	MaxCreditableAmountCents          int      `json:"max_creditable_amount_cents,omitempty"`
+	MaxRefundableAmountCents          int      `json:"max_refundable_amount_cents,omitempty"`
+	TaxesAmountCents                  int      `json:"taxes_amount_cents,omitempty"`
+	TaxesRate                         float32  `json:"taxes_rate,omitempty"`
+	SubTotalExcludingTaxesAmountCents int      `json:"sub_total_excluding_taxes_amount_cents,omitempty"`
+	CouponsAdjustmentAmountCents      int      `json:"coupons_adjustment_amount_cents,omitempty"`
+
+	Items []CreditNoteEstimatedItem `json:"items,omitempty"`
+
+	AppliedTaxes []CreditNoteEstimatedAppliedTax `json:"applied_taxes,omitempty"`
+}
+
+type CreditNoteEstimatedItem struct {
+	AmountCents int       `json:"amount_cents,omitempty"`
+	LagoFeeID   uuid.UUID `json:"lago_fee_id,omitempty"`
+}
+
+type CreditNoteEstimatedAppliedTax struct {
+	LagoTaxId      uuid.UUID `json:"lago_tax_id,omitempty"`
+	TaxName        string    `json:"tax_name,omitempty"`
+	TaxCode        string    `json:"tax_code,omitempty"`
+	TaxRate        float32   `json:"tax_rate,omitempty"`
+	TaxDescription string    `json:"tax_description,omitempty"`
+	AmountCents    int       `json:"amount_cents,omitempty"`
+	AmountCurrency Currency  `json:"amount_currency,omitempty"`
 }
 
 type CreditNoteItemInput struct {
@@ -132,6 +168,15 @@ type CreditNoteUpdateInput struct {
 
 type CreditNoteUpdateParams struct {
 	CreditNote *CreditNoteUpdateInput `json:"credit_note"`
+}
+
+type CreditNoteEstimateInput struct {
+	LagoInvoiceID uuid.UUID             `json:"invoice_id,omitempty"`
+	Items         []CreditNoteItemInput `json:"items,omitempty"`
+}
+
+type CreditNoteEstimateParams struct {
+	CreditNote *CreditNoteEstimateInput `json:"credit_note"`
 }
 
 func (c *Client) CreditNote() *CreditNoteRequest {
@@ -283,4 +328,28 @@ func (cr *CreditNoteRequest) Void(ctx context.Context, creditNoteID string) (*Cr
 	}
 
 	return creditNoteResult.CreditNote, nil
+}
+
+func (cr *CreditNoteRequest) Estimate(ctx context.Context, creditNoteEstimateInput *CreditNoteEstimateInput) (*CreditNoteEstimated, *Error) {
+	creditNoteEstimateParams := &CreditNoteEstimateParams{
+		CreditNote: creditNoteEstimateInput,
+	}
+
+	clientRequest := &ClientRequest{
+		Path:   "credit_notes/estimate",
+		Result: &CreditNoteEstimatedResult{},
+		Body:   creditNoteEstimateParams,
+	}
+
+	result, err := cr.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	creditNoteEstimatedResult, ok := result.(*CreditNoteEstimatedResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return creditNoteEstimatedResult.CreditNoteEstimated, nil
 }
