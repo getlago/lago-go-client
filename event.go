@@ -65,8 +65,9 @@ func (er *EventRequest) Create(ctx context.Context, eventInput *EventInput) (*Ev
 	}
 
 	clientRequest := &ClientRequest{
-		Path: "events",
-		Body: eventParams,
+		Path:   "events",
+		Result: &EventResult{},
+		Body:   eventParams,
 	}
 
 	result, err := er.client.Post(ctx, clientRequest)
@@ -88,8 +89,9 @@ func (er *EventRequest) EstimateFees(ctx context.Context, estimateInput EventEst
 	}
 
 	clientRequest := &ClientRequest{
-		Path: "events/estimate_fees",
-		Body: eventEstimateParams,
+		Path:   "events/estimate_fees",
+		Result: &FeeResult{},
+		Body:   eventEstimateParams,
 	}
 
 	result, clientErr := er.client.Post(ctx, clientRequest)
