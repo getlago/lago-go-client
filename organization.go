@@ -35,6 +35,7 @@ type OrganizationInput struct {
 	Zipcode                 string   `json:"zipcode,omitempty"`
 	State                   string   `json:"state,omitempty"`
 	Country                 string   `json:"country,omitempty"`
+	DefaultCurrency         Currency `json:"default_currency,omitempty"`
 	LegalName               string   `json:"legal_name,omitempty"`
 	LegalNumber             string   `json:"legal_number,omitempty"`
 	NetPaymentTerm          int      `json:"net_payment_term,omitempty"`
@@ -60,6 +61,7 @@ type Organization struct {
 	Zipcode                 string   `json:"zipcode,omitempty"`
 	State                   string   `json:"state,omitempty"`
 	Country                 string   `json:"country,omitempty"`
+	DefaultCurrency         Currency `json:"default_currency,omitempty"`
 	LegalName               string   `json:"legal_name,omitempty"`
 	LegalNumber             string   `json:"legal_number,omitempty"`
 	NetPaymentTerm          int      `json:"net_payment_term,omitempty"`
