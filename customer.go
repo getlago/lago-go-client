@@ -23,7 +23,7 @@ type CustomerParams struct {
 type CustomerResult struct {
 	Customer  *Customer  `json:"customer"`
 	Customers []Customer `json:"customers,omitempty"`
-	Meta      Metadata   `json:"medata,omitempty"`
+	Meta      Metadata   `json:"metadata,omitempty"`
 }
 
 type CustomerUsageResult struct {
