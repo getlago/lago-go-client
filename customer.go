@@ -39,6 +39,10 @@ type CustomerPortalUrlResult struct {
 	CustomerPortalUrl *CustomerPortalUrl `json:"customer"`
 }
 
+type CustomerCheckoutUrlResult struct {
+	CustomerCheckoutUrl *CustomerCheckoutUrl `json:"customer"`
+}
+
 type CustomerMetadataInput struct {
 	LagoID           *uuid.UUID `json:"id,omitempty"`
 	Key              string     `json:"key,omitempty"`
@@ -124,6 +128,10 @@ type CustomerUsage struct {
 
 type CustomerPortalUrl struct {
 	PortalUrl string `json:"portal_url,omitempty"`
+}
+
+type CustomerCheckoutUrl struct {
+	CheckoutUrl string `json:"checkout_url,omitempty"`
 }
 
 type CustomerUsageInput struct {
@@ -292,6 +300,27 @@ func (cr *CustomerRequest) PortalUrl(ctx context.Context, externalCustomerID str
 	}
 
 	return portalUrlResult.CustomerPortalUrl, nil
+}
+
+func (cr *CustomerRequest) CheckoutUrl(ctx context.Context, externalCustomerID string) (*CustomerCheckoutUrl, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "checkout_url")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &CustomerCheckoutUrlResult{},
+	}
+
+	result, err := cr.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	checkoutUrlResult, ok := result.(*CustomerCheckoutUrlResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return checkoutUrlResult.CustomerCheckoutUrl, nil
 }
 
 func (cr *CustomerRequest) Delete(ctx context.Context, externalCustomerID string) (*Customer, *Error) {
