@@ -7,21 +7,21 @@ import (
 
 type PaymentStatus string
 
-type OutstandingInvoiceRequest struct {
+type FinalizedInvoiceRequest struct {
 	client *Client
 }
 
-type OutstandingInvoiceListInput struct {
+type FinalizedInvoiceListInput struct {
 	AmountCurrency  string  `json:"currency,omitempty,string"`
 	Months          int     `json:"months,omitempty,string"`
 }
 
-type OutstandingInvoiceResult struct {
-	OutstandingInvoice  *OutstandingInvoice   `json:"outstanding_invoice,omitempty"`
-	OutstandingInvoices []OutstandingInvoice  `json:"outstanding_invoices,omitempty"`
+type FinalizedInvoiceResult struct {
+	FinalizedInvoice  *FinalizedInvoice   `json:"finalized_invoice,omitempty"`
+	FinalizedInvoices []FinalizedInvoice  `json:"finalized_invoices,omitempty"`
 }
 
-type OutstandingInvoice struct {
+type FinalizedInvoice struct {
 	Month			string   			  `json:"month,omitempty"`
 	PaymentStatus	InvoicePaymentStatus  `json:"payment_status,omitempty"`
 	InvoicesCount   int      			  `json:"invoices_count,omitempty"`
@@ -29,14 +29,14 @@ type OutstandingInvoice struct {
 	AmountCurrency	Currency 			  `json:"currency,omitempty"`
 }
 
-func (c *Client) OutstandingInvoice() *OutstandingInvoiceRequest {
-	return &OutstandingInvoiceRequest{
+func (c *Client) FinalizedInvoice() *FinalizedInvoiceRequest {
+	return &FinalizedInvoiceRequest{
 		client: c,
 	}
 }
 
-func (adr *OutstandingInvoiceRequest) GetList(ctx context.Context, OutstandingInvoiceListInput *OutstandingInvoiceListInput) (*OutstandingInvoiceResult, *Error) {
-	jsonQueryparams, err := json.Marshal(OutstandingInvoiceListInput)
+func (adr *FinalizedInvoiceRequest) GetList(ctx context.Context, FinalizedInvoiceListInput *FinalizedInvoiceListInput) (*FinalizedInvoiceResult, *Error) {
+	jsonQueryparams, err := json.Marshal(FinalizedInvoiceListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
@@ -47,9 +47,9 @@ func (adr *OutstandingInvoiceRequest) GetList(ctx context.Context, OutstandingIn
 	}
 
 	clientRequest := &ClientRequest{
-		Path:        "analytics/outstanding_invoices",
+		Path:        "analytics/finalized_invoices",
 		QueryParams: queryParams,
-		Result:      &OutstandingInvoiceResult{},
+		Result:      &FinalizedInvoiceResult{},
 	}
 
 	result, clientErr := adr.client.Get(ctx, clientRequest)
@@ -57,10 +57,10 @@ func (adr *OutstandingInvoiceRequest) GetList(ctx context.Context, OutstandingIn
 		return nil, clientErr
 	}
 
-	OutstandingInvoiceResult, ok := result.(*OutstandingInvoiceResult)
+	FinalizedInvoiceResult, ok := result.(*FinalizedInvoiceResult)
 	if !ok {
 		return nil, &ErrorTypeAssert
 	}
 
-	return OutstandingInvoiceResult, nil
+	return FinalizedInvoiceResult, nil
 }
