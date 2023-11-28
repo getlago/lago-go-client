@@ -7,21 +7,21 @@ import (
 
 type PaymentStatus string
 
-type OutstandingInvoiceRequest struct {
+type InvoiceCollectionRequest struct {
 	client *Client
 }
 
-type OutstandingInvoiceListInput struct {
+type InvoiceCollectionListInput struct {
 	AmountCurrency  string  `json:"currency,omitempty,string"`
 	Months          int     `json:"months,omitempty,string"`
 }
 
-type OutstandingInvoiceResult struct {
-	OutstandingInvoice  *OutstandingInvoice   `json:"outstanding_invoice,omitempty"`
-	OutstandingInvoices []OutstandingInvoice  `json:"outstanding_invoices,omitempty"`
+type InvoiceCollectionResult struct {
+	InvoiceCollection  *InvoiceCollection   `json:"invoice_collection,omitempty"`
+	InvoiceCollections []InvoiceCollection  `json:"invoice_collections,omitempty"`
 }
 
-type OutstandingInvoice struct {
+type InvoiceCollection struct {
 	Month			string   			  `json:"month,omitempty"`
 	PaymentStatus	InvoicePaymentStatus  `json:"payment_status,omitempty"`
 	InvoicesCount   int      			  `json:"invoices_count,omitempty"`
@@ -29,14 +29,14 @@ type OutstandingInvoice struct {
 	AmountCurrency	Currency 			  `json:"currency,omitempty"`
 }
 
-func (c *Client) OutstandingInvoice() *OutstandingInvoiceRequest {
-	return &OutstandingInvoiceRequest{
+func (c *Client) InvoiceCollection() *InvoiceCollectionRequest {
+	return &InvoiceCollectionRequest{
 		client: c,
 	}
 }
 
-func (adr *OutstandingInvoiceRequest) GetList(ctx context.Context, OutstandingInvoiceListInput *OutstandingInvoiceListInput) (*OutstandingInvoiceResult, *Error) {
-	jsonQueryparams, err := json.Marshal(OutstandingInvoiceListInput)
+func (adr *InvoiceCollectionRequest) GetList(ctx context.Context, InvoiceCollectionListInput *InvoiceCollectionListInput) (*InvoiceCollectionResult, *Error) {
+	jsonQueryparams, err := json.Marshal(InvoiceCollectionListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
@@ -47,9 +47,9 @@ func (adr *OutstandingInvoiceRequest) GetList(ctx context.Context, OutstandingIn
 	}
 
 	clientRequest := &ClientRequest{
-		Path:        "analytics/outstanding_invoices",
+		Path:        "analytics/invoice_collection",
 		QueryParams: queryParams,
-		Result:      &OutstandingInvoiceResult{},
+		Result:      &InvoiceCollectionResult{},
 	}
 
 	result, clientErr := adr.client.Get(ctx, clientRequest)
@@ -57,10 +57,10 @@ func (adr *OutstandingInvoiceRequest) GetList(ctx context.Context, OutstandingIn
 		return nil, clientErr
 	}
 
-	OutstandingInvoiceResult, ok := result.(*OutstandingInvoiceResult)
+	InvoiceCollectionResult, ok := result.(*InvoiceCollectionResult)
 	if !ok {
 		return nil, &ErrorTypeAssert
 	}
 
-	return OutstandingInvoiceResult, nil
+	return InvoiceCollectionResult, nil
 }
