@@ -39,19 +39,50 @@ type SubscriptionParams struct {
 	Subscription *SubscriptionInput `json:"subscription"`
 }
 
+type ChargeOverridesInput struct {
+	ID                 *uuid.UUID             `json:"id,omitempty"`
+	AmountCurrency     Currency               `json:"amount_currency,omitempty"`
+	InvoiceDisplayName string                 `json:"invoice_display_name,omitempty"`
+	MinAmountCents     int                    `json:"min_amount_cents,omitempty"`
+	Properties         map[string]interface{} `json:"properties"`
+	GroupProperties    []GroupProperties      `json:"group_properties,omitempty"`
+	TaxCodes           []string               `json:"tax_codes,omitempty"`
+}
+
+type PlanOverridesInput struct {
+	Name               string                 `json:"name,omitempty"`
+	InvoiceDisplayName string                 `json:"invoice_display_name,omitempty"`
+	Code               string                 `json:"code,omitempty"`
+	Description        string                 `json:"description,omitempty"`
+	AmountCents        int                    `json:"amount_cents"`
+	AmountCurrency     Currency               `json:"amount_currency,omitempty"`
+	TrialPeriod        float32                `json:"trial_period"`
+	Charges            []ChargeOverridesInput `json:"charges,omitempty"`
+	TaxCodes           []string               `json:"tax_codes,omitempty"`
+}
+
 type SubscriptionInput struct {
-	ExternalCustomerID string      `json:"external_customer_id,omitempty"`
-	PlanCode           string      `json:"plan_code,omitempty"`
-	SubscriptionAt     *time.Time  `json:"subscription_at,omitempty"`
-	BillingTime        BillingTime `json:"billing_time,omitempty"`
-	ExternalID         string      `json:"external_id"`
-	Name               string      `json:"name"`
+	ExternalCustomerID string              `json:"external_customer_id,omitempty"`
+	PlanCode           string              `json:"plan_code,omitempty"`
+	SubscriptionAt     *time.Time          `json:"subscription_at,omitempty"`
+	EndingAt           *time.Time          `json:"ending_at,omitempty"`
+	BillingTime        BillingTime         `json:"billing_time,omitempty"`
+	PlanOverrides      *PlanOverridesInput `json:"plan_overrides,omitempty"`
+	ExternalID         string              `json:"external_id"`
+	Name               string              `json:"name"`
+}
+
+type SubscriptionTerminateInput struct {
+	ExternalID string `json:"external_id,omitempty"`
+	Status     string `json:"status,omitempty"`
 }
 
 type SubscriptionListInput struct {
-	ExternalCustomerID string `json:"external_customer_id,omitempty"`
-	PerPage            int    `json:"per_page,omitempty,string"`
-	Page               int    `json:"page,omitempty,string"`
+	ExternalCustomerID string   `json:"external_customer_id,omitempty"`
+	PlanCode           string   `json:"plan_code,omitempty"`
+	PerPage            int      `json:"per_page,omitempty,string"`
+	Page               int      `json:"page,omitempty,string"`
+	Status             []string `json:"status,omitempty"`
 }
 
 type Subscription struct {
@@ -67,10 +98,13 @@ type Subscription struct {
 	Status         SubscriptionStatus `json:"status"`
 	BillingTime    BillingTime        `json:"billing_time"`
 	SubscriptionAt *time.Time         `json:"subscription_at"`
+	EndingAt       *time.Time         `json:"ending_at"`
 
 	PreviousPlanCode  string `json:"previous_plan_code"`
 	NextPlanCode      string `json:"next_plan_code"`
 	DowngradePlanDate string `json:"downgrade_plan_date"`
+
+	Plan *Plan `json:"plan,omitempty"`
 
 	CreatedAt    *time.Time `json:"created_at"`
 	StartedAt    *time.Time `json:"started_at"`
@@ -108,15 +142,47 @@ func (sr *SubscriptionRequest) Create(ctx context.Context, subscriptionInput *Su
 	return subscriptionResult.Subscription, nil
 }
 
-func (sr *SubscriptionRequest) Terminate(ctx context.Context, externalID string) (*Subscription, *Error) {
-	subPath := fmt.Sprintf("%s/%s", "subscriptions", externalID)
+func (sr *SubscriptionRequest) Terminate(ctx context.Context, subscriptionTerminateInput SubscriptionTerminateInput) (*Subscription, *Error) {
+	jsonQueryParams, err := json.Marshal(subscriptionTerminateInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	subPath := fmt.Sprintf("%s/%s", "subscriptions", subscriptionTerminateInput.ExternalID)
+
+	queryParams := make(map[string]string)
+	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	clientRequest := &ClientRequest{
+		Path:        subPath,
+		QueryParams: queryParams,
+		Result:      &SubscriptionResult{},
+	}
+
+	result, clientErr := sr.client.Delete(ctx, clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
+	}
+
+	subscriptionResult, ok := result.(*SubscriptionResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return subscriptionResult.Subscription, nil
+}
+
+func (sr *SubscriptionRequest) Get(ctx context.Context, subscriptionExternalId string) (*Subscription, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "subscriptions", subscriptionExternalId)
 
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &SubscriptionResult{},
 	}
 
-	result, err := sr.client.Delete(ctx, clientRequest)
+	result, err := sr.client.Get(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}

@@ -9,9 +9,16 @@ import (
 	"github.com/google/uuid"
 )
 
+type InvoiceType string
 type InvoiceStatus string
 type InvoicePaymentStatus string
 type InvoiceCreditItemType string
+
+const (
+	SubscriptionInvoiceType InvoiceType = "subscription"
+	AddOnInvoiceType        InvoiceType = "add_on"
+	CreditInvoiceType       InvoiceType = "credit"
+)
 
 const (
 	InvoiceStatusDraft     InvoiceStatus = "draft"
@@ -42,10 +49,23 @@ type InvoiceParams struct {
 	Invoice *InvoiceInput `json:"invoice"`
 }
 
+type InvoiceOneOffParams struct {
+	Invoice *InvoiceOneOffInput `json:"invoice"`
+}
+
 type InvoiceMetadataInput struct {
 	LagoID *uuid.UUID `json:"id,omitempty"`
 	Key    string     `json:"key,omitempty"`
 	Value  string     `json:"value,omitempty"`
+}
+
+type InvoiceFeesInput struct {
+	AddOnCode       		string   `json:"add_on_code,omitempty"`
+	InvoiceDisplayName	string   `json:"invoice_display_name,omitempty"`
+	UnitAmountCents 		int      `json:"unit_amount_cents,omitempty"`
+	Description     		string   `json:"description,omitempty"`
+	Units           		float32  `json:"units,omitempty"`
+	TaxCodes        		[]string `json:"tax_codes,omitempty"`
 }
 
 type InvoiceMetadataResponse struct {
@@ -61,12 +81,22 @@ type InvoiceInput struct {
 	Metadata      []InvoiceMetadataInput `json:"metadata,omitempty"`
 }
 
+type InvoiceOneOffInput struct {
+	ExternalCustomerId string             `json:"external_customer_id,omitempty"`
+	Currency           string             `json:"currency,omitempty"`
+	Fees               []InvoiceFeesInput `json:"fees,omitempty"`
+}
+
 type InvoiceListInput struct {
 	PerPage int `json:"per_page,omitempty,string"`
 	Page    int `json:"page,omitempty,string"`
 
 	IssuingDateFrom string `json:"issuing_date_from,omitempty"`
 	IssuingDateTo   string `json:"issuing_date_to,omitempty"`
+
+	ExternalCustomerID string               `json:"external_customer_id,omitempty"`
+	Status             InvoiceStatus        `json:"status,omitempty"`
+	PaymentStatus      InvoicePaymentStatus `json:"payment_status,omitempty"`
 }
 
 type InvoiceCreditItem struct {
@@ -89,6 +119,21 @@ type InvoiceCredit struct {
 	LagoID         uuid.UUID `json:"lago_id,omitempty"`
 	AmountCents    int       `json:"amount_cents,omitempty"`
 	AmountCurrency Currency  `json:"amount_currency,omitempty"`
+	BeforeVAT      bool      `json:"before_vat,omitempty"`
+}
+
+type InvoiceAppliedTax struct {
+	LagoId          uuid.UUID `json:"lago_id,omitempty"`
+	LagoInvoiceId   uuid.UUID `json:"lago_invoice_id,omitempty"`
+	LagoTaxId       uuid.UUID `json:"lago_tax_id,omitempty"`
+	TaxName         string    `json:"tax_name,omitempty"`
+	TaxCode         string    `json:"tax_code,omitempty"`
+	TaxRate         float32   `json:"tax_rate,omitempty"`
+	TaxDescription  string    `json:"tax_description,omitempty"`
+	AmountCents     int       `json:"amount_cents,omitempty"`
+	AmountCurrency  Currency  `json:"amount_currency,omitempty"`
+	FeesAmountCents int       `json:"fees_amount_cents,omitempty"`
+	CreatedAt       time.Time `json:"created_at,omitempty"`
 }
 
 type Invoice struct {
@@ -96,27 +141,47 @@ type Invoice struct {
 	SequentialID int       `json:"sequential_id,omitempty"`
 	Number       string    `json:"number,omitempty"`
 
-	Status        InvoiceStatus             `json:"status,omitempty"`
-	PaymentStatus InvoicePaymentStatus      `json:"payment_status,omitempty"`
+	IssuingDate    string `json:"issuing_date,omitempty"`
+	PaymentDueDate string `json:"payment_due_date,omitempty"`
+
+	InvoiceType   InvoiceType          `json:"invoice_type,omitempty"`
+	Status        InvoiceStatus        `json:"status,omitempty"`
+	PaymentStatus InvoicePaymentStatus `json:"payment_status,omitempty"`
+
+	Currency Currency `json:"currency,omitempty"`
+
+	FeesAmountCents                   int `json:"fees_amount_cents,omitempty"`
+	TaxesAmountCents                  int `json:"taxes_amount_cents,omitempty"`
+	CouponsAmountCents                int `json:"coupons_amount_cents,omitempty"`
+	CreditNotesAmountCents            int `json:"credit_notes_amount_cents,omitempty"`
+	SubTotalExcludingTaxesAmountCents int `json:"sub_total_excluding_taxes_amount_cents,omitempty"`
+	SubTotalIncludingTaxesAmountCents int `json:"sub_total_including_taxes_amount_cents,omitempty"`
+	TotalAmountCents                  int `json:"total_amount_cents,omitempty"`
+	PrepaidCreditAmountCents          int `json:"prepaid_credit_amount_cents,omitempty"`
+	NetPaymentTerm                    int `json:"net_payment_term,omitempty"`
+
+	FileURL       string                    `json:"file_url,omitempty"`
 	Metadata      []InvoiceMetadataResponse `json:"metadata,omitempty"`
-
-	AmountCents       int      `json:"amount_cents,omitempty"`
-	AmountCurrency    Currency `json:"amount_currency,omitempty"`
-	VatAmountCents    int      `json:"vat_amount_cents,omitempty"`
-	VatAmountCurrency Currency `json:"vat_amount_currency,omitempty"`
-
-	FileURL string `json:"file_url,omitempty"`
-
-	FromDate        string `json:"from_date,omitempty"`
-	ToDate          string `json:"to_date,omitempty"`
-	ChargesFromDate string `json:"charges_from_date,omitempty"`
-	IssuingDate     string `json:"issuing_date,omitempty"`
+	VersionNumber int                       `json:"version_number,omitempty"`
 
 	Customer      *Customer      `json:"customer,omitempty"`
 	Subscriptions []Subscription `json:"subscriptions,omitempty"`
 
-	Fees    []Fee           `json:"fees,omitempty"`
-	Credits []InvoiceCredit `json:"credits,omitempty"`
+	Fees         []Fee               `json:"fees,omitempty"`
+	Credits      []InvoiceCredit     `json:"credits,omitempty"`
+	AppliedTaxes []InvoiceAppliedTax `json:"applied_taxes,omitempty"`
+
+	// Deprecated: Will be removed in the future
+	Legacy                         bool     `json:"legacy,omitempty"`
+	AmountCurrency                 Currency `json:"amount_currency,omitempty"`
+	AmountCents                    int      `json:"amount_cents,omitempty"`
+	CreditAmountCents              int      `json:"credit_amount_cents,omitempty"`
+	CreditAmountCurrency           Currency `json:"credit_amount_currency,omitempty"`
+	TotalAmountCurrency            Currency `json:"total_amount_currency,omitempty"`
+	VatAmountCents                 int      `json:"vat_amount_cents,omitempty"`
+	VatAmountCurrency              Currency `json:"vat_amount_currency,omitempty"`
+	SubTotalVatExcludedAmountCents int      `json:"sub_total_vat_excluded_amount_cents,omitempty"`
+	SubTotalVatIncludedAmountCents int      `json:"sub_total_vat_included_amount_cents,omitempty"`
 }
 
 func (c *Client) Invoice() *InvoiceRequest {
@@ -173,6 +238,30 @@ func (ir *InvoiceRequest) GetList(ctx context.Context, invoiceListInput *Invoice
 	}
 
 	return invoiceResult, nil
+}
+
+func (ir *InvoiceRequest) Create(ctx context.Context, oneOffInput *InvoiceOneOffInput) (*Invoice, *Error) {
+	invoiceOneOffParams := &InvoiceOneOffParams{
+		Invoice: oneOffInput,
+	}
+
+	clientRequest := &ClientRequest{
+		Path:   "invoices",
+		Result: &InvoiceResult{},
+		Body:   invoiceOneOffParams,
+	}
+
+	result, err := ir.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	invoiceResult, ok := result.(*InvoiceResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return invoiceResult.Invoice, nil
 }
 
 func (ir *InvoiceRequest) Update(ctx context.Context, invoiceInput *InvoiceInput) (*Invoice, *Error) {

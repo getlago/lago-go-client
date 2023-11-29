@@ -56,17 +56,19 @@ type CouponParams struct {
 }
 
 type LimitationInput struct {
-	PlanCodes []string `json:"plan_codes,omitempty"`
+	PlanCodes           []string `json:"plan_codes,omitempty"`
+	BillableMetricCodes []string `json:"billable_metric_codes,omitempty"`
 }
 
 type CouponInput struct {
 	Name              string                `json:"name,omitempty"`
 	Code              string                `json:"code,omitempty"`
+	Description       string                `json:"description,omitempty"`
 	AmountCents       int                   `json:"amount_cents,omitempty"`
 	AmountCurrency    Currency              `json:"amount_currency,omitempty"`
 	Expiration        CouponExpiration      `json:"expiration,omitempty"`
 	ExpirationAt      *time.Time            `json:"expiration_at,omitempty"`
-	PercentageRate    float32               `json:"percentage_rate,omitempty"`
+	PercentageRate    float64               `json:"percentage_rate,omitempty,string"`
 	CouponType        CouponCalculationType `json:"coupon_type,omitempty"`
 	Frequency         CouponFrequency       `json:"frequency,omitempty"`
 	Reusable          bool                  `json:"reusable,omitempty"`
@@ -80,21 +82,25 @@ type CouponListInput struct {
 }
 
 type Coupon struct {
-	LagoID            uuid.UUID             `json:"lago_id,omitempty"`
-	Name              string                `json:"name,omitempty"`
-	Code              string                `json:"code,omitempty"`
-	AmountCents       int                   `json:"amount_cents,omitempty"`
-	AmountCurrency    Currency              `json:"amount_currency,omitempty"`
-	Expiration        CouponExpiration      `json:"expiration,omitempty"`
-	ExpirationDate    string                `json:"expiration_date,omitempty"`
-	PercentageRate    float32               `json:"percentage_rate,omitempty"`
-	CouponType        CouponCalculationType `json:"coupon_type,omitempty"`
-	Frequency         CouponFrequency       `json:"frequency,omitempty"`
-	Reusable          bool                  `json:"reusable,omitempty"`
-	LimitedPlans      bool                  `json:"limited_plans,omitempty"`
-	PlanCodes         []string              `json:"plan_codes,omitempty"`
-	FrequencyDuration int                   `json:"frequency_duration,omitempty"`
-	CreatedAt         time.Time             `json:"created_at,omitempty"`
+	LagoID                 uuid.UUID             `json:"lago_id,omitempty"`
+	Name                   string                `json:"name,omitempty"`
+	Code                   string                `json:"code,omitempty"`
+	Description            string                `json:"description,omitempty"`
+	AmountCents            int                   `json:"amount_cents,omitempty"`
+	AmountCurrency         Currency              `json:"amount_currency,omitempty"`
+	Expiration             CouponExpiration      `json:"expiration,omitempty"`
+	ExpirationAt           *time.Time            `json:"expiration_at,omitempty"`
+	PercentageRate         float64               `json:"percentage_rate,omitempty,string"`
+	CouponType             CouponCalculationType `json:"coupon_type,omitempty"`
+	Frequency              CouponFrequency       `json:"frequency,omitempty"`
+	Reusable               bool                  `json:"reusable,omitempty"`
+	LimitedPlans           bool                  `json:"limited_plans,omitempty"`
+	PlanCodes              []string              `json:"plan_codes,omitempty"`
+	LimitedBillableMetrics bool                  `json:"limited_billable_metrics,omitempty"`
+	BillableMetricCodes    []string              `json:"billable_metric_codes,omitempty"`
+	FrequencyDuration      int                   `json:"frequency_duration,omitempty"`
+	CreatedAt              time.Time             `json:"created_at,omitempty"`
+	TerminatedAt           *time.Time            `json:"terminated_at,omitempty"`
 }
 
 type AppliedCouponResult struct {
@@ -106,8 +112,8 @@ type AppliedCouponResult struct {
 type AppliedCouponListInput struct {
 	PerPage            int                 `json:"per_page,omitempty,string"`
 	Page               int                 `json:"page,omitempty,string"`
-	Status             AppliedCouponStatus `json:"status,omitempty,string"`
-	ExternalCustomerId string              `json:"external_customer_id,omitempty,string"`
+	Status             AppliedCouponStatus `json:"status,omitempty"`
+	ExternalCustomerID string              `json:"external_customer_id,omitempty"`
 }
 
 type ApplyCouponParams struct {
@@ -119,7 +125,7 @@ type ApplyCouponInput struct {
 	CouponCode         string          `json:"coupon_code,omitempty"`
 	AmountCents        int             `json:"amount_cents,omitempty"`
 	AmountCurrency     Currency        `json:"amount_currency,omitempty"`
-	PercentageRate     float32         `json:"percentage_rate,omitempty"`
+	PercentageRate     float64         `json:"percentage_rate,omitempty,string"`
 	Frequency          CouponFrequency `json:"frequency,omitempty"`
 	FrequencyDuration  int             `json:"frequency_duration,omitempty"`
 }
@@ -131,6 +137,7 @@ type AppliedCoupon struct {
 	LagoCustomerID     uuid.UUID           `json:"lago_customer_id,omitempty"`
 	Status             AppliedCouponStatus `json:"status,omitempty"`
 
+	CouponName         string              `json:"coupon_name,omitempty"`
 	CouponCode     string   `json:"coupon_code,omitempty"`
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"amount_currency,omitempty"`
@@ -138,7 +145,7 @@ type AppliedCoupon struct {
 	ExpirationDate string    `json:"expiration_date,omitempty"`
 	TerminatedAt   time.Time `json:"terminated_at,omitempty"`
 
-	PercentageRate    float32         `json:"percentage_rate,omitempty"`
+	PercentageRate    float64         `json:"percentage_rate,omitempty,string"`
 	Frequency         CouponFrequency `json:"frequency,omitempty"`
 	FrequencyDuration int             `json:"frequency_duration,omitempty"`
 
@@ -334,8 +341,8 @@ func (cr *CouponRequest) ApplyToCustomer(ctx context.Context, applyCouponInput *
 	return appliedCouponResult.AppliedCoupon, nil
 }
 
-func (acr *AppliedCouponRequest) AppliedCouponDelete(ctx context.Context, externalCustomerId string, appliedCouponId string) (*AppliedCoupon, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s/%s", "customers", externalCustomerId, "applied_coupons", appliedCouponId)
+func (acr *AppliedCouponRequest) AppliedCouponDelete(ctx context.Context, externalCustomerID string, appliedCouponID string) (*AppliedCoupon, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s", "customers", externalCustomerID, "applied_coupons", appliedCouponID)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &AppliedCouponResult{},

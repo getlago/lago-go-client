@@ -25,9 +25,10 @@ type PlanParams struct {
 type PlanInterval string
 
 const (
-	PlanWeekly  PlanInterval = "weekly"
-	PlanMonthly PlanInterval = "monthly"
-	PlanYearly  PlanInterval = "yearly"
+	PlanWeekly    PlanInterval = "weekly"
+	PlanMonthly   PlanInterval = "monthly"
+	PlanQuarterly PlanInterval = "quarterly"
+	PlanYearly    PlanInterval = "yearly"
 )
 
 type PlanChargeInput struct {
@@ -35,21 +36,29 @@ type PlanChargeInput struct {
 	BillableMetricID uuid.UUID              `json:"billable_metric_id,omitempty"`
 	AmountCurrency   Currency               `json:"amount_currency,omitempty"`
 	ChargeModel      ChargeModel            `json:"charge_model,omitempty"`
-	Instant          bool                   `json:"instant,omitempty"`
+	PayInAdvance     bool                   `json:"pay_in_advance,omitempty"`
+	Invoiceable      bool                   `json:"invoiceable,omitempty"`
+	Prorated         bool                   `json:"prorated,omitempty"`
+	MinAmountCents   int                    `json:"min_amount_cents,omitempty"`
 	Properties       map[string]interface{} `json:"properties"`
 	GroupProperties  []GroupProperties      `json:"group_properties,omitempty"`
+
+	TaxCodes []string `json:"tax_codes,omitempty"`
 }
 
 type PlanInput struct {
-	Name              string            `json:"name,omitempty"`
-	Code              string            `json:"code,omitempty"`
-	Interval          PlanInterval      `json:"interval,omitempty"`
-	Description       string            `json:"description,omitempty"`
-	AmountCents       int               `json:"amount_cents"`
-	AmountCurrency    Currency          `json:"amount_currency,omitempty"`
-	PayInAdvance      bool              `json:"pay_in_advance"`
-	BillChargeMonthly bool              `json:"bill_charge_monthly"`
-	Charges           []PlanChargeInput `json:"charges,omitempty"`
+	Name              	string            `json:"name,omitempty"`
+	InvoiceDisplayName	string            `json:"invoice_display_name,omitempty"`
+	Code              	string            `json:"code,omitempty"`
+	Interval          	PlanInterval      `json:"interval,omitempty"`
+	Description       	string            `json:"description,omitempty"`
+	AmountCents       	int               `json:"amount_cents"`
+	AmountCurrency    	Currency          `json:"amount_currency,omitempty"`
+	PayInAdvance      	bool              `json:"pay_in_advance"`
+	BillChargeMonthly 	bool              `json:"bill_charge_monthly"`
+	TrialPeriod       	float32           `json:"trial_period"`
+	Charges           	[]PlanChargeInput `json:"charges,omitempty"`
+	TaxCodes          	[]string          `json:"tax_codes,omitempty"`
 }
 
 type PlanListInput struct {
@@ -60,6 +69,7 @@ type PlanListInput struct {
 type Plan struct {
 	LagoID                   uuid.UUID    `json:"lago_id"`
 	Name                     string       `json:"name,omitempty"`
+	InvoiceDisplayName       string       `json:"invoice_display_name,omitempty"`
 	Code                     string       `json:"code,omitempty"`
 	Interval                 PlanInterval `json:"interval,omitempty"`
 	Description              string       `json:"description,omitempty"`
@@ -70,6 +80,8 @@ type Plan struct {
 	ActiveSubscriptionsCount int          `json:"active_subscriptions_count,omitempty"`
 	DraftInvoicesCount       int          `json:"draft_invoices_count,omitempty"`
 	Charges                  []Charge     `json:"charges,omitempty"`
+
+	Taxes []Tax `json:"taxes,omitempty"`
 }
 
 func (c *Client) Plan() *PlanRequest {

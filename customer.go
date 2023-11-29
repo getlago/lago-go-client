@@ -30,8 +30,17 @@ type CustomerUsageResult struct {
 	CustomerUsage *CustomerUsage `json:"customer_usage"`
 }
 
+type CustomerPastUsageResult struct {
+	UsagePeriods []CustomerUsage `json:"usage_periods"`
+	Meta         Metadata        `json:"metadata"`
+}
+
 type CustomerPortalUrlResult struct {
 	CustomerPortalUrl *CustomerPortalUrl `json:"customer"`
+}
+
+type CustomerCheckoutUrlResult struct {
+	CustomerCheckoutUrl *CustomerCheckoutUrl `json:"customer"`
 }
 
 type CustomerMetadataInput struct {
@@ -50,23 +59,26 @@ type MetadataResponse struct {
 }
 
 type CustomerInput struct {
-	ExternalID           string                            `json:"external_id,omitempty"`
-	Name                 string                            `json:"name,omitempty"`
-	Email                string                            `json:"email,omitempty"`
-	AddressLine1         string                            `json:"address_line1,omitempty"`
-	AddressLine2         string                            `json:"address_line2,omitempty"`
-	City                 string                            `json:"city,omitempty"`
-	Zipcode              string                            `json:"zipcode,omitempty"`
-	State                string                            `json:"state,omitempty"`
-	Country              string                            `json:"country,omitempty"`
-	LegalName            string                            `json:"legal_name,omitempty"`
-	LegalNumber          string                            `json:"legal_number,omitempty"`
-	Phone                string                            `json:"phone,omitempty"`
-	URL                  string                            `json:"url,omitempty"`
-	Currency             Currency                          `json:"currency,omitempty"`
-	Timezone             string                            `json:"timezone,omitempty"`
-	Metadata             []CustomerMetadataInput           `json:"metadata,omitempty"`
-	BillingConfiguration CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
+	ExternalID              string                            `json:"external_id,omitempty"`
+	Name                    string                            `json:"name,omitempty"`
+	Email                   string                            `json:"email,omitempty"`
+	AddressLine1            string                            `json:"address_line1,omitempty"`
+	AddressLine2            string                            `json:"address_line2,omitempty"`
+	City                    string                            `json:"city,omitempty"`
+	Zipcode                 string                            `json:"zipcode,omitempty"`
+	State                   string                            `json:"state,omitempty"`
+	Country                 string                            `json:"country,omitempty"`
+	LegalName               string                            `json:"legal_name,omitempty"`
+	LegalNumber             string                            `json:"legal_number,omitempty"`
+	NetPaymentTerm          int                               `json:"net_payment_term,omitempty"`
+	TaxIdentificationNumber string                            `json:"tax_identification_number,omitempty"`
+	Phone                   string                            `json:"phone,omitempty"`
+	URL                     string                            `json:"url,omitempty"`
+	Currency                Currency                          `json:"currency,omitempty"`
+	Timezone                string                            `json:"timezone,omitempty"`
+	Metadata                []CustomerMetadataInput           `json:"metadata,omitempty"`
+	BillingConfiguration    CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
+	TaxCodes                []string                          `json:"tax_codes,omitempty"`
 }
 
 type CustomerListInput struct {
@@ -80,7 +92,6 @@ type CustomerBillingConfigurationInput struct {
 	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
 	Sync               bool                    `json:"sync,omitempty"`
 	SyncWithProvider   bool                    `json:"sync_with_provider,omitempty"`
-	VatRate            float32                 `json:"vat_rate,omitempty"`
 	DocumentLocale     string                  `json:"document_locale,omitempty"`
 }
 
@@ -89,12 +100,12 @@ type CustomerBillingConfiguration struct {
 	PaymentProvider    CustomerPaymentProvider `json:"payment_provider,omitempty"`
 	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
 	SyncWithProvider   bool                    `json:"sync_with_provider,omitempty"`
-	VatRate            float32                 `json:"vat_rate,omitempty"`
 	DocumentLocale     string                  `json:"document_locale,omitempty"`
 }
 
 type CustomerChargeUsage struct {
 	Units          string   `json:"units,omitempty"`
+	EventsCount    int      `json:"events_count"`
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"amount_currency,omitempty"`
 
@@ -103,16 +114,14 @@ type CustomerChargeUsage struct {
 }
 
 type CustomerUsage struct {
-	FromDatetime time.Time `json:"from_datetime,omitempty"`
-	ToDatetime   time.Time `json:"to_datetime,omitempty"`
-	IssuingDate  string    `json:"issuing_date,omitempty"`
-
-	AmountCents         int      `json:"amount_cents,omitempty"`
-	AmountCurrency      Currency `json:"amount_currency,omitempty"`
-	TotalAmountCents    int      `json:"total_amount_cents,omitempty"`
-	TotalAmountCurrency Currency `json:"total_amount_currency,omitempty"`
-	VatAmountCents      int      `json:"vat_amount_cents,omitempty"`
-	VatAmountCurrency   Currency `json:"vat_amount_currency,omitempty"`
+	FromDatetime     time.Time `json:"from_datetime,omitempty"`
+	ToDatetime       time.Time `json:"to_datetime,omitempty"`
+	IssuingDate      string    `json:"issuing_date,omitempty"`
+	LagoInvoiceID    string    `json:"lago_invoice_id,omitempty"`
+	Currency         Currency  `json:"currency,omitempty"`
+	AmountCents      int       `json:"amount_cents,omitempty"`
+	TotalAmountCents int       `json:"total_amount_cents,omitempty"`
+	TaxesAmountCents int       `json:"taxes_amount_cents,omitempty"`
 
 	ChargesUsage []CustomerChargeUsage `json:"charges_usage,omitempty"`
 }
@@ -121,8 +130,18 @@ type CustomerPortalUrl struct {
 	PortalUrl string `json:"portal_url,omitempty"`
 }
 
+type CustomerCheckoutUrl struct {
+	CheckoutUrl string `json:"checkout_url,omitempty"`
+}
+
 type CustomerUsageInput struct {
 	ExternalSubscriptionID string `json:"external_subscription_id,omitempty"`
+}
+
+type CustomerPastUsageInput struct {
+	ExternalSubscriptionID string `json:"external_subscription_id"`
+	BillableMetricCode     string `json:"billable_metric_code,omitempty"`
+	PeriodsCount           int    `json:"periods_count,omitempty"`
 }
 
 type Customer struct {
@@ -131,26 +150,31 @@ type Customer struct {
 	ExternalID   string    `json:"external_id,omitempty"`
 	Slug         string    `json:"slug,omitempty"`
 
-	Name                 string                       `json:"name,omitempty"`
-	Email                string                       `json:"email,omitempty"`
-	AddressLine1         string                       `json:"address_line1,omitempty"`
-	AddressLine2         string                       `json:"address_line2,omitempty"`
-	City                 string                       `json:"city,omitempty"`
-	State                string                       `json:"state,omitempty"`
-	Zipcode              string                       `json:"zipcode,omitempty"`
-	Country              string                       `json:"country,omitempty"`
-	LegalName            string                       `json:"legal_name,omitempty"`
-	LegalNumber          string                       `json:"legal_number,omitempty"`
-	LogoURL              string                       `json:"logo_url,omitempty"`
-	Phone                string                       `json:"phone,omitempty"`
-	URL                  string                       `json:"url,omitempty"`
-	BillingConfiguration CustomerBillingConfiguration `json:"billing_configuration,omitempty"`
-	Metadata             []MetadataResponse           `json:"metadata,omitempty"`
-	Currency             Currency                     `json:"currency,omitempty"`
-	Timezone             string                       `json:"timezone,omitempty"`
-	ApplicableTimezone   string                       `json:"applicable_timezone,omitempty"`
+	Name                    string                       `json:"name,omitempty"`
+	Email                   string                       `json:"email,omitempty"`
+	AddressLine1            string                       `json:"address_line1,omitempty"`
+	AddressLine2            string                       `json:"address_line2,omitempty"`
+	City                    string                       `json:"city,omitempty"`
+	State                   string                       `json:"state,omitempty"`
+	Zipcode                 string                       `json:"zipcode,omitempty"`
+	Country                 string                       `json:"country,omitempty"`
+	LegalName               string                       `json:"legal_name,omitempty"`
+	LegalNumber             string                       `json:"legal_number,omitempty"`
+	NetPaymentTerm          int                          `json:"net_payment_term,omitempty"`
+	TaxIdentificationNumber string                       `json:"tax_identification_number,omitempty"`
+	LogoURL                 string                       `json:"logo_url,omitempty"`
+	Phone                   string                       `json:"phone,omitempty"`
+	URL                     string                       `json:"url,omitempty"`
+	BillingConfiguration    CustomerBillingConfiguration `json:"billing_configuration,omitempty"`
+	Metadata                []MetadataResponse           `json:"metadata,omitempty"`
+	Currency                Currency                     `json:"currency,omitempty"`
+	Timezone                string                       `json:"timezone,omitempty"`
+	ApplicableTimezone      string                       `json:"applicable_timezone,omitempty"`
+
+	Taxes []Tax `json:"taxes,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
 type CustomerRequest struct {
@@ -225,6 +249,38 @@ func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID 
 	return currentUsageResult.CustomerUsage, nil
 }
 
+func (cr *CustomerRequest) PastUsage(ctx context.Context, externalCustomerID string, customerPastUsageInput *CustomerPastUsageInput) (*CustomerPastUsageResult, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "past_usage")
+
+	jsonQueryParams, err := json.Marshal(customerPastUsageInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	queryParams := make(map[string]string)
+	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	clientRequest := &ClientRequest{
+		Path:        subPath,
+		QueryParams: queryParams,
+		Result:      &CustomerPastUsageResult{},
+	}
+
+	result, clientErr := cr.client.Get(ctx, clientRequest)
+	if err != nil {
+		return nil, clientErr
+	}
+
+	pastUsageResult, ok := result.(*CustomerPastUsageResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return pastUsageResult, nil
+}
+
 func (cr *CustomerRequest) PortalUrl(ctx context.Context, externalCustomerID string) (*CustomerPortalUrl, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "portal_url")
 
@@ -244,6 +300,27 @@ func (cr *CustomerRequest) PortalUrl(ctx context.Context, externalCustomerID str
 	}
 
 	return portalUrlResult.CustomerPortalUrl, nil
+}
+
+func (cr *CustomerRequest) CheckoutUrl(ctx context.Context, externalCustomerID string) (*CustomerCheckoutUrl, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "checkout_url")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &CustomerCheckoutUrlResult{},
+	}
+
+	result, err := cr.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	checkoutUrlResult, ok := result.(*CustomerCheckoutUrlResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return checkoutUrlResult.CustomerCheckoutUrl, nil
 }
 
 func (cr *CustomerRequest) Delete(ctx context.Context, externalCustomerID string) (*Customer, *Error) {

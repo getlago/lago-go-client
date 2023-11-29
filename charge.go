@@ -9,10 +9,12 @@ import (
 type ChargeModel string
 
 const (
-	StandardChargeModel   ChargeModel = "standard"
-	GraduatedChargeModel  ChargeModel = "graduated"
-	PackageChargeModel    ChargeModel = "package"
-	PercentageChargeModel ChargeModel = "percentage"
+	StandardChargeModel            ChargeModel = "standard"
+	GraduatedChargeModel           ChargeModel = "graduated"
+	GraduatedPercentageChargeModel ChargeModel = "graduated_percentage"
+	PackageChargeModel             ChargeModel = "package"
+	PercentageChargeModel          ChargeModel = "percentage"
+	VolumeChargeModel              ChargeModel = "volume"
 )
 
 type Charge struct {
@@ -21,12 +23,19 @@ type Charge struct {
 	BillableMetricCode   string                 `json:"billable_metric_code,omitempty"`
 	ChargeModel          ChargeModel            `json:"charge_model,omitempty"`
 	CreatedAt            time.Time              `json:"created_at,omitempty"`
-	Instant              bool                   `json:"instant,omitempty"`
+	PayInAdvance         bool                   `json:"pay_in_advance,omitempty"`
+	Invoiceable          bool                   `json:"invoiceable,omitempty"`
+	InvoiceDisplayName   string                 `json:"invoice_display_name,omitempty"`
+	Prorated             bool                   `json:"prorated,omitempty"`
+	MinAmountCents       int                    `json:"min_amount_cents,omitempty"`
 	Properties           map[string]interface{} `json:"properties,omitempty"`
 	GroupProperties      []GroupProperties      `json:"group_properties,omitempty"`
+
+	Taxes []Tax `json:"tax,omitempty"`
 }
 
 type GroupProperties struct {
-	GroupId uuid.UUID              `json:"group_id"`
-	Values  map[string]interface{} `json:"values"`
+	GroupID             uuid.UUID              `json:"group_id"`
+	Values              map[string]interface{} `json:"values"`
+	InvoiceDisplayName  string                 `json:"invoice_display_name,omitempty"`
 }
