@@ -107,19 +107,20 @@ type Fee struct {
 	LagoTrueUpParentFeeID  uuid.UUID `json:"lago_true_up_parent_fee_id,omitempty"`
 	ExternalSubscriptionID string    `json:"external_subscription_id,omitempty"`
 
-	AmountCents         int     `json:"amount_cents,omitempty"`
-	UnitAmountCents     int     `json:"unit_amount_cents,omitempty"` // deprecated
-	PreciseUnitAmount   int     `json:"precise_unit_amount,omitempty"`
-	AmountCurrency      string  `json:"amount_currency,omitempty"`
-	TaxesAmountCents    int     `json:"taxes_amount_cents,omitempty"`
-	TaxesRate           float32 `json:"taxes_rate,omitempty"`
-	TotalAmountCents    int     `json:"total_amount_cents,omitempty"`
-	TotalAmountCurrency string  `json:"total_amount_currency,omitempty"`
-	PayInAdvance        bool    `json:"pay_in_advance,omitempty"`
-	Invoiceable         bool    `json:"invoiceable,omitempty"`
-	FromDate            string  `json:"from_date,omitempty"`
-	ToDate              string  `json:"to_date,omitempty"`
-	InvoiceDisplayName  string  `json:"invoice_display_name,omitempty"`
+	AmountCents         int                    `json:"amount_cents,omitempty"`
+	AmountDetails       map[string]interface{} `json:"amount_details,omitempty"`
+	UnitAmountCents     int                    `json:"unit_amount_cents,omitempty"` // deprecated
+	PreciseUnitAmount   int                    `json:"precise_unit_amount,omitempty"`
+	AmountCurrency      string                 `json:"amount_currency,omitempty"`
+	TaxesAmountCents    int                    `json:"taxes_amount_cents,omitempty"`
+	TaxesRate           float32                `json:"taxes_rate,omitempty"`
+	TotalAmountCents    int                    `json:"total_amount_cents,omitempty"`
+	TotalAmountCurrency string                 `json:"total_amount_currency,omitempty"`
+	PayInAdvance        bool                   `json:"pay_in_advance,omitempty"`
+	Invoiceable         bool                   `json:"invoiceable,omitempty"`
+	FromDate            string                 `json:"from_date,omitempty"`
+	ToDate              string                 `json:"to_date,omitempty"`
+	InvoiceDisplayName  string                 `json:"invoice_display_name,omitempty"`
 
 	Units       string `json:"units,omitempty"`
 	Description string `json:"description,omitempty"`
