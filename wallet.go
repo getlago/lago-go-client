@@ -16,6 +16,25 @@ const (
 	Terminated Status = "terminated"
 )
 
+type RecurringTransactionRuleInput struct {
+	LagoID           uuid.UUID `json:"lago_id,omitempty"`
+	RuleType         string    `json:"rule_type,omitempty"`
+	Interval         string    `json:"interval,omitempty"`
+	ThresholdCredits string    `json:"threshold_credits,omitempty"`
+	PaidCredits      string    `json:"paid_credits,omitempty"`
+	GrantedCredits   string    `json:"granted_credits,omitempty"`
+}
+
+type RecurringTransactionRuleResponse struct {
+	LagoID           uuid.UUID `json:"lago_id,omitempty"`
+	RuleType         string    `json:"rule_type,omitempty"`
+	Interval         string    `json:"interval,omitempty"`
+	ThresholdCredits string    `json:"threshold_credits,omitempty"`
+	PaidCredits      string    `json:"paid_credits,omitempty"`
+	GrantedCredits   string    `json:"granted_credits,omitempty"`
+	CreatedAt        time.Time `json:"created_at,omitempty"`
+}
+
 type WalletRequest struct {
 	client *Client
 }
@@ -25,13 +44,14 @@ type WalletParams struct {
 }
 
 type WalletInput struct {
-	RateAmount         string     `json:"rate_amount,omitempty"`
-	Currency           Currency   `json:"currency,omitempty"`
-	Name               string     `json:"name,omitempty"`
-	PaidCredits        string     `json:"paid_credits,omitempty"`
-	GrantedCredits     string     `json:"granted_credits,omitempty"`
-	ExpirationAt       *time.Time `json:"expiration_at,omitempty"`
-	ExternalCustomerID string     `json:"external_customer_id,omitempty"`
+	RateAmount                string                          `json:"rate_amount,omitempty"`
+	Currency                  Currency                        `json:"currency,omitempty"`
+	Name                      string                          `json:"name,omitempty"`
+	PaidCredits               string                          `json:"paid_credits,omitempty"`
+	GrantedCredits            string                          `json:"granted_credits,omitempty"`
+	ExpirationAt              *time.Time                      `json:"expiration_at,omitempty"`
+	ExternalCustomerID        string                          `json:"external_customer_id,omitempty"`
+	RecurringTransactionRules []RecurringTransactionRuleInput `json:"recurring_transaction_rules,omitempty"`
 }
 
 type WalletListInput struct {
@@ -47,22 +67,23 @@ type WalletResult struct {
 }
 
 type Wallet struct {
-	LagoID               uuid.UUID `json:"lago_id,omitempty"`
-	LagoCustomerID       uuid.UUID `json:"lago_customer_id,omitempty"`
-	ExternalCustomerID   string    `json:"external_customer_id,omitempty"`
-	Status               Status    `json:"status,omitempty"`
-	Currency             Currency  `json:"currency,omitempty"`
-	Name                 string    `json:"name,omitempty"`
-	RateAmount           string    `json:"rate_amount,omitempty"`
-	CreditsBalance       string    `json:"credits_balance,omitempty"`
-	Balance              string    `json:"balance,omitempty"` // NOTE(legacy)
-	BalanceCents         int       `json:"balance_cents,omitempty"`
-	ConsumedCredits      string    `json:"consumed_credits,omitempty"`
-	CreatedAt            time.Time `json:"created_at,omitempty"`
-	ExpirationDate       time.Time `json:"expiration_date,omitempty"`
-	LastBalanceSyncAt    time.Time `json:"last_balance_sync_at,omitempty"`
-	LastConsumedCreditAt time.Time `json:"last_consumed_credit_at,omitempty"`
-	TerminatedAt         time.Time `json:"terminated_at,omitempty"`
+	LagoID                    uuid.UUID                          `json:"lago_id,omitempty"`
+	LagoCustomerID            uuid.UUID                          `json:"lago_customer_id,omitempty"`
+	ExternalCustomerID        string                             `json:"external_customer_id,omitempty"`
+	Status                    Status                             `json:"status,omitempty"`
+	Currency                  Currency                           `json:"currency,omitempty"`
+	Name                      string                             `json:"name,omitempty"`
+	RateAmount                string                             `json:"rate_amount,omitempty"`
+	CreditsBalance            string                             `json:"credits_balance,omitempty"`
+	Balance                   string                             `json:"balance,omitempty"` // NOTE(legacy)
+	BalanceCents              int                                `json:"balance_cents,omitempty"`
+	ConsumedCredits           string                             `json:"consumed_credits,omitempty"`
+	CreatedAt                 time.Time                          `json:"created_at,omitempty"`
+	ExpirationDate            time.Time                          `json:"expiration_date,omitempty"`
+	LastBalanceSyncAt         time.Time                          `json:"last_balance_sync_at,omitempty"`
+	LastConsumedCreditAt      time.Time                          `json:"last_consumed_credit_at,omitempty"`
+	TerminatedAt              time.Time                          `json:"terminated_at,omitempty"`
+	RecurringTransactionRules []RecurringTransactionRuleResponse `json:"recurring_transaction_rules,omitempty"`
 }
 
 func (c *Client) Wallet() *WalletRequest {
