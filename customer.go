@@ -12,6 +12,7 @@ import (
 type CustomerPaymentProvider string
 
 const (
+	PaymentProviderAdyen      CustomerPaymentProvider = "adyen"
 	PaymentProviderStripe     CustomerPaymentProvider = "stripe"
 	PaymentProviderGocardless CustomerPaymentProvider = "gocardless"
 )
@@ -87,20 +88,22 @@ type CustomerListInput struct {
 }
 
 type CustomerBillingConfigurationInput struct {
-	InvoiceGracePeriod int                     `json:"invoice_grace_period,omitempty"`
-	PaymentProvider    CustomerPaymentProvider `json:"payment_provider,omitempty"`
-	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
-	Sync               bool                    `json:"sync,omitempty"`
-	SyncWithProvider   bool                    `json:"sync_with_provider,omitempty"`
-	DocumentLocale     string                  `json:"document_locale,omitempty"`
+	InvoiceGracePeriod  int                     `json:"invoice_grace_period,omitempty"`
+	PaymentProvider     CustomerPaymentProvider `json:"payment_provider,omitempty"`
+	PaymentProviderCode string                  `json:"payment_provider_code,omitempty"`
+	ProviderCustomerID  string                  `json:"provider_customer_id,omitempty"`
+	Sync                bool                    `json:"sync,omitempty"`
+	SyncWithProvider    bool                    `json:"sync_with_provider,omitempty"`
+	DocumentLocale      string                  `json:"document_locale,omitempty"`
 }
 
 type CustomerBillingConfiguration struct {
-	InvoiceGracePeriod int                     `json:"invoice_grace_period,omitempty"`
-	PaymentProvider    CustomerPaymentProvider `json:"payment_provider,omitempty"`
-	ProviderCustomerID string                  `json:"provider_customer_id,omitempty"`
-	SyncWithProvider   bool                    `json:"sync_with_provider,omitempty"`
-	DocumentLocale     string                  `json:"document_locale,omitempty"`
+	InvoiceGracePeriod  int                     `json:"invoice_grace_period,omitempty"`
+	PaymentProvider     CustomerPaymentProvider `json:"payment_provider,omitempty"`
+	PaymentProviderCode string                  `json:"payment_provider_code,omitempty"`
+	ProviderCustomerID  string                  `json:"provider_customer_id,omitempty"`
+	SyncWithProvider    bool                    `json:"sync_with_provider,omitempty"`
+	DocumentLocale      string                  `json:"document_locale,omitempty"`
 }
 
 type CustomerChargeUsage struct {
