@@ -16,6 +16,10 @@ type EventParams struct {
 	Event *EventInput `json:"event"`
 }
 
+type BatchEventParams struct {
+	Events *[]EventInput `json:"events"`
+}
+
 type EventInput struct {
 	TransactionID          string                 `json:"transaction_id,omitempty"`
 	ExternalCustomerID     string                 `json:"external_customer_id,omitempty"`
@@ -34,6 +38,10 @@ type EventEstimateFeesInput struct {
 	ExternalSubscriptionID string            `json:"external_subscription_id,omitempty"`
 	Code                   string            `json:"code,omitempty"`
 	Properties             map[string]string `json:"properties,omitempty"`
+}
+
+type BatchEventResult struct {
+	Events *[]Event `json:"events"`
 }
 
 type EventResult struct {
@@ -125,4 +133,28 @@ func (er *EventRequest) Get(ctx context.Context, eventID string) (*Event, *Error
 	}
 
 	return eventResult.Event, nil
+}
+
+func (er *EventRequest) Batch(ctx context.Context, batchInput *[]EventInput) (*[]Event, *Error) {
+	eventParams := &BatchEventParams{
+		Events: batchInput,
+	}
+
+	clientRequest := &ClientRequest{
+		Path:   "events/batch",
+		Result: &EventResult{},
+		Body:   eventParams,
+	}
+
+	result, err := er.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	batchEventResult, ok := result.(*BatchEventResult)
+	if !ok {
+		return nil, err
+	}
+
+	return batchEventResult.Events, nil
 }
