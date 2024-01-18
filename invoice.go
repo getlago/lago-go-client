@@ -18,6 +18,7 @@ const (
 	SubscriptionInvoiceType InvoiceType = "subscription"
 	AddOnInvoiceType        InvoiceType = "add_on"
 	CreditInvoiceType       InvoiceType = "credit"
+	OneOffInvoiceType       InvoiceType = "one_off"
 )
 
 const (
@@ -60,12 +61,12 @@ type InvoiceMetadataInput struct {
 }
 
 type InvoiceFeesInput struct {
-	AddOnCode       		string   `json:"add_on_code,omitempty"`
-	InvoiceDisplayName	string   `json:"invoice_display_name,omitempty"`
-	UnitAmountCents 		int      `json:"unit_amount_cents,omitempty"`
-	Description     		string   `json:"description,omitempty"`
-	Units           		float32  `json:"units,omitempty"`
-	TaxCodes        		[]string `json:"tax_codes,omitempty"`
+	AddOnCode          string   `json:"add_on_code,omitempty"`
+	InvoiceDisplayName string   `json:"invoice_display_name,omitempty"`
+	UnitAmountCents    int      `json:"unit_amount_cents,omitempty"`
+	Description        string   `json:"description,omitempty"`
+	Units              float32  `json:"units,omitempty"`
+	TaxCodes           []string `json:"tax_codes,omitempty"`
 }
 
 type InvoiceMetadataResponse struct {
