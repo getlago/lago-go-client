@@ -46,6 +46,10 @@ type InvoiceResult struct {
 	Meta     Metadata  `json:"meta,omitempty"`
 }
 
+type InvoicePaymentUrlResult struct {
+	InvoicePaymentUrl *InvoicePaymentUrl `json:"invoice_payment_url"`
+}
+
 type InvoiceParams struct {
 	Invoice *InvoiceInput `json:"invoice"`
 }
@@ -183,6 +187,10 @@ type Invoice struct {
 	VatAmountCurrency              Currency `json:"vat_amount_currency,omitempty"`
 	SubTotalVatExcludedAmountCents int      `json:"sub_total_vat_excluded_amount_cents,omitempty"`
 	SubTotalVatIncludedAmountCents int      `json:"sub_total_vat_included_amount_cents,omitempty"`
+}
+
+type InvoicePaymentUrl struct {
+	PaymentUrl string `json:"payment_url,omitempty"`
 }
 
 func (c *Client) Invoice() *InvoiceRequest {
@@ -381,6 +389,31 @@ func (ir *InvoiceRequest) RetryPayment(ctx context.Context, invoiceID string) (*
 		}
 
 		return invoiceResult.Invoice, nil
+	}
+
+	return nil, nil
+}
+
+func (ir *InvoiceRequest) PaymentUrl(ctx context.Context, invoiceID string) (*InvoicePaymentUrl, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "payment_url")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &InvoicePaymentUrlResult{},
+	}
+
+	result, err := ir.client.PostWithoutBody(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	if result != nil {
+		paymentUrlResult, ok := result.(*InvoicePaymentUrlResult)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return paymentUrlResult.InvoicePaymentUrl, nil
 	}
 
 	return nil, nil
