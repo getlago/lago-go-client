@@ -217,6 +217,7 @@ func (c *Client) Delete(ctx context.Context, cr *ClientRequest) (interface{}, *E
 		SetError(&Error{}).
 		SetResult(cr.Result).
 		SetBody(cr.Body).
+		SetQueryParams(cr.QueryParams).
 		Delete(cr.Path)
 	if err != nil {
 		return nil, &Error{Err: err}
