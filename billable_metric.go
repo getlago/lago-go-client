@@ -43,6 +43,7 @@ type BillableMetricInput struct {
 	FieldName        string                 `json:"field_name"`
 	WeightedInterval WeightedInterval       `json:"weighted_interval,omitempty"`
 	Group            map[string]interface{} `json:"group,omitempty"`
+	Filters          []BillableMetricFilter `json:"filters,omitempty"`
 }
 
 type BillableMetricListInput struct {
@@ -56,6 +57,11 @@ type BillableMetricResult struct {
 	Meta            Metadata         `json:"meta,omitempty"`
 }
 
+type BillableMetricFilter struct {
+	Key    string   `json:"key,omitempty"`
+	Values []string `json:"values,omitempty"`
+}
+
 type BillableMetric struct {
 	LagoID                   uuid.UUID              `json:"lago_id"`
 	Name                     string                 `json:"name,omitempty"`
@@ -67,6 +73,7 @@ type BillableMetric struct {
 	CreatedAt                time.Time              `json:"created_at,omitempty"`
 	WeightedInterval         *WeightedInterval      `json:"weighted_interval,omitempty"`
 	Group                    map[string]interface{} `json:"group,omitempty"`
+	Filters                  []BillableMetricFilter `json:"filters,omitempty"`
 	ActiveSubscriptionsCount int                    `json:"active_subscriptions_count,omitempty"`
 	DraftInvoicesCount       int                    `json:"draft_invoices_count,omitempty"`
 	PlansCount               int                    `json:"plans_count,omitempty"`
