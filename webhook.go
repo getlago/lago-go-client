@@ -44,7 +44,7 @@ func (wr *WebhookRequest) GetPublicKey(ctx context.Context) (*rsa.PublicKey, *Er
 
 	// Decode the base64-encoded key
 	bytesResult, decodeErr := base64.StdEncoding.DecodeString(validatedResult)
-	if err != nil {
+	if decodeErr != nil {
 		return nil, &Error{
 			Err:            decodeErr,
 			HTTPStatusCode: http.StatusInternalServerError,

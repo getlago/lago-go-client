@@ -116,7 +116,7 @@ func (bmr *BillableMetricRequest) GetList(ctx context.Context, billableMetricLis
 	}
 
 	result, clientErr := bmr.client.Get(ctx, clientRequest)
-	if err != nil {
+	if clientErr != nil {
 		return nil, clientErr
 	}
 
