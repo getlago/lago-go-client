@@ -115,6 +115,7 @@ type CustomerChargeUsage struct {
 	Charge         *Charge                      `json:"charge,omitempty"`
 	BillableMetric *BillableMetric              `json:"billable_metric,omitempty"`
 	Groups         []CustomerChargeGroupdUsage  `json:"groups,omitempty"`
+	Filters        []CustomerChargeFilterUsage  `json:"filters,omitempty"`
 	GroupedUsage   []CustomerChargeGroupedUsage `json:"grouped_usage,omitempty"`
 }
 
@@ -127,12 +128,21 @@ type CustomerChargeGroupdUsage struct {
 	Units       string    `json:"units,omitempty"`
 }
 
+type CustomerChargeFilterUsage struct {
+	InvoiceDisplayName string                 `json:"invoice_display_name,omitempty"`
+	Values             map[string]interface{} `json:"value,omitempty"`
+	AmountCents        int                    `json:"amount_cents,omitempty"`
+	EventsCount        int                    `json:"events_count,omitempty"`
+	Units              string                 `json:"units,omitempty"`
+}
+
 type CustomerChargeGroupedUsage struct {
 	AmountCents int                         `json:"amount_cents,omitempty"`
 	EventsCount int                         `json:"events_count,omitempty"`
 	Units       string                      `json:"units,omitempty"`
 	GroupedBy   map[string]interface{}      `json:"grouped_by,omitempty"`
 	Groups      []CustomerChargeGroupdUsage `json:"groups,omitempty"`
+	Filters     []CustomerChargeFilterUsage `json:"filters,omitempty"`
 }
 
 type CustomerUsage struct {
