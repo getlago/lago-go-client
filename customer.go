@@ -259,7 +259,7 @@ func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID 
 	}
 
 	result, clientErr := cr.client.Get(ctx, clientRequest)
-	if err != nil {
+	if clientErr != nil {
 		return nil, clientErr
 	}
 
@@ -291,7 +291,7 @@ func (cr *CustomerRequest) PastUsage(ctx context.Context, externalCustomerID str
 	}
 
 	result, clientErr := cr.client.Get(ctx, clientRequest)
-	if err != nil {
+	if clientErr != nil {
 		return nil, clientErr
 	}
 
@@ -403,7 +403,7 @@ func (cr *CustomerRequest) GetList(ctx context.Context, customerListInput *Custo
 	}
 
 	result, clientErr := cr.client.Get(ctx, clientRequest)
-	if err != nil {
+	if clientErr != nil {
 		return nil, clientErr
 	}
 

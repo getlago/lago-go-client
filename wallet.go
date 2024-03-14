@@ -134,7 +134,7 @@ func (bmr *WalletRequest) GetList(ctx context.Context, walletListInput *WalletLi
 	}
 
 	result, clientErr := bmr.client.Get(ctx, clientRequest)
-	if err != nil {
+	if clientErr != nil {
 		return nil, clientErr
 	}
 

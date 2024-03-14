@@ -92,7 +92,7 @@ func (wer *WebhookEndpointRequest) GetList(ctx context.Context, webhookEndpointL
 	}
 
 	result, clientErr := wer.client.Get(ctx, clientRequest)
-	if err != nil {
+	if clientErr != nil {
 		return nil, clientErr
 	}
 
