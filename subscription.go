@@ -49,16 +49,23 @@ type ChargeOverridesInput struct {
 	TaxCodes           []string               `json:"tax_codes,omitempty"`
 }
 
+type MinimumCommitmentOverridesInput struct {
+	AmountCents         int      `json:"amount_cents,omitempty"`
+	InvoiceDisplayName  string   `json:"invoice_display_name,omitempty"`
+	TaxCodes          	[]string `json:"tax_codes,omitempty"`
+}
+
 type PlanOverridesInput struct {
-	Name               string                 `json:"name,omitempty"`
-	InvoiceDisplayName string                 `json:"invoice_display_name,omitempty"`
-	Code               string                 `json:"code,omitempty"`
-	Description        string                 `json:"description,omitempty"`
-	AmountCents        int                    `json:"amount_cents"`
-	AmountCurrency     Currency               `json:"amount_currency,omitempty"`
-	TrialPeriod        float32                `json:"trial_period"`
-	Charges            []ChargeOverridesInput `json:"charges,omitempty"`
-	TaxCodes           []string               `json:"tax_codes,omitempty"`
+	Name               string                           `json:"name,omitempty"`
+	InvoiceDisplayName string                           `json:"invoice_display_name,omitempty"`
+	Code               string                           `json:"code,omitempty"`
+	Description        string                           `json:"description,omitempty"`
+	AmountCents        int                              `json:"amount_cents"`
+	AmountCurrency     Currency                         `json:"amount_currency,omitempty"`
+	TrialPeriod        float32                          `json:"trial_period"`
+	Charges            []ChargeOverridesInput           `json:"charges,omitempty"`
+	MinimumCommitment  *MinimumCommitmentOverridesInput `json:"minimum_commitment"`
+	TaxCodes           []string                         `json:"tax_codes,omitempty"`
 }
 
 type SubscriptionInput struct {

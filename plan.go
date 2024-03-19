@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -46,19 +47,26 @@ type PlanChargeInput struct {
 	TaxCodes []string `json:"tax_codes,omitempty"`
 }
 
+type MinimumCommitmentInput struct {
+	AmountCents         int      `json:"amount_cents,omitempty"`
+	InvoiceDisplayName  string   `json:"invoice_display_name,omitempty"`
+	TaxCodes          	[]string `json:"tax_codes,omitempty"`
+}
+
 type PlanInput struct {
-	Name              	string            `json:"name,omitempty"`
-	InvoiceDisplayName	string            `json:"invoice_display_name,omitempty"`
-	Code              	string            `json:"code,omitempty"`
-	Interval          	PlanInterval      `json:"interval,omitempty"`
-	Description       	string            `json:"description,omitempty"`
-	AmountCents       	int               `json:"amount_cents"`
-	AmountCurrency    	Currency          `json:"amount_currency,omitempty"`
-	PayInAdvance      	bool              `json:"pay_in_advance"`
-	BillChargeMonthly 	bool              `json:"bill_charge_monthly"`
-	TrialPeriod       	float32           `json:"trial_period"`
-	Charges           	[]PlanChargeInput `json:"charges,omitempty"`
-	TaxCodes          	[]string          `json:"tax_codes,omitempty"`
+	Name              	string                  `json:"name,omitempty"`
+	InvoiceDisplayName	string                  `json:"invoice_display_name,omitempty"`
+	Code              	string                  `json:"code,omitempty"`
+	Interval          	PlanInterval            `json:"interval,omitempty"`
+	Description       	string                  `json:"description,omitempty"`
+	AmountCents       	int                     `json:"amount_cents"`
+	AmountCurrency    	Currency                `json:"amount_currency,omitempty"`
+	PayInAdvance      	bool                    `json:"pay_in_advance"`
+	BillChargeMonthly 	bool                    `json:"bill_charge_monthly"`
+	TrialPeriod       	float32                 `json:"trial_period"`
+	Charges           	[]PlanChargeInput       `json:"charges,omitempty"`
+	MinimumCommitment   *MinimumCommitmentInput `json:"minimum_commitment,omitempty"`
+	TaxCodes          	[]string                `json:"tax_codes,omitempty"`
 }
 
 type PlanListInput struct {
@@ -66,20 +74,33 @@ type PlanListInput struct {
 	Page    int `json:"page,omitempty,string"`
 }
 
+type MinimumCommitment struct {
+	LagoID              uuid.UUID    `json:"lago_id"`
+	PlanCode            string       `json:"plan_code,omitempty"`
+	InvoiceDisplayName	string       `json:"invoice_display_name,omitempty"`
+	AmountCents         int          `json:"amount_cents"`
+	Interval            PlanInterval `json:"interval,omitempty"`
+	CreatedAt           time.Time    `json:"created_at,omitempty"`
+	UpdatedAt           time.Time    `json:"updated_at,omitempty"`
+
+	Taxes []Tax `json:"tax,omitempty"`
+}
+
 type Plan struct {
-	LagoID                   uuid.UUID    `json:"lago_id"`
-	Name                     string       `json:"name,omitempty"`
-	InvoiceDisplayName       string       `json:"invoice_display_name,omitempty"`
-	Code                     string       `json:"code,omitempty"`
-	Interval                 PlanInterval `json:"interval,omitempty"`
-	Description              string       `json:"description,omitempty"`
-	AmountCents              int          `json:"amount_cents,omitempty"`
-	AmountCurrency           Currency     `json:"amount_currency,omitempty"`
-	PayInAdvance             bool         `json:"pay_in_advance,omitempty"`
-	BillChargeMonthly        bool         `json:"bill_charge_monthly,omitempty"`
-	ActiveSubscriptionsCount int          `json:"active_subscriptions_count,omitempty"`
-	DraftInvoicesCount       int          `json:"draft_invoices_count,omitempty"`
-	Charges                  []Charge     `json:"charges,omitempty"`
+	LagoID                   uuid.UUID          `json:"lago_id"`
+	Name                     string             `json:"name,omitempty"`
+	InvoiceDisplayName       string             `json:"invoice_display_name,omitempty"`
+	Code                     string             `json:"code,omitempty"`
+	Interval                 PlanInterval       `json:"interval,omitempty"`
+	Description              string             `json:"description,omitempty"`
+	AmountCents              int                `json:"amount_cents,omitempty"`
+	AmountCurrency           Currency           `json:"amount_currency,omitempty"`
+	PayInAdvance             bool               `json:"pay_in_advance,omitempty"`
+	BillChargeMonthly        bool               `json:"bill_charge_monthly,omitempty"`
+	ActiveSubscriptionsCount int                `json:"active_subscriptions_count,omitempty"`
+	DraftInvoicesCount       int          	    `json:"draft_invoices_count,omitempty"`
+	Charges                  []Charge           `json:"charges,omitempty"`
+	MinimumCommitment 	  	 *MinimumCommitment `json:"minimum_commitment"`
 
 	Taxes []Tax `json:"taxes,omitempty"`
 }
