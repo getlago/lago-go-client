@@ -7,7 +7,7 @@ This is a Go wrapper for Lago API
 ## Installation
 
 ```shell
-go get github.com/getlago/lago-go-client@v0.15.2-alpha
+go get github.com/getlago/lago-go-client@v1
 ```
 
 ## Usage
