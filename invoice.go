@@ -146,8 +146,9 @@ type Invoice struct {
 	SequentialID int       `json:"sequential_id,omitempty"`
 	Number       string    `json:"number,omitempty"`
 
-	IssuingDate    string `json:"issuing_date,omitempty"`
-	PaymentDueDate string `json:"payment_due_date,omitempty"`
+	IssuingDate          string    `json:"issuing_date,omitempty"`
+	PaymentDisputeLostAt time.Time `json:"payment_dispute_lost_at,omitempty"`
+	PaymentDueDate       string    `json:"payment_due_date,omitempty"`
 
 	InvoiceType   InvoiceType          `json:"invoice_type,omitempty"`
 	Status        InvoiceStatus        `json:"status,omitempty"`
@@ -348,6 +349,30 @@ func (ir *InvoiceRequest) Refresh(ctx context.Context, invoiceID string) (*Invoi
 
 func (ir *InvoiceRequest) Finalize(ctx context.Context, invoiceID string) (*Invoice, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "finalize")
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &InvoiceResult{},
+	}
+
+	result, err := ir.client.Put(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	if result != nil {
+		invoiceResult, ok := result.(*InvoiceResult)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return invoiceResult.Invoice, nil
+	}
+
+	return nil, nil
+}
+
+func (ir *InvoiceRequest) LoseDispute(ctx context.Context, invoiceID string) (*Invoice, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "lose_dispute")
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &InvoiceResult{},
