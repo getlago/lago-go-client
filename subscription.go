@@ -231,3 +231,28 @@ func (sr *SubscriptionRequest) GetList(ctx context.Context, subscriptionListInpu
 
 	return subscriptionResult, nil
 }
+
+func (sr *SubscriptionRequest) Update(ctx context.Context, subscriptionInput *SubscriptionInput) (*Subscription, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "subscriptions", subscriptionInput.ExternalID)
+	subscriptionParam := &SubscriptionParams{
+		Subscription: subscriptionInput,
+	}
+
+	clientRequest := &ClientRequest{
+		Path: subPath,
+		Result: &SubscriptionResult{},
+		Body: subscriptionParam,
+	}
+
+	result, err := sr.client.Put(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	subscriptionResult, ok := result.(*SubscriptionResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return subscriptionResult.Subscription, nil
+}
