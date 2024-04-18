@@ -77,14 +77,16 @@ type FeeListInput struct {
 }
 
 type FeeItem struct {
-	Type                    FeeType                `json:"type,omitempty"`
-	Code                    string                 `json:"code,omitempty"`
-	Name                    string                 `json:"name,omitempty"`
-	InvoiceDisplayName      string                 `json:"invoice_display_name,omitempty"`
-	GroupInvoiceDisplayName string                 `json:"group_invoice_display_name,omitempty"`
-	LagoItemID              uuid.UUID              `json:"lago_item_id,omitempty"`
-	ItemType                FeeItemType            `json:"item_type,omitempty"`
-	GroupedBy               map[string]interface{} `json:"grouped_by,omitempty"`
+	Type                     FeeType                `json:"type,omitempty"`
+	Code                     string                 `json:"code,omitempty"`
+	Name                     string                 `json:"name,omitempty"`
+	InvoiceDisplayName       string                 `json:"invoice_display_name,omitempty"`
+	GroupInvoiceDisplayName  string                 `json:"group_invoice_display_name,omitempty"`
+	FilterInvoiceDisplayName string                 `json:"filter_invoice_display_name,omitempty"`
+	Filters                  map[string]interface{} `json:"filters,omitempty"`
+	LagoItemID               uuid.UUID              `json:"lago_item_id,omitempty"`
+	ItemType                 FeeItemType            `json:"item_type,omitempty"`
+	GroupedBy                map[string]interface{} `json:"grouped_by,omitempty"`
 }
 
 type FeeAppliedTax struct {
@@ -103,6 +105,7 @@ type FeeAppliedTax struct {
 type Fee struct {
 	LagoID                 uuid.UUID `json:"lago_id,omitempty"`
 	LagoGroupID            uuid.UUID `json:"lago_group_id,omitempty"`
+	LagoChargeFilterID     uuid.UUID `json:"lago_charge_filter_id,omitempty"`
 	LagoInvoiceID          uuid.UUID `json:"lago_invoice_id,omitempty"`
 	LagoTrueUpFeeID        uuid.UUID `json:"lago_true_up_fee_id,omitempty"`
 	LagoTrueUpParentFeeID  uuid.UUID `json:"lago_true_up_parent_fee_id,omitempty"`
