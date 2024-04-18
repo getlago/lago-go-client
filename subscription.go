@@ -50,9 +50,9 @@ type ChargeOverridesInput struct {
 }
 
 type MinimumCommitmentOverridesInput struct {
-	AmountCents         int      `json:"amount_cents,omitempty"`
-	InvoiceDisplayName  string   `json:"invoice_display_name,omitempty"`
-	TaxCodes          	[]string `json:"tax_codes,omitempty"`
+	AmountCents        int      `json:"amount_cents,omitempty"`
+	InvoiceDisplayName string   `json:"invoice_display_name,omitempty"`
+	TaxCodes           []string `json:"tax_codes,omitempty"`
 }
 
 type PlanOverridesInput struct {
@@ -106,6 +106,7 @@ type Subscription struct {
 	BillingTime    BillingTime        `json:"billing_time"`
 	SubscriptionAt *time.Time         `json:"subscription_at"`
 	EndingAt       *time.Time         `json:"ending_at"`
+	TrialEndedAt   *time.Time         `json:"trial_ended_at"`
 
 	PreviousPlanCode  string `json:"previous_plan_code"`
 	NextPlanCode      string `json:"next_plan_code"`
@@ -239,9 +240,9 @@ func (sr *SubscriptionRequest) Update(ctx context.Context, subscriptionInput *Su
 	}
 
 	clientRequest := &ClientRequest{
-		Path: subPath,
+		Path:   subPath,
 		Result: &SubscriptionResult{},
-		Body: subscriptionParam,
+		Body:   subscriptionParam,
 	}
 
 	result, err := sr.client.Put(ctx, clientRequest)
