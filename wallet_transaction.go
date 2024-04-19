@@ -16,6 +16,14 @@ const (
 	WalletTransactionStatusSettled WalletTransactionStatus = "settled"
 )
 
+type TransactionStatus string
+
+const (
+	Paid    TransactionStatus = "paid"
+	Offered TransactionStatus = "offered"
+	Voided  TransactionStatus = "voided"
+)
+
 type TransactionType string
 
 const (
@@ -28,11 +36,12 @@ type WalletTransactionRequest struct {
 }
 
 type WalletTransactionListInput struct {
-	PerPage         int                     `json:"per_page,omitempty,string"`
-	Page            int                     `json:"page,omitempty,string"`
-	WalletID        string                  `json:"wallet_id,omitempty"`
-	Status          WalletTransactionStatus `json:"status,omitempty"`
-	TransactionType TransactionType         `json:"transaction_type,omitempty"`
+	PerPage           int                     `json:"per_page,omitempty,string"`
+	Page              int                     `json:"page,omitempty,string"`
+	WalletID          string                  `json:"wallet_id,omitempty"`
+	Status            WalletTransactionStatus `json:"status,omitempty"`
+	TransactionStatus TransactionStatus       `json:"transaction_status,omitempty"`
+	TransactionType   TransactionType         `json:"transaction_type,omitempty"`
 }
 
 type WalletTransactionParams struct {
