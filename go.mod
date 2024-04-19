@@ -9,4 +9,4 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.0.0
 )
 
-require golang.org/x/net v0.17.0 // indirect
+require golang.org/x/net v0.23.0 // indirect
