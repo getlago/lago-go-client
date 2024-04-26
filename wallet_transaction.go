@@ -19,9 +19,9 @@ const (
 type TransactionStatus string
 
 const (
-	Paid    TransactionStatus = "paid"
-	Offered TransactionStatus = "offered"
-	Voided  TransactionStatus = "voided"
+	Purchased TransactionStatus = "purchased"
+	Granted   TransactionStatus = "granted"
+	Voided    TransactionStatus = "voided"
 )
 
 type TransactionType string
