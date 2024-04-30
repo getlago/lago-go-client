@@ -22,6 +22,7 @@ const (
 	Purchased TransactionStatus = "purchased"
 	Granted   TransactionStatus = "granted"
 	Voided    TransactionStatus = "voided"
+	Invoiced  TransactionStatus = "invoiced"
 )
 
 type TransactionType string
