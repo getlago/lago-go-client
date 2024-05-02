@@ -22,6 +22,7 @@ const (
 	Purchased TransactionStatus = "purchased"
 	Granted   TransactionStatus = "granted"
 	Voided    TransactionStatus = "voided"
+	Invoiced  TransactionStatus = "invoiced"
 )
 
 type TransactionType string
@@ -52,6 +53,7 @@ type WalletTransactionInput struct {
 	WalletID       string `json:"wallet_id,omitempty"`
 	PaidCredits    string `json:"paid_credits,omitempty"`
 	GrantedCredits string `json:"granted_credits,omitempty"`
+	VoidedCredits  string `json:"voided_credits,omitempty"`
 }
 
 type WalletTransactionResult struct {
