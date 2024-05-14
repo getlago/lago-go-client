@@ -10,13 +10,13 @@ type MrrRequest struct {
 }
 
 type MrrListInput struct {
-	AmountCurrency  string	`json:"currency,omitempty,string"`
-	Months          int 	`json:"months,omitempty,string"`
+	AmountCurrency string `json:"currency,omitempty,string"`
+	Months         int    `json:"months,omitempty,string"`
 }
 
 type MrrResult struct {
-	Mrr  *Mrr   `json:"mrr,omitempty"`
-	Mrrs []Mrr  `json:"mrrs,omitempty"`
+	Mrr  *Mrr  `json:"mrr,omitempty"`
+	Mrrs []Mrr `json:"mrrs,omitempty"`
 }
 
 type Mrr struct {
