@@ -10,13 +10,13 @@ type InvoicedUsageRequest struct {
 }
 
 type InvoicedUsageListInput struct {
-	AmountCurrency  string	`json:"currency,omitempty,string"`
-	Months          int 	`json:"months,omitempty,string"`
+	AmountCurrency string `json:"currency,omitempty,string"`
+	Months         int    `json:"months,omitempty,string"`
 }
 
 type InvoicedUsageResult struct {
-	InvoicedUsage  *InvoicedUsage   `json:"invoiced_usage,omitempty"`
-	InvoicedUsages []InvoicedUsage  `json:"invoiced_usages,omitempty"`
+	InvoicedUsage  *InvoicedUsage  `json:"invoiced_usage,omitempty"`
+	InvoicedUsages []InvoicedUsage `json:"invoiced_usages,omitempty"`
 }
 
 type InvoicedUsage struct {
@@ -28,26 +28,26 @@ type InvoicedUsage struct {
 
 func (c *Client) InvoicedUsage() *InvoicedUsageRequest {
 	return &InvoicedUsageRequest{
-    	client: c,
-  	}
+		client: c,
+	}
 }
 
 func (adr *InvoicedUsageRequest) GetList(ctx context.Context, InvoicedUsageListInput *InvoicedUsageListInput) (*InvoicedUsageResult, *Error) {
 	jsonQueryparams, err := json.Marshal(InvoicedUsageListInput)
 	if err != nil {
-    	return nil, &Error{Err: err}
-  	}
+		return nil, &Error{Err: err}
+	}
 
 	queryParams := make(map[string]string)
 	if err = json.Unmarshal(jsonQueryparams, &queryParams); err != nil {
 		return nil, &Error{Err: err}
 	}
 
-  clientRequest := &ClientRequest{
-    Path:        "analytics/invoiced_usage",
-    QueryParams: queryParams,
-    Result:      &InvoicedUsageResult{},
-  }
+	clientRequest := &ClientRequest{
+		Path:        "analytics/invoiced_usage",
+		QueryParams: queryParams,
+		Result:      &InvoicedUsageResult{},
+	}
 
 	result, clientErr := adr.client.Get(ctx, clientRequest)
 	if clientErr != nil {
@@ -59,5 +59,5 @@ func (adr *InvoicedUsageRequest) GetList(ctx context.Context, InvoicedUsageListI
 		return nil, &ErrorTypeAssert
 	}
 
-  	return InvoicedUsageResult, nil
+	return InvoicedUsageResult, nil
 }

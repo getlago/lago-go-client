@@ -10,14 +10,14 @@ type GrossRevenueRequest struct {
 }
 
 type GrossRevenueListInput struct {
-	AmountCurrency      string  `json:"currency,omitempty,string"`
-	ExternalCustomerId  string  `json:"external_customer_id,omitempty,string"`
-	Months              int     `json:"months,omitempty,string"`
+	AmountCurrency     string `json:"currency,omitempty,string"`
+	ExternalCustomerId string `json:"external_customer_id,omitempty,string"`
+	Months             int    `json:"months,omitempty,string"`
 }
 
 type GrossRevenueResult struct {
-	GrossRevenue  *GrossRevenue   `json:"gross_revenue,omitempty"`
-	GrossRevenues []GrossRevenue  `json:"gross_revenues,omitempty"`
+	GrossRevenue  *GrossRevenue  `json:"gross_revenue,omitempty"`
+	GrossRevenues []GrossRevenue `json:"gross_revenues,omitempty"`
 }
 
 type GrossRevenue struct {

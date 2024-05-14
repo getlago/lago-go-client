@@ -137,12 +137,13 @@ type AppliedCoupon struct {
 	LagoCustomerID     uuid.UUID           `json:"lago_customer_id,omitempty"`
 	Status             AppliedCouponStatus `json:"status,omitempty"`
 
-	CouponName         string              `json:"coupon_name,omitempty"`
+	CouponName     string   `json:"coupon_name,omitempty"`
 	CouponCode     string   `json:"coupon_code,omitempty"`
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"amount_currency,omitempty"`
 
 	ExpirationDate string    `json:"expiration_date,omitempty"`
+	ExpirationAt   time.Time `json:"expiration_at,omitempty"`
 	TerminatedAt   time.Time `json:"terminated_at,omitempty"`
 
 	PercentageRate    float64         `json:"percentage_rate,omitempty,string"`

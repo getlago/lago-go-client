@@ -12,21 +12,21 @@ type InvoiceCollectionRequest struct {
 }
 
 type InvoiceCollectionListInput struct {
-	AmountCurrency  string  `json:"currency,omitempty,string"`
-	Months          int     `json:"months,omitempty,string"`
+	AmountCurrency string `json:"currency,omitempty,string"`
+	Months         int    `json:"months,omitempty,string"`
 }
 
 type InvoiceCollectionResult struct {
-	InvoiceCollection  *InvoiceCollection   `json:"invoice_collection,omitempty"`
-	InvoiceCollections []InvoiceCollection  `json:"invoice_collections,omitempty"`
+	InvoiceCollection  *InvoiceCollection  `json:"invoice_collection,omitempty"`
+	InvoiceCollections []InvoiceCollection `json:"invoice_collections,omitempty"`
 }
 
 type InvoiceCollection struct {
-	Month			string   			  `json:"month,omitempty"`
-	PaymentStatus	InvoicePaymentStatus  `json:"payment_status,omitempty"`
-	InvoicesCount   int      			  `json:"invoices_count,omitempty"`
-	AmountCents    	int      			  `json:"amount_cents,omitempty"`
-	AmountCurrency	Currency 			  `json:"currency,omitempty"`
+	Month          string               `json:"month,omitempty"`
+	PaymentStatus  InvoicePaymentStatus `json:"payment_status,omitempty"`
+	InvoicesCount  int                  `json:"invoices_count,omitempty"`
+	AmountCents    int                  `json:"amount_cents,omitempty"`
+	AmountCurrency Currency             `json:"currency,omitempty"`
 }
 
 func (c *Client) InvoiceCollection() *InvoiceCollectionRequest {
