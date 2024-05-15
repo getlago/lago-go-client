@@ -18,18 +18,18 @@ const (
 
 type RecurringTransactionRuleInput struct {
 	LagoID           uuid.UUID `json:"lago_id,omitempty"`
-	RuleType         string    `json:"rule_type,omitempty"`
 	Interval         string    `json:"interval,omitempty"`
 	ThresholdCredits string    `json:"threshold_credits,omitempty"`
+	Trigger          string    `json:"trigger,omitempty"`
 	PaidCredits      string    `json:"paid_credits,omitempty"`
 	GrantedCredits   string    `json:"granted_credits,omitempty"`
 }
 
 type RecurringTransactionRuleResponse struct {
 	LagoID           uuid.UUID `json:"lago_id,omitempty"`
-	RuleType         string    `json:"rule_type,omitempty"`
 	Interval         string    `json:"interval,omitempty"`
 	ThresholdCredits string    `json:"threshold_credits,omitempty"`
+	Trigger          string    `json:"trigger,omitempty"`
 	PaidCredits      string    `json:"paid_credits,omitempty"`
 	GrantedCredits   string    `json:"granted_credits,omitempty"`
 	CreatedAt        time.Time `json:"created_at,omitempty"`
