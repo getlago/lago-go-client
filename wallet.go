@@ -17,22 +17,26 @@ const (
 )
 
 type RecurringTransactionRuleInput struct {
-	LagoID           uuid.UUID `json:"lago_id,omitempty"`
-	Interval         string    `json:"interval,omitempty"`
-	ThresholdCredits string    `json:"threshold_credits,omitempty"`
-	Trigger          string    `json:"trigger,omitempty"`
-	PaidCredits      string    `json:"paid_credits,omitempty"`
-	GrantedCredits   string    `json:"granted_credits,omitempty"`
+	LagoID               uuid.UUID `json:"lago_id,omitempty"`
+	Interval             string    `json:"interval,omitempty"`
+	Method               string    `json:"method,omitempty"`
+	TargetOngoingBalance string    `json:"target_ongoing_balance,omitempty"`
+	ThresholdCredits     string    `json:"threshold_credits,omitempty"`
+	Trigger              string    `json:"trigger,omitempty"`
+	PaidCredits          string    `json:"paid_credits,omitempty"`
+	GrantedCredits       string    `json:"granted_credits,omitempty"`
 }
 
 type RecurringTransactionRuleResponse struct {
-	LagoID           uuid.UUID `json:"lago_id,omitempty"`
-	Interval         string    `json:"interval,omitempty"`
-	ThresholdCredits string    `json:"threshold_credits,omitempty"`
-	Trigger          string    `json:"trigger,omitempty"`
-	PaidCredits      string    `json:"paid_credits,omitempty"`
-	GrantedCredits   string    `json:"granted_credits,omitempty"`
-	CreatedAt        time.Time `json:"created_at,omitempty"`
+	LagoID               uuid.UUID `json:"lago_id,omitempty"`
+	Interval             string    `json:"interval,omitempty"`
+	Method               string    `json:"method,omitempty"`
+	TargetOngoingBalance string    `json:"target_ongoing_balance,omitempty"`
+	ThresholdCredits     string    `json:"threshold_credits,omitempty"`
+	Trigger              string    `json:"trigger,omitempty"`
+	PaidCredits          string    `json:"paid_credits,omitempty"`
+	GrantedCredits       string    `json:"granted_credits,omitempty"`
+	CreatedAt            time.Time `json:"created_at,omitempty"`
 }
 
 type WalletRequest struct {
