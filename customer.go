@@ -17,6 +17,12 @@ const (
 	PaymentProviderGocardless CustomerPaymentProvider = "gocardless"
 )
 
+type IntegrationType string
+
+const (
+	IntegrationNetsuite IntegrationType = "netsuite"
+)
+
 type CustomerParams struct {
 	Customer *CustomerInput `json:"customer"`
 }
@@ -79,6 +85,7 @@ type CustomerInput struct {
 	Timezone                string                            `json:"timezone,omitempty"`
 	Metadata                []CustomerMetadataInput           `json:"metadata,omitempty"`
 	BillingConfiguration    CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
+	IntegrationCustomer     IntegrationCustomer               `json:"integration_customer,omitempty"`
 	TaxCodes                []string                          `json:"tax_codes,omitempty"`
 }
 
@@ -104,6 +111,14 @@ type CustomerBillingConfiguration struct {
 	ProviderCustomerID  string                  `json:"provider_customer_id,omitempty"`
 	SyncWithProvider    bool                    `json:"sync_with_provider,omitempty"`
 	DocumentLocale      string                  `json:"document_locale,omitempty"`
+}
+
+type IntegrationCustomer struct {
+	ExternalCustomerId string          `json:"external_customer_id,omitempty"`
+	IntegrationType    IntegrationType `json:"integration_type,omitempty"`
+	IntegrationCode    bool            `json:"integration_code,omitempty"`
+	SubsidiaryId       string          `json:"subsidiary_id,omitempty"`
+	SyncWithProvider   bool            `json:"sync_with_provider,omitempty"`
 }
 
 type CustomerChargeUsage struct {
@@ -198,6 +213,7 @@ type Customer struct {
 	Phone                   string                       `json:"phone,omitempty"`
 	URL                     string                       `json:"url,omitempty"`
 	BillingConfiguration    CustomerBillingConfiguration `json:"billing_configuration,omitempty"`
+	IntegrationCustomer     IntegrationCustomer          `json:"integration_customer,omitempty"`
 	Metadata                []MetadataResponse           `json:"metadata,omitempty"`
 	Currency                Currency                     `json:"currency,omitempty"`
 	Timezone                string                       `json:"timezone,omitempty"`
