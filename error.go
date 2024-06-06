@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"encoding/json"
 	"errors"
 	"net/http"
 )
@@ -26,6 +27,19 @@ type Error struct {
 	ErrorCode      string `json:"code"`
 
 	ErrorDetail map[string][]string `json:"error_details,omitempty"`
+}
+
+func (e Error) Error() string {
+	type alias struct {
+		Error
+		Err string `json:"err,omitempty"`
+	}
+	err := alias{Error: e}
+	if e.Err != nil {
+		err.Err = e.Err.Error()
+	}
+	msg, _ := json.Marshal(&err)
+	return string(msg)
 }
 
 func (e ErrorCode) Error() string {
