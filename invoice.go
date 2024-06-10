@@ -149,6 +149,7 @@ type Invoice struct {
 	IssuingDate          string    `json:"issuing_date,omitempty"`
 	PaymentDisputeLostAt time.Time `json:"payment_dispute_lost_at,omitempty"`
 	PaymentDueDate       string    `json:"payment_due_date,omitempty"`
+	PaymentOverdue       bool      `json:"payment_overdue,omitempty"`
 
 	InvoiceType   InvoiceType          `json:"invoice_type,omitempty"`
 	Status        InvoiceStatus        `json:"status,omitempty"`
