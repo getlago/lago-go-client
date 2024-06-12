@@ -135,7 +135,7 @@ type CustomerChargeUsage struct {
 }
 
 type CustomerChargeGroupdUsage struct {
-	LagoId      uuid.UUID `json:"lago_id,omitempty"`
+	LagoId      string `json:"lago_id,omitempty"`
 	Key         string    `json:"key,omitempty"`
 	Value       string    `json:"value,omitempty"`
 	AmountCents int       `json:"amount_cents,omitempty"`
