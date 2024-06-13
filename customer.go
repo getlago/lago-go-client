@@ -85,7 +85,7 @@ type CustomerInput struct {
 	Timezone                string                            `json:"timezone,omitempty"`
 	Metadata                []CustomerMetadataInput           `json:"metadata,omitempty"`
 	BillingConfiguration    CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
-	IntegrationCustomer     IntegrationCustomer               `json:"integration_customer,omitempty"`
+	IntegrationCustomers    []IntegrationCustomer             `json:"integration_customers,omitempty"`
 	TaxCodes                []string                          `json:"tax_codes,omitempty"`
 }
 
@@ -213,7 +213,7 @@ type Customer struct {
 	Phone                   string                       `json:"phone,omitempty"`
 	URL                     string                       `json:"url,omitempty"`
 	BillingConfiguration    CustomerBillingConfiguration `json:"billing_configuration,omitempty"`
-	IntegrationCustomer     IntegrationCustomer          `json:"integration_customer,omitempty"`
+	IntegrationCustomers    []IntegrationCustomer        `json:"integration_customers,omitempty"`
 	Metadata                []MetadataResponse           `json:"metadata,omitempty"`
 	Currency                Currency                     `json:"currency,omitempty"`
 	Timezone                string                       `json:"timezone,omitempty"`
