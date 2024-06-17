@@ -102,6 +102,7 @@ type InvoiceListInput struct {
 	ExternalCustomerID string               `json:"external_customer_id,omitempty"`
 	Status             InvoiceStatus        `json:"status,omitempty"`
 	PaymentStatus      InvoicePaymentStatus `json:"payment_status,omitempty"`
+	PaymentOverdue     bool                 `json:"payment_overdue,omitempty"`
 }
 
 type InvoiceCreditItem struct {
