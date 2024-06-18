@@ -7,7 +7,8 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-const baseURL string = "https://api.getlago.com"
+const BaseURL string = "https://api.getlago.com"
+const BaseIngestURL string = "https://ingest.getlago.com"
 const apiPath string = "/api/v1/"
 
 type Client struct {
@@ -16,6 +17,7 @@ type Client struct {
 }
 
 type ClientRequest struct {
+	BaseURL     string
 	Path        string
 	QueryParams map[string]string
 	Result      interface{}
@@ -31,7 +33,7 @@ type Metadata struct {
 }
 
 func New() *Client {
-	url := fmt.Sprintf("%s%s", baseURL, apiPath)
+	url := fmt.Sprintf("%s%s", BaseURL, apiPath)
 
 	restyClient := resty.New().
 		SetBaseURL(url).
@@ -54,6 +56,10 @@ func (c *Client) SetBaseURL(url string) *Client {
 	c.HttpClient = c.HttpClient.SetBaseURL(customURL)
 
 	return c
+}
+
+func (c *Client) GetBaseUrl() string {
+	return c.HttpClient.BaseURL
 }
 
 func (c *Client) SetDebug(debug bool) *Client {
@@ -102,12 +108,23 @@ func (c *Client) Get(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 }
 
 func (c *Client) Post(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
+	initialBaseUrl := c.GetBaseUrl()
+	baseUrl := c.GetBaseUrl()
+
+	if len(cr.BaseURL) > 0 {
+		baseUrl = cr.BaseURL
+	}
+	c.HttpClient.SetBaseURL(baseUrl)
+
 	resp, err := c.HttpClient.R().
 		SetContext(ctx).
 		SetError(&Error{}).
 		SetResult(cr.Result).
 		SetBody(cr.Body).
 		Post(cr.Path)
+
+	// Reset base URL
+	c.HttpClient.SetBaseURL(initialBaseUrl)
 
 	if err != nil {
 		return nil, &Error{Err: err}
