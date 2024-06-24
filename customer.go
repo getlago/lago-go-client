@@ -114,8 +114,18 @@ type CustomerBillingConfiguration struct {
 }
 
 type IntegrationCustomer struct {
+	LagoID             uuid.UUID       `json:"id,omitempty"`
 	ExternalCustomerId string          `json:"external_customer_id,omitempty"`
 	IntegrationType    IntegrationType `json:"integration_type,omitempty"`
+	IntegrationCode    bool            `json:"integration_code,omitempty"`
+	SubsidiaryId       string          `json:"subsidiary_id,omitempty"`
+	SyncWithProvider   bool            `json:"sync_with_provider,omitempty"`
+}
+
+type IntegrationCustomersResponse struct {
+	LagoID             uuid.UUID       `json:"lago_id,omitempty"`
+	ExternalCustomerId string          `json:"external_customer_id,omitempty"`
+	IntegrationType    IntegrationType `json:"type,omitempty"`
 	IntegrationCode    bool            `json:"integration_code,omitempty"`
 	SubsidiaryId       string          `json:"subsidiary_id,omitempty"`
 	SyncWithProvider   bool            `json:"sync_with_provider,omitempty"`
@@ -136,11 +146,11 @@ type CustomerChargeUsage struct {
 
 type CustomerChargeGroupdUsage struct {
 	LagoId      string `json:"lago_id,omitempty"`
-	Key         string    `json:"key,omitempty"`
-	Value       string    `json:"value,omitempty"`
-	AmountCents int       `json:"amount_cents,omitempty"`
-	EventsCount int       `json:"events_count,omitempty"`
-	Units       string    `json:"units,omitempty"`
+	Key         string `json:"key,omitempty"`
+	Value       string `json:"value,omitempty"`
+	AmountCents int    `json:"amount_cents,omitempty"`
+	EventsCount int    `json:"events_count,omitempty"`
+	Units       string `json:"units,omitempty"`
 }
 
 type CustomerChargeFilterUsage struct {
@@ -197,27 +207,27 @@ type Customer struct {
 	ExternalID   string    `json:"external_id,omitempty"`
 	Slug         string    `json:"slug,omitempty"`
 
-	Name                    string                       `json:"name,omitempty"`
-	Email                   string                       `json:"email,omitempty"`
-	AddressLine1            string                       `json:"address_line1,omitempty"`
-	AddressLine2            string                       `json:"address_line2,omitempty"`
-	City                    string                       `json:"city,omitempty"`
-	State                   string                       `json:"state,omitempty"`
-	Zipcode                 string                       `json:"zipcode,omitempty"`
-	Country                 string                       `json:"country,omitempty"`
-	LegalName               string                       `json:"legal_name,omitempty"`
-	LegalNumber             string                       `json:"legal_number,omitempty"`
-	NetPaymentTerm          int                          `json:"net_payment_term,omitempty"`
-	TaxIdentificationNumber string                       `json:"tax_identification_number,omitempty"`
-	LogoURL                 string                       `json:"logo_url,omitempty"`
-	Phone                   string                       `json:"phone,omitempty"`
-	URL                     string                       `json:"url,omitempty"`
-	BillingConfiguration    CustomerBillingConfiguration `json:"billing_configuration,omitempty"`
-	IntegrationCustomers    []IntegrationCustomer        `json:"integration_customers,omitempty"`
-	Metadata                []MetadataResponse           `json:"metadata,omitempty"`
-	Currency                Currency                     `json:"currency,omitempty"`
-	Timezone                string                       `json:"timezone,omitempty"`
-	ApplicableTimezone      string                       `json:"applicable_timezone,omitempty"`
+	Name                    string                         `json:"name,omitempty"`
+	Email                   string                         `json:"email,omitempty"`
+	AddressLine1            string                         `json:"address_line1,omitempty"`
+	AddressLine2            string                         `json:"address_line2,omitempty"`
+	City                    string                         `json:"city,omitempty"`
+	State                   string                         `json:"state,omitempty"`
+	Zipcode                 string                         `json:"zipcode,omitempty"`
+	Country                 string                         `json:"country,omitempty"`
+	LegalName               string                         `json:"legal_name,omitempty"`
+	LegalNumber             string                         `json:"legal_number,omitempty"`
+	NetPaymentTerm          int                            `json:"net_payment_term,omitempty"`
+	TaxIdentificationNumber string                         `json:"tax_identification_number,omitempty"`
+	LogoURL                 string                         `json:"logo_url,omitempty"`
+	Phone                   string                         `json:"phone,omitempty"`
+	URL                     string                         `json:"url,omitempty"`
+	BillingConfiguration    CustomerBillingConfiguration   `json:"billing_configuration,omitempty"`
+	IntegrationCustomers    []IntegrationCustomersResponse `json:"integration_customers,omitempty"`
+	Metadata                []MetadataResponse             `json:"metadata,omitempty"`
+	Currency                Currency                       `json:"currency,omitempty"`
+	Timezone                string                         `json:"timezone,omitempty"`
+	ApplicableTimezone      string                         `json:"applicable_timezone,omitempty"`
 
 	Taxes []Tax `json:"taxes,omitempty"`
 
