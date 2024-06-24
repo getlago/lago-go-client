@@ -116,7 +116,7 @@ type CustomerBillingConfiguration struct {
 type IntegrationCustomer struct {
 	ExternalCustomerId string          `json:"external_customer_id,omitempty"`
 	IntegrationType    IntegrationType `json:"integration_type,omitempty"`
-	IntegrationCode    bool            `json:"integration_code,omitempty"`
+	IntegrationCode    string          `json:"integration_code,omitempty"`
 	SubsidiaryId       string          `json:"subsidiary_id,omitempty"`
 	SyncWithProvider   bool            `json:"sync_with_provider,omitempty"`
 }
@@ -136,11 +136,11 @@ type CustomerChargeUsage struct {
 
 type CustomerChargeGroupdUsage struct {
 	LagoId      string `json:"lago_id,omitempty"`
-	Key         string    `json:"key,omitempty"`
-	Value       string    `json:"value,omitempty"`
-	AmountCents int       `json:"amount_cents,omitempty"`
-	EventsCount int       `json:"events_count,omitempty"`
-	Units       string    `json:"units,omitempty"`
+	Key         string `json:"key,omitempty"`
+	Value       string `json:"value,omitempty"`
+	AmountCents int    `json:"amount_cents,omitempty"`
+	EventsCount int    `json:"events_count,omitempty"`
+	Units       string `json:"units,omitempty"`
 }
 
 type CustomerChargeFilterUsage struct {
