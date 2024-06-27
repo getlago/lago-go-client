@@ -142,7 +142,7 @@ func (er *EventRequest) Batch(ctx context.Context, batchInput *[]EventInput) (*[
 
 	clientRequest := &ClientRequest{
 		Path:   "events/batch",
-		Result: &EventResult{},
+		Result: &BatchEventResult{},
 		Body:   eventParams,
 	}
 
