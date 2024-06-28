@@ -85,6 +85,7 @@ type CustomerInput struct {
 	Timezone                string                            `json:"timezone,omitempty"`
 	Metadata                []CustomerMetadataInput           `json:"metadata,omitempty"`
 	BillingConfiguration    CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
+	ShippingAddress         Address                           `json:"shipping_address,omitempty"`
 	IntegrationCustomers    []IntegrationCustomer             `json:"integration_customers,omitempty"`
 	TaxCodes                []string                          `json:"tax_codes,omitempty"`
 }
@@ -111,6 +112,15 @@ type CustomerBillingConfiguration struct {
 	ProviderCustomerID  string                  `json:"provider_customer_id,omitempty"`
 	SyncWithProvider    bool                    `json:"sync_with_provider,omitempty"`
 	DocumentLocale      string                  `json:"document_locale,omitempty"`
+}
+
+type Address struct {
+	AddressLine1 string `json:"address_line1,omitempty"`
+	AddressLine2 string `json:"address_line2,omitempty"`
+	City         string `json:"city,omitempty"`
+	Zipcode      string `json:"zipcode,omitempty"`
+	State        string `json:"state,omitempty"`
+	Country      string `json:"country,omitempty"`
 }
 
 type IntegrationCustomer struct {
@@ -223,6 +233,7 @@ type Customer struct {
 	Phone                   string                         `json:"phone,omitempty"`
 	URL                     string                         `json:"url,omitempty"`
 	BillingConfiguration    CustomerBillingConfiguration   `json:"billing_configuration,omitempty"`
+	ShippingAddress         Address                        `json:"shipping_address,omitempty"`
 	IntegrationCustomers    []IntegrationCustomersResponse `json:"integration_customers,omitempty"`
 	Metadata                []MetadataResponse             `json:"metadata,omitempty"`
 	Currency                Currency                       `json:"currency,omitempty"`
