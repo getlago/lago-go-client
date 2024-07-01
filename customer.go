@@ -126,7 +126,7 @@ type IntegrationCustomersResponse struct {
 	LagoID             uuid.UUID       `json:"lago_id,omitempty"`
 	ExternalCustomerId string          `json:"external_customer_id,omitempty"`
 	IntegrationType    IntegrationType `json:"type,omitempty"`
-	IntegrationCode    bool            `json:"integration_code,omitempty"`
+	IntegrationCode    string          `json:"integration_code,omitempty"`
 	SubsidiaryId       string          `json:"subsidiary_id,omitempty"`
 	SyncWithProvider   bool            `json:"sync_with_provider,omitempty"`
 }
