@@ -10,8 +10,8 @@ type GrossRevenueRequest struct {
 }
 
 type GrossRevenueListInput struct {
-	AmountCurrency     string `json:"currency,omitempty,string"`
-	ExternalCustomerId string `json:"external_customer_id,omitempty,string"`
+	AmountCurrency     string `json:"currency,omitempty"`
+	ExternalCustomerId string `json:"external_customer_id,omitempty"`
 	Months             int    `json:"months,omitempty,string"`
 }
 
