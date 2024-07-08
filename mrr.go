@@ -10,7 +10,7 @@ type MrrRequest struct {
 }
 
 type MrrListInput struct {
-	AmountCurrency string `json:"currency,omitempty,string"`
+	AmountCurrency string `json:"currency,omitempty"`
 	Months         int    `json:"months,omitempty,string"`
 }
 
