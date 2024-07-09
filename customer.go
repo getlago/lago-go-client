@@ -149,18 +149,8 @@ type CustomerChargeUsage struct {
 
 	Charge         *Charge                      `json:"charge,omitempty"`
 	BillableMetric *BillableMetric              `json:"billable_metric,omitempty"`
-	Groups         []CustomerChargeGroupdUsage  `json:"groups,omitempty"`
 	Filters        []CustomerChargeFilterUsage  `json:"filters,omitempty"`
 	GroupedUsage   []CustomerChargeGroupedUsage `json:"grouped_usage,omitempty"`
-}
-
-type CustomerChargeGroupdUsage struct {
-	LagoId      string `json:"lago_id,omitempty"`
-	Key         string `json:"key,omitempty"`
-	Value       string `json:"value,omitempty"`
-	AmountCents int    `json:"amount_cents,omitempty"`
-	EventsCount int    `json:"events_count,omitempty"`
-	Units       string `json:"units,omitempty"`
 }
 
 type CustomerChargeFilterUsage struct {
@@ -176,7 +166,6 @@ type CustomerChargeGroupedUsage struct {
 	EventsCount int                         `json:"events_count,omitempty"`
 	Units       string                      `json:"units,omitempty"`
 	GroupedBy   map[string]interface{}      `json:"grouped_by,omitempty"`
-	Groups      []CustomerChargeGroupdUsage `json:"groups,omitempty"`
 	Filters     []CustomerChargeFilterUsage `json:"filters,omitempty"`
 }
 

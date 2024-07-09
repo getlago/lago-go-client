@@ -35,14 +35,7 @@ type Charge struct {
 	Prorated             bool                   `json:"prorated,omitempty"`
 	MinAmountCents       int                    `json:"min_amount_cents,omitempty"`
 	Properties           map[string]interface{} `json:"properties,omitempty"`
-	GroupProperties      []GroupProperties      `json:"group_properties,omitempty"`
 	Filters              []ChargeFilter         `json:"filters,omitempty"`
 
 	Taxes []Tax `json:"tax,omitempty"`
-}
-
-type GroupProperties struct {
-	GroupID            uuid.UUID              `json:"group_id"`
-	Values             map[string]interface{} `json:"values"`
-	InvoiceDisplayName string                 `json:"invoice_display_name,omitempty"`
 }

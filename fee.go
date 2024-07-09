@@ -81,7 +81,6 @@ type FeeItem struct {
 	Code                     string                 `json:"code,omitempty"`
 	Name                     string                 `json:"name,omitempty"`
 	InvoiceDisplayName       string                 `json:"invoice_display_name,omitempty"`
-	GroupInvoiceDisplayName  string                 `json:"group_invoice_display_name,omitempty"`
 	FilterInvoiceDisplayName string                 `json:"filter_invoice_display_name,omitempty"`
 	Filters                  map[string]interface{} `json:"filters,omitempty"`
 	LagoItemID               uuid.UUID              `json:"lago_item_id,omitempty"`
@@ -104,7 +103,6 @@ type FeeAppliedTax struct {
 
 type Fee struct {
 	LagoID                 uuid.UUID `json:"lago_id,omitempty"`
-	LagoGroupID            uuid.UUID `json:"lago_group_id,omitempty"`
 	LagoChargeFilterID     uuid.UUID `json:"lago_charge_filter_id,omitempty"`
 	LagoInvoiceID          uuid.UUID `json:"lago_invoice_id,omitempty"`
 	LagoTrueUpFeeID        uuid.UUID `json:"lago_true_up_fee_id,omitempty"`
@@ -113,7 +111,6 @@ type Fee struct {
 
 	AmountCents         int                    `json:"amount_cents,omitempty"`
 	AmountDetails       map[string]interface{} `json:"amount_details,omitempty"`
-	UnitAmountCents     int                    `json:"unit_amount_cents,omitempty"` // deprecated
 	PreciseUnitAmount   string                 `json:"precise_unit_amount,omitempty"`
 	AmountCurrency      string                 `json:"amount_currency,omitempty"`
 	TaxesAmountCents    int                    `json:"taxes_amount_cents,omitempty"`

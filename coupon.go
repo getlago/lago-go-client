@@ -142,9 +142,8 @@ type AppliedCoupon struct {
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"amount_currency,omitempty"`
 
-	ExpirationDate string    `json:"expiration_date,omitempty"`
-	ExpirationAt   time.Time `json:"expiration_at,omitempty"`
-	TerminatedAt   time.Time `json:"terminated_at,omitempty"`
+	ExpirationAt time.Time `json:"expiration_at,omitempty"`
+	TerminatedAt time.Time `json:"terminated_at,omitempty"`
 
 	PercentageRate    float64         `json:"percentage_rate,omitempty,string"`
 	Frequency         CouponFrequency `json:"frequency,omitempty"`
