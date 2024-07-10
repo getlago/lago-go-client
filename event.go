@@ -22,7 +22,6 @@ type BatchEventParams struct {
 
 type EventInput struct {
 	TransactionID          string                 `json:"transaction_id,omitempty"`
-	ExternalCustomerID     string                 `json:"external_customer_id,omitempty"`
 	ExternalSubscriptionID string                 `json:"external_subscription_id,omitempty"`
 	Code                   string                 `json:"code,omitempty"`
 	Timestamp              string                 `json:"timestamp,omitempty"`
@@ -52,7 +51,6 @@ type Event struct {
 	LagoID                 uuid.UUID              `json:"lago_id"`
 	TransactionID          string                 `json:"transaction_id"`
 	LagoCustomerID         *uuid.UUID             `json:"lago_customer_id,omitempty"`
-	ExternalCustomerID     string                 `json:"external_customer_id,omitempty"`
 	Code                   string                 `json:"code,omitempty"`
 	Timestamp              time.Time              `json:"timestamp"`
 	Properties             map[string]interface{} `json:"properties,omitempty"`
