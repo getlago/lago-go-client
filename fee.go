@@ -221,3 +221,23 @@ func (fr *FeeRequest) GetList(ctx context.Context, feeListInput *FeeListInput) (
 
 	return feeResult, nil
 }
+
+func (fr *FeeRequest) Delete(ctx context.Context, feeID string) (*Fee, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "fees", feeID)
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &FeeResult{},
+	}
+
+	result, err := fr.client.Delete(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	feeResult, ok := result.(*FeeResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return feeResult.Fee, nil
+}
