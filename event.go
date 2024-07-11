@@ -33,7 +33,6 @@ type EventEstimateFeesParams struct {
 }
 
 type EventEstimateFeesInput struct {
-	ExternalCustomerID     string            `json:"external_customer_id,omitempty"`
 	ExternalSubscriptionID string            `json:"external_subscription_id,omitempty"`
 	Code                   string            `json:"code,omitempty"`
 	Properties             map[string]string `json:"properties,omitempty"`
