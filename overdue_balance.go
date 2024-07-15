@@ -5,36 +5,35 @@ import (
 	"encoding/json"
 )
 
-type GrossRevenueRequest struct {
+type OverdueBalanceRequest struct {
 	client *Client
 }
 
-type GrossRevenueListInput struct {
+type OverdueBalanceListInput struct {
 	AmountCurrency     string `json:"currency,omitempty"`
 	ExternalCustomerId string `json:"external_customer_id,omitempty"`
 	Months             int    `json:"months,omitempty,string"`
 }
 
-type GrossRevenueResult struct {
-	GrossRevenue  *GrossRevenue  `json:"gross_revenue,omitempty"`
-	GrossRevenues []GrossRevenue `json:"gross_revenues,omitempty"`
+type OverdueBalanceResult struct {
+	OverdueBalance  *OverdueBalance  `json:"overdue_balance,omitempty"`
+	OverdueBalances []OverdueBalance `json:"overdue_balances,omitempty"`
 }
 
-type GrossRevenue struct {
+type OverdueBalance struct {
 	Month          string   `json:"month,omitempty"`
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"currency,omitempty"`
-	InvoicesCount  int      `json:"invoices_count,omitempty"`
 }
 
-func (c *Client) GrossRevenue() *GrossRevenueRequest {
-	return &GrossRevenueRequest{
+func (c *Client) OverdueBalance() *OverdueBalanceRequest {
+	return &OverdueBalanceRequest{
 		client: c,
 	}
 }
 
-func (adr *GrossRevenueRequest) GetList(ctx context.Context, GrossRevenueListInput *GrossRevenueListInput) (*GrossRevenueResult, *Error) {
-	jsonQueryparams, err := json.Marshal(GrossRevenueListInput)
+func (adr *OverdueBalanceRequest) GetList(ctx context.Context, OverdueBalanceListInput *OverdueBalanceListInput) (*OverdueBalanceResult, *Error) {
+	jsonQueryparams, err := json.Marshal(OverdueBalanceListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
@@ -45,9 +44,9 @@ func (adr *GrossRevenueRequest) GetList(ctx context.Context, GrossRevenueListInp
 	}
 
 	clientRequest := &ClientRequest{
-		Path:        "analytics/gross_revenue",
+		Path:        "analytics/overdue_balance",
 		QueryParams: queryParams,
-		Result:      &GrossRevenueResult{},
+		Result:      &OverdueBalanceResult{},
 	}
 
 	result, clientErr := adr.client.Get(ctx, clientRequest)
@@ -55,10 +54,10 @@ func (adr *GrossRevenueRequest) GetList(ctx context.Context, GrossRevenueListInp
 		return nil, clientErr
 	}
 
-	GrossRevenueResult, ok := result.(*GrossRevenueResult)
+	OverdueBalanceResult, ok := result.(*OverdueBalanceResult)
 	if !ok {
 		return nil, &ErrorTypeAssert
 	}
 
-	return GrossRevenueResult, nil
+	return OverdueBalanceResult, nil
 }
