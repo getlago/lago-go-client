@@ -81,11 +81,10 @@ type Wallet struct {
 	Name                       string                             `json:"name,omitempty"`
 	RateAmount                 string                             `json:"rate_amount,omitempty"`
 	CreditsBalance             string                             `json:"credits_balance,omitempty"`
-	Balance                    string                             `json:"balance,omitempty"` // NOTE(legacy)
 	BalanceCents               int                                `json:"balance_cents,omitempty"`
 	ConsumedCredits            string                             `json:"consumed_credits,omitempty"`
 	CreatedAt                  time.Time                          `json:"created_at,omitempty"`
-	ExpirationDate             time.Time                          `json:"expiration_date,omitempty"`
+	ExpirationAt               time.Time                          `json:"expiration_at,omitempty"`
 	LastBalanceSyncAt          time.Time                          `json:"last_balance_sync_at,omitempty"`
 	LastConsumedCreditAt       time.Time                          `json:"last_consumed_credit_at,omitempty"`
 	TerminatedAt               time.Time                          `json:"terminated_at,omitempty"`

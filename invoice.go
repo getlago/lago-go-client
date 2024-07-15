@@ -122,10 +122,10 @@ type InvoiceCredit struct {
 
 	Invoice InvoiceSummary `json:"invoice,omitempty"`
 
-	LagoID         uuid.UUID `json:"lago_id,omitempty"`
+	LagoItemID     uuid.UUID `json:"lago_item_id,omitempty"`
 	AmountCents    int       `json:"amount_cents,omitempty"`
 	AmountCurrency Currency  `json:"amount_currency,omitempty"`
-	BeforeVAT      bool      `json:"before_vat,omitempty"`
+	BeforeTaxes    bool      `json:"before_taxes,omitempty"`
 }
 
 type InvoiceAppliedTax struct {
@@ -178,18 +178,6 @@ type Invoice struct {
 	Fees         []Fee               `json:"fees,omitempty"`
 	Credits      []InvoiceCredit     `json:"credits,omitempty"`
 	AppliedTaxes []InvoiceAppliedTax `json:"applied_taxes,omitempty"`
-
-	// Deprecated: Will be removed in the future
-	Legacy                         bool     `json:"legacy,omitempty"`
-	AmountCurrency                 Currency `json:"amount_currency,omitempty"`
-	AmountCents                    int      `json:"amount_cents,omitempty"`
-	CreditAmountCents              int      `json:"credit_amount_cents,omitempty"`
-	CreditAmountCurrency           Currency `json:"credit_amount_currency,omitempty"`
-	TotalAmountCurrency            Currency `json:"total_amount_currency,omitempty"`
-	VatAmountCents                 int      `json:"vat_amount_cents,omitempty"`
-	VatAmountCurrency              Currency `json:"vat_amount_currency,omitempty"`
-	SubTotalVatExcludedAmountCents int      `json:"sub_total_vat_excluded_amount_cents,omitempty"`
-	SubTotalVatIncludedAmountCents int      `json:"sub_total_vat_included_amount_cents,omitempty"`
 }
 
 type InvoicePaymentUrl struct {

@@ -42,7 +42,6 @@ type BillableMetricInput struct {
 	Recurring        bool                   `json:"recurring,omitempty"`
 	FieldName        string                 `json:"field_name"`
 	WeightedInterval WeightedInterval       `json:"weighted_interval,omitempty"`
-	Group            map[string]interface{} `json:"group,omitempty"`
 	Filters          []BillableMetricFilter `json:"filters,omitempty"`
 }
 
@@ -72,7 +71,6 @@ type BillableMetric struct {
 	FieldName                string                 `json:"field_name"`
 	CreatedAt                time.Time              `json:"created_at,omitempty"`
 	WeightedInterval         *WeightedInterval      `json:"weighted_interval,omitempty"`
-	Group                    map[string]interface{} `json:"group,omitempty"`
 	Filters                  []BillableMetricFilter `json:"filters,omitempty"`
 	ActiveSubscriptionsCount int                    `json:"active_subscriptions_count,omitempty"`
 	DraftInvoicesCount       int                    `json:"draft_invoices_count,omitempty"`

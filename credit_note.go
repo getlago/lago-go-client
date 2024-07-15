@@ -104,16 +104,6 @@ type CreditNote struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 
 	Items []CreditNoteItem `json:"items,omitempty"`
-
-	// Deprecated: Will be removed in the future
-	TotalAmountCurrency               Currency `json:"total_amount_currency,omitempty"`
-	CreditAmountCurrency              Currency `json:"credit_amount_currency,omitempty"`
-	BalanceAmountCurrency             Currency `json:"balance_amount_currency,omitempty"`
-	RefundAmountCurrency              Currency `json:"refund_amount_currency,omitempty"`
-	VatAmountCents                    int      `json:"vat_amount_cents,omitempty"`
-	VatAmountCurrency                 Currency `json:"vat_amount_currency,omitempty"`
-	SubTotalVatExcludedAmountCents    int      `json:"sub_total_vat_excluded_amount_cents,omitempty"`
-	SubTotalVatExcludedAmountCurrency Currency `json:"sub_total_vat_excluded_amount_currency,omitempty"`
 }
 
 type CreditNoteEstimated struct {
