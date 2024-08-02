@@ -69,10 +69,16 @@ func (er *EventRequest) Create(ctx context.Context, eventInput *EventInput) (*Ev
 		Event: eventInput,
 	}
 
+	baseUrl := er.client.GetBaseUrl()
+	if baseUrl == BaseURL {
+		baseUrl = BaseIngestURL
+	}
+
 	clientRequest := &ClientRequest{
-		Path:   "events",
-		Result: &EventResult{},
-		Body:   eventParams,
+		BaseURL: baseUrl,
+		Path:    "events",
+		Result:  &EventResult{},
+		Body:    eventParams,
 	}
 
 	result, err := er.client.Post(ctx, clientRequest)
