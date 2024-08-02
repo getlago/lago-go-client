@@ -50,11 +50,11 @@ type WalletTransactionParams struct {
 }
 
 type WalletTransactionInput struct {
-	WalletID                        string `json:"wallet_id,omitempty"`
-	PaidCredits                     string `json:"paid_credits,omitempty"`
-	GrantedCredits                  string `json:"granted_credits,omitempty"`
-	VoidedCredits                   string `json:"voided_credits,omitempty"`
-    InvoiceRequireSuccessfulPayment bool   `json:"invoice_require_successful_payment,omitempty"`
+	WalletID                         string `json:"wallet_id,omitempty"`
+	PaidCredits                      string `json:"paid_credits,omitempty"`
+	GrantedCredits                   string `json:"granted_credits,omitempty"`
+	VoidedCredits                    string `json:"voided_credits,omitempty"`
+    InvoiceRequiresSuccessfulPayment bool   `json:"invoice_requires_successful_payment,omitempty"`
 }
 
 type WalletTransactionResult struct {
@@ -63,15 +63,15 @@ type WalletTransactionResult struct {
 }
 
 type WalletTransaction struct {
-	LagoID                          uuid.UUID               `json:"lago_id,omitempty"`
-	LagoWalletID                    uuid.UUID               `json:"lago_wallet_id,omitempty"`
-	Status                          WalletTransactionStatus `json:"status,omitempty"`
-	TransactionType                 TransactionType         `json:"transaction_type,omitempty"`
-	Amount                          string                  `json:"amount,omitempty"`
-	CreditAmount                    string                  `json:"credit_amount,omitempty"`
-    InvoiceRequireSuccessfulPayment bool                    `json:"invoice_require_successful_payment,omitempty"`
-	CreatedAt                       time.Time               `json:"created_at,omitempty"`
-	SettledAt                       time.Time               `json:"settled_at,omitempty"`
+	LagoID                           uuid.UUID               `json:"lago_id,omitempty"`
+	LagoWalletID                     uuid.UUID               `json:"lago_wallet_id,omitempty"`
+	Status                           WalletTransactionStatus `json:"status,omitempty"`
+	TransactionType                  TransactionType         `json:"transaction_type,omitempty"`
+	Amount                           string                  `json:"amount,omitempty"`
+	CreditAmount                     string                  `json:"credit_amount,omitempty"`
+    InvoiceRequiresSuccessfulPayment bool                    `json:"invoice_requires_successful_payment,omitempty"`
+	CreatedAt                        time.Time               `json:"created_at,omitempty"`
+	SettledAt                        time.Time               `json:"settled_at,omitempty"`
 }
 
 func (c *Client) WalletTransaction() *WalletTransactionRequest {
