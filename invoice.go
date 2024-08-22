@@ -24,6 +24,7 @@ const (
 const (
 	InvoiceStatusDraft     InvoiceStatus = "draft"
 	InvoiceStatusFinalized InvoiceStatus = "finalized"
+	InvoiceStatusFailed    InvoiceStatus = "failed"
 )
 
 const (
@@ -147,7 +148,7 @@ type InvoiceAppliedTax struct {
 type InvoiceErrorDetail struct {
     LagoId          uuid.UUID `json:"lago_id,omitempty"`
     ErrorCode       string    `json:"error_code,omitempty"`
-    ErrorDetails    string    `json:"error_details,omitempty"`
+    Details         string    `json:"details,omitempty"`
 }
 
 type Invoice struct {
@@ -185,9 +186,9 @@ type Invoice struct {
 	Subscriptions []Subscription `json:"subscriptions,omitempty"`
 
 	Fees                  []Fee                `json:"fees,omitempty"`
-	ErrorDetails          []InvoiceErrorDetail `json:"error_details,omitempty"`
 	Credits               []InvoiceCredit      `json:"credits,omitempty"`
 	AppliedTaxes          []InvoiceAppliedTax  `json:"applied_taxes,omitempty"`
+	ErrorDetails          []InvoiceErrorDetail `json:"error_details,omitempty"`
 	AppliedUsageThreshold []AppliedUsageThreshold `json:"applied_usage_threshold,omitempty"`
 }
 
@@ -326,6 +327,30 @@ func (ir *InvoiceRequest) Download(ctx context.Context, invoiceID string) (*Invo
 
 func (ir *InvoiceRequest) Refresh(ctx context.Context, invoiceID string) (*Invoice, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "refresh")
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &InvoiceResult{},
+	}
+
+	result, err := ir.client.Put(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	if result != nil {
+		invoiceResult, ok := result.(*InvoiceResult)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return invoiceResult.Invoice, nil
+	}
+
+	return nil, nil
+}
+
+func (ir *InvoiceRequest) Retry(ctx context.Context, invoiceID string) (*Invoice, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "retry")
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &InvoiceResult{},
