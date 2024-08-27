@@ -356,7 +356,7 @@ func (ir *InvoiceRequest) Retry(ctx context.Context, invoiceID string) (*Invoice
 		Result: &InvoiceResult{},
 	}
 
-	result, err := ir.client.Put(ctx, clientRequest)
+	result, err := ir.client.Post(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
