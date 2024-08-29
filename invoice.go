@@ -33,7 +33,9 @@ const (
 )
 
 const (
-	InvoiceCreditItemCredit InvoiceCreditItemType = "coupon"
+	InvoiceCreditItemCoupon     InvoiceCreditItemType = "coupon"
+	InvoiceCreditItemCreditNote InvoiceCreditItemType = "credit_note"
+	InvoiceCreditItemInvoice    InvoiceCreditItemType = "invoice"
 )
 
 type InvoiceRequest struct {
@@ -158,15 +160,16 @@ type Invoice struct {
 
 	Currency Currency `json:"currency,omitempty"`
 
-	FeesAmountCents                   int `json:"fees_amount_cents,omitempty"`
-	TaxesAmountCents                  int `json:"taxes_amount_cents,omitempty"`
-	CouponsAmountCents                int `json:"coupons_amount_cents,omitempty"`
-	CreditNotesAmountCents            int `json:"credit_notes_amount_cents,omitempty"`
-	SubTotalExcludingTaxesAmountCents int `json:"sub_total_excluding_taxes_amount_cents,omitempty"`
-	SubTotalIncludingTaxesAmountCents int `json:"sub_total_including_taxes_amount_cents,omitempty"`
-	TotalAmountCents                  int `json:"total_amount_cents,omitempty"`
-	PrepaidCreditAmountCents          int `json:"prepaid_credit_amount_cents,omitempty"`
-	NetPaymentTerm                    int `json:"net_payment_term,omitempty"`
+	FeesAmountCents                     int `json:"fees_amount_cents,omitempty"`
+	TaxesAmountCents                    int `json:"taxes_amount_cents,omitempty"`
+	CouponsAmountCents                  int `json:"coupons_amount_cents,omitempty"`
+	CreditNotesAmountCents              int `json:"credit_notes_amount_cents,omitempty"`
+	SubTotalExcludingTaxesAmountCents   int `json:"sub_total_excluding_taxes_amount_cents,omitempty"`
+	SubTotalIncludingTaxesAmountCents   int `json:"sub_total_including_taxes_amount_cents,omitempty"`
+	TotalAmountCents                    int `json:"total_amount_cents,omitempty"`
+	PrepaidCreditAmountCents            int `json:"prepaid_credit_amount_cents,omitempty"`
+	ProgressiveBillingCreditAmountCents int `json:"progressive_billing_credit_amount_cents"`
+	NetPaymentTerm                      int `json:"net_payment_term,omitempty"`
 
 	FileURL       string                    `json:"file_url,omitempty"`
 	Metadata      []InvoiceMetadataResponse `json:"metadata,omitempty"`
