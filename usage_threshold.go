@@ -21,3 +21,9 @@ type UsageThreshold struct {
 	CreatedAt            time.Time `json:"created_at"`
 	UpdatedAt            time.Time `json:"updated_at"`
 }
+
+type AppliedUsageThreshold struct {
+	LifetimeUsageAmountCents int            `json:"lifetime_usage_amount_cents"`
+	CreatedAt                time.Time      `json:"created_at"`
+	UsageThreshold           UsageThreshold `json:"usage_threshold"`
+}
