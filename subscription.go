@@ -66,6 +66,7 @@ type PlanOverridesInput struct {
 	Charges            []ChargeOverridesInput           `json:"charges,omitempty"`
 	MinimumCommitment  *MinimumCommitmentOverridesInput `json:"minimum_commitment"`
 	TaxCodes           []string                         `json:"tax_codes,omitempty"`
+	UsageThresholds    []UsageThreshold                 `json:"usage_thresholds,omitempty"`
 }
 
 type SubscriptionInput struct {

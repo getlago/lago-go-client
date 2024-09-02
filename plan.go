@@ -68,6 +68,7 @@ type PlanInput struct {
 	Charges            []PlanChargeInput       `json:"charges,omitempty"`
 	MinimumCommitment  *MinimumCommitmentInput `json:"minimum_commitment,omitempty"`
 	TaxCodes           []string                `json:"tax_codes,omitempty"`
+	UsageThresholds    []UsageThresholdInput   `json:"usage_thresholds,omitempty"`
 }
 
 type PlanListInput struct {
@@ -103,7 +104,8 @@ type Plan struct {
 	Charges                  []Charge           `json:"charges,omitempty"`
 	MinimumCommitment        *MinimumCommitment `json:"minimum_commitment"`
 
-	Taxes []Tax `json:"taxes,omitempty"`
+	Taxes           []Tax            `json:"taxes,omitempty"`
+	UsageThresholds []UsageThreshold `json:"usage_thresholds,omitempty"`
 }
 
 func (c *Client) Plan() *PlanRequest {
