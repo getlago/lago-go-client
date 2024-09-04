@@ -112,8 +112,11 @@ type Fee struct {
 	AmountCents         int                    `json:"amount_cents,omitempty"`
 	AmountDetails       map[string]interface{} `json:"amount_details,omitempty"`
 	PreciseUnitAmount   string                 `json:"precise_unit_amount,omitempty"`
+	PreciseAmount       string                 `json:"precise_amount,omitempty"`
+	PreciseTotalAmount 	string                 `json:"precise_total_amount,omitempty"`
 	AmountCurrency      string                 `json:"amount_currency,omitempty"`
 	TaxesAmountCents    int                    `json:"taxes_amount_cents,omitempty"`
+	TaxesPreciseAmount  string                 `json:"taxes_precise_amount,omitempty"`
 	TaxesRate           float32                `json:"taxes_rate,omitempty"`
 	TotalAmountCents    int                    `json:"total_amount_cents,omitempty"`
 	TotalAmountCurrency string                 `json:"total_amount_currency,omitempty"`
