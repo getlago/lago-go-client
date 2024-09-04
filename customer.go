@@ -21,6 +21,8 @@ type IntegrationType string
 
 const (
 	IntegrationNetsuite IntegrationType = "netsuite"
+	IntegrationAnrok    IntegrationType = "anrok"
+	IntegrationXero     IntegrationType = "xero"
 )
 
 type CustomerParams struct {
