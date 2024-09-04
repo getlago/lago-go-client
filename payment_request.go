@@ -25,14 +25,25 @@ type PaymentRequestListInput struct {
 }
 
 type PaymentRequest struct {
-	LagoID       uuid.UUID  `json:"lago_id,omitempty"`
-	Email        string     `json:"email,omitempty"`
-	Currency     Currency   `json:"currency,omitempty"`
-	AmountCents  int        `json:"amount_cents,omitempty"`
-	CreatedAt    time.Time  `json:"created_at,omitempty"`
+	LagoID          uuid.UUID  `json:"lago_id,omitempty"`
+	Email           string     `json:"email,omitempty"`
+	AmountCurrency  Currency   `json:"amount_currency,omitempty"`
+	AmountCents     int        `json:"amount_cents,omitempty"`
+	PaymentStatus   string     `json:"payment_status,omitempty"`
+	CreatedAt       time.Time  `json:"created_at,omitempty"`
 
-	Customer     *Customer  `json:"customer,omitempty"`
-	Invoices     []Invoice  `json:"fees,omitempty"`
+	Customer        *Customer  `json:"customer,omitempty"`
+	Invoices        []Invoice  `json:"fees,omitempty"`
+}
+
+type PaymentRequestParams struct {
+	PaymentRequest *PaymentRequestInput `json:"payment_request"`
+}
+
+type PaymentRequestInput struct {
+	Email                 string     `json:"email,omitempty"`
+	CustomerExternalId    string     `json:"customer_external_id,omitempty"`
+	LagoInvoiceIds        []string   `json:"lago_invoice_ids,omitempty"`
 }
 
 func (c *Client) PaymentRequest() *PaymentRequestRequest {
@@ -69,4 +80,28 @@ func (ir *PaymentRequestRequest) GetList(ctx context.Context, paymentRequestList
 	}
 
 	return paymentRequestResult, nil
+}
+
+func (cr *PaymentRequestRequest) Create(ctx context.Context, paymentRequestInput *PaymentRequestInput) (*PaymentRequest, *Error) {
+	paymentRequestParams := &PaymentRequestParams{
+		PaymentRequest: paymentRequestInput,
+	}
+
+	clientRequest := &ClientRequest{
+		Path:   "payment_requests",
+		Result: &PaymentRequestResult{},
+		Body:   paymentRequestParams,
+	}
+
+	result, err := cr.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	paymentRequestResult, ok := result.(*PaymentRequestResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return paymentRequestResult.PaymentRequest, nil
 }
