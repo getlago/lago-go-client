@@ -35,23 +35,24 @@ type OrganizationBillingConfiguration struct {
 type OrganizationInput struct {
 	Name string `json:"name,omitempty"`
 
-	Email                   string                        `json:"email,omitempty"`
-	AddressLine1            string                        `json:"address_line1,omitempty"`
-	AddressLine2            string                        `json:"address_line2,omitempty"`
-	City                    string                        `json:"city,omitempty"`
-	Zipcode                 string                        `json:"zipcode,omitempty"`
-	State                   string                        `json:"state,omitempty"`
-	Country                 string                        `json:"country,omitempty"`
-	DefaultCurrency         Currency                      `json:"default_currency,omitempty"`
-	LegalName               string                        `json:"legal_name,omitempty"`
-	LegalNumber             string                        `json:"legal_number,omitempty"`
-	DocumentNumbering       OrganizationDocumentNumbering `json:"document_numbering,omitempty"`
-	DocumentNumberPrefix    string                        `json:"document_number_prefix,omitempty"`
-	NetPaymentTerm          int                           `json:"net_payment_term,omitempty"`
-	TaxIdentificationNumber string                        `json:"tax_identification_number,omitempty"`
-	WebhookURL              string                        `json:"webhook_url,omitempty"`
-	Timezone                string                        `json:"timezone,omitempty"`
-	EmailSettings           []string                      `json:"email_settings,omitempty"`
+	Email                     string                        `json:"email,omitempty"`
+	AddressLine1              string                        `json:"address_line1,omitempty"`
+	AddressLine2              string                        `json:"address_line2,omitempty"`
+	City                      string                        `json:"city,omitempty"`
+	Zipcode                   string                        `json:"zipcode,omitempty"`
+	State                     string                        `json:"state,omitempty"`
+	Country                   string                        `json:"country,omitempty"`
+	DefaultCurrency           Currency                      `json:"default_currency,omitempty"`
+	LegalName                 string                        `json:"legal_name,omitempty"`
+	LegalNumber               string                        `json:"legal_number,omitempty"`
+	DocumentNumbering         OrganizationDocumentNumbering `json:"document_numbering,omitempty"`
+	DocumentNumberPrefix      string                        `json:"document_number_prefix,omitempty"`
+	NetPaymentTerm            int                           `json:"net_payment_term,omitempty"`
+	TaxIdentificationNumber   string                        `json:"tax_identification_number,omitempty"`
+	WebhookURL                string                        `json:"webhook_url,omitempty"`
+	Timezone                  string                        `json:"timezone,omitempty"`
+	EmailSettings             []string                      `json:"email_settings,omitempty"`
+	FinalizeZeroAmountInvoice bool                          `json:"finalize_zero_amount_invoice,omitempty"` // Added field
 
 	BillingConfiguration OrganizationBillingConfigurationInput `json:"billing_configuration,omitempty"`
 }
@@ -63,24 +64,26 @@ type OrganizationResult struct {
 type Organization struct {
 	Name string `json:"name,omitempty"`
 
-	Email                   string                        `json:"email,omitempty"`
-	AddressLine1            string                        `json:"address_line1,omitempty"`
-	AddressLine2            string                        `json:"address_line2,omitempty"`
-	City                    string                        `json:"city,omitempty"`
-	Zipcode                 string                        `json:"zipcode,omitempty"`
-	State                   string                        `json:"state,omitempty"`
-	Country                 string                        `json:"country,omitempty"`
-	DefaultCurrency         Currency                      `json:"default_currency,omitempty"`
-	LegalName               string                        `json:"legal_name,omitempty"`
-	LegalNumber             string                        `json:"legal_number,omitempty"`
-	DocumentNumbering       OrganizationDocumentNumbering `json:"document_numbering,omitempty"`
-	DocumentNumberPrefix    string                        `json:"document_number_prefix,omitempty"`
-	NetPaymentTerm          int                           `json:"net_payment_term,omitempty"`
-	TaxIdentificationNumber string                        `json:"tax_identification_number,omitempty"`
-	WebhookURL              string                        `json:"webhook_url,omitempty"`
-	WebhookURLs             []string                      `json:"webhook_urls,omitempty"`
-	Timezone                string                        `json:"timezone,omitempty"`
-	EmailSettings           []string                      `json:"email_settings,omitempty"`
+	Email                     string                        `json:"email,omitempty"`
+	AddressLine1              string                        `json:"address_line1,omitempty"`
+	AddressLine2              string                        `json:"address_line2,omitempty"`
+	City                      string                        `json:"city,omitempty"`
+	Zipcode                   string                        `json:"zipcode,omitempty"`
+	State                     string                        `json:"state,omitempty"`
+	Country                   string                        `json:"country,omitempty"`
+	DefaultCurrency           Currency                      `json:"default_currency,omitempty"`
+	LegalName                 string                        `json:"legal_name,omitempty"`
+	LegalNumber               string                        `json:"legal_number,omitempty"`
+	DocumentNumbering         OrganizationDocumentNumbering `json:"document_numbering,omitempty"`
+	DocumentNumberPrefix      string                        `json:"document_number_prefix,omitempty"`
+	NetPaymentTerm            int                           `json:"net_payment_term,omitempty"`
+	TaxIdentificationNumber   string                        `json:"tax_identification_number,omitempty"`
+	WebhookURL                string                        `json:"webhook_url,omitempty"`
+	WebhookURLs               []string                      `json:"webhook_urls,omitempty"`
+	Timezone                  string                        `json:"timezone,omitempty"`
+	EmailSettings             []string                      `json:"email_settings,omitempty"`
+    FinalizeZeroAmountInvoice bool                          `json:"finalize_zero_amount_invoice,omitempty"` // Added field
+
 
 	BillingConfiguration OrganizationBillingConfiguration `json:"billing_configuration,omitempty"`
 
