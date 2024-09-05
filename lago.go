@@ -8,18 +8,24 @@ import (
 )
 
 const baseURL string = "https://api.getlago.com"
+const baseIngestURL string = "https://ingest.getlago.com"
 const apiPath string = "/api/v1/"
 
 type Client struct {
-	Debug      bool
-	HttpClient *resty.Client
+	BaseUrl          string
+	BaseIngestUrl    string
+	UseIngestService bool
+	Debug            bool
+	HttpClient       *resty.Client
+	IngestHttpClient *resty.Client
 }
 
 type ClientRequest struct {
-	Path        string
-	QueryParams map[string]string
-	Result      interface{}
-	Body        interface{}
+	UseIngestService bool
+	Path             string
+	QueryParams      map[string]string
+	Result           interface{}
+	Body             interface{}
 }
 
 type Metadata struct {
@@ -38,26 +44,60 @@ func New() *Client {
 		SetHeader("Content-Type", "application/json").
 		SetHeader("User-Agent", "lago-go-client github.com/getlago/lago-go-client/v1")
 
+	ingestRestyClient := resty.New().
+		SetBaseURL(url).
+		SetHeader("Content-Type", "application/json").
+		SetHeader("User-Agent", "lago-go-client github.com/getlago/lago-go-client/v1")
+
 	return &Client{
-		HttpClient: restyClient,
+		BaseUrl:          url,
+		BaseIngestUrl:    url,
+		HttpClient:       restyClient,
+		IngestHttpClient: ingestRestyClient,
 	}
 }
 
 func (c *Client) SetApiKey(apiKey string) *Client {
 	c.HttpClient = c.HttpClient.SetAuthToken(apiKey)
+	c.IngestHttpClient = c.IngestHttpClient.SetAuthToken(apiKey)
 
 	return c
 }
 
 func (c *Client) SetBaseURL(url string) *Client {
+	c.BaseUrl = url
+	c.BaseIngestUrl = url
+
 	customURL := fmt.Sprintf("%s%s", url, apiPath)
 	c.HttpClient = c.HttpClient.SetBaseURL(customURL)
+	c.IngestHttpClient = c.IngestHttpClient.SetBaseURL(customURL)
 
 	return c
 }
 
 func (c *Client) SetDebug(debug bool) *Client {
 	c.Debug = debug
+
+	return c
+}
+
+func (c *Client) SetUseIngestService(useIngestService bool) *Client {
+	c.UseIngestService = useIngestService
+
+	if useIngestService {
+		c = c.SetBaseIngestUrl(baseIngestURL)
+	} else {
+		c = c.SetBaseURL(c.BaseUrl)
+	}
+
+	return c
+}
+
+func (c *Client) SetBaseIngestUrl(url string) *Client {
+	c.BaseIngestUrl = url
+
+	customURL := fmt.Sprintf("%s%s", url, apiPath)
+	c.IngestHttpClient = c.IngestHttpClient.SetBaseURL(customURL)
 
 	return c
 }
@@ -102,7 +142,12 @@ func (c *Client) Get(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 }
 
 func (c *Client) Post(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
-	resp, err := c.HttpClient.R().
+	httpClient := c.HttpClient
+	if cr.UseIngestService {
+		httpClient = c.IngestHttpClient
+	}
+
+	resp, err := httpClient.R().
 		SetContext(ctx).
 		SetError(&Error{}).
 		SetResult(cr.Result).
