@@ -70,9 +70,10 @@ func (er *EventRequest) Create(ctx context.Context, eventInput *EventInput) (*Ev
 	}
 
 	clientRequest := &ClientRequest{
-		Path:   "events",
-		Result: &EventResult{},
-		Body:   eventParams,
+		UseIngestService: true,
+		Path:             "events",
+		Result:           &EventResult{},
+		Body:             eventParams,
 	}
 
 	result, err := er.client.Post(ctx, clientRequest)
@@ -138,9 +139,10 @@ func (er *EventRequest) Batch(ctx context.Context, batchInput *[]EventInput) (*[
 	}
 
 	clientRequest := &ClientRequest{
-		Path:   "events/batch",
-		Result: &BatchEventResult{},
-		Body:   eventParams,
+		UseIngestService: true,
+		Path:             "events/batch",
+		Result:           &BatchEventResult{},
+		Body:             eventParams,
 	}
 
 	result, err := er.client.Post(ctx, clientRequest)
