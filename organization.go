@@ -82,7 +82,7 @@ type Organization struct {
 	WebhookURLs               []string                      `json:"webhook_urls,omitempty"`
 	Timezone                  string                        `json:"timezone,omitempty"`
 	EmailSettings             []string                      `json:"email_settings,omitempty"`
-    FinalizeZeroAmountInvoice bool                          `json:"finalize_zero_amount_invoice,omitempty"`
+	FinalizeZeroAmountInvoice bool                          `json:"finalize_zero_amount_invoice,omitempty"`
 
 
 	BillingConfiguration OrganizationBillingConfiguration `json:"billing_configuration,omitempty"`
