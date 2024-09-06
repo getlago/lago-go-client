@@ -17,6 +17,14 @@ const (
 	PaymentProviderGocardless CustomerPaymentProvider = "gocardless"
 )
 
+type FinalizeZeroAmountInvoice string
+
+const (
+    FinalizeInvoice   FinalizeZeroAmountInvoice = "finalize"
+    SkipInvoice       FinalizeZeroAmountInvoice = "skip"
+    InheritInvoice    FinalizeZeroAmountInvoice = "inherit"
+)
+
 type IntegrationType string
 
 const (
@@ -68,28 +76,29 @@ type MetadataResponse struct {
 }
 
 type CustomerInput struct {
-	ExternalID              string                            `json:"external_id,omitempty"`
-	Name                    string                            `json:"name,omitempty"`
-	Email                   string                            `json:"email,omitempty"`
-	AddressLine1            string                            `json:"address_line1,omitempty"`
-	AddressLine2            string                            `json:"address_line2,omitempty"`
-	City                    string                            `json:"city,omitempty"`
-	Zipcode                 string                            `json:"zipcode,omitempty"`
-	State                   string                            `json:"state,omitempty"`
-	Country                 string                            `json:"country,omitempty"`
-	LegalName               string                            `json:"legal_name,omitempty"`
-	LegalNumber             string                            `json:"legal_number,omitempty"`
-	NetPaymentTerm          int                               `json:"net_payment_term,omitempty"`
-	TaxIdentificationNumber string                            `json:"tax_identification_number,omitempty"`
-	Phone                   string                            `json:"phone,omitempty"`
-	URL                     string                            `json:"url,omitempty"`
-	Currency                Currency                          `json:"currency,omitempty"`
-	Timezone                string                            `json:"timezone,omitempty"`
-	Metadata                []CustomerMetadataInput           `json:"metadata,omitempty"`
-	BillingConfiguration    CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
-	ShippingAddress         Address                           `json:"shipping_address,omitempty"`
-	IntegrationCustomers    []IntegrationCustomer             `json:"integration_customers,omitempty"`
-	TaxCodes                []string                          `json:"tax_codes,omitempty"`
+	ExternalID                string                            `json:"external_id,omitempty"`
+	Name                      string                            `json:"name,omitempty"`
+	Email                     string                            `json:"email,omitempty"`
+	AddressLine1              string                            `json:"address_line1,omitempty"`
+	AddressLine2              string                            `json:"address_line2,omitempty"`
+	City                      string                            `json:"city,omitempty"`
+	Zipcode                   string                            `json:"zipcode,omitempty"`
+	State                     string                            `json:"state,omitempty"`
+	Country                   string                            `json:"country,omitempty"`
+	LegalName                 string                            `json:"legal_name,omitempty"`
+	LegalNumber               string                            `json:"legal_number,omitempty"`
+	NetPaymentTerm            int                               `json:"net_payment_term,omitempty"`
+	TaxIdentificationNumber   string                            `json:"tax_identification_number,omitempty"`
+	Phone                     string                            `json:"phone,omitempty"`
+	URL                       string                            `json:"url,omitempty"`
+	Currency                  Currency                          `json:"currency,omitempty"`
+	Timezone                  string                            `json:"timezone,omitempty"`
+	Metadata                  []CustomerMetadataInput           `json:"metadata,omitempty"`
+	BillingConfiguration      CustomerBillingConfigurationInput `json:"billing_configuration,omitempty"`
+	ShippingAddress           Address                           `json:"shipping_address,omitempty"`
+	IntegrationCustomers      []IntegrationCustomer             `json:"integration_customers,omitempty"`
+	TaxCodes                  []string                          `json:"tax_codes,omitempty"`
+    FinalizeZeroAmountInvoice FinalizeZeroAmountInvoice         `json:"finalize_zero_amount_invoice,omitempty"`
 }
 
 type CustomerListInput struct {
@@ -208,28 +217,29 @@ type Customer struct {
 	ExternalID   string    `json:"external_id,omitempty"`
 	Slug         string    `json:"slug,omitempty"`
 
-	Name                    string                         `json:"name,omitempty"`
-	Email                   string                         `json:"email,omitempty"`
-	AddressLine1            string                         `json:"address_line1,omitempty"`
-	AddressLine2            string                         `json:"address_line2,omitempty"`
-	City                    string                         `json:"city,omitempty"`
-	State                   string                         `json:"state,omitempty"`
-	Zipcode                 string                         `json:"zipcode,omitempty"`
-	Country                 string                         `json:"country,omitempty"`
-	LegalName               string                         `json:"legal_name,omitempty"`
-	LegalNumber             string                         `json:"legal_number,omitempty"`
-	NetPaymentTerm          int                            `json:"net_payment_term,omitempty"`
-	TaxIdentificationNumber string                         `json:"tax_identification_number,omitempty"`
-	LogoURL                 string                         `json:"logo_url,omitempty"`
-	Phone                   string                         `json:"phone,omitempty"`
-	URL                     string                         `json:"url,omitempty"`
-	BillingConfiguration    CustomerBillingConfiguration   `json:"billing_configuration,omitempty"`
-	ShippingAddress         Address                        `json:"shipping_address,omitempty"`
-	IntegrationCustomers    []IntegrationCustomersResponse `json:"integration_customers,omitempty"`
-	Metadata                []MetadataResponse             `json:"metadata,omitempty"`
-	Currency                Currency                       `json:"currency,omitempty"`
-	Timezone                string                         `json:"timezone,omitempty"`
-	ApplicableTimezone      string                         `json:"applicable_timezone,omitempty"`
+	Name                      string                         `json:"name,omitempty"`
+	Email                     string                         `json:"email,omitempty"`
+	AddressLine1              string                         `json:"address_line1,omitempty"`
+	AddressLine2              string                         `json:"address_line2,omitempty"`
+	City                      string                         `json:"city,omitempty"`
+	State                     string                         `json:"state,omitempty"`
+	Zipcode                   string                         `json:"zipcode,omitempty"`
+	Country                   string                         `json:"country,omitempty"`
+	LegalName                 string                         `json:"legal_name,omitempty"`
+	LegalNumber               string                         `json:"legal_number,omitempty"`
+	NetPaymentTerm            int                            `json:"net_payment_term,omitempty"`
+	TaxIdentificationNumber   string                         `json:"tax_identification_number,omitempty"`
+	LogoURL                   string                         `json:"logo_url,omitempty"`
+	Phone                     string                         `json:"phone,omitempty"`
+	URL                       string                         `json:"url,omitempty"`
+    FinalizeZeroAmountInvoice FinalizeZeroAmountInvoice      `json:"finalize_zero_amount_invoice,omitempty"`
+	BillingConfiguration      CustomerBillingConfiguration   `json:"billing_configuration,omitempty"`
+	ShippingAddress           Address                        `json:"shipping_address,omitempty"`
+	IntegrationCustomers      []IntegrationCustomersResponse `json:"integration_customers,omitempty"`
+	Metadata                  []MetadataResponse             `json:"metadata,omitempty"`
+	Currency                  Currency                       `json:"currency,omitempty"`
+	Timezone                  string                         `json:"timezone,omitempty"`
+	ApplicableTimezone        string                         `json:"applicable_timezone,omitempty"`
 
 	Taxes []Tax `json:"taxes,omitempty"`
 
