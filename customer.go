@@ -33,6 +33,13 @@ const (
 	IntegrationXero     IntegrationType = "xero"
 )
 
+type CustomerType string
+
+const (
+	CompanyCustomerType     CustomerType = "company"
+	IndividualCustomerType	CustomerType = "individual"
+)
+
 type CustomerParams struct {
 	Customer *CustomerInput `json:"customer"`
 }
@@ -78,6 +85,9 @@ type MetadataResponse struct {
 type CustomerInput struct {
 	ExternalID                string                            `json:"external_id,omitempty"`
 	Name                      string                            `json:"name,omitempty"`
+	Firstname                 string                            `json:"first_name,omitempty"`
+	Lastname                  string                            `json:"last_name,omitempty"`
+	CustomerType              CustomerType                      `json:"customer_type,omitempty"`
 	Email                     string                            `json:"email,omitempty"`
 	AddressLine1              string                            `json:"address_line1,omitempty"`
 	AddressLine2              string                            `json:"address_line2,omitempty"`
@@ -218,6 +228,9 @@ type Customer struct {
 	Slug         string    `json:"slug,omitempty"`
 
 	Name                      string                         `json:"name,omitempty"`
+	Firstname                 string                         `json:"first_name,omitempty"`
+	Lastname                  string                         `json:"last_name,omitempty"`
+	CustomerType              string                         `json:"customer_type,omitempty"`
 	Email                     string                         `json:"email,omitempty"`
 	AddressLine1              string                         `json:"address_line1,omitempty"`
 	AddressLine2              string                         `json:"address_line2,omitempty"`
