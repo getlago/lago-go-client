@@ -21,11 +21,12 @@ type BatchEventParams struct {
 }
 
 type EventInput struct {
-	TransactionID          string                 `json:"transaction_id,omitempty"`
-	ExternalSubscriptionID string                 `json:"external_subscription_id,omitempty"`
-	Code                   string                 `json:"code,omitempty"`
-	Timestamp              string                 `json:"timestamp,omitempty"`
-	Properties             map[string]interface{} `json:"properties,omitempty"`
+	TransactionID           string                 `json:"transaction_id,omitempty"`
+	ExternalSubscriptionID  string                 `json:"external_subscription_id,omitempty"`
+	Code                    string                 `json:"code,omitempty"`
+	Timestamp               string                 `json:"timestamp,omitempty"`
+	PreciseTotalAmountCents string                 `json:"precise_total_amount_cents,omitempty"`
+	Properties              map[string]interface{} `json:"properties,omitempty"`
 }
 
 type EventEstimateFeesParams struct {
@@ -47,15 +48,16 @@ type EventResult struct {
 }
 
 type Event struct {
-	LagoID                 uuid.UUID              `json:"lago_id"`
-	TransactionID          string                 `json:"transaction_id"`
-	LagoCustomerID         *uuid.UUID             `json:"lago_customer_id,omitempty"`
-	Code                   string                 `json:"code,omitempty"`
-	Timestamp              time.Time              `json:"timestamp"`
-	Properties             map[string]interface{} `json:"properties,omitempty"`
-	LagoSubscriptionID     *uuid.UUID             `json:"lago_subscription_id,omitempty"`
-	ExternalSubscriptionID string                 `json:"external_subscription_id,omitempty"`
-	CreatedAt              time.Time              `json:"created_at"`
+	LagoID                  uuid.UUID              `json:"lago_id"`
+	TransactionID           string                 `json:"transaction_id"`
+	LagoCustomerID          *uuid.UUID             `json:"lago_customer_id,omitempty"`
+	Code                    string                 `json:"code,omitempty"`
+	Timestamp               time.Time              `json:"timestamp"`
+	PreciseTotalAmountCents string                 `json:"precise_total_amount_cents,omitempty"`
+	Properties              map[string]interface{} `json:"properties,omitempty"`
+	LagoSubscriptionID      *uuid.UUID             `json:"lago_subscription_id,omitempty"`
+	ExternalSubscriptionID  string                 `json:"external_subscription_id,omitempty"`
+	CreatedAt               time.Time              `json:"created_at"`
 }
 
 func (c *Client) Event() *EventRequest {
