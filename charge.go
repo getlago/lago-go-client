@@ -15,6 +15,7 @@ const (
 	PackageChargeModel             ChargeModel = "package"
 	PercentageChargeModel          ChargeModel = "percentage"
 	VolumeChargeModel              ChargeModel = "volume"
+	DynamicChargeModel             ChargeModel = "dynamic"
 )
 
 type ChargeFilter struct {
