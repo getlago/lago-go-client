@@ -113,6 +113,9 @@ type Subscription struct {
 	NextPlanCode      string `json:"next_plan_code"`
 	DowngradePlanDate string `json:"downgrade_plan_date"`
 
+	CurrentBillingPeriodStartedAt *time.Time `json:"current_billing_period_started_at"`
+	CurrentBillingPeriodEndingAt  *time.Time `json:"current_billing_period_ending_at"`
+
 	Plan *Plan `json:"plan,omitempty"`
 
 	CreatedAt    *time.Time `json:"created_at"`
