@@ -86,11 +86,11 @@ type SubscriptionTerminateInput struct {
 }
 
 type SubscriptionListInput struct {
-	ExternalCustomerID string   `json:"external_customer_id,omitempty"`
-	PlanCode           string   `json:"plan_code,omitempty"`
-	PerPage            int      `json:"per_page,omitempty,string"`
-	Page               int      `json:"page,omitempty,string"`
-	Status             []string `json:"status,omitempty"`
+	ExternalCustomerID string               `json:"external_customer_id,omitempty"`
+	PlanCode           string               `json:"plan_code,omitempty"`
+	PerPage            int                  `json:"per_page,omitempty,string"`
+	Page               int                  `json:"page,omitempty,string"`
+	Status             []SubscriptionStatus `json:"status,omitempty"`
 }
 
 type Subscription struct {
