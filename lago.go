@@ -3,6 +3,7 @@ package lago
 import (
 	"context"
 	"fmt"
+	"net/url"
 
 	"github.com/go-resty/resty/v2"
 )
@@ -24,6 +25,7 @@ type ClientRequest struct {
 	UseIngestService bool
 	Path             string
 	QueryParams      map[string]string
+	UrlValues        url.Values
 	Result           interface{}
 	Body             interface{}
 }
@@ -108,7 +110,8 @@ func (c *Client) Get(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 	request := c.HttpClient.R().
 		SetContext(ctx).
 		SetError(&Error{}).
-		SetQueryParams(cr.QueryParams)
+		SetQueryParams(cr.QueryParams).
+		SetQueryParamsFromValues(cr.UrlValues)
 
 	if hasResult {
 		request.SetResult(cr.Result)

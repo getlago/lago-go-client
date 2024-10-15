@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/go-querystring/query"
 	"github.com/google/uuid"
 )
 
@@ -86,11 +87,11 @@ type SubscriptionTerminateInput struct {
 }
 
 type SubscriptionListInput struct {
-	ExternalCustomerID string   `json:"external_customer_id,omitempty"`
-	PlanCode           string   `json:"plan_code,omitempty"`
-	PerPage            int      `json:"per_page,omitempty,string"`
-	Page               int      `json:"page,omitempty,string"`
-	Status             []string `json:"status,omitempty"`
+	ExternalCustomerID string               `url:"external_customer_id,omitempty"`
+	PlanCode           string               `url:"plan_code,omitempty"`
+	PerPage            int                  `url:"per_page,omitempty"`
+	Page               int                  `url:"page,omitempty"`
+	Status             []SubscriptionStatus `url:"status[],omitempty"`
 }
 
 type Subscription struct {
@@ -208,20 +209,15 @@ func (sr *SubscriptionRequest) Get(ctx context.Context, subscriptionExternalId s
 }
 
 func (sr *SubscriptionRequest) GetList(ctx context.Context, subscriptionListInput SubscriptionListInput) (*SubscriptionResult, *Error) {
-	jsonQueryParams, err := json.Marshal(subscriptionListInput)
+	urlValues, err := query.Values(subscriptionListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
 
-	queryParams := make(map[string]string)
-	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
-		return nil, &Error{Err: err}
-	}
-
 	clientRequest := &ClientRequest{
-		Path:        "subscriptions",
-		QueryParams: queryParams,
-		Result:      &SubscriptionResult{},
+		Path:      "subscriptions",
+		UrlValues: urlValues,
+		Result:    &SubscriptionResult{},
 	}
 
 	result, clientErr := sr.client.Get(ctx, clientRequest)
