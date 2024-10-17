@@ -20,9 +20,9 @@ const (
 type FinalizeZeroAmountInvoice string
 
 const (
-    FinalizeInvoice   FinalizeZeroAmountInvoice = "finalize"
-    SkipInvoice       FinalizeZeroAmountInvoice = "skip"
-    InheritInvoice    FinalizeZeroAmountInvoice = "inherit"
+	FinalizeInvoice FinalizeZeroAmountInvoice = "finalize"
+	SkipInvoice     FinalizeZeroAmountInvoice = "skip"
+	InheritInvoice  FinalizeZeroAmountInvoice = "inherit"
 )
 
 type IntegrationType string
@@ -36,8 +36,8 @@ const (
 type CustomerType string
 
 const (
-	CompanyCustomerType     CustomerType = "company"
-	IndividualCustomerType	CustomerType = "individual"
+	CompanyCustomerType    CustomerType = "company"
+	IndividualCustomerType CustomerType = "individual"
 )
 
 type CustomerParams struct {
@@ -85,8 +85,8 @@ type MetadataResponse struct {
 type CustomerInput struct {
 	ExternalID                string                            `json:"external_id,omitempty"`
 	Name                      string                            `json:"name,omitempty"`
-	Firstname                 string                            `json:"first_name,omitempty"`
-	Lastname                  string                            `json:"last_name,omitempty"`
+	Firstname                 string                            `json:"firstname,omitempty"`
+	Lastname                  string                            `json:"lastname,omitempty"`
 	CustomerType              CustomerType                      `json:"customer_type,omitempty"`
 	Email                     string                            `json:"email,omitempty"`
 	AddressLine1              string                            `json:"address_line1,omitempty"`
@@ -108,7 +108,7 @@ type CustomerInput struct {
 	ShippingAddress           Address                           `json:"shipping_address,omitempty"`
 	IntegrationCustomers      []IntegrationCustomer             `json:"integration_customers,omitempty"`
 	TaxCodes                  []string                          `json:"tax_codes,omitempty"`
-    FinalizeZeroAmountInvoice FinalizeZeroAmountInvoice         `json:"finalize_zero_amount_invoice,omitempty"`
+	FinalizeZeroAmountInvoice FinalizeZeroAmountInvoice         `json:"finalize_zero_amount_invoice,omitempty"`
 }
 
 type CustomerListInput struct {
@@ -228,8 +228,8 @@ type Customer struct {
 	Slug         string    `json:"slug,omitempty"`
 
 	Name                      string                         `json:"name,omitempty"`
-	Firstname                 string                         `json:"first_name,omitempty"`
-	Lastname                  string                         `json:"last_name,omitempty"`
+	Firstname                 string                         `json:"firstname,omitempty"`
+	Lastname                  string                         `json:"lastname,omitempty"`
 	CustomerType              string                         `json:"customer_type,omitempty"`
 	Email                     string                         `json:"email,omitempty"`
 	AddressLine1              string                         `json:"address_line1,omitempty"`
@@ -245,7 +245,7 @@ type Customer struct {
 	LogoURL                   string                         `json:"logo_url,omitempty"`
 	Phone                     string                         `json:"phone,omitempty"`
 	URL                       string                         `json:"url,omitempty"`
-    FinalizeZeroAmountInvoice FinalizeZeroAmountInvoice      `json:"finalize_zero_amount_invoice,omitempty"`
+	FinalizeZeroAmountInvoice FinalizeZeroAmountInvoice      `json:"finalize_zero_amount_invoice,omitempty"`
 	BillingConfiguration      CustomerBillingConfiguration   `json:"billing_configuration,omitempty"`
 	ShippingAddress           Address                        `json:"shipping_address,omitempty"`
 	IntegrationCustomers      []IntegrationCustomersResponse `json:"integration_customers,omitempty"`
