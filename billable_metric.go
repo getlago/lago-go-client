@@ -79,6 +79,25 @@ type BillableMetric struct {
 	PlansCount               int                    `json:"plans_count,omitempty"`
 }
 
+type BillableMetricEveluateExpressionEvent struct {
+	Code       string                 `json:"code,omitempty"`
+	Timestamp  string                 `json:"timestamp,omitempty"`
+	Properties map[string]interface{} `json:"properties,omitempty"`
+}
+
+type BillableMetricEvaluateExpressionInput struct {
+	Expression string                                `json:"expression"`
+	Event      BillableMetricEveluateExpressionEvent `json:"event"`
+}
+
+type BillableMetricEvaluateExpressionResultValue struct {
+	Value string `json:"value,omitempty"`
+}
+
+type BillableMetricEvaluateExpressionResult struct {
+	ExpressionResult BillableMetricEvaluateExpressionResultValue `json:"expression_result,omitempty"`
+}
+
 func (c *Client) BillableMetric() *BillableMetricRequest {
 	return &BillableMetricRequest{
 		client: c,
@@ -199,4 +218,24 @@ func (bmr *BillableMetricRequest) Delete(ctx context.Context, billableMetricCode
 	}
 
 	return billableMetricResult.BillableMetric, nil
+}
+
+func (bmr *BillableMetricRequest) EvaluateExpression(ctx context.Context, evaluateExpressingInput *BillableMetricEvaluateExpressionInput) (*BillableMetricEvaluateExpressionResultValue, *Error) {
+	clientRequest := &ClientRequest{
+		Path:   "billable_metrics/evaluate_expression",
+		Result: &BillableMetricEvaluateExpressionResult{},
+		Body:   evaluateExpressingInput,
+	}
+
+	result, err := bmr.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	evaluateExpressionResult, ok := result.(*BillableMetricEvaluateExpressionResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return &evaluateExpressionResult.ExpressionResult, nil
 }
