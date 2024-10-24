@@ -40,6 +40,7 @@ type BillableMetricInput struct {
 	Description      string                 `json:"description,omitempty"`
 	AggregationType  AggregationType        `json:"aggregation_type,omitempty"`
 	Recurring        bool                   `json:"recurring,omitempty"`
+	Expression       string                 `json:"expression,omitempty"`
 	FieldName        string                 `json:"field_name"`
 	WeightedInterval WeightedInterval       `json:"weighted_interval,omitempty"`
 	Filters          []BillableMetricFilter `json:"filters,omitempty"`
@@ -68,6 +69,7 @@ type BillableMetric struct {
 	Description              string                 `json:"description,omitempty"`
 	Recurring                bool                   `json:"recurring,omitempty"`
 	AggregationType          AggregationType        `json:"aggregation_type,omitempty"`
+	Expression               string                 `json:"expression,omitempty"`
 	FieldName                string                 `json:"field_name"`
 	CreatedAt                time.Time              `json:"created_at,omitempty"`
 	WeightedInterval         *WeightedInterval      `json:"weighted_interval,omitempty"`
