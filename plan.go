@@ -69,6 +69,7 @@ type PlanInput struct {
 	MinimumCommitment  *MinimumCommitmentInput `json:"minimum_commitment,omitempty"`
 	TaxCodes           []string                `json:"tax_codes,omitempty"`
 	UsageThresholds    []UsageThresholdInput   `json:"usage_thresholds,omitempty"`
+	CascadeUpdates     bool                    `json:"cascade_updates"`
 }
 
 type PlanListInput struct {
