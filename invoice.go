@@ -146,9 +146,9 @@ type InvoiceAppliedTax struct {
 }
 
 type InvoiceErrorDetail struct {
-    LagoId          uuid.UUID `json:"lago_id,omitempty"`
-    ErrorCode       string    `json:"error_code,omitempty"`
-    Details         string    `json:"details,omitempty"`
+	LagoId    uuid.UUID      `json:"lago_id,omitempty"`
+	ErrorCode string         `json:"error_code,omitempty"`
+	Details   map[string]any `json:"details,omitempty"`
 }
 
 type Invoice struct {
@@ -185,10 +185,10 @@ type Invoice struct {
 	Customer      *Customer      `json:"customer,omitempty"`
 	Subscriptions []Subscription `json:"subscriptions,omitempty"`
 
-	Fees                  []Fee                `json:"fees,omitempty"`
-	Credits               []InvoiceCredit      `json:"credits,omitempty"`
-	AppliedTaxes          []InvoiceAppliedTax  `json:"applied_taxes,omitempty"`
-	ErrorDetails          []InvoiceErrorDetail `json:"error_details,omitempty"`
+	Fees                  []Fee                   `json:"fees,omitempty"`
+	Credits               []InvoiceCredit         `json:"credits,omitempty"`
+	AppliedTaxes          []InvoiceAppliedTax     `json:"applied_taxes,omitempty"`
+	ErrorDetails          []InvoiceErrorDetail    `json:"error_details,omitempty"`
 	AppliedUsageThreshold []AppliedUsageThreshold `json:"applied_usage_threshold,omitempty"`
 }
 
