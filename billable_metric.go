@@ -73,22 +73,19 @@ type BillableMetricFilter struct {
 }
 
 type BillableMetric struct {
-	LagoID                   uuid.UUID              `json:"lago_id"`
-	Name                     string                 `json:"name,omitempty"`
-	Code                     string                 `json:"code,omitempty"`
-	Description              string                 `json:"description,omitempty"`
-	Recurring                bool                   `json:"recurring,omitempty"`
-	RoundingFunction         *RoundingFunction      `json:"rounding_function,omitempty"`
-	RoundingPrecision        *int                   `json:"rounding_precision,omitempty"`
-	AggregationType          AggregationType        `json:"aggregation_type,omitempty"`
-	Expression               string                 `json:"expression,omitempty"`
-	FieldName                string                 `json:"field_name"`
-	CreatedAt                time.Time              `json:"created_at,omitempty"`
-	WeightedInterval         *WeightedInterval      `json:"weighted_interval,omitempty"`
-	Filters                  []BillableMetricFilter `json:"filters,omitempty"`
-	ActiveSubscriptionsCount int                    `json:"active_subscriptions_count,omitempty"`
-	DraftInvoicesCount       int                    `json:"draft_invoices_count,omitempty"`
-	PlansCount               int                    `json:"plans_count,omitempty"`
+	LagoID            uuid.UUID              `json:"lago_id"`
+	Name              string                 `json:"name,omitempty"`
+	Code              string                 `json:"code,omitempty"`
+	Description       string                 `json:"description,omitempty"`
+	Recurring         bool                   `json:"recurring,omitempty"`
+	RoundingFunction  *RoundingFunction      `json:"rounding_function,omitempty"`
+	RoundingPrecision *int                   `json:"rounding_precision,omitempty"`
+	AggregationType   AggregationType        `json:"aggregation_type,omitempty"`
+	Expression        string                 `json:"expression,omitempty"`
+	FieldName         string                 `json:"field_name"`
+	CreatedAt         time.Time              `json:"created_at,omitempty"`
+	WeightedInterval  *WeightedInterval      `json:"weighted_interval,omitempty"`
+	Filters           []BillableMetricFilter `json:"filters,omitempty"`
 }
 
 type BillableMetricEveluateExpressionEvent struct {
