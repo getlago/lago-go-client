@@ -25,6 +25,8 @@ const (
 	InvoiceStatusDraft     InvoiceStatus = "draft"
 	InvoiceStatusFinalized InvoiceStatus = "finalized"
 	InvoiceStatusFailed    InvoiceStatus = "failed"
+	InvoiceStatusVoided    InvoiceStatus = "voided"
+	InvoiceStatusPending   InvoiceStatus = "pending"
 )
 
 const (
