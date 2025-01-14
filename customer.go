@@ -160,7 +160,7 @@ type InvoiceCustomSection struct {
 	Code                    string    `json:"code,omitempty"`
 	Name                    string    `json:"name,omitempty"`
 	Description             string    `json:"description,omitempty"`
-	Details                 float32   `json:"details,omitempty"`
+	Details                 string    `json:"details,omitempty"`
 	DisplayName             string    `json:"display_name,omitempty"`
 	SelectedForOrganization bool      `json:"selected_for_organization,omitempty"`
 	CreatedAt               time.Time `json:"created_at,omitempty"`

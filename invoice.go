@@ -135,7 +135,7 @@ type InvoiceAppliedInvoiceCustomSection struct {
 	LagoId          uuid.UUID `json:"lago_id,omitempty"`
 	LagoInvoiceId   uuid.UUID `json:"lago_invoice_id,omitempty"`
 	Code            string    `json:"code,omitempty"`
-	Details         float32   `json:"details,omitempty"`
+	Details         string    `json:"details,omitempty"`
 	DisplayName     string    `json:"display_name,omitempty"`
 	CreatedAt       time.Time `json:"created_at,omitempty"`
 }
