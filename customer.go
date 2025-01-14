@@ -109,6 +109,8 @@ type CustomerInput struct {
 	IntegrationCustomers      []IntegrationCustomer             `json:"integration_customers,omitempty"`
 	TaxCodes                  []string                          `json:"tax_codes,omitempty"`
 	FinalizeZeroAmountInvoice FinalizeZeroAmountInvoice         `json:"finalize_zero_amount_invoice,omitempty"`
+	SkipInvoiceCustomSections bool                              `json:"skip_invoice_custom_sections,omitempty"`
+	InvoiceCustomSectionCodes []string                          `json:"invoice_custom_section_codes,omitempty"`
 }
 
 type CustomerListInput struct {
@@ -151,6 +153,17 @@ type IntegrationCustomer struct {
 	IntegrationCode    string          `json:"integration_code,omitempty"`
 	SubsidiaryId       string          `json:"subsidiary_id,omitempty"`
 	SyncWithProvider   bool            `json:"sync_with_provider,omitempty"`
+}
+
+type InvoiceCustomSection struct {
+	LagoId                  uuid.UUID `json:"lago_id,omitempty"`
+	Code                    string    `json:"code,omitempty"`
+	Name                    string    `json:"name,omitempty"`
+	Description             string    `json:"description,omitempty"`
+	Details                 string    `json:"details,omitempty"`
+	DisplayName             string    `json:"display_name,omitempty"`
+	AppliedToOrganization bool      `json:"applied_to_organization,omitempty"`
+	CreatedAt               time.Time `json:"created_at,omitempty"`
 }
 
 type IntegrationCustomersResponse struct {
@@ -253,8 +266,10 @@ type Customer struct {
 	Currency                  Currency                       `json:"currency,omitempty"`
 	Timezone                  string                         `json:"timezone,omitempty"`
 	ApplicableTimezone        string                         `json:"applicable_timezone,omitempty"`
+	SkipInvoiceCustomSections bool                           `json:"skip_invoice_custom_sections,omitempty"`
 
-	Taxes []Tax `json:"taxes,omitempty"`
+	Taxes                           []Tax                  `json:"taxes,omitempty"`
+	ApplicableInvoiceCustomSections []InvoiceCustomSection `json:"applicable_invoice_custom_sections,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
