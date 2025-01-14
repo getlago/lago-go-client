@@ -196,7 +196,7 @@ type Invoice struct {
 
 	Fees                         []Fee                   `json:"fees,omitempty"`
 	Credits                      []InvoiceCredit         `json:"credits,omitempty"`
-	AppliedInvoiceCustomSections []InvoiceAppliedInvoiceCustomSection     `json:"applied_invoice_custom_section,omitempty"`
+	AppliedInvoiceCustomSections []InvoiceAppliedInvoiceCustomSection     `json:"applied_invoice_custom_sections,omitempty"`
 	AppliedTaxes                 []InvoiceAppliedTax     `json:"applied_taxes,omitempty"`
 	ErrorDetails                 []InvoiceErrorDetail    `json:"error_details,omitempty"`
 	AppliedUsageThreshold        []AppliedUsageThreshold `json:"applied_usage_threshold,omitempty"`

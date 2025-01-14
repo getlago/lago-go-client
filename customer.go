@@ -162,7 +162,7 @@ type InvoiceCustomSection struct {
 	Description             string    `json:"description,omitempty"`
 	Details                 string    `json:"details,omitempty"`
 	DisplayName             string    `json:"display_name,omitempty"`
-	SelectedForOrganization bool      `json:"selected_for_organization,omitempty"`
+	AppliedToOrganization bool      `json:"applied_to_organization,omitempty"`
 	CreatedAt               time.Time `json:"created_at,omitempty"`
 }
 
@@ -266,6 +266,7 @@ type Customer struct {
 	Currency                  Currency                       `json:"currency,omitempty"`
 	Timezone                  string                         `json:"timezone,omitempty"`
 	ApplicableTimezone        string                         `json:"applicable_timezone,omitempty"`
+	SkipInvoiceCustomSections bool                           `json:"skip_invoice_custom_sections,omitempty"`
 
 	Taxes                           []Tax                  `json:"taxes,omitempty"`
 	ApplicableInvoiceCustomSections []InvoiceCustomSection `json:"applicable_invoice_custom_sections,omitempty"`
