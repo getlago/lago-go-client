@@ -134,12 +134,12 @@ type InvoiceCredit struct {
 }
 
 type InvoiceAppliedInvoiceCustomSection struct {
-	LagoId          uuid.UUID `json:"lago_id,omitempty"`
-	LagoInvoiceId   uuid.UUID `json:"lago_invoice_id,omitempty"`
-	Code            string    `json:"code,omitempty"`
-	Details         string    `json:"details,omitempty"`
-	DisplayName     string    `json:"display_name,omitempty"`
-	CreatedAt       time.Time `json:"created_at,omitempty"`
+	LagoId        uuid.UUID `json:"lago_id,omitempty"`
+	LagoInvoiceId uuid.UUID `json:"lago_invoice_id,omitempty"`
+	Code          string    `json:"code,omitempty"`
+	Details       string    `json:"details,omitempty"`
+	DisplayName   string    `json:"display_name,omitempty"`
+	CreatedAt     time.Time `json:"created_at,omitempty"`
 }
 
 type InvoiceAppliedTax struct {
@@ -193,15 +193,16 @@ type Invoice struct {
 	Metadata      []InvoiceMetadataResponse `json:"metadata,omitempty"`
 	VersionNumber int                       `json:"version_number,omitempty"`
 
-	Customer      *Customer      `json:"customer,omitempty"`
-	Subscriptions []Subscription `json:"subscriptions,omitempty"`
+	Customer       *Customer       `json:"customer,omitempty"`
+	BillingPeriods []BillingPeriod `json:"billing_periods,omitempty"`
+	Subscriptions  []Subscription  `json:"subscriptions,omitempty"`
 
-	Fees                         []Fee                   `json:"fees,omitempty"`
-	Credits                      []InvoiceCredit         `json:"credits,omitempty"`
-	AppliedInvoiceCustomSections []InvoiceAppliedInvoiceCustomSection     `json:"applied_invoice_custom_sections,omitempty"`
-	AppliedTaxes                 []InvoiceAppliedTax     `json:"applied_taxes,omitempty"`
-	ErrorDetails                 []InvoiceErrorDetail    `json:"error_details,omitempty"`
-	AppliedUsageThreshold        []AppliedUsageThreshold `json:"applied_usage_threshold,omitempty"`
+	Fees                         []Fee                                `json:"fees,omitempty"`
+	Credits                      []InvoiceCredit                      `json:"credits,omitempty"`
+	AppliedInvoiceCustomSections []InvoiceAppliedInvoiceCustomSection `json:"applied_invoice_custom_sections,omitempty"`
+	AppliedTaxes                 []InvoiceAppliedTax                  `json:"applied_taxes,omitempty"`
+	ErrorDetails                 []InvoiceErrorDetail                 `json:"error_details,omitempty"`
+	AppliedUsageThreshold        []AppliedUsageThreshold              `json:"applied_usage_threshold,omitempty"`
 }
 
 type InvoicePaymentUrl struct {
