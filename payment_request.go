@@ -13,7 +13,7 @@ type PaymentRequestRequest struct {
 }
 
 type PaymentRequestResult struct {
-	PaymentRequest  *PaymentRequest `json:"payment_request,omitempty"`
+	PaymentRequest  *PaymentRequest  `json:"payment_request,omitempty"`
 	PaymentRequests []PaymentRequest `json:"payment_requests,omitempty"`
 }
 
@@ -21,19 +21,19 @@ type PaymentRequestListInput struct {
 	PerPage int `json:"per_page,omitempty,string"`
 	Page    int `json:"page,omitempty,string"`
 
-	ExternalCustomerID string               `json:"external_customer_id,omitempty"`
+	ExternalCustomerID string `json:"external_customer_id,omitempty"`
 }
 
 type PaymentRequest struct {
-	LagoID          uuid.UUID  `json:"lago_id,omitempty"`
-	Email           string     `json:"email,omitempty"`
-	AmountCurrency  Currency   `json:"amount_currency,omitempty"`
-	AmountCents     int        `json:"amount_cents,omitempty"`
-	PaymentStatus   string     `json:"payment_status,omitempty"`
-	CreatedAt       time.Time  `json:"created_at,omitempty"`
+	LagoID         uuid.UUID `json:"lago_id,omitempty"`
+	Email          string    `json:"email,omitempty"`
+	AmountCurrency Currency  `json:"amount_currency,omitempty"`
+	AmountCents    int       `json:"amount_cents,omitempty"`
+	PaymentStatus  string    `json:"payment_status,omitempty"`
+	CreatedAt      time.Time `json:"created_at,omitempty"`
 
-	Customer        *Customer  `json:"customer,omitempty"`
-	Invoices        []Invoice  `json:"fees,omitempty"`
+	Customer *Customer `json:"customer,omitempty"`
+	Invoices []Invoice `json:"fees,omitempty"`
 }
 
 type PaymentRequestParams struct {
@@ -41,9 +41,9 @@ type PaymentRequestParams struct {
 }
 
 type PaymentRequestInput struct {
-	Email                 string     `json:"email,omitempty"`
-	CustomerExternalId    string     `json:"customer_external_id,omitempty"`
-	LagoInvoiceIds        []string   `json:"lago_invoice_ids,omitempty"`
+	Email              string   `json:"email,omitempty"`
+	ExternalCustomerId string   `json:"external_customer_id,omitempty"`
+	LagoInvoiceIds     []string `json:"lago_invoice_ids,omitempty"`
 }
 
 func (c *Client) PaymentRequest() *PaymentRequestRequest {
