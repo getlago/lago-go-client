@@ -97,6 +97,14 @@ type InvoiceOneOffInput struct {
 	Fees               []InvoiceFeesInput `json:"fees,omitempty"`
 }
 
+type InvoicePreviewInput struct {
+	PlanCode       string         `json:"plan_code,omitempty"`
+	BillingTime    string         `json:"billing_time,omitempty"`
+	SubscriptionAt string         `json:"subscription_at,omitempty"`
+	Coupons        []CouponInput  `json:"coupons,omitempty"`
+	Customer       *CustomerInput `json:"customer,omitempty"`
+}
+
 type InvoiceListInput struct {
 	PerPage int `json:"per_page,omitempty,string"`
 	Page    int `json:"page,omitempty,string"`
@@ -274,6 +282,26 @@ func (ir *InvoiceRequest) Create(ctx context.Context, oneOffInput *InvoiceOneOff
 		Path:   "invoices",
 		Result: &InvoiceResult{},
 		Body:   invoiceOneOffParams,
+	}
+
+	result, err := ir.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	invoiceResult, ok := result.(*InvoiceResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return invoiceResult.Invoice, nil
+}
+
+func (ir *InvoiceRequest) Preview(ctx context.Context, invoicePreviewInput *InvoicePreviewInput) (*Invoice, *Error) {
+	clientRequest := &ClientRequest{
+		Path:   "invoices/preview",
+		Result: &InvoiceResult{},
+		Body:   invoicePreviewInput,
 	}
 
 	result, err := ir.client.Post(ctx, clientRequest)
