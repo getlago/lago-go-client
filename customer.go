@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
-
+    "strconv"
 	"github.com/google/uuid"
 )
 
@@ -226,7 +226,7 @@ type CustomerCheckoutUrl struct {
 
 type CustomerUsageInput struct {
 	ExternalSubscriptionID string `json:"external_subscription_id,omitempty"`
-    ApplyTaxes             string `json:"apply_taxes,omitempty"`
+	ApplyTaxes             bool   `json:"apply_taxes,omitempty"`
 }
 
 type CustomerPastUsageInput struct {
@@ -319,14 +319,9 @@ func (cr *CustomerRequest) Update(ctx context.Context, customerInput *CustomerIn
 func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID string, customerUsageInput *CustomerUsageInput) (*CustomerUsage, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "current_usage")
 
-	jsonQueryParams, err := json.Marshal(customerUsageInput)
-	if err != nil {
-		return nil, &Error{Err: err}
-	}
-
-	queryParams := make(map[string]string)
-	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
-		return nil, &Error{Err: err}
+	queryParams := map[string]string{
+		"external_subscription_id": customerUsageInput.ExternalSubscriptionID,
+		"apply_taxes":              strconv.FormatBool(customerUsageInput.ApplyTaxes),
 	}
 
 	clientRequest := &ClientRequest{
