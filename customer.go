@@ -226,6 +226,7 @@ type CustomerCheckoutUrl struct {
 
 type CustomerUsageInput struct {
 	ExternalSubscriptionID string `json:"external_subscription_id,omitempty"`
+    ApplyTaxes             string `json:"apply_taxes,omitempty"`
 }
 
 type CustomerPastUsageInput struct {
