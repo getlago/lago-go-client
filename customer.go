@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
-    "strconv"
+
 	"github.com/google/uuid"
 )
 
@@ -38,6 +39,17 @@ type CustomerType string
 const (
 	CompanyCustomerType    CustomerType = "company"
 	IndividualCustomerType CustomerType = "individual"
+)
+
+type ProviderPaymentMethodType string
+
+const (
+	CardPaymentMethodType          ProviderPaymentMethodType = "card"
+	SepaDebitPaymentMethodType     ProviderPaymentMethodType = "sepa_debit"
+	USBankAccountPaymentMethodType ProviderPaymentMethodType = "us_bank_account"
+	BacsDebitPaymentMethodType     ProviderPaymentMethodType = "bacs_debit"
+	LinkPaymentMethodType          ProviderPaymentMethodType = "link"
+	BoletoPaymentMethodType        ProviderPaymentMethodType = "boleto"
 )
 
 type CustomerParams struct {
@@ -119,22 +131,24 @@ type CustomerListInput struct {
 }
 
 type CustomerBillingConfigurationInput struct {
-	InvoiceGracePeriod  int                     `json:"invoice_grace_period,omitempty"`
-	PaymentProvider     CustomerPaymentProvider `json:"payment_provider,omitempty"`
-	PaymentProviderCode string                  `json:"payment_provider_code,omitempty"`
-	ProviderCustomerID  string                  `json:"provider_customer_id,omitempty"`
-	Sync                bool                    `json:"sync,omitempty"`
-	SyncWithProvider    bool                    `json:"sync_with_provider,omitempty"`
-	DocumentLocale      string                  `json:"document_locale,omitempty"`
+	InvoiceGracePeriod     int                         `json:"invoice_grace_period,omitempty"`
+	PaymentProvider        CustomerPaymentProvider     `json:"payment_provider,omitempty"`
+	PaymentProviderCode    string                      `json:"payment_provider_code,omitempty"`
+	ProviderCustomerID     string                      `json:"provider_customer_id,omitempty"`
+	Sync                   bool                        `json:"sync,omitempty"`
+	SyncWithProvider       bool                        `json:"sync_with_provider,omitempty"`
+	DocumentLocale         string                      `json:"document_locale,omitempty"`
+	ProviderPaymentMethods []ProviderPaymentMethodType `json:"provider_payment_methods,omitempty"`
 }
 
 type CustomerBillingConfiguration struct {
-	InvoiceGracePeriod  int                     `json:"invoice_grace_period,omitempty"`
-	PaymentProvider     CustomerPaymentProvider `json:"payment_provider,omitempty"`
-	PaymentProviderCode string                  `json:"payment_provider_code,omitempty"`
-	ProviderCustomerID  string                  `json:"provider_customer_id,omitempty"`
-	SyncWithProvider    bool                    `json:"sync_with_provider,omitempty"`
-	DocumentLocale      string                  `json:"document_locale,omitempty"`
+	InvoiceGracePeriod     int                         `json:"invoice_grace_period,omitempty"`
+	PaymentProvider        CustomerPaymentProvider     `json:"payment_provider,omitempty"`
+	PaymentProviderCode    string                      `json:"payment_provider_code,omitempty"`
+	ProviderCustomerID     string                      `json:"provider_customer_id,omitempty"`
+	SyncWithProvider       bool                        `json:"sync_with_provider,omitempty"`
+	DocumentLocale         string                      `json:"document_locale,omitempty"`
+	ProviderPaymentMethods []ProviderPaymentMethodType `json:"provider_payment_methods,omitempty"`
 }
 
 type Address struct {
@@ -156,14 +170,14 @@ type IntegrationCustomer struct {
 }
 
 type InvoiceCustomSection struct {
-	LagoId                  uuid.UUID `json:"lago_id,omitempty"`
-	Code                    string    `json:"code,omitempty"`
-	Name                    string    `json:"name,omitempty"`
-	Description             string    `json:"description,omitempty"`
-	Details                 string    `json:"details,omitempty"`
-	DisplayName             string    `json:"display_name,omitempty"`
+	LagoId                uuid.UUID `json:"lago_id,omitempty"`
+	Code                  string    `json:"code,omitempty"`
+	Name                  string    `json:"name,omitempty"`
+	Description           string    `json:"description,omitempty"`
+	Details               string    `json:"details,omitempty"`
+	DisplayName           string    `json:"display_name,omitempty"`
 	AppliedToOrganization bool      `json:"applied_to_organization,omitempty"`
-	CreatedAt               time.Time `json:"created_at,omitempty"`
+	CreatedAt             time.Time `json:"created_at,omitempty"`
 }
 
 type IntegrationCustomersResponse struct {
