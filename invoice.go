@@ -98,11 +98,12 @@ type InvoiceOneOffInput struct {
 }
 
 type InvoicePreviewInput struct {
-	PlanCode       string         `json:"plan_code,omitempty"`
-	BillingTime    string         `json:"billing_time,omitempty"`
-	SubscriptionAt string         `json:"subscription_at,omitempty"`
-	Coupons        []CouponInput  `json:"coupons,omitempty"`
-	Customer       *CustomerInput `json:"customer,omitempty"`
+	PlanCode       string              `json:"plan_code,omitempty"`
+	BillingTime    string              `json:"billing_time,omitempty"`
+	SubscriptionAt string              `json:"subscription_at,omitempty"`
+	Coupons        []CouponInput       `json:"coupons,omitempty"`
+	Customer       *CustomerInput      `json:"customer,omitempty"`
+	Subscriptions  *SubscriptionsInput `json:"subscriptions,omitempty"`
 }
 
 type InvoiceListInput struct {

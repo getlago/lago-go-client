@@ -81,6 +81,10 @@ type SubscriptionInput struct {
 	Name               string              `json:"name"`
 }
 
+type SubscriptionsInput struct {
+    ExternalCustomerID []string `json:"external_ids,omitempty"`
+}
+
 type SubscriptionTerminateInput struct {
 	ExternalID string `json:"external_id,omitempty"`
 	Status     string `json:"status,omitempty"`
