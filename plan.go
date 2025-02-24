@@ -63,7 +63,7 @@ type PlanInput struct {
 	AmountCents        int                     `json:"amount_cents"`
 	AmountCurrency     Currency                `json:"amount_currency,omitempty"`
 	PayInAdvance       bool                    `json:"pay_in_advance"`
-	BillChargeMonthly  bool                    `json:"bill_charge_monthly"`
+	BillChargesMonthly bool                    `json:"bill_charges_monthly"`
 	TrialPeriod        float32                 `json:"trial_period"`
 	Charges            []PlanChargeInput       `json:"charges,omitempty"`
 	MinimumCommitment  *MinimumCommitmentInput `json:"minimum_commitment,omitempty"`
@@ -99,7 +99,7 @@ type Plan struct {
 	AmountCents        int                `json:"amount_cents,omitempty"`
 	AmountCurrency     Currency           `json:"amount_currency,omitempty"`
 	PayInAdvance       bool               `json:"pay_in_advance,omitempty"`
-	BillChargeMonthly  bool               `json:"bill_charge_monthly,omitempty"`
+	BillChargesMonthly bool               `json:"bill_charges_monthly,omitempty"`
 	Charges            []Charge           `json:"charges,omitempty"`
 	MinimumCommitment  *MinimumCommitment `json:"minimum_commitment"`
 
