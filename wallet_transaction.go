@@ -14,6 +14,7 @@ type WalletTransactionStatus string
 const (
 	WalletTransactionStatusPending WalletTransactionStatus = "pending"
 	WalletTransactionStatusSettled WalletTransactionStatus = "settled"
+	WalletTransactionStatusFailed  WalletTransactionStatus = "failed"
 )
 
 type TransactionStatus string
@@ -78,6 +79,7 @@ type WalletTransaction struct {
     InvoiceRequiresSuccessfulPayment bool                                `json:"invoice_requires_successful_payment,omitempty"`
 	CreatedAt                        time.Time                           `json:"created_at,omitempty"`
 	SettledAt                        time.Time                           `json:"settled_at,omitempty"`
+	FailedAt                         time.Time                           `json:"failed_at,omitempty"`
     Metadata                         []WalletTransactionMetadata         `json:"metadata,omitempty"`
 }
 
