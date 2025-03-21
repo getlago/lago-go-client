@@ -21,6 +21,7 @@ type RecurringTransactionRuleInput struct {
 	Interval                         string                      `json:"interval,omitempty"`
     Method                           string                      `json:"method,omitempty"`
 	StartedAt                        *time.Time                  `json:"started_at,omitempty"`
+    ExpirationAt                     *time.Time                  `json:"expiration_at,omitempty"`
 	TargetOngoingBalance             string                      `json:"target_ongoing_balance,omitempty"`
 	ThresholdCredits                 string                      `json:"threshold_credits,omitempty"`
 	Trigger                          string                      `json:"trigger,omitempty"`
@@ -35,6 +36,8 @@ type RecurringTransactionRuleResponse struct {
 	Interval                         string                      `json:"interval,omitempty"`
 	Method                           string                      `json:"method,omitempty"`
 	StartedAt                        *time.Time                  `json:"started_at,omitempty"`
+	ExpirationAt                     *time.Time                  `json:"expiration_at,omitempty"`
+	Status                           Status                      `json:"status,omitempty"`
 	TargetOngoingBalance             string                      `json:"target_ongoing_balance,omitempty"`
 	ThresholdCredits                 string                      `json:"threshold_credits,omitempty"`
 	Trigger                          string                      `json:"trigger,omitempty"`
