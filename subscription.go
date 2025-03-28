@@ -82,7 +82,9 @@ type SubscriptionInput struct {
 }
 
 type SubscriptionsInput struct {
-    ExternalCustomerID []string `json:"external_ids,omitempty"`
+	ExternalIds  []string   `json:"external_ids,omitempty"`
+	TerminatedAt *time.Time `json:"terminated_at,omitempty"`
+	PlanCode     string     `json:"plan_code,omitempty"`
 }
 
 type SubscriptionTerminateInput struct {
