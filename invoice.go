@@ -15,10 +15,11 @@ type InvoicePaymentStatus string
 type InvoiceCreditItemType string
 
 const (
-	SubscriptionInvoiceType InvoiceType = "subscription"
-	AddOnInvoiceType        InvoiceType = "add_on"
-	CreditInvoiceType       InvoiceType = "credit"
-	OneOffInvoiceType       InvoiceType = "one_off"
+	SubscriptionInvoiceType       InvoiceType = "subscription"
+	AddOnInvoiceType              InvoiceType = "add_on"
+	CreditInvoiceType             InvoiceType = "credit"
+	OneOffInvoiceType             InvoiceType = "one_off"
+	ProgressiveBillingInvoiceType InvoiceType = "progressive_billing"
 )
 
 const (
