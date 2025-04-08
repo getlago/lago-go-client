@@ -83,6 +83,14 @@ type WalletTransaction struct {
     Metadata                         []WalletTransactionMetadata         `json:"metadata,omitempty"`
 }
 
+type WalletTransactionPaymentUrl struct {
+	PaymentUrl string `json:"payment_url,omitempty"`
+}
+
+type WalletTransactionPaymentUrlResult struct {
+	WalletTransactionPaymentUrl *WalletTransactionPaymentUrl `json:"wallet_transaction_payment_url"`
+}
+
 func (c *Client) WalletTransaction() *WalletTransactionRequest {
 	return &WalletTransactionRequest{
 		client: c,
@@ -141,4 +149,29 @@ func (wtr *WalletTransactionRequest) GetList(ctx context.Context, walletTransact
 	}
 
 	return walletTransactionResult, nil
+}
+
+func (wtr *WalletTransactionRequest) PaymentUrl(ctx context.Context, walletTransactionID string) (*WalletTransactionPaymentUrl, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "wallet_transactions", walletTransactionID, "payment_url")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &WalletTransactionPaymentUrlResult{},
+	}
+
+	result, err := wtr.client.PostWithoutBody(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	if result != nil {
+		paymentUrlResult, ok := result.(*WalletTransactionPaymentUrlResult)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return paymentUrlResult.WalletTransactionPaymentUrl, nil
+	}
+
+	return nil, nil
 }
