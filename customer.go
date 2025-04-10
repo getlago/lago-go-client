@@ -246,7 +246,7 @@ type CustomerUsageInput struct {
 type CustomerPastUsageInput struct {
 	ExternalSubscriptionID string `json:"external_subscription_id"`
 	BillableMetricCode     string `json:"billable_metric_code,omitempty"`
-	PeriodsCount           int    `json:"periods_count,omitempty"`
+	PeriodsCount           int    `json:"periods_count,omitempty,string"`
 }
 
 type Customer struct {
