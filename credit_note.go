@@ -78,12 +78,13 @@ type CreditNoteAppliedTax struct {
 }
 
 type CreditNote struct {
-	LagoID        uuid.UUID        `json:"lago_id,omitempty"`
-	SequentialID  int              `json:"sequential_id,omitempty"`
-	Number        string           `json:"number,omitempty"`
-	LagoInvoiceID uuid.UUID        `json:"lago_invoice_id,omitempty"`
-	InvoiceNumber string           `json:"invoice_number,omitempty"`
-	Reason        CreditNoteReason `json:"reason,omitempty"`
+	LagoID            uuid.UUID        `json:"lago_id,omitempty"`
+	SequentialID  	  int              `json:"sequential_id,omitempty"`
+	BillingEntityCode string           `json:"billing_entity_code,omitempty"`
+	Number            string           `json:"number,omitempty"`
+	LagoInvoiceID     uuid.UUID        `json:"lago_invoice_id,omitempty"`
+	InvoiceNumber     string           `json:"invoice_number,omitempty"`
+	Reason            CreditNoteReason `json:"reason,omitempty"`
 
 	CreditStatus CreditNoteCreditStatus `json:"credit_status,omitempty"`
 	RefundStatus CreditNoteRefundStatus `json:"refund_status,omitempty"`
