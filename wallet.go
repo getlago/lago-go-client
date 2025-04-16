@@ -44,8 +44,8 @@ type RecurringTransactionRuleResponse struct {
 	PaidCredits                      string                      `json:"paid_credits,omitempty"`
 	GrantedCredits                   string                      `json:"granted_credits,omitempty"`
 	CreatedAt                        time.Time                   `json:"created_at,omitempty"`
-    InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
-    TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
+	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
+	TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
 }
 
 type WalletRequest struct {
@@ -64,9 +64,9 @@ type WalletInput struct {
 	GrantedCredits                   string                          `json:"granted_credits,omitempty"`
 	ExpirationAt                     *time.Time                      `json:"expiration_at,omitempty"`
 	ExternalCustomerID               string                          `json:"external_customer_id,omitempty"`
-    InvoiceRequiresSuccessfulPayment bool                            `json:"invoice_requires_successful_payment,omitempty"`
-    TransactionMetadata              []WalletTransactionMetadata     `json:"transaction_metadata,omitempty"`
-	RecurringTransactionRules        []RecurringTransactionRuleInput `json:"recurring_transaction_rules,omitempty"`
+	InvoiceRequiresSuccessfulPayment bool                            `json:"invoice_requires_successful_payment,omitempty"`
+	TransactionMetadata              []WalletTransactionMetadata     `json:"transaction_metadata,omitempty"`
+	RecurringTransactionRules        []RecurringTransactionRuleInput `json:"recurring_transaction_rules"`
 }
 
 type WalletListInput struct {
@@ -92,13 +92,13 @@ type Wallet struct {
 	CreditsBalance                   string                             `json:"credits_balance,omitempty"`
 	BalanceCents                     int                                `json:"balance_cents,omitempty"`
 	ConsumedCredits                  string                             `json:"consumed_credits,omitempty"`
-    InvoiceRequiresSuccessfulPayment bool                               `json:"invoice_requires_successful_payment,omitempty"`
+	InvoiceRequiresSuccessfulPayment bool                               `json:"invoice_requires_successful_payment,omitempty"`
 	CreatedAt                        time.Time                          `json:"created_at,omitempty"`
 	ExpirationAt                     time.Time                          `json:"expiration_at,omitempty"`
 	LastBalanceSyncAt                time.Time                          `json:"last_balance_sync_at,omitempty"`
 	LastConsumedCreditAt             time.Time                          `json:"last_consumed_credit_at,omitempty"`
 	TerminatedAt                     time.Time                          `json:"terminated_at,omitempty"`
-    RecurringTransactionRules        []RecurringTransactionRuleResponse `json:"recurring_transaction_rules,omitempty"`
+	RecurringTransactionRules        []RecurringTransactionRuleResponse `json:"recurring_transaction_rules,omitempty"`
 	OngoingBalanceCents              int                                `json:"ongoing_balance_cents,omitempty"`
 	OngoingUsageBalanceCents         int                                `json:"ongoing_usage_balance_cents,omitempty"`
 	CreditsOngoingBalance            string                             `json:"credits_ongoing_balance,omitempty"`
