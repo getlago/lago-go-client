@@ -96,6 +96,7 @@ type MetadataResponse struct {
 
 type CustomerInput struct {
 	ExternalID                string                            `json:"external_id,omitempty"`
+	BillingEntityCode         string                            `json:"billing_entity_code,omitempty"`
 	Name                      string                            `json:"name,omitempty"`
 	Firstname                 string                            `json:"firstname,omitempty"`
 	Lastname                  string                            `json:"lastname,omitempty"`
@@ -250,10 +251,11 @@ type CustomerPastUsageInput struct {
 }
 
 type Customer struct {
-	LagoID       uuid.UUID `json:"lago_id,omitempty"`
-	SequentialID int       `json:"sequential_id,omitempty"`
-	ExternalID   string    `json:"external_id,omitempty"`
-	Slug         string    `json:"slug,omitempty"`
+	LagoID            uuid.UUID `json:"lago_id,omitempty"`
+	SequentialID      int       `json:"sequential_id,omitempty"`
+	ExternalID        string    `json:"external_id,omitempty"`
+	Slug              string    `json:"slug,omitempty"`
+	BillingEntityCode string    `json:"billing_entity_code,omitempty"`
 
 	Name                      string                         `json:"name,omitempty"`
 	Firstname                 string                         `json:"firstname,omitempty"`

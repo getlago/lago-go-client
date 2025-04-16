@@ -99,12 +99,13 @@ type InvoiceOneOffInput struct {
 }
 
 type InvoicePreviewInput struct {
-	PlanCode       string              `json:"plan_code,omitempty"`
-	BillingTime    string              `json:"billing_time,omitempty"`
-	SubscriptionAt string              `json:"subscription_at,omitempty"`
-	Coupons        []CouponInput       `json:"coupons,omitempty"`
-	Customer       *CustomerInput      `json:"customer,omitempty"`
-	Subscriptions  *SubscriptionsInput `json:"subscriptions,omitempty"`
+	PlanCode          string              `json:"plan_code,omitempty"`
+	BillingTime       string              `json:"billing_time,omitempty"`
+	SubscriptionAt    string              `json:"subscription_at,omitempty"`
+	Coupons           []CouponInput       `json:"coupons,omitempty"`
+	Customer          *CustomerInput      `json:"customer,omitempty"`
+	Subscriptions     *SubscriptionsInput `json:"subscriptions,omitempty"`
+	BillingEntityCode string              `json:"billing_entity_code,omitempty"`
 }
 
 type InvoiceListInput struct {
@@ -173,9 +174,10 @@ type InvoiceErrorDetail struct {
 }
 
 type Invoice struct {
-	LagoID       uuid.UUID `json:"lago_id,omitempty"`
-	SequentialID int       `json:"sequential_id,omitempty"`
-	Number       string    `json:"number,omitempty"`
+	LagoID            uuid.UUID `json:"lago_id,omitempty"`
+	SequentialID      int       `json:"sequential_id,omitempty"`
+	BillingEntityCode string    `json:"billing_entity_code,omitempty"`
+	Number            string    `json:"number,omitempty"`
 
 	IssuingDate          string    `json:"issuing_date,omitempty"`
 	PaymentDisputeLostAt time.Time `json:"payment_dispute_lost_at,omitempty"`
