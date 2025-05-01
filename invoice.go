@@ -119,6 +119,9 @@ type InvoiceListInput struct {
 	Status             InvoiceStatus        `json:"status,omitempty"`
 	PaymentStatus      InvoicePaymentStatus `json:"payment_status,omitempty"`
 	PaymentOverdue     bool                 `json:"payment_overdue,omitempty"`
+
+	AmountFrom int `json:"amount_from,omitempty"`
+	AmountTo   int `json:"amount_to,omitempty"`
 }
 
 type InvoiceCreditItem struct {
