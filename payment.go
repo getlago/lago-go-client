@@ -26,16 +26,28 @@ type PaymentListInput struct {
 	InvoiceID 			string `json:"invoice_id,omitempty"`
 }
 
+type NextAction struct {
+	Type          string         `json:"type,omitempty"`
+	RedirectToURL *RedirectToURL `json:"redirect_to_url,omitempty"`
+}
+
+type RedirectToURL struct {
+	URL       string `json:"url,omitempty"`
+	ReturnURL string `json:"return_url,omitempty"`
+}
+
 type Payment struct {
-	LagoID         		uuid.UUID `json:"lago_id,omitempty"`
-	AmountCurrency		Currency  `json:"amount_currency,omitempty"`
-	AmountCents			int       `json:"amount_cents,omitempty"`
-	PaymentStatus		string    `json:"payment_status,omitempty"`
-	Type  		   		string    `json:"type,omitempty"`
-	Reference			string    `json:"reference,omitempty"`
-	ExternalPaymentID	string    `json:"external_payment_id,omitempty"`
-	CreatedAt      		time.Time `json:"created_at,omitempty"`
-	InvoiceIds 	   		[]string  `json:"invoice_ids,omitempty"`
+	LagoID             uuid.UUID   `json:"lago_id,omitempty"`
+	AmountCurrency     Currency    `json:"amount_currency,omitempty"`
+	AmountCents        int         `json:"amount_cents,omitempty"`
+	PaymentStatus      string      `json:"payment_status,omitempty"`
+	Type               string      `json:"type,omitempty"`
+	Reference          string      `json:"reference,omitempty"`
+	ExternalPaymentID  string      `json:"external_payment_id,omitempty"`
+	CreatedAt          time.Time   `json:"created_at,omitempty"`
+	InvoiceIds         []string    `json:"invoice_ids,omitempty"`
+	ExternalCustomerID string      `json:"external_customer_id,omitempty"`
+	NextAction         *NextAction `json:"next_action,omitempty"`
 }
 
 type PaymentParams struct {
