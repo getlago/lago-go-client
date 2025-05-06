@@ -16,6 +16,7 @@ type ManualPaymentRequest struct {
 type PaymentResult struct {
 	Payment  *Payment  `json:"payment,omitempty"`
 	Payments []Payment `json:"payments,omitempty"`
+	Meta     Metadata  `json:"meta,omitempty"`
 }
 
 type PaymentListInput struct {
