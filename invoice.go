@@ -96,6 +96,7 @@ type InvoiceOneOffInput struct {
 	ExternalCustomerId string             `json:"external_customer_id,omitempty"`
 	Currency           string             `json:"currency,omitempty"`
 	Fees               []InvoiceFeesInput `json:"fees,omitempty"`
+	SkipPsp            bool               `json:"skip_psp,omitempty"`
 }
 
 type InvoicePreviewInput struct {
