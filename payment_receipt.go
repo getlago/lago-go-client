@@ -16,6 +16,7 @@ type PaymentReceiptRequest struct {
 type PaymentReceiptResult struct {
 	PaymentReceipt  *PaymentReceipt  `json:"payment_receipt,omitempty"`
 	PaymentReceipts []PaymentReceipt `json:"payment_receipts,omitempty"`
+	Meta            Metadata         `json:"meta,omitempty"`
 }
 
 type PaymentReceiptListInput struct {
@@ -26,10 +27,10 @@ type PaymentReceiptListInput struct {
 }
 
 type PaymentReceipt struct {
-	LagoID         uuid.UUID `json:"lago_id,omitempty"`
-	Number         string    `json:"number,omitempty"`
-	CreatedAt      time.Time `json:"created_at,omitempty"`
-	Payment 	   *Payment `json:"payment,omitempty"`
+	LagoID    uuid.UUID `json:"lago_id,omitempty"`
+	Number    string    `json:"number,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	Payment   *Payment  `json:"payment,omitempty"`
 }
 
 func (c *Client) PaymentReceipt() *PaymentReceiptRequest {
