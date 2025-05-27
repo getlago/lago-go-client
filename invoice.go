@@ -447,6 +447,30 @@ func (ir *InvoiceRequest) Finalize(ctx context.Context, invoiceID string) (*Invo
 	return nil, nil
 }
 
+func (ir *InvoiceRequest) Void(ctx context.Context, invoiceID string) (*Invoice, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "void")
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &InvoiceResult{},
+	}
+
+	result, err := ir.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	if result != nil {
+		invoiceResult, ok := result.(*InvoiceResult)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return invoiceResult.Invoice, nil
+	}
+
+	return nil, nil
+}
+
 func (ir *InvoiceRequest) LoseDispute(ctx context.Context, invoiceID string) (*Invoice, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "lose_dispute")
 	clientRequest := &ClientRequest{
