@@ -19,16 +19,16 @@ const (
 type RecurringTransactionRuleInput struct {
 	LagoID                           uuid.UUID                   `json:"lago_id,omitempty"`
 	Interval                         string                      `json:"interval,omitempty"`
-    Method                           string                      `json:"method,omitempty"`
+	Method                           string                      `json:"method,omitempty"`
 	StartedAt                        *time.Time                  `json:"started_at,omitempty"`
-    ExpirationAt                     *time.Time                  `json:"expiration_at,omitempty"`
+	ExpirationAt                     *time.Time                  `json:"expiration_at,omitempty"`
 	TargetOngoingBalance             string                      `json:"target_ongoing_balance,omitempty"`
 	ThresholdCredits                 string                      `json:"threshold_credits,omitempty"`
 	Trigger                          string                      `json:"trigger,omitempty"`
 	PaidCredits                      string                      `json:"paid_credits,omitempty"`
 	GrantedCredits                   string                      `json:"granted_credits,omitempty"`
-    InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
-    TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
+	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
+	TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
 }
 
 type RecurringTransactionRuleResponse struct {
@@ -186,9 +186,9 @@ func (bmr *WalletRequest) Create(ctx context.Context, walletInput *WalletInput) 
 }
 
 func (bmr *WalletRequest) Update(ctx context.Context, walletInput *WalletInput, walletID string) (*Wallet, *Error) {
-    walletParams := &WalletParams{
-        WalletInput: walletInput,
-    }
+	walletParams := &WalletParams{
+		WalletInput: walletInput,
+	}
 
 	subPath := fmt.Sprintf("%s/%s", "wallets", walletID)
 	clientRequest := &ClientRequest{

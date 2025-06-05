@@ -1,0 +1,31 @@
+name: gofmt
+on:
+  push:
+    tags:
+      - v*
+    branches:
+      - main
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  gofmt:
+    name: Go fmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          # The builtin cache feature ensures that installing golangci-lint
+          # is consistently fast.
+          cache: true
+          cache-dependency-path: go.sum
+      - name: check-gofmt
+        run: |
+          if [ "$(gofmt -s -l . | wc -l)" -gt 0 ]; then
+            echo "The following files are not formatted:"
+            gofmt -s -l .
+            echo "Please run 'go fmt ./...' to format the code."
+            exit 1
+          fi

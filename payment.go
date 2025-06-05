@@ -20,11 +20,11 @@ type PaymentResult struct {
 }
 
 type PaymentListInput struct {
-	PerPage 			int `json:"per_page,omitempty,string"`
-	Page				int `json:"page,omitempty,string"`
+	PerPage int `json:"per_page,omitempty,string"`
+	Page    int `json:"page,omitempty,string"`
 
-	ExternalCustomerID	string `json:"external_customer_id,omitempty"`
-	InvoiceID 			string `json:"invoice_id,omitempty"`
+	ExternalCustomerID string `json:"external_customer_id,omitempty"`
+	InvoiceID          string `json:"invoice_id,omitempty"`
 }
 
 type NextAction struct {
@@ -56,10 +56,10 @@ type PaymentParams struct {
 }
 
 type PaymentInput struct {
-	InvoiceId	string		`json:"invoice_id,omitempty"`
-	AmountCents int   		`json:"amount_cents,omitempty"`
-	Reference	string		`json:"reference,omitempty"`
-	PaidAt		string		`json:"paid_at,omitempty"`
+	InvoiceId   string `json:"invoice_id,omitempty"`
+	AmountCents int    `json:"amount_cents,omitempty"`
+	Reference   string `json:"reference,omitempty"`
+	PaidAt      string `json:"paid_at,omitempty"`
 }
 
 func (c *Client) Payment() *ManualPaymentRequest {

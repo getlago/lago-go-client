@@ -84,7 +84,6 @@ type Organization struct {
 	EmailSettings             []string                      `json:"email_settings,omitempty"`
 	FinalizeZeroAmountInvoice bool                          `json:"finalize_zero_amount_invoice,omitempty"`
 
-
 	BillingConfiguration OrganizationBillingConfiguration `json:"billing_configuration,omitempty"`
 
 	Taxes []Tax `json:"taxes,omitempty"`
