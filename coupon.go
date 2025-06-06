@@ -299,12 +299,7 @@ func (cr *AppliedCouponRequest) GetList(ctx context.Context, appliedCouponListIn
 	clientRequest := &ClientRequest{
 		Path:      "applied_coupons",
 		UrlValues: urlValues,
-		Result: &AppliedCouponResult{
-			Meta: Metadata{
-				CurrentPage: 1,
-				NextPage:    0,
-			},
-		},
+		Result:    &AppliedCouponResult{},
 	}
 
 	result, clientErr := cr.client.Get(ctx, clientRequest)
