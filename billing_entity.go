@@ -40,35 +40,36 @@ type BillingEntityBillingConfiguration struct {
 }
 
 type BillingEntity struct {
-	LagoID                    uuid.UUID                      `json:"lago_id,omitempty"`
-	Name                      string                         `json:"name,omitempty"`
-	Code                      string                         `json:"code,omitempty"`
-	Email                     string                         `json:"email,omitempty"`
-	AddressLine1              string                         `json:"address_line1,omitempty"`
-	AddressLine2              string                         `json:"address_line2,omitempty"`
-	City                      string                         `json:"city,omitempty"`
-	Zipcode                   string                         `json:"zipcode,omitempty"`
-	State                     string                         `json:"state,omitempty"`
-	Country                   string                         `json:"country,omitempty"`
-	DefaultCurrency           Currency                       `json:"default_currency,omitempty"`
-	LegalName                 string                         `json:"legal_name,omitempty"`
-	LegalNumber               string                         `json:"legal_number,omitempty"`
-	DocumentNumbering         BillingEntityDocumentNumbering `json:"document_numbering,omitempty"`
-	DocumentNumberPrefix      string                         `json:"document_number_prefix,omitempty"`
-	NetPaymentTerm            int                            `json:"net_payment_term,omitempty"`
-	CreatedAt                 time.Time                      `json:"created_at,omitempty"`
-	UpdatedAt                 time.Time                      `json:"updated_at,omitempty"`
-	IsDefault                 bool                           `json:"is_default,omitempty"`
-	Timezone                  string                         `json:"timezone,omitempty"`
-	EmailSettings             []string                       `json:"email_settings,omitempty"`
-	TaxIdentificationNumber   string                         `json:"tax_identification_number,omitempty"`
-	FinalizeZeroAmountInvoice bool                           `json:"finalize_zero_amount_invoice,omitempty"`
-	EuTaxManagement           bool                           `json:"eu_tax_management,omitempty"`
-	LogoURL                   string                         `json:"logo_url,omitempty"`
-	InvoiceFooter             string                         `json:"invoice_footer,omitempty"`
-	InvoiceGracePeriod        int                            `json:"invoice_grace_period,omitempty"`
-	DocumentLocale            string                         `json:"document_locale,omitempty"`
-	Taxes                     []Tax                          `json:"taxes,omitempty"`
+	LagoID                        uuid.UUID                      `json:"lago_id,omitempty"`
+	Name                          string                         `json:"name,omitempty"`
+	Code                          string                         `json:"code,omitempty"`
+	Email                         string                         `json:"email,omitempty"`
+	AddressLine1                  string                         `json:"address_line1,omitempty"`
+	AddressLine2                  string                         `json:"address_line2,omitempty"`
+	City                          string                         `json:"city,omitempty"`
+	Zipcode                       string                         `json:"zipcode,omitempty"`
+	State                         string                         `json:"state,omitempty"`
+	Country                       string                         `json:"country,omitempty"`
+	DefaultCurrency               Currency                       `json:"default_currency,omitempty"`
+	LegalName                     string                         `json:"legal_name,omitempty"`
+	LegalNumber                   string                         `json:"legal_number,omitempty"`
+	DocumentNumbering             BillingEntityDocumentNumbering `json:"document_numbering,omitempty"`
+	DocumentNumberPrefix          string                         `json:"document_number_prefix,omitempty"`
+	NetPaymentTerm                int                            `json:"net_payment_term,omitempty"`
+	CreatedAt                     time.Time                      `json:"created_at,omitempty"`
+	UpdatedAt                     time.Time                      `json:"updated_at,omitempty"`
+	IsDefault                     bool                           `json:"is_default,omitempty"`
+	Timezone                      string                         `json:"timezone,omitempty"`
+	EmailSettings                 []string                       `json:"email_settings,omitempty"`
+	TaxIdentificationNumber       string                         `json:"tax_identification_number,omitempty"`
+	FinalizeZeroAmountInvoice     bool                           `json:"finalize_zero_amount_invoice,omitempty"`
+	EuTaxManagement               bool                           `json:"eu_tax_management,omitempty"`
+	LogoURL                       string                         `json:"logo_url,omitempty"`
+	InvoiceFooter                 string                         `json:"invoice_footer,omitempty"`
+	InvoiceGracePeriod            int                            `json:"invoice_grace_period,omitempty"`
+	DocumentLocale                string                         `json:"document_locale,omitempty"`
+	Taxes                         []Tax                          `json:"taxes,omitempty"`
+	SelectedInvoiceCustomSections []InvoiceCustomSection         `json:"selected_invoice_custom_sections,omitempty"`
 }
 
 type BillingEntityCreateInput struct {
@@ -119,6 +120,7 @@ type BillingEntityUpdateInput struct {
 	BillingConfiguration      BillingEntityBillingConfiguration `json:"billing_configuration,omitempty"`
 	LogoBase64                string                            `json:"logo,omitempty"`
 	TaxCodes                  []string                          `json:"tax_codes,omitempty"`
+	InvoiceCustomSectionCodes []string                          `json:"invoice_custom_section_codes,omitempty"`
 }
 
 func (c *Client) BillingEntity() *BillingEntityRequest {

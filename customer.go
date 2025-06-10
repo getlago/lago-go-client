@@ -170,17 +170,6 @@ type IntegrationCustomer struct {
 	SyncWithProvider   bool            `json:"sync_with_provider,omitempty"`
 }
 
-type InvoiceCustomSection struct {
-	LagoId                uuid.UUID `json:"lago_id,omitempty"`
-	Code                  string    `json:"code,omitempty"`
-	Name                  string    `json:"name,omitempty"`
-	Description           string    `json:"description,omitempty"`
-	Details               string    `json:"details,omitempty"`
-	DisplayName           string    `json:"display_name,omitempty"`
-	AppliedToOrganization bool      `json:"applied_to_organization,omitempty"`
-	CreatedAt             time.Time `json:"created_at,omitempty"`
-}
-
 type IntegrationCustomersResponse struct {
 	LagoID             uuid.UUID       `json:"lago_id,omitempty"`
 	ExternalCustomerId string          `json:"external_customer_id,omitempty"`
