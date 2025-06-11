@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/google/go-querystring/query"
 	"github.com/google/uuid"
 )
 
@@ -110,10 +111,11 @@ type AppliedCouponResult struct {
 }
 
 type AppliedCouponListInput struct {
-	PerPage            int                 `json:"per_page,omitempty,string"`
-	Page               int                 `json:"page,omitempty,string"`
-	Status             AppliedCouponStatus `json:"status,omitempty"`
-	ExternalCustomerID string              `json:"external_customer_id,omitempty"`
+	PerPage            int                 `url:"per_page,omitempty,string"`
+	Page               int                 `url:"page,omitempty,string"`
+	Status             AppliedCouponStatus `url:"status,omitempty"`
+	ExternalCustomerID string              `url:"external_customer_id,omitempty"`
+	CouponCode         []string            `url:"coupon_code[],omitempty"`
 }
 
 type ApplyCouponParams struct {
@@ -289,20 +291,15 @@ func (cr *CouponRequest) Delete(ctx context.Context, couponCode string) (*Coupon
 }
 
 func (cr *AppliedCouponRequest) GetList(ctx context.Context, appliedCouponListInput *AppliedCouponListInput) (*AppliedCouponResult, *Error) {
-	jsonQueryParams, err := json.Marshal(appliedCouponListInput)
+	urlValues, err := query.Values(appliedCouponListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
 
-	queryParams := make(map[string]string)
-	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
-		return nil, &Error{Err: err}
-	}
-
 	clientRequest := &ClientRequest{
-		Path:        "applied_coupons",
-		QueryParams: queryParams,
-		Result:      &AppliedCouponResult{},
+		Path:      "applied_coupons",
+		UrlValues: urlValues,
+		Result:    &AppliedCouponResult{},
 	}
 
 	result, clientErr := cr.client.Get(ctx, clientRequest)
