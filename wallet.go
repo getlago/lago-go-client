@@ -56,6 +56,10 @@ type WalletParams struct {
 	WalletInput *WalletInput `json:"wallet"`
 }
 
+type AppliesTo struct {
+	FeeTypes []string `json:"fee_types,omitempty"`
+}
+
 type WalletInput struct {
 	RateAmount                       string                          `json:"rate_amount,omitempty"`
 	Currency                         Currency                        `json:"currency,omitempty"`
@@ -67,6 +71,7 @@ type WalletInput struct {
 	InvoiceRequiresSuccessfulPayment bool                            `json:"invoice_requires_successful_payment,omitempty"`
 	TransactionMetadata              []WalletTransactionMetadata     `json:"transaction_metadata,omitempty"`
 	RecurringTransactionRules        []RecurringTransactionRuleInput `json:"recurring_transaction_rules"`
+	AppliesTo                        AppliesTo                       `json:"applies_to,omitempty"`
 }
 
 type WalletListInput struct {
@@ -103,6 +108,7 @@ type Wallet struct {
 	OngoingUsageBalanceCents         int                                `json:"ongoing_usage_balance_cents,omitempty"`
 	CreditsOngoingBalance            string                             `json:"credits_ongoing_balance,omitempty"`
 	CreditsOngoingUsageBalance       string                             `json:"credits_ongoing_usage_balance,omitempty"`
+	AppliesTo                        AppliesTo                          `json:"applies_to,omitempty"`
 }
 
 func (c *Client) Wallet() *WalletRequest {
