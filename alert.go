@@ -66,6 +66,7 @@ type TriggeredAlert struct {
 	LagoAlertID            uuid.UUID        `json:"lago_alert_id"`
 	LagoSubscriptionID     uuid.UUID        `json:"lago_subscription_id"`
 	SubscriptionExternalID string           `json:"subscription_external_id"`
+	CustomerExternalID     string           `json:"customer_external_id"`
 	BillableMetricCode     string           `json:"billable_metric_code,omitempty"`
 	AlertType              AlertType        `json:"alert_type"`
 	AlertCode              string           `json:"alert_code"`
