@@ -447,11 +447,21 @@ func (ir *InvoiceRequest) Finalize(ctx context.Context, invoiceID string) (*Invo
 	return nil, nil
 }
 
-func (ir *InvoiceRequest) Void(ctx context.Context, invoiceID string) (*Invoice, *Error) {
+type VoidInvoiceOptions struct {
+	GenerateCreditNote bool `json:"generate_credit_note,omitempty"`
+	RefundAmount       int  `json:"refund_amount,omitempty"`
+	CreditAmount       int  `json:"credit_amount,omitempty"`
+}
+
+func (ir *InvoiceRequest) Void(ctx context.Context, invoiceID string, opts *VoidInvoiceOptions) (*Invoice, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "void")
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &InvoiceResult{},
+	}
+
+	if opts != nil {
+		clientRequest.Body = opts
 	}
 
 	result, err := ir.client.Post(ctx, clientRequest)
