@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const Endpoint string = "activity_logs"
+const ActivityLogsEndpoint string = "activity_logs"
 
 type ActivityLogRequest struct {
 	client *Client
@@ -59,8 +59,14 @@ type ActivityLogResult struct {
 	Meta         Metadata      `json:"meta,omitempty"`
 }
 
+func (c *Client) ActivityLog() *ActivityLogRequest {
+	return &ActivityLogRequest{
+		client: c,
+	}
+}
+
 func (alr *ActivityLogRequest) Get(ctx context.Context, ActivityId string) (*ActivityLog, *Error) {
-	subPath := fmt.Sprintf("%s/%s", Endpoint, ActivityId)
+	subPath := fmt.Sprintf("%s/%s", ActivityLogsEndpoint, ActivityId)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &ActivityLogResult{},
@@ -91,7 +97,7 @@ func (alr *ActivityLogRequest) GetList(ctx context.Context, activityLogListInput
 	}
 
 	clientRequest := &ClientRequest{
-		Path:        Endpoint,
+		Path:        ActivityLogsEndpoint,
 		QueryParams: queryParams,
 		Result:      &ActivityLogResult{},
 	}
