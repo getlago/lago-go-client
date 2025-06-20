@@ -18,40 +18,40 @@ type ApiLogRequest struct {
 type HttpMethod string
 
 const (
-	PostMethod		HttpMethod = "post"
-	PutMethod			HttpMethod = "put"
-	DeleteMethod	HttpMethod = "delete"
+	PostMethod   HttpMethod = "post"
+	PutMethod    HttpMethod = "put"
+	DeleteMethod HttpMethod = "delete"
 )
 
 type ApiLog struct {
-	RequestId       uuid.UUID              	`json:"request_id"`
-	ApiVersion      string                 	`json:"api_version"`
-	Client         	string     							`json:"client"`
-	HttpMethod 			HttpMethod 							`json:"http_method"`
-	HttpStatus			int 										`json:"http_status"`
-	RequestBody  		map[string]interface{} 	`json:"request_body,omitempty"`
-	RequestOrigin		string                 	`json:"request_origin"`
-	RequestPath     string              		`json:"request_path"`
-	RequestResponse	map[string]interface{} 	`json:"request_response,omitempty"`
-	LoggedAt        time.Time              	`json:"logged_at"`
-	CreatedAt       time.Time              	`json:"created_at"`
+	RequestId       uuid.UUID              `json:"request_id"`
+	ApiVersion      string                 `json:"api_version"`
+	Client          string                 `json:"client"`
+	HttpMethod      HttpMethod             `json:"http_method"`
+	HttpStatus      int                    `json:"http_status"`
+	RequestBody     map[string]interface{} `json:"request_body,omitempty"`
+	RequestOrigin   string                 `json:"request_origin"`
+	RequestPath     string                 `json:"request_path"`
+	RequestResponse map[string]interface{} `json:"request_response,omitempty"`
+	LoggedAt        time.Time              `json:"logged_at"`
+	CreatedAt       time.Time              `json:"created_at"`
 }
 
 type ApiLogListInput struct {
-	PerPage 			int 		 `json:"per_page,omitempty,string"`
-	Page    			int 		 `json:"page,omitempty,string"`
-	FromDate      string   `json:"from_date,omitempty"`
-	ToDate        string   `json:"to_date,omitempty"`
-	HttpMethods   []string `json:"http_methods,omitempty"`
-	HttpStatuses	[]string `json:"http_statuses,omitempty"`
-	ApiVersion		[]string `json:"api_version,omitempty"`
-	RequestPaths  []string `json:"request_paths,omitempty"`
+	PerPage      int      `json:"per_page,omitempty,string"`
+	Page         int      `json:"page,omitempty,string"`
+	FromDate     string   `json:"from_date,omitempty"`
+	ToDate       string   `json:"to_date,omitempty"`
+	HttpMethods  []string `json:"http_methods,omitempty"`
+	HttpStatuses []string `json:"http_statuses,omitempty"`
+	ApiVersion   []string `json:"api_version,omitempty"`
+	RequestPaths []string `json:"request_paths,omitempty"`
 }
 
 type ApiLogResult struct {
-	ApiLog  	*ApiLog  `json:"api_log,omitempty"`
-	ApiLogs 	[]ApiLog `json:"api_logs,omitempty"`
-	Meta      Metadata `json:"meta,omitempty"`
+	ApiLog  *ApiLog  `json:"api_log,omitempty"`
+	ApiLogs []ApiLog `json:"api_logs,omitempty"`
+	Meta    Metadata `json:"meta,omitempty"`
 }
 
 func (c *Client) ApiLog() *ApiLogRequest {
