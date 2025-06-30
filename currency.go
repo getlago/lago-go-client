@@ -46,6 +46,7 @@ const (
 	FKP Currency = "FKP"
 	GBP Currency = "GBP"
 	GEL Currency = "GEL"
+	GHS Currency = "GHS"
 	GIP Currency = "GIP"
 	GMD Currency = "GMD"
 	GNF Currency = "GNF"
