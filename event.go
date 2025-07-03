@@ -135,7 +135,7 @@ func (er *EventRequest) Get(ctx context.Context, eventID string) (*Event, *Error
 	return eventResult.Event, nil
 }
 
-func (er *EventRequest) Batch(ctx context.Context, batchInput []EventInput) (*BatchEventResult, *Error) {
+func (er *EventRequest) Batch(ctx context.Context, batchInput []EventInput) ([]Event, *Error) {
 	eventParams := &BatchEventParams{
 		Events: batchInput,
 	}
@@ -157,5 +157,5 @@ func (er *EventRequest) Batch(ctx context.Context, batchInput []EventInput) (*Ba
 		return nil, err
 	}
 
-	return batchEventResult, nil
+	return batchEventResult.Events, nil
 }

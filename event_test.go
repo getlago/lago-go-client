@@ -3,7 +3,6 @@ package lago
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -40,10 +39,10 @@ func batchHandlerFunc(c *qt.C, assertRequestFunc func(*qt.C, *http.Request)) *ht
 	}))
 }
 
-func assertBatchEventListResponse(c *qt.C, result *BatchEventResult) {
-	c.Assert(result.Events, qt.HasLen, 1)
+func assertBatchEventListResponse(c *qt.C, result []Event) {
+	c.Assert(result, qt.HasLen, 1)
 
-	event := result.Events[0]
+	event := result[0]
 	c.Assert(event.LagoID.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
 	c.Assert(event.Code, qt.Equals, "bm_code")
 	c.Assert(event.Timestamp.Format(time.RFC3339), qt.Equals, "2025-07-03T15:35:00Z")
@@ -88,7 +87,6 @@ func TestEventsBatch(t *testing.T) {
 			},
 		})
 
-		fmt.Println(err)
 		c.Assert(err == nil, qt.IsTrue)
 		assertBatchEventListResponse(c, result)
 	})
