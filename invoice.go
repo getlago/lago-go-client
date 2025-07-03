@@ -52,8 +52,8 @@ type InvoiceResult struct {
 	Meta     Metadata  `json:"meta,omitempty"`
 }
 
-type InvoicePaymentUrlResult struct {
-	InvoicePaymentUrl *InvoicePaymentUrl `json:"invoice_payment_url"`
+type InvoicePaymentDetailsResult struct {
+	InvoicePaymentDetails *InvoicePaymentDetails `json:"invoice_payment_details,omitempty"`
 }
 
 type InvoiceParams struct {
@@ -222,8 +222,12 @@ type Invoice struct {
 	AppliedUsageThreshold        []AppliedUsageThreshold              `json:"applied_usage_threshold,omitempty"`
 }
 
-type InvoicePaymentUrl struct {
-	PaymentUrl string `json:"payment_url,omitempty"`
+type InvoicePaymentDetails struct {
+	LagoCustomerID     uuid.UUID `json:"lago_customer_id,omitempty"`
+	LagoInvoiceID      uuid.UUID `json:"lago_invoice_id,omitempty"`
+	ExternalCustomerID string    `json:"external_customer_id,omitempty"`
+	PaymentProvider    string    `json:"payment_provider,omitempty"`
+	PaymentUrl         string    `json:"payment_url,omitempty"`
 }
 
 func (c *Client) Invoice() *InvoiceRequest {
@@ -522,27 +526,24 @@ func (ir *InvoiceRequest) RetryPayment(ctx context.Context, invoiceID string) (*
 	return nil, nil
 }
 
-func (ir *InvoiceRequest) PaymentUrl(ctx context.Context, invoiceID string) (*InvoicePaymentUrl, *Error) {
+func (ir *InvoiceRequest) PaymentUrl(ctx context.Context, invoiceID string) (*InvoicePaymentDetails, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "payment_url")
 
 	clientRequest := &ClientRequest{
 		Path:   subPath,
-		Result: &InvoicePaymentUrlResult{},
+		Result: &InvoicePaymentDetailsResult{},
 	}
 
 	result, err := ir.client.PostWithoutBody(ctx, clientRequest)
 	if err != nil {
 		return nil, err
 	}
+	fmt.Println(result)
 
-	if result != nil {
-		paymentUrlResult, ok := result.(*InvoicePaymentUrlResult)
-		if !ok {
-			return nil, &ErrorTypeAssert
-		}
-
-		return paymentUrlResult.InvoicePaymentUrl, nil
+	paymentUrlResult, ok := result.(*InvoicePaymentDetailsResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
 	}
 
-	return nil, nil
+	return paymentUrlResult.InvoicePaymentDetails, nil
 }
