@@ -209,6 +209,7 @@ func (c *Client) PostWithoutBody(ctx context.Context, cr *ClientRequest) (interf
 	resp, err := c.HttpClient.R().
 		SetContext(ctx).
 		SetError(&Error{}).
+		SetResult(cr.Result).
 		Post(cr.Path)
 	if err != nil {
 		return nil, &Error{Err: err}
