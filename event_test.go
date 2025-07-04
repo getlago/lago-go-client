@@ -3,7 +3,6 @@ package lago
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -88,7 +87,6 @@ func TestEventsBatch(t *testing.T) {
 			},
 		})
 
-		fmt.Println(err)
 		c.Assert(err == nil, qt.IsTrue)
 		assertBatchEventListResponse(c, result)
 	})
