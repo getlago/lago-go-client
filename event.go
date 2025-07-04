@@ -17,7 +17,7 @@ type EventParams struct {
 }
 
 type BatchEventParams struct {
-	Events *[]EventInput `json:"events"`
+	Events []EventInput `json:"events"`
 }
 
 type EventInput struct {
@@ -40,7 +40,7 @@ type EventEstimateFeesInput struct {
 }
 
 type BatchEventResult struct {
-	Events *[]Event `json:"events"`
+	Events []Event `json:"events"`
 }
 
 type EventResult struct {
@@ -135,7 +135,7 @@ func (er *EventRequest) Get(ctx context.Context, eventID string) (*Event, *Error
 	return eventResult.Event, nil
 }
 
-func (er *EventRequest) Batch(ctx context.Context, batchInput *[]EventInput) (*[]Event, *Error) {
+func (er *EventRequest) Batch(ctx context.Context, batchInput []EventInput) ([]Event, *Error) {
 	eventParams := &BatchEventParams{
 		Events: batchInput,
 	}
