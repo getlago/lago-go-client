@@ -2,25 +2,28 @@ package lago
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
+	"github.com/google/go-querystring/query"
 	"github.com/google/uuid"
 )
 
 type CreditNoteCreditStatus string
 type CreditNoteRefundStatus string
 type CreditNoteReason string
+type CreditNoteErrorCode string
 
 const (
 	CreditNoteCreditStatusAvailable CreditNoteCreditStatus = "available"
 	CreditNoteCreditStatusConsumed  CreditNoteCreditStatus = "consumed"
+	CreditNoteCreditStatusVoided    CreditNoteCreditStatus = "voided"
 )
 
 const (
-	CreditNoteRefundStatusPending  CreditNoteRefundStatus = "pending"
-	CreditNoteRefundStatusRefunded CreditNoteRefundStatus = "refunded"
+	CreditNoteRefundStatusPending   CreditNoteRefundStatus = "pending"
+	CreditNoteRefundStatusSucceeded CreditNoteRefundStatus = "succeeded"
+	CreditNoteRefundStatusFailed    CreditNoteRefundStatus = "failed"
 )
 
 const (
@@ -30,6 +33,13 @@ const (
 	CreditNoteReasonOrderCancellation     CreditNoteReason = "order_cancellation"
 	CreditNoteReasonFraudulentCharge      CreditNoteReason = "fraudulent_charge"
 	CreditNoteReasonOther                 CreditNoteReason = "other"
+)
+
+const (
+	CreditNoteErrorCodeNotProvided            CreditNoteErrorCode = "not_provided"
+	CreditNoteErrorCodeTaxError               CreditNoteErrorCode = "tax_error"
+	CreditNoteErrorCodeTaxVoidingError        CreditNoteErrorCode = "tax_voiding_error"
+	CreditNoteErrorCodeInvoiceGenerationError CreditNoteErrorCode = "invoice_generation_error"
 )
 
 type CreditNoteRequest struct {
@@ -46,14 +56,29 @@ type CreditNoteResult struct {
 	Meta        Metadata     `json:"meta,omitempty"`
 }
 
-type CreditNoteEstimatedResult struct {
-	CreditNoteEstimated *CreditNoteEstimated `json:"credit_note_estimated"`
+type EstimatedCreditNoteResult struct {
+	CreditNoteEstimated *EstimatedCreditNote `json:"estimated_credit_note"`
 }
 
-type CreditListInput struct {
-	PerPage            int    `json:"per_page,omitempty,string"`
-	Page               int    `json:"page,omitempty,string"`
-	ExternalCustomerID string `json:"external_customer_id,omitempty"`
+type CreditNoteListInput struct {
+	PerPage int `url:"per_page,omitempty,string"`
+	Page    int `url:"page,omitempty,string"`
+
+	ExternalCustomerID string `url:"external_customer_id,omitempty"`
+	IssuingDateFrom    string `url:"issuing_date_from,omitempty"`
+	IssuingDateTo      string `url:"issuing_date_to,omitempty"`
+
+	AmountFrom int `url:"amount_from,omitempty,string"`
+	AmountTo   int `url:"amount_to,omitempty,string"`
+
+	SearchTerm       string                 `url:"search_term,omitempty"`
+	BillingEntityIDs []uuid.UUID            `url:"billing_entity_ids[],omitempty"`
+	CreditStatus     CreditNoteCreditStatus `url:"credit_status,omitempty"`
+	Currency         Currency               `url:"currency,omitempty"`
+	InvoiceNumber    string                 `url:"invoice_number,omitempty"`
+	Reason           CreditNoteReason       `url:"reason,omitempty"`
+	RefundStatus     CreditNoteRefundStatus `url:"refund_status,omitempty"`
+	SelfBilled       *bool                  `url:"self_billed,omitempty,string"`
 }
 
 type CreditNoteItem struct {
@@ -64,17 +89,23 @@ type CreditNoteItem struct {
 }
 
 type CreditNoteAppliedTax struct {
-	LagoId           uuid.UUID `json:"lago_id,omitempty"`
-	LagoCreditNoteId uuid.UUID `json:"lago_credit_note_id,omitempty"`
-	LagoTaxId        uuid.UUID `json:"lago_tax_id,omitempty"`
+	LagoID           uuid.UUID `json:"lago_id,omitempty"`
+	LagoCreditNoteID uuid.UUID `json:"lago_credit_note_id,omitempty"`
+	LagoTaxID        uuid.UUID `json:"lago_tax_id,omitempty"`
 	TaxName          string    `json:"tax_name,omitempty"`
 	TaxCode          string    `json:"tax_code,omitempty"`
-	TaxRate          float32   `json:"tax_rate,omitempty"`
+	TaxRate          float64   `json:"tax_rate,omitempty"`
 	TaxDescription   string    `json:"tax_description,omitempty"`
 	AmountCents      int       `json:"amount_cents,omitempty"`
 	AmountCurrency   Currency  `json:"amount_currency,omitempty"`
 	BaseAmountCents  int       `json:"base_amount_cents,omitempty"`
 	CreatedAt        time.Time `json:"created_at,omitempty"`
+}
+
+type CreditNoteErrorDetails struct {
+	LagoID    uuid.UUID              `json:"lago_id,omitempty"`
+	ErrorCode CreditNoteErrorCode    `json:"error_code,omitempty"`
+	Details   map[string]interface{} `json:"details,omitempty"`
 }
 
 type CreditNote struct {
@@ -85,7 +116,9 @@ type CreditNote struct {
 	LagoInvoiceID     uuid.UUID        `json:"lago_invoice_id,omitempty"`
 	InvoiceNumber     string           `json:"invoice_number,omitempty"`
 	Reason            CreditNoteReason `json:"reason,omitempty"`
+	Description       string           `json:"description,omitempty"`
 
+	SelfBilled   bool                   `json:"self_billed,omitempty"`
 	CreditStatus CreditNoteCreditStatus `json:"credit_status,omitempty"`
 	RefundStatus CreditNoteRefundStatus `json:"refund_status,omitempty"`
 
@@ -95,48 +128,54 @@ type CreditNote struct {
 	BalanceAmountCents                int      `json:"balance_amount_cents,omitempty"`
 	RefundAmountCents                 int      `json:"refund_amount_cents,omitempty"`
 	TaxesAmountCents                  int      `json:"taxes_amount_cents,omitempty"`
-	TaxesRate                         float32  `json:"taxes_rate,omitempty"`
+	TaxesRate                         float64  `json:"taxes_rate,omitempty"`
 	SubTotalExcludingTaxesAmountCents int      `json:"sub_total_excluding_taxes_amount_cents,omitempty"`
 	CouponsAdjustmentAmountCents      int      `json:"coupons_adjustment_amount_cents,omitempty"`
 
 	FileURL string `json:"file_url,omitempty"`
 
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	IssuingDate string    `json:"issuing_date,omitempty"`
+	CreatedAt   time.Time `json:"created_at,omitempty"`
+	UpdatedAt   time.Time `json:"updated_at,omitempty"`
 
-	Items []CreditNoteItem `json:"items,omitempty"`
+	Items        []CreditNoteItem         `json:"items,omitempty"`
+	AppliedTaxes []CreditNoteAppliedTax   `json:"applied_taxes,omitempty"`
+	ErrorDetails []CreditNoteErrorDetails `json:"error_details,omitempty"`
 }
 
-type CreditNoteEstimated struct {
+type EstimatedCreditNote struct {
 	LagoInvoiceID uuid.UUID `json:"lago_invoice_id,omitempty"`
 	InvoiceNumber string    `json:"invoice_number,omitempty"`
 
-	Currency                          Currency `json:"currency,omitempty"`
-	MaxCreditableAmountCents          int      `json:"max_creditable_amount_cents,omitempty"`
-	MaxRefundableAmountCents          int      `json:"max_refundable_amount_cents,omitempty"`
-	TaxesAmountCents                  int      `json:"taxes_amount_cents,omitempty"`
-	TaxesRate                         float32  `json:"taxes_rate,omitempty"`
-	SubTotalExcludingTaxesAmountCents int      `json:"sub_total_excluding_taxes_amount_cents,omitempty"`
-	CouponsAdjustmentAmountCents      int      `json:"coupons_adjustment_amount_cents,omitempty"`
+	Currency                            Currency `json:"currency,omitempty"`
+	MaxCreditableAmountCents            int      `json:"max_creditable_amount_cents,omitempty"`
+	MaxRefundableAmountCents            int      `json:"max_refundable_amount_cents,omitempty"`
+	TaxesAmountCents                    int      `json:"taxes_amount_cents,omitempty"`
+	PreciseTaxesAmountCents             float64  `json:"precise_taxes_amount_cents,omitempty"`
+	TaxesRate                           float64  `json:"taxes_rate,omitempty"`
+	SubTotalExcludingTaxesAmountCents   int      `json:"sub_total_excluding_taxes_amount_cents,omitempty"`
+	CouponsAdjustmentAmountCents        int      `json:"coupons_adjustment_amount_cents,omitempty"`
+	PreciseCouponsAdjustmentAmountCents float64  `json:"precise_coupons_adjustment_amount_cents,omitempty"`
 
-	Items []CreditNoteEstimatedItem `json:"items,omitempty"`
+	Items []EstimatedCreditNoteItem `json:"items,omitempty"`
 
-	AppliedTaxes []CreditNoteEstimatedAppliedTax `json:"applied_taxes,omitempty"`
+	AppliedTaxes []EstimatedCreditNoteAppliedTax `json:"applied_taxes,omitempty"`
 }
 
-type CreditNoteEstimatedItem struct {
+type EstimatedCreditNoteItem struct {
 	AmountCents int       `json:"amount_cents,omitempty"`
 	LagoFeeID   uuid.UUID `json:"lago_fee_id,omitempty"`
 }
 
-type CreditNoteEstimatedAppliedTax struct {
-	LagoTaxId      uuid.UUID `json:"lago_tax_id,omitempty"`
-	TaxName        string    `json:"tax_name,omitempty"`
-	TaxCode        string    `json:"tax_code,omitempty"`
-	TaxRate        float32   `json:"tax_rate,omitempty"`
-	TaxDescription string    `json:"tax_description,omitempty"`
-	AmountCents    int       `json:"amount_cents,omitempty"`
-	AmountCurrency Currency  `json:"amount_currency,omitempty"`
+type EstimatedCreditNoteAppliedTax struct {
+	LagoTaxID       uuid.UUID `json:"lago_tax_id,omitempty"`
+	TaxName         string    `json:"tax_name,omitempty"`
+	TaxCode         string    `json:"tax_code,omitempty"`
+	TaxRate         float64   `json:"tax_rate,omitempty"`
+	TaxDescription  string    `json:"tax_description,omitempty"`
+	AmountCents     int       `json:"amount_cents,omitempty"`
+	AmountCurrency  Currency  `json:"amount_currency,omitempty"`
+	BaseAmountCents int       `json:"base_amount_cents,omitempty"`
 }
 
 type CreditNoteItemInput struct {
@@ -147,13 +186,14 @@ type CreditNoteItemInput struct {
 type CreditNoteInput struct {
 	LagoInvoiceID     uuid.UUID             `json:"invoice_id,omitempty"`
 	Reason            CreditNoteReason      `json:"reason,omitempty"`
+	Description       *string               `json:"description,omitempty"`
 	Items             []CreditNoteItemInput `json:"items,omitempty"`
-	CreditAmountCents int                   `json:"refund_amount_cents,omitempty"`
-	RefundAmountCents int                   `json:"credit_amount_cents,omitempty"`
+	CreditAmountCents int                   `json:"credit_amount_cents,omitempty"`
+	RefundAmountCents int                   `json:"refund_amount_cents,omitempty"`
 }
 
 type CreditNoteUpdateInput struct {
-	LagoID       string                 `json:"id,omitempty"`
+	LagoID       uuid.UUID
 	RefundStatus CreditNoteRefundStatus `json:"refund_status,omitempty"`
 }
 
@@ -161,13 +201,13 @@ type CreditNoteUpdateParams struct {
 	CreditNote *CreditNoteUpdateInput `json:"credit_note"`
 }
 
-type CreditNoteEstimateInput struct {
+type EstimateCreditNoteInput struct {
 	LagoInvoiceID uuid.UUID             `json:"invoice_id,omitempty"`
 	Items         []CreditNoteItemInput `json:"items,omitempty"`
 }
 
-type CreditNoteEstimateParams struct {
-	CreditNote *CreditNoteEstimateInput `json:"credit_note"`
+type EstimateCreditNoteParams struct {
+	CreditNote *EstimateCreditNoteInput `json:"credit_note"`
 }
 
 func (c *Client) CreditNote() *CreditNoteRequest {
@@ -197,7 +237,7 @@ func (cr *CreditNoteRequest) Get(ctx context.Context, creditNoteID uuid.UUID) (*
 	return creditNoteResult.CreditNote, nil
 }
 
-func (cr *CreditNoteRequest) Download(ctx context.Context, creditNoteID string) (*CreditNote, *Error) {
+func (cr *CreditNoteRequest) Download(ctx context.Context, creditNoteID uuid.UUID) (*CreditNote, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "credit_notes", creditNoteID, "download")
 	clientRequest := &ClientRequest{
 		Path:   subPath,
@@ -221,21 +261,16 @@ func (cr *CreditNoteRequest) Download(ctx context.Context, creditNoteID string) 
 	return nil, nil
 }
 
-func (cr *CreditNoteRequest) GetList(ctx context.Context, creditNoteListInput *CreditListInput) (*CreditNoteResult, *Error) {
-	jsonQueryParams, err := json.Marshal(creditNoteListInput)
+func (cr *CreditNoteRequest) GetList(ctx context.Context, creditNoteListInput *CreditNoteListInput) (*CreditNoteResult, *Error) {
+	urlValues, err := query.Values(creditNoteListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
 
-	queryParams := make(map[string]string)
-	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
-		return nil, &Error{Err: err}
-	}
-
 	clientRequest := &ClientRequest{
-		Path:        "credit_notes",
-		QueryParams: queryParams,
-		Result:      &CreditNoteResult{},
+		Path:      "credit_notes",
+		UrlValues: urlValues,
+		Result:    &CreditNoteResult{},
 	}
 
 	result, clientErr := cr.client.Get(ctx, clientRequest)
@@ -283,7 +318,7 @@ func (cr *CreditNoteRequest) Update(ctx context.Context, creditNoteUpdateInput *
 
 	ClientRequest := &ClientRequest{
 		Path:   subPath,
-		Result: &PlanResult{},
+		Result: &CreditNoteResult{},
 		Body:   creditNoteParams,
 	}
 
@@ -300,7 +335,7 @@ func (cr *CreditNoteRequest) Update(ctx context.Context, creditNoteUpdateInput *
 	return creditNoteResult.CreditNote, nil
 }
 
-func (cr *CreditNoteRequest) Void(ctx context.Context, creditNoteID string) (*CreditNote, *Error) {
+func (cr *CreditNoteRequest) Void(ctx context.Context, creditNoteID uuid.UUID) (*CreditNote, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "credit_notes", creditNoteID, "void")
 
 	clientRequest := &ClientRequest{
@@ -321,15 +356,15 @@ func (cr *CreditNoteRequest) Void(ctx context.Context, creditNoteID string) (*Cr
 	return creditNoteResult.CreditNote, nil
 }
 
-func (cr *CreditNoteRequest) Estimate(ctx context.Context, creditNoteEstimateInput *CreditNoteEstimateInput) (*CreditNoteEstimated, *Error) {
-	creditNoteEstimateParams := &CreditNoteEstimateParams{
-		CreditNote: creditNoteEstimateInput,
+func (cr *CreditNoteRequest) Estimate(ctx context.Context, estimateCreditNoteInput *EstimateCreditNoteInput) (*EstimatedCreditNote, *Error) {
+	estimateCreditNoteParams := &EstimateCreditNoteParams{
+		CreditNote: estimateCreditNoteInput,
 	}
 
 	clientRequest := &ClientRequest{
 		Path:   "credit_notes/estimate",
-		Result: &CreditNoteEstimatedResult{},
-		Body:   creditNoteEstimateParams,
+		Result: &EstimatedCreditNoteResult{},
+		Body:   estimateCreditNoteParams,
 	}
 
 	result, err := cr.client.Post(ctx, clientRequest)
@@ -337,10 +372,10 @@ func (cr *CreditNoteRequest) Estimate(ctx context.Context, creditNoteEstimateInp
 		return nil, err
 	}
 
-	creditNoteEstimatedResult, ok := result.(*CreditNoteEstimatedResult)
+	estimatedCreditNoteResult, ok := result.(*EstimatedCreditNoteResult)
 	if !ok {
 		return nil, &ErrorTypeAssert
 	}
 
-	return creditNoteEstimatedResult.CreditNoteEstimated, nil
+	return estimatedCreditNoteResult.CreditNoteEstimated, nil
 }

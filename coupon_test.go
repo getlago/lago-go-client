@@ -2,9 +2,7 @@ package lago
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -61,14 +59,6 @@ var mockResponse = map[string]interface{}{
 	},
 }
 
-func HandlerFunc(c *qt.C, assertRequestFunc func(*qt.C, *http.Request)) *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assertRequestFunc(c, r)
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(mockResponse)
-	}))
-}
-
 func assertAppliedCoupontGetListResponse(c *qt.C, result *AppliedCouponResult) {
 	c.Assert(result.AppliedCoupons, qt.HasLen, 1)
 	appliedCoupon := result.AppliedCoupons[0]
@@ -120,7 +110,7 @@ func TestAppliedCouponGetList(t *testing.T) {
 	t.Run("When no parameter is provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, func(c *qt.C, r *http.Request) {
+		server := HandlerFunc(c, mockResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "GET")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/applied_coupons")
 			c.Assert(r.URL.Query().Encode(), qt.Equals, "")
@@ -138,7 +128,7 @@ func TestAppliedCouponGetList(t *testing.T) {
 	t.Run("When parameters are provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, func(c *qt.C, r *http.Request) {
+		server := HandlerFunc(c, mockResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "GET")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/applied_coupons")
 			query := r.URL.Query()
