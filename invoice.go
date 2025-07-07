@@ -2,10 +2,11 @@ package lago
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
+	"net/url"
 	"time"
 
+	"github.com/google/go-querystring/query"
 	"github.com/google/uuid"
 )
 
@@ -109,20 +110,34 @@ type InvoicePreviewInput struct {
 	BillingEntityCode string              `json:"billing_entity_code,omitempty"`
 }
 
+type InvoiceListInputMetadata map[string]any
 type InvoiceListInput struct {
-	PerPage int `json:"per_page,omitempty,string"`
-	Page    int `json:"page,omitempty,string"`
+	PerPage *int `url:"per_page,omitempty"`
+	Page    *int `url:"page,omitempty"`
 
-	IssuingDateFrom string `json:"issuing_date_from,omitempty"`
-	IssuingDateTo   string `json:"issuing_date_to,omitempty"`
+	IssuingDateFrom string `url:"issuing_date_from,omitempty"`
+	IssuingDateTo   string `url:"issuing_date_to,omitempty"`
 
-	ExternalCustomerID string               `json:"external_customer_id,omitempty"`
-	Status             InvoiceStatus        `json:"status,omitempty"`
-	PaymentStatus      InvoicePaymentStatus `json:"payment_status,omitempty"`
-	PaymentOverdue     bool                 `json:"payment_overdue,omitempty"`
+	// NOTE: Expose the fields as ExternalCustomerID to keep consistency with other endpoints
+	ExternalCustomerID string `url:"customer_external_id,omitempty"`
 
-	AmountFrom int `json:"amount_from,omitempty"`
-	AmountTo   int `json:"amount_to,omitempty"`
+	InvoiceType   InvoiceType          `url:"invoice_type,omitempty"`
+	Status        InvoiceStatus        `url:"status,omitempty"`
+	PaymentStatus InvoicePaymentStatus `url:"payment_status,omitempty"`
+
+	PaymentOverdue     *bool `url:"payment_overdue,omitempty,string"`
+	PartiallyPaid      *bool `url:"partially_paid,omitempty,string"`
+	SelfBilled         *bool `url:"self_billed,omitempty,string"`
+	PaymentDisputeLost *bool `url:"payment_dispute_lost,omitempty,string"`
+
+	AmountFrom *int `url:"amount_from,omitempty"`
+	AmountTo   *int `url:"amount_to,omitempty"`
+
+	SearchTerm       string      `url:"search_term,omitempty"`
+	BillingEntityIDs []uuid.UUID `url:"billing_entity_ids[],omitempty"`
+	Currency         Currency    `url:"currency,omitempty"`
+
+	Metadata *InvoiceListInputMetadata `url:"metadata,omitempty"`
 }
 
 type InvoiceCreditItem struct {
@@ -257,20 +272,15 @@ func (ir *InvoiceRequest) Get(ctx context.Context, invoiceID string) (*Invoice, 
 }
 
 func (ir *InvoiceRequest) GetList(ctx context.Context, invoiceListInput *InvoiceListInput) (*InvoiceResult, *Error) {
-	jsonQueryParams, err := json.Marshal(invoiceListInput)
+	urlValues, err := query.Values(invoiceListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
 
-	queryParams := make(map[string]string)
-	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
-		return nil, &Error{Err: err}
-	}
-
 	clientRequest := &ClientRequest{
-		Path:        "invoices",
-		QueryParams: queryParams,
-		Result:      &InvoiceResult{},
+		Path:      "invoices",
+		UrlValues: urlValues,
+		Result:    &InvoiceResult{},
 	}
 
 	result, clientErr := ir.client.Get(ctx, clientRequest)
@@ -538,7 +548,6 @@ func (ir *InvoiceRequest) PaymentUrl(ctx context.Context, invoiceID string) (*In
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(result)
 
 	paymentUrlResult, ok := result.(*InvoicePaymentDetailsResult)
 	if !ok {
@@ -546,4 +555,14 @@ func (ir *InvoiceRequest) PaymentUrl(ctx context.Context, invoiceID string) (*In
 	}
 
 	return paymentUrlResult.InvoicePaymentDetails, nil
+}
+
+// URL encoder for metadata type on GetList
+// it will convert a map[string]any to a query string metadata[key1]=value1&metadata[key2]=value2
+func (m InvoiceListInputMetadata) EncodeValues(key string, values *url.Values) error {
+	for k, v := range m {
+		metadataKey := fmt.Sprintf("metadata[%s]", k)
+		values.Set(metadataKey, fmt.Sprintf("%v", v))
+	}
+	return nil
 }
