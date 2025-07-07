@@ -74,6 +74,7 @@ type WalletTransaction struct {
 	LagoWalletID                     uuid.UUID                   `json:"lago_wallet_id,omitempty"`
 	Status                           WalletTransactionStatus     `json:"status,omitempty"`
 	TransactionType                  TransactionType             `json:"transaction_type,omitempty"`
+	TransactionStatus                TransactionStatus           `json:"transaction_status,omitempty"`
 	Amount                           string                      `json:"amount,omitempty"`
 	CreditAmount                     string                      `json:"credit_amount,omitempty"`
 	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
