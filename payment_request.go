@@ -23,6 +23,7 @@ type PaymentRequestListInput struct {
 	Page    int `json:"page,omitempty,string"`
 
 	ExternalCustomerID string `json:"external_customer_id,omitempty"`
+	PaymentStatus      string `json:"payment_status,omitempty"`
 }
 
 type PaymentRequest struct {
