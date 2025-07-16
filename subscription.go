@@ -26,6 +26,13 @@ const (
 	Calendar    BillingTime = "calendar"
 )
 
+type OnTerminationCreditNote string
+
+const (
+	OnTerminationCreditNoteCredit OnTerminationCreditNote = "credit"
+	OnTerminationCreditNoteSkip   OnTerminationCreditNote = "skip"
+)
+
 type SubscriptionRequest struct {
 	client *Client
 }
@@ -88,8 +95,9 @@ type SubscriptionsInput struct {
 }
 
 type SubscriptionTerminateInput struct {
-	ExternalID string `json:"external_id,omitempty"`
-	Status     string `json:"status,omitempty"`
+	ExternalID              string                  `json:"-"`
+	Status                  string                  `json:"status,omitempty"`
+	OnTerminationCreditNote OnTerminationCreditNote `json:"on_termination_credit_note,omitempty"`
 }
 
 type SubscriptionListInput struct {
@@ -110,11 +118,12 @@ type Subscription struct {
 
 	Name string `json:"name"`
 
-	Status         SubscriptionStatus `json:"status"`
-	BillingTime    BillingTime        `json:"billing_time"`
-	SubscriptionAt *time.Time         `json:"subscription_at"`
-	EndingAt       *time.Time         `json:"ending_at"`
-	TrialEndedAt   *time.Time         `json:"trial_ended_at"`
+	Status                  SubscriptionStatus      `json:"status"`
+	BillingTime             BillingTime             `json:"billing_time"`
+	SubscriptionAt          *time.Time              `json:"subscription_at"`
+	EndingAt                *time.Time              `json:"ending_at"`
+	TrialEndedAt            *time.Time              `json:"trial_ended_at"`
+	OnTerminationCreditNote OnTerminationCreditNote `json:"on_termination_credit_note,omitempty"`
 
 	PreviousPlanCode  string `json:"previous_plan_code"`
 	NextPlanCode      string `json:"next_plan_code"`
