@@ -10,6 +10,8 @@ import (
 
 	qt "github.com/frankban/quicktest"
 	"github.com/google/uuid"
+
+	lt "github.com/getlago/lago-go-client/testing"
 )
 
 // Mock JSON response structure
@@ -312,7 +314,7 @@ func TestCreditNoteGet(t *testing.T) {
 
 		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
 
-		server := HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "GET")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90")
 		})
@@ -343,7 +345,7 @@ func TestCreditNoteDownload(t *testing.T) {
 
 		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
 
-		server := HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "POST")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/download")
 		})
@@ -361,7 +363,7 @@ func TestCreditNoteDownload(t *testing.T) {
 
 		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
 
-		server := HandlerFunc(c, nil, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, nil, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "POST")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/download")
 		})
@@ -388,7 +390,7 @@ func TestCreditNoteGetList(t *testing.T) {
 	t.Run("When no parameters are provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, mockCreditNoteListResponse, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, mockCreditNoteListResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "GET")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes")
 			c.Assert(r.URL.Query().Encode(), qt.Equals, "")
@@ -407,7 +409,7 @@ func TestCreditNoteGetList(t *testing.T) {
 	t.Run("When parameters are provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, mockCreditNoteListResponse, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, mockCreditNoteListResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "GET")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes")
 
@@ -471,7 +473,7 @@ func TestCreditNoteCreate(t *testing.T) {
 	t.Run("When create is called", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "POST")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes")
 
@@ -543,7 +545,7 @@ func TestCreditNoteUpdate(t *testing.T) {
 
 		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
 
-		server := HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "PUT")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90")
 
@@ -589,7 +591,7 @@ func TestCreditNoteVoid(t *testing.T) {
 
 		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
 
-		server := HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "PUT")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/void")
 		})
@@ -624,7 +626,7 @@ func TestCreditNoteEstimate(t *testing.T) {
 	t.Run("When estimate is called", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, mockCreditNoteEstimateResponse, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, mockCreditNoteEstimateResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "POST")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/estimate")
 

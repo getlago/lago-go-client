@@ -1,4 +1,4 @@
-package lago
+package testing
 
 import (
 	"encoding/json"
