@@ -7,6 +7,8 @@ import (
 	"time"
 
 	qt "github.com/frankban/quicktest"
+
+	lt "github.com/getlago/lago-go-client/testing"
 )
 
 // Mock JSON response structure
@@ -110,7 +112,7 @@ func TestAppliedCouponGetList(t *testing.T) {
 	t.Run("When no parameter is provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, mockResponse, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, mockResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "GET")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/applied_coupons")
 			c.Assert(r.URL.Query().Encode(), qt.Equals, "")
@@ -128,7 +130,7 @@ func TestAppliedCouponGetList(t *testing.T) {
 	t.Run("When parameters are provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, mockResponse, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, mockResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "GET")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/applied_coupons")
 			query := r.URL.Query()

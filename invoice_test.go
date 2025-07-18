@@ -6,6 +6,8 @@ import (
 	"testing"
 	"time"
 
+	lt "github.com/getlago/lago-go-client/testing"
+
 	qt "github.com/frankban/quicktest"
 	"github.com/google/uuid"
 )
@@ -237,7 +239,7 @@ func TestInvoiceGetList(t *testing.T) {
 	t.Run("When no parameters are provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, mockInvoiceListResponse, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, mockInvoiceListResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "GET")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/invoices")
 			c.Assert(r.URL.Query().Encode(), qt.Equals, "")
@@ -264,7 +266,7 @@ func TestInvoiceGetList(t *testing.T) {
 	t.Run("When parameters are provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, mockInvoiceListResponse, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, mockInvoiceListResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "GET")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/invoices")
 
@@ -335,7 +337,7 @@ func TestPaymentUrl(t *testing.T) {
 	t.Run("With an invoiceID in the request", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, mockInvoicePaymentUrlResponse, func(c *qt.C, r *http.Request) {
+		server := lt.HandlerFunc(c, mockInvoicePaymentUrlResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "POST")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/invoices/1a901a90-1a90-1a90-1a90-1a901a901a90/payment_url")
 		})
