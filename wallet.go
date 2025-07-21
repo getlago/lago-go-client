@@ -57,7 +57,8 @@ type WalletParams struct {
 }
 
 type AppliesTo struct {
-	FeeTypes []string `json:"fee_types,omitempty"`
+	FeeTypes            []string `json:"fee_types,omitempty"`
+	BillableMetricCodes []string `json:"billable_metric_codes,omitempty"`
 }
 
 type WalletInput struct {
