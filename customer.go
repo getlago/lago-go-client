@@ -180,44 +180,49 @@ type IntegrationCustomersResponse struct {
 }
 
 type CustomerChargeUsage struct {
-	Units          string   `json:"units,omitempty"`
-	EventsCount    int      `json:"events_count"`
-	AmountCents    int      `json:"amount_cents,omitempty"`
-	AmountCurrency Currency `json:"amount_currency,omitempty"`
-
-	Charge         *Charge                      `json:"charge,omitempty"`
-	BillableMetric *BillableMetric              `json:"billable_metric,omitempty"`
-	Filters        []CustomerChargeFilterUsage  `json:"filters,omitempty"`
-	GroupedUsage   []CustomerChargeGroupedUsage `json:"grouped_usage,omitempty"`
+	Units                string                       `json:"units,omitempty"`
+	ProjectedUnits       string                       `json:"projected_units,omitempty"`
+	EventsCount          int                          `json:"events_count"`
+	AmountCents          int                          `json:"amount_cents,omitempty"`
+	ProjectedAmountCents int                          `json:"projected_amount_cents,omitempty"`
+	AmountCurrency       Currency                     `json:"amount_currency,omitempty"`
+	Charge               *Charge                      `json:"charge,omitempty"`
+	BillableMetric       *BillableMetric              `json:"billable_metric,omitempty"`
+	Filters              []CustomerChargeFilterUsage  `json:"filters,omitempty"`
+	GroupedUsage         []CustomerChargeGroupedUsage `json:"grouped_usage,omitempty"`
 }
 
 type CustomerChargeFilterUsage struct {
-	InvoiceDisplayName string                 `json:"invoice_display_name,omitempty"`
-	Values             map[string]interface{} `json:"value,omitempty"`
-	AmountCents        int                    `json:"amount_cents,omitempty"`
-	EventsCount        int                    `json:"events_count,omitempty"`
-	Units              string                 `json:"units,omitempty"`
+	InvoiceDisplayName   string                 `json:"invoice_display_name,omitempty"`
+	Values               map[string]interface{} `json:"value,omitempty"`
+	AmountCents          int                    `json:"amount_cents,omitempty"`
+	ProjectedAmountCents int                    `json:"projected_amount_cents,omitempty"`
+	EventsCount          int                    `json:"events_count,omitempty"`
+	Units                string                 `json:"units,omitempty"`
+	ProjectedUnits       string                 `json:"projected_units,omitempty"`
 }
 
 type CustomerChargeGroupedUsage struct {
-	AmountCents int                         `json:"amount_cents,omitempty"`
-	EventsCount int                         `json:"events_count,omitempty"`
-	Units       string                      `json:"units,omitempty"`
-	GroupedBy   map[string]interface{}      `json:"grouped_by,omitempty"`
-	Filters     []CustomerChargeFilterUsage `json:"filters,omitempty"`
+	AmountCents          int                         `json:"amount_cents,omitempty"`
+	ProjectedAmountCents int                         `json:"projected_amount_cents,omitempty"`
+	EventsCount          int                         `json:"events_count,omitempty"`
+	Units                string                      `json:"units,omitempty"`
+	ProjectedUnits       string                      `json:"projected_units,omitempty"`
+	GroupedBy            map[string]interface{}      `json:"grouped_by,omitempty"`
+	Filters              []CustomerChargeFilterUsage `json:"filters,omitempty"`
 }
 
 type CustomerUsage struct {
-	FromDatetime     time.Time `json:"from_datetime,omitempty"`
-	ToDatetime       time.Time `json:"to_datetime,omitempty"`
-	IssuingDate      string    `json:"issuing_date,omitempty"`
-	LagoInvoiceID    string    `json:"lago_invoice_id,omitempty"`
-	Currency         Currency  `json:"currency,omitempty"`
-	AmountCents      int       `json:"amount_cents,omitempty"`
-	TotalAmountCents int       `json:"total_amount_cents,omitempty"`
-	TaxesAmountCents int       `json:"taxes_amount_cents,omitempty"`
-
-	ChargesUsage []CustomerChargeUsage `json:"charges_usage,omitempty"`
+	FromDatetime         time.Time             `json:"from_datetime,omitempty"`
+	ToDatetime           time.Time             `json:"to_datetime,omitempty"`
+	IssuingDate          string                `json:"issuing_date,omitempty"`
+	LagoInvoiceID        string                `json:"lago_invoice_id,omitempty"`
+	Currency             Currency              `json:"currency,omitempty"`
+	AmountCents          int                   `json:"amount_cents,omitempty"`
+	ProjectedAmountCents int                   `json:"projected_amount_cents,omitempty"`
+	TotalAmountCents     int                   `json:"total_amount_cents,omitempty"`
+	TaxesAmountCents     int                   `json:"taxes_amount_cents,omitempty"`
+	ChargesUsage         []CustomerChargeUsage `json:"charges_usage,omitempty"`
 }
 
 type CustomerPortalUrl struct {
