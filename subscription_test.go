@@ -1,12 +1,12 @@
-package lago
+package lago_test
 
 import (
 	"context"
-	"net/http"
 	"testing"
 
 	qt "github.com/frankban/quicktest"
 
+	. "github.com/getlago/lago-go-client"
 	lt "github.com/getlago/lago-go-client/testing"
 )
 
@@ -245,6 +245,12 @@ func assertSubscriptionTerminateResponse(c *qt.C, subscription *Subscription) {
 	c.Assert(subscription.OnTerminationInvoice, qt.Equals, OnTerminationInvoiceSkip)
 }
 
+func terminateSubscription(c *qt.C, server *lt.MockServer, input SubscriptionTerminateInput) *Subscription {
+	subscription, err := server.Client().Subscription().Terminate(context.Background(), input)
+	c.Assert(err == nil, qt.IsTrue)
+	return subscription
+}
+
 func TestSubscriptionTerminate(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
@@ -260,60 +266,50 @@ func TestSubscriptionTerminate(t *testing.T) {
 	t.Run("When no parameter is provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := lt.HandlerFunc(c, mockSubscriptionResponse, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "DELETE")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/subscriptions/1a901a90-1a90-1a90-1a90-1a901a901a90")
-			c.Assert(r.URL.Query().Encode(), qt.Equals, "")
-		})
+		server := lt.NewMockServer(c).
+			MatchMethod("DELETE").
+			MatchPath("/api/v1/subscriptions/1a901a90-1a90-1a90-1a90-1a901a901a90").
+			MatchQuery("").
+			MockResponse(mockSubscriptionResponse)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-		subscription, err := client.Subscription().Terminate(context.Background(), SubscriptionTerminateInput{
+		subscription := terminateSubscription(c, server, SubscriptionTerminateInput{
 			ExternalID: "1a901a90-1a90-1a90-1a90-1a901a901a90",
 		})
 
-		c.Assert(err == nil, qt.IsTrue)
 		assertSubscriptionTerminateResponse(c, subscription)
 	})
 
 	t.Run("When providing the on_termination_credit_note parameter", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := lt.HandlerFunc(c, mockSubscriptionResponse, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "DELETE")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/subscriptions/1a901a90-1a90-1a90-1a90-1a901a901a90")
-			c.Assert(r.URL.Query().Encode(), qt.Equals, "on_termination_credit_note=skip")
-		})
+		server := lt.NewMockServer(c).MatchMethod("DELETE").MatchPath("/api/v1/subscriptions/1a901a90-1a90-1a90-1a90-1a901a901a90").MatchQuery("on_termination_credit_note=skip").MockResponse(mockSubscriptionResponse)
 
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-		subscription, err := client.Subscription().Terminate(context.Background(), SubscriptionTerminateInput{
+		subscription := terminateSubscription(c, server, SubscriptionTerminateInput{
 			ExternalID:              "1a901a90-1a90-1a90-1a90-1a901a901a90",
 			OnTerminationCreditNote: OnTerminationCreditNoteSkip,
 		})
 
-		c.Assert(err == nil, qt.IsTrue)
 		assertSubscriptionTerminateResponse(c, subscription)
 	})
 
 	t.Run("When providing the on_termination_invoice parameter", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := lt.HandlerFunc(c, mockSubscriptionResponse, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "DELETE")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/subscriptions/1a901a90-1a90-1a90-1a90-1a901a901a90")
-			c.Assert(r.URL.Query().Encode(), qt.Equals, "on_termination_invoice=skip")
-		})
+		server := lt.NewMockServer(c).
+			MatchMethod("DELETE").
+			MatchPath("/api/v1/subscriptions/1a901a90-1a90-1a90-1a90-1a901a901a90").
+			MatchQuery("on_termination_invoice=skip").
+			MockResponse(mockSubscriptionResponse)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-		subscription, err := client.Subscription().Terminate(context.Background(), SubscriptionTerminateInput{
+		subscription := terminateSubscription(c, server, SubscriptionTerminateInput{
 			ExternalID:           "1a901a90-1a90-1a90-1a90-1a901a901a90",
 			OnTerminationInvoice: OnTerminationInvoiceSkip,
 		})
 
-		c.Assert(err == nil, qt.IsTrue)
 		assertSubscriptionTerminateResponse(c, subscription)
 	})
 }
