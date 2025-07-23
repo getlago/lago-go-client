@@ -54,6 +54,7 @@ type ChargeOverridesInput struct {
 	MinAmountCents     int                    `json:"min_amount_cents,omitempty"`
 	Properties         map[string]interface{} `json:"properties"`
 	Filters            []ChargeFilter         `json:"filters,omitempty"`
+	AppliedPricingUnit *AppliedPricingUnit    `json:"applied_pricing_unit,omitempty"`
 	TaxCodes           []string               `json:"tax_codes,omitempty"`
 }
 
