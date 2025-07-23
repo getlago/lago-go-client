@@ -102,6 +102,17 @@ type FeeAppliedTax struct {
 	CreatedAt      time.Time `json:"created_at,omitempty"`
 }
 
+type PricingUnitDetails struct {
+	LagoPricingUnitID  uuid.UUID `json:"lago_pricing_unit_id,omitempty"`
+	PricingUnitCode    string    `json:"pricing_unit_code,omitempty"`
+	ShortName          string    `json:"short_name,omitempty"`
+	AmountCents        int       `json:"amount_cents,omitempty"`
+	PreciseAmountCents string    `json:"precise_amount_cents,omitempty"`
+	UnitAmountCents    int       `json:"unit_amount_cents,omitempty"`
+	PreciseUnitAmount  string    `json:"precise_unit_amount,omitempty"`
+	ConversionRate     float64   `json:"conversion_rate,omitempty"`
+}
+
 type Fee struct {
 	LagoID                 uuid.UUID `json:"lago_id,omitempty"`
 	LagoChargeID           uuid.UUID `json:"lago_charge_id,omitempty"`
@@ -139,8 +150,9 @@ type Fee struct {
 	FailedAt    time.Time `json:"failed_at,omitempty"`
 	RefundedAt  time.Time `json:"refunded_at,omitempty"`
 
-	Item         FeeItem         `json:"item,omitempty"`
-	AppliedTaxes []FeeAppliedTax `json:"applied_taxes,omitempty"`
+	Item               FeeItem             `json:"item,omitempty"`
+	AppliedTaxes       []FeeAppliedTax     `json:"applied_taxes,omitempty"`
+	PricingUnitDetails *PricingUnitDetails `json:"pricing_unit_details,omitempty"`
 }
 
 func (c *Client) Fee() *FeeRequest {
