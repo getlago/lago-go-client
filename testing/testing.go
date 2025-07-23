@@ -83,12 +83,10 @@ func (m *MockServer) MatchPath(path string) *MockServer {
 }
 
 func (m *MockServer) MatchQuery(queryParams interface{}) *MockServer {
-	switch mapQueryParams := queryParams.(type) {
-	case map[string]string:
-	case map[string][]string:
+	urlValues := url.Values{}
+	switch typedQueryParams := queryParams.(type) {
 	case map[string]interface{}:
-		urlValues := url.Values{}
-		for key, value := range mapQueryParams {
+		for key, value := range typedQueryParams {
 			switch stringOrArrayValue := value.(type) {
 			case string:
 				urlValues.Add(key, stringOrArrayValue)
@@ -100,20 +98,25 @@ func (m *MockServer) MatchQuery(queryParams interface{}) *MockServer {
 		}
 		str := urlValues.Encode()
 		m.expectedQuery = &str
-		return m
+	case map[string]string:
+		for key, value := range typedQueryParams {
+			urlValues.Add(key, value)
+		}
+	case map[string][]string:
+		for key, values := range typedQueryParams {
+			for _, value := range values {
+				urlValues.Add(key, value)
+			}
+		}
 	case string:
-		str := queryParams.(string)
-		m.expectedQuery = &str
+		m.expectedQuery = &typedQueryParams
 		return m
 	default:
 		m.c.Fatalf("Invalid query params type: %T", queryParams)
 	}
 
-	if queryString, ok := queryParams.(string); ok {
-		m.expectedQuery = &queryString
-		return m
-	}
-	m.c.Fatalf("Invalid query params type: %T", queryParams)
+	str := urlValues.Encode()
+	m.expectedQuery = &str
 	return m
 }
 
