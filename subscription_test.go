@@ -32,6 +32,7 @@ var mockSubscriptionResponse = `{
     "downgrade_plan_date": "2022-04-30",
     "trial_ended_at": "2022-08-08T00:00:00Z",
     "on_termination_credit_note": "skip",
+    "on_termination_invoice": "skip",
     "current_billing_period_started_at": "2022-08-08T00:00:00Z",
     "current_billing_period_ending_at": "2022-09-08T00:00:00Z",
     "plan": {
@@ -241,6 +242,7 @@ var mockSubscriptionResponse = `{
 
 func assertSubscriptionTerminateResponse(c *qt.C, subscription *Subscription) {
 	c.Assert(subscription.OnTerminationCreditNote, qt.Equals, OnTerminationCreditNoteSkip)
+	c.Assert(subscription.OnTerminationInvoice, qt.Equals, OnTerminationInvoiceSkip)
 }
 
 func TestSubscriptionTerminate(t *testing.T) {
@@ -269,8 +271,7 @@ func TestSubscriptionTerminate(t *testing.T) {
 		subscription, err := client.Subscription().Terminate(context.Background(), SubscriptionTerminateInput{
 			ExternalID: "1a901a90-1a90-1a90-1a90-1a901a901a90",
 		})
-		// The method interface should return `error` and not `*Error` but that would break the API.
-		// See https://go.dev/doc/faq#nil_error.
+
 		c.Assert(err == nil, qt.IsTrue)
 		assertSubscriptionTerminateResponse(c, subscription)
 	})
@@ -291,8 +292,27 @@ func TestSubscriptionTerminate(t *testing.T) {
 			ExternalID:              "1a901a90-1a90-1a90-1a90-1a901a901a90",
 			OnTerminationCreditNote: OnTerminationCreditNoteSkip,
 		})
-		// The method interface should return `error` and not `*Error` but that would break the API.
-		// See https://go.dev/doc/faq#nil_error.
+
+		c.Assert(err == nil, qt.IsTrue)
+		assertSubscriptionTerminateResponse(c, subscription)
+	})
+
+	t.Run("When providing the on_termination_invoice parameter", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.HandlerFunc(c, mockSubscriptionResponse, func(c *qt.C, r *http.Request) {
+			c.Assert(r.Method, qt.Equals, "DELETE")
+			c.Assert(r.URL.Path, qt.Equals, "/api/v1/subscriptions/1a901a90-1a90-1a90-1a90-1a901a901a90")
+			c.Assert(r.URL.Query().Encode(), qt.Equals, "on_termination_invoice=skip")
+		})
+		defer server.Close()
+
+		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
+		subscription, err := client.Subscription().Terminate(context.Background(), SubscriptionTerminateInput{
+			ExternalID:           "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			OnTerminationInvoice: OnTerminationInvoiceSkip,
+		})
+
 		c.Assert(err == nil, qt.IsTrue)
 		assertSubscriptionTerminateResponse(c, subscription)
 	})

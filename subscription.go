@@ -33,6 +33,13 @@ const (
 	OnTerminationCreditNoteSkip   OnTerminationCreditNote = "skip"
 )
 
+type OnTerminationInvoice string
+
+const (
+	OnTerminationInvoiceGenerate OnTerminationInvoice = "generate"
+	OnTerminationInvoiceSkip     OnTerminationInvoice = "skip"
+)
+
 type SubscriptionRequest struct {
 	client *Client
 }
@@ -99,6 +106,7 @@ type SubscriptionTerminateInput struct {
 	ExternalID              string                  `json:"-"`
 	Status                  string                  `json:"status,omitempty"`
 	OnTerminationCreditNote OnTerminationCreditNote `json:"on_termination_credit_note,omitempty"`
+	OnTerminationInvoice    OnTerminationInvoice    `json:"on_termination_invoice,omitempty"`
 }
 
 type SubscriptionListInput struct {
@@ -125,6 +133,7 @@ type Subscription struct {
 	EndingAt                *time.Time              `json:"ending_at"`
 	TrialEndedAt            *time.Time              `json:"trial_ended_at"`
 	OnTerminationCreditNote OnTerminationCreditNote `json:"on_termination_credit_note,omitempty"`
+	OnTerminationInvoice    OnTerminationInvoice    `json:"on_termination_invoice,omitempty"`
 
 	PreviousPlanCode  string `json:"previous_plan_code"`
 	NextPlanCode      string `json:"next_plan_code"`
