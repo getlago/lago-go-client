@@ -1,14 +1,13 @@
-package lago
+package lago_test
 
 import (
 	"context"
-	"encoding/json"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 	"time"
 
 	qt "github.com/frankban/quicktest"
+	. "github.com/getlago/lago-go-client"
+	lt "github.com/getlago/lago-go-client/testing"
 )
 
 // Mock JSON response structure
@@ -113,13 +112,6 @@ var GetMockResponse = map[string]interface{}{
 	},
 }
 
-func apiLogTestServer(c *qt.C, response any) *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(response)
-	}))
-}
-
 func assertApiLog(c *qt.C, apiLog ApiLog) {
 	c.Assert(apiLog.RequestId.String(), qt.Equals, "8fae2f0e-fe8e-44d3-bbf7-1c552eba3a24")
 	c.Assert(apiLog.ApiVersion, qt.Equals, "v1")
@@ -137,11 +129,10 @@ func TestApiLogGetList(t *testing.T) {
 	t.Run("When query for all api logs", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := apiLogTestServer(c, GetListMockResponse)
+		server := lt.NewMockServer(c).MatchMethod("GET").MatchPath("/api/v1/api_logs").MockResponse(GetListMockResponse)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-		result, err := client.ApiLog().GetList(context.Background(), &ApiLogListInput{})
+		result, err := server.Client().ApiLog().GetList(context.Background(), &ApiLogListInput{})
 
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result.ApiLogs, qt.HasLen, 1)
@@ -154,11 +145,10 @@ func TestApiLogGet(t *testing.T) {
 	t.Run("When query for a specific api log", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := apiLogTestServer(c, GetMockResponse)
+		server := lt.NewMockServer(c).MatchMethod("GET").MatchPath("/api/v1/api_logs/8fae2f0e-fe8e-44d3-bbf7-1c552eba3a24").MockResponse(GetMockResponse)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-		result, err := client.ApiLog().Get(context.Background(), "8fae2f0e-fe8e-44d3-bbf7-1c552eba3a24")
+		result, err := server.Client().ApiLog().Get(context.Background(), "8fae2f0e-fe8e-44d3-bbf7-1c552eba3a24")
 
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result, qt.IsNotNil)

@@ -1,4 +1,4 @@
-package lago
+package lago_test
 
 import (
 	"context"
@@ -12,6 +12,8 @@ import (
 	"github.com/google/uuid"
 
 	lt "github.com/getlago/lago-go-client/testing"
+
+	. "github.com/getlago/lago-go-client"
 )
 
 // Mock JSON response structure
@@ -314,15 +316,13 @@ func TestCreditNoteGet(t *testing.T) {
 
 		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
 
-		server := lt.HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "GET")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90")
-		})
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90").
+			MockResponse(mockCreditNoteResponse)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-
-		result, err := client.CreditNote().Get(context.Background(), creditNoteUUID)
+		result, err := server.Client().CreditNote().Get(context.Background(), creditNoteUUID)
 		c.Assert(err == nil, qt.IsTrue)
 		assertCreditNoteResponse(c, result)
 	})
@@ -345,15 +345,13 @@ func TestCreditNoteDownload(t *testing.T) {
 
 		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
 
-		server := lt.HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "POST")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/download")
-		})
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/download").
+			MockResponse(mockCreditNoteResponse)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-
-		result, err := client.CreditNote().Download(context.Background(), creditNoteUUID)
+		result, err := server.Client().CreditNote().Download(context.Background(), creditNoteUUID)
 		c.Assert(err == nil, qt.IsTrue)
 		assertCreditNoteResponse(c, result)
 	})
@@ -363,15 +361,13 @@ func TestCreditNoteDownload(t *testing.T) {
 
 		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
 
-		server := lt.HandlerFunc(c, nil, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "POST")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/download")
-		})
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/download").
+			MockResponse(nil)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-
-		result, err := client.CreditNote().Download(context.Background(), creditNoteUUID)
+		result, err := server.Client().CreditNote().Download(context.Background(), creditNoteUUID)
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result == nil, qt.IsTrue)
 	})
@@ -390,15 +386,13 @@ func TestCreditNoteGetList(t *testing.T) {
 	t.Run("When no parameters are provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := lt.HandlerFunc(c, mockCreditNoteListResponse, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "GET")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes")
-			c.Assert(r.URL.Query().Encode(), qt.Equals, "")
-		})
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/credit_notes").
+			MockResponse(mockCreditNoteListResponse)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-		result, err := client.CreditNote().GetList(context.Background(), &CreditNoteListInput{})
+		result, err := server.Client().CreditNote().GetList(context.Background(), &CreditNoteListInput{})
 		// The method interface should return `error` and not `*Error` but that would break the API.
 		// See https://go.dev/doc/faq#nil_error.
 
@@ -409,35 +403,34 @@ func TestCreditNoteGetList(t *testing.T) {
 	t.Run("When parameters are provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := lt.HandlerFunc(c, mockCreditNoteListResponse, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "GET")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes")
-
-			query := r.URL.Query()
-			c.Assert(query.Get("per_page"), qt.Equals, "10")
-			c.Assert(query.Get("page"), qt.Equals, "1")
-			c.Assert(query.Get("external_customer_id"), qt.Equals, "CUSTOMER_1")
-			c.Assert(query.Get("issuing_date_from"), qt.Equals, "2022-09-14T00:00:00Z")
-			c.Assert(query.Get("issuing_date_to"), qt.Equals, "2022-09-14T23:59:59Z")
-			c.Assert(query.Get("amount_from"), qt.Equals, "10")
-			c.Assert(query.Get("amount_to"), qt.Equals, "1000")
-			c.Assert(query.Get("search_term"), qt.Equals, "credit")
-			c.Assert(query["billing_entity_ids[]"], qt.DeepEquals, []string{"1a901a90-1a90-1a90-1a90-1a901a901a90", "2a902a90-2a90-2a90-2a90-2a902a902a90"})
-			c.Assert(query.Get("credit_status"), qt.Equals, "consumed")
-			c.Assert(query.Get("currency"), qt.Equals, "EUR")
-			c.Assert(query.Get("invoice_number"), qt.Equals, "LAG_1234")
-			c.Assert(query.Get("reason"), qt.Equals, "order_change")
-			c.Assert(query.Get("refund_status"), qt.Equals, "pending")
-			c.Assert(query.Get("self_billed"), qt.Equals, "false")
-		})
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/credit_notes").
+			MatchQuery(map[string]interface{}{
+				"per_page":             "10",
+				"page":                 "1",
+				"external_customer_id": "CUSTOMER_1",
+				"issuing_date_from":    "2022-09-14T00:00:00Z",
+				"issuing_date_to":      "2022-09-14T23:59:59Z",
+				"amount_from":          "10",
+				"amount_to":            "1000",
+				"search_term":          "credit",
+				"billing_entity_ids[]": []string{"1a901a90-1a90-1a90-1a90-1a901a901a90", "2a902a90-2a90-2a90-2a90-2a902a902a90"},
+				"credit_status":        "consumed",
+				"currency":             "EUR",
+				"invoice_number":       "LAG_1234",
+				"reason":               "order_change",
+				"refund_status":        "pending",
+				"self_billed":          "false",
+			}).
+			MockResponse(mockCreditNoteListResponse)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
 		selfBilled := false
 		entityUUID1, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
 		entityUUID2, _ := uuid.Parse("2a902a90-2a90-2a90-2a90-2a902a902a90")
 
-		result, err := client.CreditNote().GetList(context.Background(), &CreditNoteListInput{
+		result, err := server.Client().CreditNote().GetList(context.Background(), &CreditNoteListInput{
 			PerPage:            10,
 			Page:               1,
 			ExternalCustomerID: "CUSTOMER_1",
@@ -473,7 +466,7 @@ func TestCreditNoteCreate(t *testing.T) {
 	t.Run("When create is called", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := lt.HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
+		server := lt.ServerWithAssertions(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "POST")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes")
 
@@ -545,7 +538,7 @@ func TestCreditNoteUpdate(t *testing.T) {
 
 		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
 
-		server := lt.HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
+		server := lt.ServerWithAssertions(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "PUT")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90")
 
@@ -591,15 +584,13 @@ func TestCreditNoteVoid(t *testing.T) {
 
 		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
 
-		server := lt.HandlerFunc(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "PUT")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/void")
-		})
+		server := lt.NewMockServer(c).
+			MatchMethod("PUT").
+			MatchPath("/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/void").
+			MockResponse(mockCreditNoteResponse)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-
-		result, err := client.CreditNote().Void(context.Background(), creditNoteUUID)
+		result, err := server.Client().CreditNote().Void(context.Background(), creditNoteUUID)
 		c.Assert(err == nil, qt.IsTrue)
 		assertCreditNoteResponse(c, result)
 	})
@@ -626,7 +617,7 @@ func TestCreditNoteEstimate(t *testing.T) {
 	t.Run("When estimate is called", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := lt.HandlerFunc(c, mockCreditNoteEstimateResponse, func(c *qt.C, r *http.Request) {
+		server := lt.ServerWithAssertions(c, mockCreditNoteEstimateResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "POST")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/estimate")
 

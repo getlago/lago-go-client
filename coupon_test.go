@@ -1,14 +1,15 @@
-package lago
+package lago_test
 
 import (
 	"context"
-	"net/http"
 	"testing"
 	"time"
 
 	qt "github.com/frankban/quicktest"
 
 	lt "github.com/getlago/lago-go-client/testing"
+
+	. "github.com/getlago/lago-go-client"
 )
 
 // Mock JSON response structure
@@ -112,15 +113,10 @@ func TestAppliedCouponGetList(t *testing.T) {
 	t.Run("When no parameter is provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := lt.HandlerFunc(c, mockResponse, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "GET")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/applied_coupons")
-			c.Assert(r.URL.Query().Encode(), qt.Equals, "")
-		})
+		server := lt.NewMockServer(c).MatchMethod("GET").MatchPath("/api/v1/applied_coupons").MatchQuery("").MockResponse(mockResponse)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-		result, err := client.AppliedCoupon().GetList(context.Background(), &AppliedCouponListInput{})
+		result, err := server.Client().AppliedCoupon().GetList(context.Background(), &AppliedCouponListInput{})
 		// The method interface should return `error` and not `*Error` but that would break the API.
 		// See https://go.dev/doc/faq#nil_error.
 		c.Assert(err == nil, qt.IsTrue)
@@ -130,20 +126,20 @@ func TestAppliedCouponGetList(t *testing.T) {
 	t.Run("When parameters are provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := lt.HandlerFunc(c, mockResponse, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "GET")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/applied_coupons")
-			query := r.URL.Query()
-			c.Assert(query.Get("external_customer_id"), qt.Equals, "CUSTOMER_1")
-			c.Assert(query.Get("status"), qt.Equals, "active")
-			c.Assert(query.Get("per_page"), qt.Equals, "10")
-			c.Assert(query.Get("page"), qt.Equals, "1")
-			c.Assert(query["coupon_code[]"], qt.DeepEquals, []string{"BLACK_FRIDAY", "CYBER_MONDAY"})
-		})
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/applied_coupons").
+			MatchQuery(map[string]interface{}{
+				"external_customer_id": "CUSTOMER_1",
+				"status":               "active",
+				"per_page":             "10",
+				"page":                 "1",
+				"coupon_code[]":        []string{"BLACK_FRIDAY", "CYBER_MONDAY"},
+			}).
+			MockResponse(mockResponse)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-		result, err := client.AppliedCoupon().GetList(context.Background(), &AppliedCouponListInput{
+		result, err := server.Client().AppliedCoupon().GetList(context.Background(), &AppliedCouponListInput{
 			ExternalCustomerID: "CUSTOMER_1",
 			Status:             "active",
 			PerPage:            10,
