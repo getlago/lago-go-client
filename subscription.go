@@ -26,6 +26,20 @@ const (
 	Calendar    BillingTime = "calendar"
 )
 
+type OnTerminationCreditNote string
+
+const (
+	OnTerminationCreditNoteCredit OnTerminationCreditNote = "credit"
+	OnTerminationCreditNoteSkip   OnTerminationCreditNote = "skip"
+)
+
+type OnTerminationInvoice string
+
+const (
+	OnTerminationInvoiceGenerate OnTerminationInvoice = "generate"
+	OnTerminationInvoiceSkip     OnTerminationInvoice = "skip"
+)
+
 type SubscriptionRequest struct {
 	client *Client
 }
@@ -47,6 +61,7 @@ type ChargeOverridesInput struct {
 	MinAmountCents     int                    `json:"min_amount_cents,omitempty"`
 	Properties         map[string]interface{} `json:"properties"`
 	Filters            []ChargeFilter         `json:"filters,omitempty"`
+	AppliedPricingUnit *AppliedPricingUnit    `json:"applied_pricing_unit,omitempty"`
 	TaxCodes           []string               `json:"tax_codes,omitempty"`
 }
 
@@ -88,8 +103,10 @@ type SubscriptionsInput struct {
 }
 
 type SubscriptionTerminateInput struct {
-	ExternalID string `json:"external_id,omitempty"`
-	Status     string `json:"status,omitempty"`
+	ExternalID              string                  `json:"-"`
+	Status                  string                  `json:"status,omitempty"`
+	OnTerminationCreditNote OnTerminationCreditNote `json:"on_termination_credit_note,omitempty"`
+	OnTerminationInvoice    OnTerminationInvoice    `json:"on_termination_invoice,omitempty"`
 }
 
 type SubscriptionListInput struct {
@@ -110,11 +127,13 @@ type Subscription struct {
 
 	Name string `json:"name"`
 
-	Status         SubscriptionStatus `json:"status"`
-	BillingTime    BillingTime        `json:"billing_time"`
-	SubscriptionAt *time.Time         `json:"subscription_at"`
-	EndingAt       *time.Time         `json:"ending_at"`
-	TrialEndedAt   *time.Time         `json:"trial_ended_at"`
+	Status                  SubscriptionStatus      `json:"status"`
+	BillingTime             BillingTime             `json:"billing_time"`
+	SubscriptionAt          *time.Time              `json:"subscription_at"`
+	EndingAt                *time.Time              `json:"ending_at"`
+	TrialEndedAt            *time.Time              `json:"trial_ended_at"`
+	OnTerminationCreditNote OnTerminationCreditNote `json:"on_termination_credit_note,omitempty"`
+	OnTerminationInvoice    OnTerminationInvoice    `json:"on_termination_invoice,omitempty"`
 
 	PreviousPlanCode  string `json:"previous_plan_code"`
 	NextPlanCode      string `json:"next_plan_code"`

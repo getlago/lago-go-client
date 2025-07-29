@@ -188,18 +188,26 @@ type CustomerChargeUsage struct {
 	AmountCurrency       Currency                     `json:"amount_currency,omitempty"`
 	Charge               *Charge                      `json:"charge,omitempty"`
 	BillableMetric       *BillableMetric              `json:"billable_metric,omitempty"`
+	PricingUnitDetails   *CustomerPricingUnitDetails  `json:"pricing_unit_details,omitempty"`
 	Filters              []CustomerChargeFilterUsage  `json:"filters,omitempty"`
 	GroupedUsage         []CustomerChargeGroupedUsage `json:"grouped_usage,omitempty"`
 }
 
+type CustomerPricingUnitDetails struct {
+	AmountCents    int     `json:"amount_cents,omitempty"`
+	ShortName      string  `json:"short_name,omitempty"`
+	ConversionRate float64 `json:"conversion_rate,omitempty"`
+}
+
 type CustomerChargeFilterUsage struct {
-	InvoiceDisplayName   string                 `json:"invoice_display_name,omitempty"`
-	Values               map[string]interface{} `json:"value,omitempty"`
-	AmountCents          int                    `json:"amount_cents,omitempty"`
-	ProjectedAmountCents int                    `json:"projected_amount_cents,omitempty"`
-	EventsCount          int                    `json:"events_count,omitempty"`
-	Units                string                 `json:"units,omitempty"`
-	ProjectedUnits       string                 `json:"projected_units,omitempty"`
+	InvoiceDisplayName   string                      `json:"invoice_display_name,omitempty"`
+	Values               map[string]interface{}      `json:"value,omitempty"`
+	AmountCents          int                         `json:"amount_cents,omitempty"`
+	ProjectedAmountCents int                         `json:"projected_amount_cents,omitempty"`
+	EventsCount          int                         `json:"events_count,omitempty"`
+	Units                string                      `json:"units,omitempty"`
+	ProjectedUnits       string                      `json:"projected_units,omitempty"`
+	PricingUnitDetails   *CustomerPricingUnitDetails `json:"pricing_unit_details,omitempty"`
 }
 
 type CustomerChargeGroupedUsage struct {
@@ -210,6 +218,7 @@ type CustomerChargeGroupedUsage struct {
 	ProjectedUnits       string                      `json:"projected_units,omitempty"`
 	GroupedBy            map[string]interface{}      `json:"grouped_by,omitempty"`
 	Filters              []CustomerChargeFilterUsage `json:"filters,omitempty"`
+	PricingUnitDetails   *CustomerPricingUnitDetails `json:"pricing_unit_details,omitempty"`
 }
 
 type CustomerUsage struct {

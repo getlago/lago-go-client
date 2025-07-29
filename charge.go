@@ -18,6 +18,11 @@ const (
 	DynamicChargeModel             ChargeModel = "dynamic"
 )
 
+type AppliedPricingUnit struct {
+	Code           string  `json:"code,omitempty"`
+	ConversionRate float64 `json:"conversion_rate,omitempty"`
+}
+
 type ChargeFilter struct {
 	InvoiceDisplayName string                 `json:"invoice_display_name,omitempty"`
 	Properties         map[string]interface{} `json:"properties,omitempty"`
@@ -38,6 +43,7 @@ type Charge struct {
 	MinAmountCents       int                    `json:"min_amount_cents,omitempty"`
 	Properties           map[string]interface{} `json:"properties,omitempty"`
 	Filters              []ChargeFilter         `json:"filters,omitempty"`
+	AppliedPricingUnit   *AppliedPricingUnit    `json:"applied_pricing_unit,omitempty"`
 
 	Taxes []Tax `json:"tax,omitempty"`
 }

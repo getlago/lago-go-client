@@ -1,14 +1,13 @@
-package lago
+package lago_test
 
 import (
 	"context"
-	"encoding/json"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 	"time"
 
 	qt "github.com/frankban/quicktest"
+	. "github.com/getlago/lago-go-client"
+	lt "github.com/getlago/lago-go-client/testing"
 )
 
 // Mock JSON response structure
@@ -29,14 +28,6 @@ var mockBatchEventsResponse = map[string]any{
 			"created_at":               "2025-07-03T15:35:22Z",
 		},
 	},
-}
-
-func batchHandlerFunc(c *qt.C, assertRequestFunc func(*qt.C, *http.Request)) *httptest.Server {
-	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assertRequestFunc(c, r)
-		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(mockBatchEventsResponse)
-	}))
 }
 
 func assertBatchEventListResponse(c *qt.C, result []Event) {
@@ -68,13 +59,13 @@ func TestEventsBatch(t *testing.T) {
 	t.Run("When events are provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := batchHandlerFunc(c, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "POST")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/events/batch")
-		})
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/events/batch").
+			MockResponse(mockBatchEventsResponse)
+		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-		result, err := client.Event().Batch(context.Background(), []EventInput{
+		result, err := server.Client().Event().Batch(context.Background(), []EventInput{
 			{
 				TransactionID:           "event_1234",
 				ExternalSubscriptionID:  "sub_1234",

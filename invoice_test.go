@@ -1,10 +1,12 @@
-package lago
+package lago_test
 
 import (
 	"context"
-	"net/http"
 	"testing"
 	"time"
+
+	. "github.com/getlago/lago-go-client"
+	lt "github.com/getlago/lago-go-client/testing"
 
 	qt "github.com/frankban/quicktest"
 	"github.com/google/uuid"
@@ -237,23 +239,14 @@ func TestInvoiceGetList(t *testing.T) {
 	t.Run("When no parameters are provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, mockInvoiceListResponse, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "GET")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/invoices")
-			c.Assert(r.URL.Query().Encode(), qt.Equals, "")
-
-			query := r.URL.Query()
-			c.Assert(query.Get("per_page"), qt.Equals, "")
-			c.Assert(query.Get("page"), qt.Equals, "")
-			c.Assert(query.Get("payment_overdue"), qt.Equals, "")
-			c.Assert(query.Get("partially_paid"), qt.Equals, "")
-			c.Assert(query.Get("self_billed"), qt.Equals, "")
-			c.Assert(query.Get("payment_dispute_lost"), qt.Equals, "")
-		})
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/invoices").
+			MatchQuery("").
+			MockResponse(mockInvoiceListResponse)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-		result, err := client.Invoice().GetList(context.Background(), &InvoiceListInput{})
+		result, err := server.Client().Invoice().GetList(context.Background(), &InvoiceListInput{})
 		// The method interface should return `error` and not `*Error` but that would break the API.
 		// See https://go.dev/doc/faq#nil_error.
 
@@ -264,39 +257,38 @@ func TestInvoiceGetList(t *testing.T) {
 	t.Run("When parameters are provided", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, mockInvoiceListResponse, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "GET")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/invoices")
-
-			query := r.URL.Query()
-			c.Assert(query.Get("per_page"), qt.Equals, "10")
-			c.Assert(query.Get("page"), qt.Equals, "1")
-			c.Assert(query.Get("customer_external_id"), qt.Equals, "CUSTOMER_1")
-			c.Assert(query.Get("invoice_type"), qt.Equals, "subscription")
-			c.Assert(query.Get("status"), qt.Equals, "finalized")
-			c.Assert(query.Get("payment_status"), qt.Equals, "succeeded")
-			c.Assert(query.Get("issuing_date_from"), qt.Equals, "2022-09-14T00:00:00Z")
-			c.Assert(query.Get("issuing_date_to"), qt.Equals, "2022-09-14T23:59:59Z")
-			c.Assert(query.Get("amount_from"), qt.Equals, "10")
-			c.Assert(query.Get("amount_to"), qt.Equals, "1000")
-			c.Assert(query.Get("search_term"), qt.Equals, "credit")
-			c.Assert(query["billing_entity_ids[]"], qt.DeepEquals, []string{"1a901a90-1a90-1a90-1a90-1a901a901a90", "1a901a90-1a90-1a90-1a90-1a901a901a91"})
-			c.Assert(query.Get("currency"), qt.Equals, "EUR")
-			c.Assert(query.Get("payment_overdue"), qt.Equals, "true")
-			c.Assert(query.Get("partially_paid"), qt.Equals, "true")
-			c.Assert(query.Get("self_billed"), qt.Equals, "false")
-			c.Assert(query.Get("payment_dispute_lost"), qt.Equals, "true")
-			c.Assert(query.Get("metadata[key1]"), qt.Equals, "10")
-			c.Assert(query.Get("metadata[key2]"), qt.Equals, "value2")
-		})
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/invoices").
+			MatchQuery(map[string]interface{}{
+				"per_page":             "10",
+				"page":                 "1",
+				"customer_external_id": "CUSTOMER_1",
+				"invoice_type":         "subscription",
+				"status":               "finalized",
+				"payment_status":       "succeeded",
+				"issuing_date_from":    "2022-09-14T00:00:00Z",
+				"issuing_date_to":      "2022-09-14T23:59:59Z",
+				"amount_from":          "10",
+				"amount_to":            "1000",
+				"search_term":          "credit",
+				"billing_entity_ids[]": []string{"1a901a90-1a90-1a90-1a90-1a901a901a90", "1a901a90-1a90-1a90-1a90-1a901a901a91"},
+				"currency":             "EUR",
+				"payment_overdue":      "true",
+				"partially_paid":       "true",
+				"self_billed":          "false",
+				"payment_dispute_lost": "true",
+				"metadata[key1]":       "10",
+				"metadata[key2]":       "value2",
+			}).
+			MockResponse(mockInvoiceListResponse)
 		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
 		// selfBilled := false
 		entityUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
 		entityUUID2, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a91")
 
-		result, err := client.Invoice().GetList(context.Background(), &InvoiceListInput{
+		result, err := server.Client().Invoice().GetList(context.Background(), &InvoiceListInput{
 			PerPage:            Ptr(10),
 			Page:               Ptr(1),
 			IssuingDateFrom:    "2022-09-14T00:00:00Z",
@@ -335,13 +327,13 @@ func TestPaymentUrl(t *testing.T) {
 	t.Run("With an invoiceID in the request", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := HandlerFunc(c, mockInvoicePaymentUrlResponse, func(c *qt.C, r *http.Request) {
-			c.Assert(r.Method, qt.Equals, "POST")
-			c.Assert(r.URL.Path, qt.Equals, "/api/v1/invoices/1a901a90-1a90-1a90-1a90-1a901a901a90/payment_url")
-		})
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/invoices/1a901a90-1a90-1a90-1a90-1a901a901a90/payment_url").
+			MockResponse(mockInvoicePaymentUrlResponse)
+		defer server.Close()
 
-		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
-		result, err := client.Invoice().PaymentUrl(context.Background(), "1a901a90-1a90-1a90-1a90-1a901a901a90")
+		result, err := server.Client().Invoice().PaymentUrl(context.Background(), "1a901a90-1a90-1a90-1a90-1a901a901a90")
 
 		c.Assert(err == nil, qt.IsTrue)
 		assertPaymentUrlResponse(c, result)
