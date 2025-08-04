@@ -36,7 +36,7 @@ type PaymentRequest struct {
 	CreatedAt      time.Time `json:"created_at,omitempty"`
 
 	Customer *Customer `json:"customer,omitempty"`
-	Invoices []Invoice `json:"fees,omitempty"`
+	Invoices []Invoice `json:"invoices,omitempty"`
 }
 
 type PaymentRequestParams struct {
@@ -55,7 +55,7 @@ func (c *Client) PaymentRequest() *PaymentRequestRequest {
 	}
 }
 
-func (adr *PaymentRequestRequest) Get(ctx context.Context, paymentRequestID string) (*PaymentRequest, *Error) {
+func (adr *PaymentRequestRequest) Get(ctx context.Context, paymentRequestID uuid.UUID) (*PaymentRequest, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "payment_requests", paymentRequestID)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
