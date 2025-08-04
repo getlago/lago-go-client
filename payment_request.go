@@ -3,6 +3,7 @@ package lago
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -35,7 +36,7 @@ type PaymentRequest struct {
 	CreatedAt      time.Time `json:"created_at,omitempty"`
 
 	Customer *Customer `json:"customer,omitempty"`
-	Invoices []Invoice `json:"fees,omitempty"`
+	Invoices []Invoice `json:"invoices,omitempty"`
 }
 
 type PaymentRequestParams struct {
@@ -52,6 +53,26 @@ func (c *Client) PaymentRequest() *PaymentRequestRequest {
 	return &PaymentRequestRequest{
 		client: c,
 	}
+}
+
+func (adr *PaymentRequestRequest) Get(ctx context.Context, paymentRequestID uuid.UUID) (*PaymentRequest, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "payment_requests", paymentRequestID)
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &PaymentRequestResult{},
+	}
+
+	result, err := adr.client.Get(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	paymentRequestResult, ok := result.(*PaymentRequestResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return paymentRequestResult.PaymentRequest, nil
 }
 
 func (ir *PaymentRequestRequest) GetList(ctx context.Context, paymentRequestListInput *PaymentRequestListInput) (*PaymentRequestResult, *Error) {
