@@ -66,6 +66,10 @@ type CustomerUsageResult struct {
 	CustomerUsage *CustomerUsage `json:"customer_usage"`
 }
 
+type CustomerProjectedUsageResult struct {
+	CustomerProjectedUsage *CustomerProjectedUsage `json:"customer_projected_usage"`
+}
+
 type CustomerPastUsageResult struct {
 	UsagePeriods []CustomerUsage `json:"usage_periods"`
 	Meta         Metadata        `json:"meta"`
@@ -180,17 +184,29 @@ type IntegrationCustomersResponse struct {
 }
 
 type CustomerChargeUsage struct {
-	Units                string                       `json:"units,omitempty"`
-	ProjectedUnits       string                       `json:"projected_units,omitempty"`
-	EventsCount          int                          `json:"events_count"`
-	AmountCents          int                          `json:"amount_cents,omitempty"`
-	ProjectedAmountCents int                          `json:"projected_amount_cents,omitempty"`
-	AmountCurrency       Currency                     `json:"amount_currency,omitempty"`
-	Charge               *Charge                      `json:"charge,omitempty"`
-	BillableMetric       *BillableMetric              `json:"billable_metric,omitempty"`
-	PricingUnitDetails   *CustomerPricingUnitDetails  `json:"pricing_unit_details,omitempty"`
-	Filters              []CustomerChargeFilterUsage  `json:"filters,omitempty"`
-	GroupedUsage         []CustomerChargeGroupedUsage `json:"grouped_usage,omitempty"`
+	Units              string                       `json:"units,omitempty"`
+	EventsCount        int                          `json:"events_count"`
+	AmountCents        int                          `json:"amount_cents,omitempty"`
+	AmountCurrency     Currency                     `json:"amount_currency,omitempty"`
+	Charge             *Charge                      `json:"charge,omitempty"`
+	BillableMetric     *BillableMetric              `json:"billable_metric,omitempty"`
+	PricingUnitDetails *CustomerPricingUnitDetails  `json:"pricing_unit_details,omitempty"`
+	Filters            []CustomerChargeFilterUsage  `json:"filters,omitempty"`
+	GroupedUsage       []CustomerChargeGroupedUsage `json:"grouped_usage,omitempty"`
+}
+
+type CustomerProjectedChargeUsage struct {
+	Units                string                                `json:"units,omitempty"`
+	ProjectedUnits       string                                `json:"projected_units,omitempty"`
+	EventsCount          int                                   `json:"events_count"`
+	AmountCents          int                                   `json:"amount_cents,omitempty"`
+	ProjectedAmountCents int                                   `json:"projected_amount_cents,omitempty"`
+	AmountCurrency       Currency                              `json:"amount_currency,omitempty"`
+	Charge               *Charge                               `json:"charge,omitempty"`
+	BillableMetric       *BillableMetric                       `json:"billable_metric,omitempty"`
+	PricingUnitDetails   *CustomerPricingUnitDetails           `json:"pricing_unit_details,omitempty"`
+	Filters              []CustomerProjectedChargeFilterUsage  `json:"filters,omitempty"`
+	GroupedUsage         []CustomerProjectedChargeGroupedUsage `json:"grouped_usage,omitempty"`
 }
 
 type CustomerPricingUnitDetails struct {
@@ -200,6 +216,15 @@ type CustomerPricingUnitDetails struct {
 }
 
 type CustomerChargeFilterUsage struct {
+	InvoiceDisplayName string                      `json:"invoice_display_name,omitempty"`
+	Values             map[string]interface{}      `json:"value,omitempty"`
+	AmountCents        int                         `json:"amount_cents,omitempty"`
+	EventsCount        int                         `json:"events_count,omitempty"`
+	Units              string                      `json:"units,omitempty"`
+	PricingUnitDetails *CustomerPricingUnitDetails `json:"pricing_unit_details,omitempty"`
+}
+
+type CustomerProjectedChargeFilterUsage struct {
 	InvoiceDisplayName   string                      `json:"invoice_display_name,omitempty"`
 	Values               map[string]interface{}      `json:"value,omitempty"`
 	AmountCents          int                         `json:"amount_cents,omitempty"`
@@ -211,6 +236,15 @@ type CustomerChargeFilterUsage struct {
 }
 
 type CustomerChargeGroupedUsage struct {
+	AmountCents        int                         `json:"amount_cents,omitempty"`
+	EventsCount        int                         `json:"events_count,omitempty"`
+	Units              string                      `json:"units,omitempty"`
+	GroupedBy          map[string]interface{}      `json:"grouped_by,omitempty"`
+	Filters            []CustomerChargeFilterUsage `json:"filters,omitempty"`
+	PricingUnitDetails *CustomerPricingUnitDetails `json:"pricing_unit_details,omitempty"`
+}
+
+type CustomerProjectedChargeGroupedUsage struct {
 	AmountCents          int                         `json:"amount_cents,omitempty"`
 	ProjectedAmountCents int                         `json:"projected_amount_cents,omitempty"`
 	EventsCount          int                         `json:"events_count,omitempty"`
@@ -222,16 +256,28 @@ type CustomerChargeGroupedUsage struct {
 }
 
 type CustomerUsage struct {
-	FromDatetime         time.Time             `json:"from_datetime,omitempty"`
-	ToDatetime           time.Time             `json:"to_datetime,omitempty"`
-	IssuingDate          string                `json:"issuing_date,omitempty"`
-	LagoInvoiceID        string                `json:"lago_invoice_id,omitempty"`
-	Currency             Currency              `json:"currency,omitempty"`
-	AmountCents          int                   `json:"amount_cents,omitempty"`
-	ProjectedAmountCents int                   `json:"projected_amount_cents,omitempty"`
-	TotalAmountCents     int                   `json:"total_amount_cents,omitempty"`
-	TaxesAmountCents     int                   `json:"taxes_amount_cents,omitempty"`
-	ChargesUsage         []CustomerChargeUsage `json:"charges_usage,omitempty"`
+	FromDatetime     time.Time             `json:"from_datetime,omitempty"`
+	ToDatetime       time.Time             `json:"to_datetime,omitempty"`
+	IssuingDate      string                `json:"issuing_date,omitempty"`
+	LagoInvoiceID    string                `json:"lago_invoice_id,omitempty"`
+	Currency         Currency              `json:"currency,omitempty"`
+	AmountCents      int                   `json:"amount_cents,omitempty"`
+	TotalAmountCents int                   `json:"total_amount_cents,omitempty"`
+	TaxesAmountCents int                   `json:"taxes_amount_cents,omitempty"`
+	ChargesUsage     []CustomerChargeUsage `json:"charges_usage,omitempty"`
+}
+
+type CustomerProjectedUsage struct {
+	FromDatetime         time.Time                      `json:"from_datetime,omitempty"`
+	ToDatetime           time.Time                      `json:"to_datetime,omitempty"`
+	IssuingDate          string                         `json:"issuing_date,omitempty"`
+	LagoInvoiceID        string                         `json:"lago_invoice_id,omitempty"`
+	Currency             Currency                       `json:"currency,omitempty"`
+	AmountCents          int                            `json:"amount_cents,omitempty"`
+	ProjectedAmountCents int                            `json:"projected_amount_cents,omitempty"`
+	TotalAmountCents     int                            `json:"total_amount_cents,omitempty"`
+	TaxesAmountCents     int                            `json:"taxes_amount_cents,omitempty"`
+	ChargesUsage         []CustomerProjectedChargeUsage `json:"charges_usage,omitempty"`
 }
 
 type CustomerPortalUrl struct {
@@ -504,4 +550,31 @@ func (cr *CustomerRequest) GetList(ctx context.Context, customerListInput *Custo
 	}
 
 	return customerResult, nil
+}
+
+func (cr *CustomerRequest) ProjectedUsage(ctx context.Context, externalCustomerID string, customerUsageInput *CustomerUsageInput) (*CustomerProjectedUsage, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "projected_usage")
+
+	queryParams := map[string]string{
+		"external_subscription_id": customerUsageInput.ExternalSubscriptionID,
+		"apply_taxes":              strconv.FormatBool(customerUsageInput.ApplyTaxes),
+	}
+
+	clientRequest := &ClientRequest{
+		Path:        subPath,
+		QueryParams: queryParams,
+		Result:      &CustomerProjectedUsageResult{},
+	}
+
+	result, clientErr := cr.client.Get(ctx, clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
+	}
+
+	projectedUsageResult, ok := result.(*CustomerProjectedUsageResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return projectedUsageResult.CustomerProjectedUsage, nil
 }
