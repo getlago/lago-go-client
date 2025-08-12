@@ -38,7 +38,6 @@ type UsageListInput struct {
 }
 
 type UsageResult struct {
-	Usage  *Usage  `json:"usage,omitempty"`
 	Usages []Usage `json:"usages,omitempty"`
 }
 
