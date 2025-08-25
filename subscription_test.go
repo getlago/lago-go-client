@@ -2,6 +2,7 @@ package lago_test
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	qt "github.com/frankban/quicktest"
@@ -280,36 +281,56 @@ func TestSubscriptionTerminate(t *testing.T) {
 		assertSubscriptionTerminateResponse(c, subscription)
 	})
 
-	t.Run("When providing the on_termination_credit_note parameter", func(t *testing.T) {
-		c := qt.New(t)
+	for _, onTerminationCreditNote := range []OnTerminationCreditNote{
+		OnTerminationCreditNoteCredit,
+		OnTerminationCreditNoteRefund,
+		OnTerminationCreditNoteSkip,
+	} {
+		title := fmt.Sprintf("When providing the on_termination_credit_note=%s parameter", onTerminationCreditNote)
+		t.Run(title, func(t *testing.T) {
+			c := qt.New(t)
 
-		server := lt.NewMockServer(c).MatchMethod("DELETE").MatchPath("/api/v1/subscriptions/1a901a90-1a90-1a90-1a90-1a901a901a90").MatchQuery("on_termination_credit_note=skip").MockResponse(mockSubscriptionResponse)
+			server := lt.NewMockServer(c).
+				MatchMethod("DELETE").
+				MatchPath("/api/v1/subscriptions/1a901a90-1a90-1a90-1a90-1a901a901a90").
+				MatchQuery(map[string]string{"on_termination_credit_note": string(onTerminationCreditNote)}).
+				MockResponse(mockSubscriptionResponse)
 
-		defer server.Close()
+			defer server.Close()
 
-		subscription := terminateSubscription(c, server, SubscriptionTerminateInput{
-			ExternalID:              "1a901a90-1a90-1a90-1a90-1a901a901a90",
-			OnTerminationCreditNote: OnTerminationCreditNoteSkip,
+			input := SubscriptionTerminateInput{
+				ExternalID:              "1a901a90-1a90-1a90-1a90-1a901a901a90",
+				OnTerminationCreditNote: onTerminationCreditNote,
+			}
+			subscription := terminateSubscription(c, server, input)
+
+			assertSubscriptionTerminateResponse(c, subscription)
 		})
+	}
 
-		assertSubscriptionTerminateResponse(c, subscription)
-	})
+	for _, onTerminationInvoice := range []OnTerminationInvoice{
+		OnTerminationInvoiceGenerate,
+		OnTerminationInvoiceSkip,
+	} {
+		title := fmt.Sprintf("When providing the on_termination_invoice=%s parameter", onTerminationInvoice)
+		t.Run(title, func(t *testing.T) {
+			c := qt.New(t)
 
-	t.Run("When providing the on_termination_invoice parameter", func(t *testing.T) {
-		c := qt.New(t)
+			server := lt.NewMockServer(c).
+				MatchMethod("DELETE").
+				MatchPath("/api/v1/subscriptions/1a901a90-1a90-1a90-1a90-1a901a901a90").
+				MatchQuery(map[string]string{"on_termination_invoice": string(onTerminationInvoice)}).
+				MockResponse(mockSubscriptionResponse)
 
-		server := lt.NewMockServer(c).
-			MatchMethod("DELETE").
-			MatchPath("/api/v1/subscriptions/1a901a90-1a90-1a90-1a90-1a901a901a90").
-			MatchQuery("on_termination_invoice=skip").
-			MockResponse(mockSubscriptionResponse)
-		defer server.Close()
+			defer server.Close()
 
-		subscription := terminateSubscription(c, server, SubscriptionTerminateInput{
-			ExternalID:           "1a901a90-1a90-1a90-1a90-1a901a901a90",
-			OnTerminationInvoice: OnTerminationInvoiceSkip,
+			input := SubscriptionTerminateInput{
+				ExternalID:           "1a901a90-1a90-1a90-1a90-1a901a901a90",
+				OnTerminationInvoice: onTerminationInvoice,
+			}
+			subscription := terminateSubscription(c, server, input)
+
+			assertSubscriptionTerminateResponse(c, subscription)
 		})
-
-		assertSubscriptionTerminateResponse(c, subscription)
-	})
+	}
 }
