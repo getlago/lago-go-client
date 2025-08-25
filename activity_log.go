@@ -39,8 +39,8 @@ type ActivityLog struct {
 }
 
 type ActivityLogListInput struct {
-	PerPage int `json:"per_page,omitempty,string"`
-	Page    int `json:"page,omitempty,string"`
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
 
 	FromDate               string   `json:"from_date,omitempty"`
 	ToDate                 string   `json:"to_date,omitempty"`

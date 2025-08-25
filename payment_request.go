@@ -20,8 +20,8 @@ type PaymentRequestResult struct {
 }
 
 type PaymentRequestListInput struct {
-	PerPage int `json:"per_page,omitempty,string"`
-	Page    int `json:"page,omitempty,string"`
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
 
 	ExternalCustomerID string `json:"external_customer_id,omitempty"`
 	PaymentStatus      string `json:"payment_status,omitempty"`

@@ -431,8 +431,8 @@ func TestCreditNoteGetList(t *testing.T) {
 		entityUUID2, _ := uuid.Parse("2a902a90-2a90-2a90-2a90-2a902a902a90")
 
 		result, err := server.Client().CreditNote().GetList(context.Background(), &CreditNoteListInput{
-			PerPage:            10,
-			Page:               1,
+			PerPage:            Ptr(10),
+			Page:               Ptr(1),
 			ExternalCustomerID: "CUSTOMER_1",
 			IssuingDateFrom:    "2022-09-14T00:00:00Z",
 			IssuingDateTo:      "2022-09-14T23:59:59Z",

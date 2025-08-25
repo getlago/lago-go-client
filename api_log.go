@@ -38,8 +38,8 @@ type ApiLog struct {
 }
 
 type ApiLogListInput struct {
-	PerPage      int      `json:"per_page,omitempty,string"`
-	Page         int      `json:"page,omitempty,string"`
+	PerPage      *int     `json:"per_page,omitempty,string"`
+	Page         *int     `json:"page,omitempty,string"`
 	FromDate     string   `json:"from_date,omitempty"`
 	ToDate       string   `json:"to_date,omitempty"`
 	HttpMethods  []string `json:"http_methods,omitempty"`

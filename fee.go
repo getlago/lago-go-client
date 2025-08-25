@@ -53,8 +53,8 @@ type FeeUpdateInput struct {
 }
 
 type FeeListInput struct {
-	PerPage int `json:"per_page,omitempty,string"`
-	Page    int `json:"page,omitempty,string"`
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
 
 	FeeType       FeeType          `json:"fee_type,omitempty"`
 	PaymentStatus FeePaymentStatus `json:"payment_status,omitempty"`
