@@ -20,8 +20,8 @@ type PaymentReceiptResult struct {
 }
 
 type PaymentReceiptListInput struct {
-	PerPage int `json:"per_page,omitempty,string"`
-	Page    int `json:"page,omitempty,string"`
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
 
 	InvoiceID string `json:"invoice_id,omitempty"`
 }

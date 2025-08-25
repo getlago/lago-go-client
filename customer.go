@@ -131,8 +131,8 @@ type CustomerInput struct {
 }
 
 type CustomerListInput struct {
-	PerPage int `json:"per_page,omitempty,string"`
-	Page    int `json:"page,omitempty,string"`
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
 }
 
 type CustomerBillingConfigurationInput struct {

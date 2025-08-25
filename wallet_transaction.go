@@ -38,8 +38,8 @@ type WalletTransactionRequest struct {
 }
 
 type WalletTransactionListInput struct {
-	PerPage           int                     `json:"per_page,omitempty,string"`
-	Page              int                     `json:"page,omitempty,string"`
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
 	WalletID          string                  `json:"wallet_id,omitempty"`
 	Status            WalletTransactionStatus `json:"status,omitempty"`
 	TransactionStatus TransactionStatus       `json:"transaction_status,omitempty"`

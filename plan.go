@@ -74,8 +74,8 @@ type PlanInput struct {
 }
 
 type PlanListInput struct {
-	PerPage int `json:"per_page,omitempty,string"`
-	Page    int `json:"page,omitempty,string"`
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
 }
 
 type MinimumCommitment struct {
