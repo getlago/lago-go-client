@@ -56,7 +56,7 @@ func (wr *WebhookRequest) GetPublicKey(ctx context.Context) (*rsa.PublicKey, *Er
 	block, _ := pem.Decode(bytesResult)
 	if block == nil || block.Type != "PUBLIC KEY" {
 		return nil, &Error{
-			Err:            errors.New("Failed to decode PEM block containing public key"),
+			Err:            errors.New("failed to decode pem block containing public key"),
 			HTTPStatusCode: http.StatusInternalServerError,
 			Message:        "Failed to decode PEM block containing public key",
 		}
@@ -75,7 +75,7 @@ func (wr *WebhookRequest) GetPublicKey(ctx context.Context) (*rsa.PublicKey, *Er
 	rsaPublicKey, ok := publicKey.(*rsa.PublicKey)
 	if !ok {
 		return nil, &Error{
-			Err:            errors.New("Unexpected type of public key"),
+			Err:            errors.New("unexpected type of public key"),
 			HTTPStatusCode: http.StatusInternalServerError,
 			Message:        "Unexpected type of public key",
 		}
@@ -92,7 +92,7 @@ func (wr *WebhookRequest) parseSignature(ctx context.Context, signature string) 
 
 	token, parseErr := jwt.Parse(signature, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return publicKey, nil
 	})
