@@ -27,6 +27,6 @@ jobs:
         # Install golangci-lint from source instead of using
         # golangci-lint-action to ensure the golangci-lint binary is built with
         # the same Go version we're targeting.
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.47.3
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v2.4.0
       - name: golangci-lint
         run: golangci-lint run --version --verbose --out-format=github-actions
