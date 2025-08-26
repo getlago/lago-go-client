@@ -61,8 +61,8 @@ type EstimatedCreditNoteResult struct {
 }
 
 type CreditNoteListInput struct {
-	PerPage int `url:"per_page,omitempty,string"`
-	Page    int `url:"page,omitempty,string"`
+	PerPage *int `url:"per_page,omitempty,string"`
+	Page    *int `url:"page,omitempty,string"`
 
 	ExternalCustomerID string `url:"external_customer_id,omitempty"`
 	IssuingDateFrom    string `url:"issuing_date_from,omitempty"`

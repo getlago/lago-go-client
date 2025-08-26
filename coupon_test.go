@@ -142,8 +142,8 @@ func TestAppliedCouponGetList(t *testing.T) {
 		result, err := server.Client().AppliedCoupon().GetList(context.Background(), &AppliedCouponListInput{
 			ExternalCustomerID: "CUSTOMER_1",
 			Status:             "active",
-			PerPage:            10,
-			Page:               1,
+			PerPage:            Ptr(10),
+			Page:               Ptr(1),
 			CouponCode:         []string{"BLACK_FRIDAY", "CYBER_MONDAY"},
 		})
 		c.Assert(err == nil, qt.IsTrue)

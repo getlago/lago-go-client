@@ -78,8 +78,8 @@ type CouponInput struct {
 }
 
 type CouponListInput struct {
-	PerPage int `json:"per_page,omitempty,string"`
-	Page    int `json:"page,omitempty,string"`
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
 }
 
 type Coupon struct {
@@ -111,8 +111,8 @@ type AppliedCouponResult struct {
 }
 
 type AppliedCouponListInput struct {
-	PerPage            int                 `url:"per_page,omitempty,string"`
-	Page               int                 `url:"page,omitempty,string"`
+	PerPage            *int                `url:"per_page,omitempty,string"`
+	Page               *int                `url:"page,omitempty,string"`
 	Status             AppliedCouponStatus `url:"status,omitempty"`
 	ExternalCustomerID string              `url:"external_customer_id,omitempty"`
 	CouponCode         []string            `url:"coupon_code[],omitempty"`

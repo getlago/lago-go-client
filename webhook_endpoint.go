@@ -30,8 +30,8 @@ type WebhookEndpointInput struct {
 }
 
 type WebhookEndpointListInput struct {
-	PerPage int `json:"per_page,omitempty,string"`
-	Page    int `json:"page,omitempty,string"`
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
 }
 
 type WebhookEndpointResult struct {

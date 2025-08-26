@@ -57,8 +57,8 @@ type BillableMetricInput struct {
 }
 
 type BillableMetricListInput struct {
-	PerPage int `json:"per_page,omitempty,string"`
-	Page    int `json:"page,omitempty,string"`
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
 }
 
 type BillableMetricResult struct {

@@ -113,8 +113,8 @@ type SubscriptionTerminateInput struct {
 type SubscriptionListInput struct {
 	ExternalCustomerID string               `url:"external_customer_id,omitempty"`
 	PlanCode           string               `url:"plan_code,omitempty"`
-	PerPage            int                  `url:"per_page,omitempty"`
-	Page               int                  `url:"page,omitempty"`
+	PerPage            *int                 `url:"per_page,omitempty"`
+	Page               *int                 `url:"page,omitempty"`
 	Status             []SubscriptionStatus `url:"status[],omitempty"`
 }
 
@@ -130,7 +130,7 @@ type Subscription struct {
 
 	Status                  SubscriptionStatus      `json:"status"`
 	BillingTime             BillingTime             `json:"billing_time"`
-	SubscriptionAt          *time.Time              `json:"subscription_at"`
+	SubscriptionAt          time.Time               `json:"subscription_at"`
 	EndingAt                *time.Time              `json:"ending_at"`
 	TrialEndedAt            *time.Time              `json:"trial_ended_at"`
 	OnTerminationCreditNote OnTerminationCreditNote `json:"on_termination_credit_note,omitempty"`
@@ -145,7 +145,7 @@ type Subscription struct {
 
 	Plan *Plan `json:"plan,omitempty"`
 
-	CreatedAt    *time.Time `json:"created_at"`
+	CreatedAt    time.Time  `json:"created_at"`
 	StartedAt    *time.Time `json:"started_at"`
 	CanceledAt   *time.Time `json:"canceled_at"`
 	TerminatedAt *time.Time `json:"terminated_at"`
