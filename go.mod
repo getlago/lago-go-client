@@ -1,13 +1,13 @@
 module github.com/getlago/lago-go-client
 
-go 1.18
+go 1.23.0
 
 require github.com/google/uuid v1.6.0
 
 require (
 	github.com/frankban/quicktest v1.14.6
 	github.com/go-resty/resty/v2 v2.16.5
-	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/google/go-querystring v1.1.0
 )
 
