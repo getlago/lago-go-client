@@ -15,18 +15,22 @@ jobs:
     name: golangci-lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
           # The builtin cache feature ensures that installing golangci-lint
           # is consistently fast.
           cache: true
           cache-dependency-path: go.sum
-      - name: install-golangci-lint
-        # Install golangci-lint from source instead of using
-        # golangci-lint-action to ensure the golangci-lint binary is built with
-        # the same Go version we're targeting.
-        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v2.4.0
       - name: golangci-lint
-        run: golangci-lint run --version --verbose --out-format=github-actions
+        uses: golangci/golangci-lint-action@v8
+        with:
+          version: v2.1
+      # - name: install-golangci-lint
+      #   # Install golangci-lint from source instead of using
+      #   # golangci-lint-action to ensure the golangci-lint binary is built with
+      #   # the same Go version we're targeting.
+      #   run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@v2.4.0
+      # - name: golangci-lint
+      #   run: golangci-lint run --version --verbose --out-format=github-actions
