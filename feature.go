@@ -10,11 +10,15 @@ type FeatureRequest struct {
 	client *Client
 }
 
+type PrivilegeConfig struct {
+	SelectOptions []string `json:"select_options,omitempty"`
+}
+
 type Privilege struct {
-	Code      string `json:"code"`
-	Name      string `json:"name,omitempty"`
-	ValueType string `json:"value_type"` // TODO: add enum
-	// TODO: Add config
+	Code      string          `json:"code"`
+	Name      string          `json:"name,omitempty"`
+	ValueType string          `json:"value_type"` // TODO: add enum
+	Config    PrivilegeConfig `json:"config"`
 }
 
 type Feature struct {
@@ -46,11 +50,46 @@ type FeatureInput struct {
 	Privileges  []PrivilegeInput `json:"privileges,omitempty"`
 }
 
+type ConfigInput struct {
+	SelectOptions []string `json:"select_options,omitempty"`
+}
+
 type PrivilegeInput struct {
-	Code      string `json:"code,omitempty"`
-	Name      string `json:"name,omitempty"`
-	ValueType string `json:"value_type,omitempty"`
-	// TODO: Add config
+	Code      string      `json:"code,omitempty"`
+	Name      string      `json:"name,omitempty"`
+	ValueType string      `json:"value_type,omitempty"`
+	Config    ConfigInput `json:"config,omitempty"`
+}
+
+type EntitlementsInput struct {
+	Entitlements []EntitlementInput `json:"entitlements"`
+}
+
+type EntitlementsInputMap map[string]map[string]any
+
+func (p EntitlementsInput) MarshalJSON() ([]byte, error) {
+	result := make(EntitlementsInputMap, len(p.Entitlements))
+	for _, ent := range p.Entitlements {
+		privilegeMap := make(map[string]any, len(ent.Privileges))
+
+		for _, privilege := range ent.Privileges {
+			privilegeMap[privilege.Code] = privilege.Value
+		}
+
+		result[ent.Code] = privilegeMap
+	}
+
+	return json.Marshal(map[string]EntitlementsInputMap{"entitlements": result})
+}
+
+type EntitlementPrivilegeInput struct {
+	Code  string `json:"code"`
+	Value any    `json:"value"`
+}
+
+type EntitlementInput struct {
+	Code       string                      `json:"code"`
+	Privileges []EntitlementPrivilegeInput `json:"privileges"`
 }
 
 func (c *Client) Feature() *FeatureRequest {

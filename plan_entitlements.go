@@ -2,7 +2,6 @@ package lago
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 )
 
@@ -12,48 +11,17 @@ type PlanEntitlementRequest struct {
 
 type PlanEntitlement struct {
 	Code        string                     `json:"code"`
-	Name        string                     `json:"name,omitempty"`
-	Description string                     `json:"description,omitempty"`
+	Name        string                     `json:"name"`
+	Description string                     `json:"description"`
 	Privileges  []PlanEntitlementPrivilege `json:"privileges"`
 }
 
 type PlanEntitlementPrivilege struct {
-	Code      string `json:"code"`
-	Name      string `json:"name,omitempty"`
-	ValueType string `json:"value_type,omitempty"`
-	// TODO: Add config
-	Value any `json:"value"`
-}
-
-type PlanEntitlementsInput struct {
-	Entitlements []PlanEntitlementInput `json:"entitlements"`
-}
-
-type PlanEntitlementsInputMap map[string]map[string]any
-
-func (p PlanEntitlementsInput) MarshalJSON() ([]byte, error) {
-	result := make(PlanEntitlementsInputMap, len(p.Entitlements))
-	for _, ent := range p.Entitlements {
-		privilegeMap := make(map[string]any, len(ent.Privileges))
-
-		for _, privilege := range ent.Privileges {
-			privilegeMap[privilege.Code] = privilege.Value
-		}
-
-		result[ent.Code] = privilegeMap
-	}
-
-	return json.Marshal(map[string]PlanEntitlementsInputMap{"entitlements": result})
-}
-
-type PlanEntitlementPrivilegeInput struct {
-	Code  string `json:"code"`
-	Value any    `json:"value"`
-}
-
-type PlanEntitlementInput struct {
-	Code       string                          `json:"code"`
-	Privileges []PlanEntitlementPrivilegeInput `json:"privileges"`
+	Code      string          `json:"code"`
+	Name      string          `json:"name"`
+	ValueType string          `json:"value_type"`
+	Config    PrivilegeConfig `json:"config"`
+	Value     any             `json:"value"`
 }
 
 type PlanEntitlementResult struct {
@@ -151,21 +119,21 @@ func (sr *PlanEntitlementRequest) DeletePrivilege(ctx context.Context, planCode 
 	return planEntitlementResult.Entitlement, nil
 }
 
-func (sr *PlanEntitlementRequest) Replace(ctx context.Context, planCode string, input []PlanEntitlementInput) (*PlanEntitlementResult, *Error) {
+func (sr *PlanEntitlementRequest) Replace(ctx context.Context, planCode string, input []EntitlementInput) (*PlanEntitlementResult, *Error) {
 	return sr.update(ctx, planCode, input, false)
 }
 
-func (sr *PlanEntitlementRequest) Update(ctx context.Context, planCode string, input []PlanEntitlementInput) (*PlanEntitlementResult, *Error) {
+func (sr *PlanEntitlementRequest) Update(ctx context.Context, planCode string, input []EntitlementInput) (*PlanEntitlementResult, *Error) {
 	return sr.update(ctx, planCode, input, true)
 }
 
-func (sr *PlanEntitlementRequest) update(ctx context.Context, planCode string, input []PlanEntitlementInput, partial bool) (*PlanEntitlementResult, *Error) {
+func (sr *PlanEntitlementRequest) update(ctx context.Context, planCode string, input []EntitlementInput, partial bool) (*PlanEntitlementResult, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "plans", planCode, "entitlements")
 
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &PlanEntitlementResult{},
-		Body:   PlanEntitlementsInput{Entitlements: input},
+		Body:   EntitlementsInput{Entitlements: input},
 	}
 
 	var result interface{}
