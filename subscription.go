@@ -145,6 +145,8 @@ type Subscription struct {
 
 	Plan *Plan `json:"plan,omitempty"`
 
+	Entitlements []SubscriptionEntitlement `json:"entitlements,omitempty"`
+
 	CreatedAt    time.Time  `json:"created_at"`
 	StartedAt    *time.Time `json:"started_at"`
 	CanceledAt   *time.Time `json:"canceled_at"`
