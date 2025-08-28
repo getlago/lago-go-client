@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 )
 
 type FeatureRequest struct {
@@ -26,6 +27,7 @@ type Feature struct {
 	Code        string      `json:"code"`
 	Description string      `json:"description,omitempty"`
 	Privileges  []Privilege `json:"privileges,omitempty"`
+	CreatedAt   time.Time   `json:"created_at,omitempty"`
 }
 
 type FeatureResult struct {
