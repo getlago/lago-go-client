@@ -19,7 +19,7 @@ type PlanEntitlement struct {
 type PlanEntitlementPrivilege struct {
 	Code      string          `json:"code"`
 	Name      string          `json:"name"`
-	ValueType string          `json:"value_type"`
+	ValueType ValueType       `json:"value_type"`
 	Config    PrivilegeConfig `json:"config"`
 	Value     any             `json:"value"`
 }

@@ -11,6 +11,15 @@ type FeatureRequest struct {
 	client *Client
 }
 
+type ValueType string
+
+const (
+	ValueTypeString  ValueType = "string"
+	ValueTypeInteger ValueType = "integer"
+	ValueTypeSelect  ValueType = "select"
+	ValueTypeBoolean ValueType = "boolean"
+)
+
 type PrivilegeConfig struct {
 	SelectOptions []string `json:"select_options,omitempty"`
 }
@@ -18,7 +27,7 @@ type PrivilegeConfig struct {
 type Privilege struct {
 	Code      string          `json:"code"`
 	Name      string          `json:"name,omitempty"`
-	ValueType string          `json:"value_type"` // TODO: add enum
+	ValueType ValueType       `json:"value_type"`
 	Config    PrivilegeConfig `json:"config"`
 }
 
@@ -26,8 +35,8 @@ type Feature struct {
 	Name        string      `json:"name,omitempty"`
 	Code        string      `json:"code"`
 	Description string      `json:"description,omitempty"`
-	Privileges  []Privilege `json:"privileges,omitempty"`
-	CreatedAt   time.Time   `json:"created_at,omitempty"`
+	Privileges  []Privilege `json:"privileges"`
+	CreatedAt   time.Time   `json:"created_at"`
 }
 
 type FeatureResult struct {
@@ -37,17 +46,18 @@ type FeatureResult struct {
 }
 
 type FeatureListInput struct {
-	PerPage int `json:"per_page,omitempty,string"`
-	Page    int `json:"page,omitempty,string"`
+	PerPage    *int   `json:"per_page,omitempty,string"`
+	Page       *int   `json:"page,omitempty,string"`
+	SearchTerm string `json:"search_term,omitempty"`
 }
 
 type FeatureParams struct {
-	FeatureInput *FeatureInput `json:"feature,omitempty"`
+	FeatureInput *FeatureInput `json:"feature"`
 }
 
 type FeatureInput struct {
 	Name        string           `json:"name,omitempty"`
-	Code        string           `json:"code,omitempty"`
+	Code        string           `json:"code"`
 	Description string           `json:"description,omitempty"`
 	Privileges  []PrivilegeInput `json:"privileges,omitempty"`
 }
@@ -57,9 +67,9 @@ type ConfigInput struct {
 }
 
 type PrivilegeInput struct {
-	Code      string      `json:"code,omitempty"`
+	Code      string      `json:"code"`
 	Name      string      `json:"name,omitempty"`
-	ValueType string      `json:"value_type,omitempty"`
+	ValueType ValueType   `json:"value_type,omitempty"`
 	Config    ConfigInput `json:"config,omitempty"`
 }
 

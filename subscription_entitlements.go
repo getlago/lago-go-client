@@ -19,8 +19,8 @@ type SubscriptionEntitlement struct {
 
 type SubscriptionEntitlementPrivilege struct {
 	Code          string          `json:"code"`
-	Name          string          `json:"name"`
-	ValueType     string          `json:"value_type"`
+	Name          string          `json:"name,omitempty"`
+	ValueType     ValueType       `json:"value_type"`
 	Config        PrivilegeConfig `json:"config"`
 	Value         any             `json:"value"`
 	PlanValue     any             `json:"plan_value"`
