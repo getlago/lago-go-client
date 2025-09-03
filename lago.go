@@ -144,6 +144,40 @@ func (c *Client) Get(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 	return resp.String(), nil
 }
 
+func (c *Client) Patch(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
+	httpClient := c.HttpClient
+	if cr.UseIngestService {
+		httpClient = c.IngestHttpClient
+	}
+
+	resp, err := httpClient.R().
+		SetContext(ctx).
+		SetError(&Error{}).
+		SetResult(cr.Result).
+		SetBody(cr.Body).
+		Patch(cr.Path)
+
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	if c.Debug {
+		fmt.Println("REQUEST: ", resp.Request.RawRequest)
+		fmt.Println("RESPONSE: ", resp.String())
+	}
+
+	if resp.IsError() {
+		err, ok := resp.Error().(*Error)
+		if !ok {
+			return nil, &ErrorTypeAssert
+		}
+
+		return nil, err
+	}
+
+	return resp.Result(), nil
+}
+
 func (c *Client) Post(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
 	httpClient := c.HttpClient
 	if cr.UseIngestService {

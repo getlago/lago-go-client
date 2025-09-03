@@ -104,8 +104,9 @@ type Plan struct {
 	Charges            []Charge           `json:"charges,omitempty"`
 	MinimumCommitment  *MinimumCommitment `json:"minimum_commitment"`
 
-	Taxes           []Tax            `json:"taxes,omitempty"`
-	UsageThresholds []UsageThreshold `json:"usage_thresholds,omitempty"`
+	Taxes           []Tax             `json:"taxes,omitempty"`
+	UsageThresholds []UsageThreshold  `json:"usage_thresholds,omitempty"`
+	Entitlements    []PlanEntitlement `json:"entitlements,omitempty"`
 }
 
 func (c *Client) Plan() *PlanRequest {
