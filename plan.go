@@ -26,10 +26,11 @@ type PlanParams struct {
 type PlanInterval string
 
 const (
-	PlanWeekly    PlanInterval = "weekly"
-	PlanMonthly   PlanInterval = "monthly"
-	PlanQuarterly PlanInterval = "quarterly"
-	PlanYearly    PlanInterval = "yearly"
+	PlanWeekly     PlanInterval = "weekly"
+	PlanMonthly    PlanInterval = "monthly"
+	PlanQuarterly  PlanInterval = "quarterly"
+	PlanYearly     PlanInterval = "yearly"
+	PlanSemiannual PlanInterval = "semiannual"
 )
 
 type PlanChargeInput struct {
