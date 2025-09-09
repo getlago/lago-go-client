@@ -2,6 +2,7 @@ package testing
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -39,13 +40,15 @@ func ServerWithAssertions(c *qt.C, mockResponse interface{}, assertRequestFunc f
 }
 
 type MockServer struct {
-	c              *qt.C
-	server         *httptest.Server
-	called         bool
-	expectedMethod string
-	expectedPath   string
-	expectedQuery  *string
-	mockResponse   interface{}
+	c                *qt.C
+	server           *httptest.Server
+	called           bool
+	expectedMethod   string
+	expectedPath     string
+	expectedQuery    *string
+	expectedBody     string
+	jsonBodyExpected bool
+	mockResponse     interface{}
 }
 
 func NewMockServer(c *qt.C) *MockServer {
@@ -68,6 +71,24 @@ func NewMockServer(c *qt.C) *MockServer {
 			mockServer.c.Assert(err, qt.IsNil)
 			c.Assert(r.URL.Query(), qt.DeepEquals, parsedQuery)
 		}
+
+		if mockServer.expectedBody != "" {
+			body, err := io.ReadAll(r.Body)
+			mockServer.c.Assert(err, qt.IsNil)
+
+			if mockServer.jsonBodyExpected {
+				expectedJsonBody := map[string]interface{}{}
+				err = json.Unmarshal([]byte(mockServer.expectedBody), &expectedJsonBody)
+				mockServer.c.Assert(err, qt.IsNil)
+				actualJsonBody := map[string]interface{}{}
+				err = json.Unmarshal(body, &actualJsonBody)
+
+				mockServer.c.Assert(err, qt.IsNil)
+				c.Assert(actualJsonBody, qt.DeepEquals, expectedJsonBody)
+			} else {
+				c.Assert(body, qt.DeepEquals, mockServer.expectedBody)
+			}
+		}
 	}))
 	return mockServer
 }
@@ -80,6 +101,23 @@ func (m *MockServer) MatchMethod(method string) *MockServer {
 func (m *MockServer) MatchPath(path string) *MockServer {
 	m.expectedPath = path
 	return m
+}
+
+func (m *MockServer) MatchBody(body string) *MockServer {
+	m.expectedBody = body
+	return m
+}
+
+func (m *MockServer) MatchJSONBody(body interface{}) *MockServer {
+	m.jsonBodyExpected = true
+	if strBody, ok := body.(string); ok {
+		return m.MatchBody(strBody)
+	}
+	jsonBody, err := json.Marshal(body)
+	if err != nil {
+		m.c.Fatalf("Invalid JSON body: %v", err)
+	}
+	return m.MatchBody(string(jsonBody))
 }
 
 func (m *MockServer) MatchQuery(queryParams interface{}) *MockServer {
