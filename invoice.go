@@ -118,8 +118,7 @@ type InvoiceListInput struct {
 	IssuingDateFrom string `url:"issuing_date_from,omitempty"`
 	IssuingDateTo   string `url:"issuing_date_to,omitempty"`
 
-	// NOTE: Expose the fields as ExternalCustomerID to keep consistency with other endpoints
-	ExternalCustomerID string `url:"customer_external_id,omitempty"`
+	ExternalCustomerID string `url:"external_customer_id,omitempty"`
 
 	InvoiceType   InvoiceType          `url:"invoice_type,omitempty"`
 	Status        InvoiceStatus        `url:"status,omitempty"`
