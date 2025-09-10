@@ -52,6 +52,7 @@ type WalletTransactionParams struct {
 
 type WalletTransactionInput struct {
 	WalletID                         string                      `json:"wallet_id,omitempty"`
+	Name                             string                      `json:"name,omitempty"`
 	PaidCredits                      string                      `json:"paid_credits,omitempty"`
 	GrantedCredits                   string                      `json:"granted_credits,omitempty"`
 	VoidedCredits                    string                      `json:"voided_credits,omitempty"`
@@ -82,6 +83,7 @@ type WalletTransaction struct {
 	SettledAt                        time.Time                   `json:"settled_at,omitempty"`
 	FailedAt                         time.Time                   `json:"failed_at,omitempty"`
 	Metadata                         []WalletTransactionMetadata `json:"metadata,omitempty"`
+	Name                             string                      `json:"name,omitempty"`
 }
 
 type WalletTransactionPaymentUrl struct {
