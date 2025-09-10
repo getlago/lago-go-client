@@ -263,7 +263,7 @@ func TestInvoiceGetList(t *testing.T) {
 			MatchQuery(map[string]interface{}{
 				"per_page":             "10",
 				"page":                 "1",
-				"customer_external_id": "CUSTOMER_1",
+				"external_customer_id": "CUSTOMER_1",
 				"invoice_type":         "subscription",
 				"status":               "finalized",
 				"payment_status":       "succeeded",
