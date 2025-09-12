@@ -29,6 +29,7 @@ type RecurringTransactionRuleInput struct {
 	GrantedCredits                   string                      `json:"granted_credits,omitempty"`
 	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
 	TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
+	TransactionName                  string                      `json:"transaction_name,omitempty"`
 }
 
 type RecurringTransactionRuleResponse struct {
@@ -46,6 +47,7 @@ type RecurringTransactionRuleResponse struct {
 	CreatedAt                        time.Time                   `json:"created_at,omitempty"`
 	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
 	TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
+	TransactionName                  string                      `json:"transaction_name,omitempty"`
 }
 
 type WalletRequest struct {
