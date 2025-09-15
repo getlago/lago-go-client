@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestErrorErr(t *testing.T) {
+func TestError_Err(t *testing.T) {
 	var hasErr error = Error{
 		Err:            errors.New("type assertion failed"),
 		HTTPStatusCode: 422,
@@ -15,7 +15,7 @@ func TestErrorErr(t *testing.T) {
 	t.Logf("%s", hasErr.Error())
 }
 
-func TestErrorNoErr(t *testing.T) {
+func TestError_NoErr(t *testing.T) {
 	var noErr error = Error{
 		HTTPStatusCode: 500,
 		Message:        "500",
@@ -23,7 +23,7 @@ func TestErrorNoErr(t *testing.T) {
 	t.Logf("%s", noErr.Error())
 }
 
-func TestErrorDetails(t *testing.T) {
+func TestError_Details(t *testing.T) {
 	var tests = []struct {
 		name  string
 		input string

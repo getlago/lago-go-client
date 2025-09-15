@@ -299,7 +299,7 @@ func assertCreditNoteEstimateResponse(c *qt.C, result *EstimatedCreditNote) {
 	c.Assert(appliedTax.BaseAmountCents, qt.Equals, 100)
 }
 
-func TestCreditNoteGet(t *testing.T) {
+func TestCreditNoteRequest_Get(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
@@ -328,7 +328,7 @@ func TestCreditNoteGet(t *testing.T) {
 	})
 }
 
-func TestCreditNoteDownload(t *testing.T) {
+func TestCreditNoteRequest_Download(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
@@ -373,7 +373,7 @@ func TestCreditNoteDownload(t *testing.T) {
 	})
 }
 
-func TestCreditNoteGetList(t *testing.T) {
+func TestCreditNoteRequest_GetList(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
@@ -453,7 +453,7 @@ func TestCreditNoteGetList(t *testing.T) {
 	})
 }
 
-func TestCreditNoteCreate(t *testing.T) {
+func TestCreditNoteRequest_Create(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
@@ -519,7 +519,7 @@ func TestCreditNoteCreate(t *testing.T) {
 	})
 }
 
-func TestCreditNoteUpdate(t *testing.T) {
+func TestCreditNoteRequest_Update(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
@@ -567,7 +567,7 @@ func TestCreditNoteUpdate(t *testing.T) {
 	})
 }
 
-func TestCreditNoteVoid(t *testing.T) {
+func TestCreditNoteRequest_Void(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
@@ -596,7 +596,7 @@ func TestCreditNoteVoid(t *testing.T) {
 	})
 }
 
-func TestCreditNoteEstimate(t *testing.T) {
+func TestCreditNoteRequest_Estimate(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 

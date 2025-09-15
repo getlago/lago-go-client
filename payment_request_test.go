@@ -61,7 +61,7 @@ func assertPaymentRequestResponse(c *qt.C, result *PaymentRequest) {
 	c.Assert(invoice.LagoID.String(), qt.Equals, "f8e194df-5d90-4382-b146-c881d2c67f28")
 }
 
-func TestPaymentRequestGet(t *testing.T) {
+func TestPaymentRequestRequest_Get(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 

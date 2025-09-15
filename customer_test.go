@@ -193,7 +193,7 @@ var mockCustomerSubscriptionListResponse = map[string]any{
 	},
 }
 
-func TestCustomerGetInvoiceList(t *testing.T) {
+func TestCustomerRequest_GetInvoiceList(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
@@ -260,7 +260,7 @@ func TestCustomerGetInvoiceList(t *testing.T) {
 	})
 }
 
-func TestCustomerGetCreditNoteList(t *testing.T) {
+func TestCustomerRequest_GetCreditNoteList(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
@@ -332,7 +332,7 @@ func TestCustomerGetCreditNoteList(t *testing.T) {
 	})
 }
 
-func TestCustomerGetPaymentList(t *testing.T) {
+func TestCustomerRequest_GetPaymentList(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
@@ -381,7 +381,7 @@ func TestCustomerGetPaymentList(t *testing.T) {
 	})
 }
 
-func TestCustomerGetPaymentRequestList(t *testing.T) {
+func TestCustomerRequest_GetPaymentRequestList(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
@@ -430,7 +430,7 @@ func TestCustomerGetPaymentRequestList(t *testing.T) {
 	})
 }
 
-func TestCustomerGetAppliedCouponList(t *testing.T) {
+func TestCustomerRequest_GetAppliedCouponList(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
@@ -480,7 +480,7 @@ func TestCustomerGetAppliedCouponList(t *testing.T) {
 	})
 }
 
-func TestCustomerGetSubscriptionList(t *testing.T) {
+func TestCustomerRequest_GetSubscriptionList(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 

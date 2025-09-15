@@ -226,7 +226,7 @@ func assertPaymentUrlResponse(c *qt.C, result *InvoicePaymentDetails) {
 	c.Assert(result.PaymentUrl, qt.Equals, "https://example.com/payment")
 }
 
-func TestInvoiceGetList(t *testing.T) {
+func TestInvoiceRequest_GetList(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
@@ -314,7 +314,7 @@ func TestInvoiceGetList(t *testing.T) {
 	})
 }
 
-func TestPaymentUrl(t *testing.T) {
+func TestInvoiceRequest_PaymentUrl(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
