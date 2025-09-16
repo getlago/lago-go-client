@@ -324,9 +324,7 @@ type CustomerInvoiceListInput struct {
 	AmountFrom *int `url:"amount_from,omitempty"`
 	AmountTo   *int `url:"amount_to,omitempty"`
 
-	SearchTerm       string      `url:"search_term,omitempty"`
-	BillingEntityIDs []uuid.UUID `url:"billing_entity_ids[],omitempty"`
-	Currency         Currency    `url:"currency,omitempty"`
+	SearchTerm string `url:"search_term,omitempty"`
 }
 
 type CustomerCreditNoteListInput struct {
@@ -339,14 +337,12 @@ type CustomerCreditNoteListInput struct {
 	AmountFrom int `url:"amount_from,omitempty,string"`
 	AmountTo   int `url:"amount_to,omitempty,string"`
 
-	SearchTerm       string                 `url:"search_term,omitempty"`
-	BillingEntityIDs []uuid.UUID            `url:"billing_entity_ids[],omitempty"`
-	CreditStatus     CreditNoteCreditStatus `url:"credit_status,omitempty"`
-	Currency         Currency               `url:"currency,omitempty"`
-	InvoiceNumber    string                 `url:"invoice_number,omitempty"`
-	Reason           CreditNoteReason       `url:"reason,omitempty"`
-	RefundStatus     CreditNoteRefundStatus `url:"refund_status,omitempty"`
-	SelfBilled       *bool                  `url:"self_billed,omitempty,string"`
+	SearchTerm    string                 `url:"search_term,omitempty"`
+	CreditStatus  CreditNoteCreditStatus `url:"credit_status,omitempty"`
+	InvoiceNumber string                 `url:"invoice_number,omitempty"`
+	Reason        CreditNoteReason       `url:"reason,omitempty"`
+	RefundStatus  CreditNoteRefundStatus `url:"refund_status,omitempty"`
+	SelfBilled    *bool                  `url:"self_billed,omitempty,string"`
 }
 
 type CustomerPaymentListInput struct {
