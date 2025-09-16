@@ -46,7 +46,7 @@ func assertBatchEventListResponse(c *qt.C, result []Event) {
 	c.Assert(event.CreatedAt.Format(time.RFC3339), qt.Equals, "2025-07-03T15:35:22Z")
 }
 
-func TestEventsBatch(t *testing.T) {
+func TestEventRequest_Batch(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 

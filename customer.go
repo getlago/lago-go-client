@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/google/go-querystring/query"
 	"github.com/google/uuid"
 )
 
@@ -299,6 +300,85 @@ type CustomerPastUsageInput struct {
 	PeriodsCount           int    `json:"periods_count,omitempty,string"`
 }
 
+type CustomerWalletListInput struct {
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
+}
+
+type CustomerInvoiceListInput struct {
+	PerPage *int `url:"per_page,omitempty"`
+	Page    *int `url:"page,omitempty"`
+
+	IssuingDateFrom string `url:"issuing_date_from,omitempty"`
+	IssuingDateTo   string `url:"issuing_date_to,omitempty"`
+
+	InvoiceType   InvoiceType          `url:"invoice_type,omitempty"`
+	Status        InvoiceStatus        `url:"status,omitempty"`
+	PaymentStatus InvoicePaymentStatus `url:"payment_status,omitempty"`
+
+	PaymentOverdue     *bool `url:"payment_overdue,omitempty,string"`
+	PartiallyPaid      *bool `url:"partially_paid,omitempty,string"`
+	SelfBilled         *bool `url:"self_billed,omitempty,string"`
+	PaymentDisputeLost *bool `url:"payment_dispute_lost,omitempty,string"`
+
+	AmountFrom *int `url:"amount_from,omitempty"`
+	AmountTo   *int `url:"amount_to,omitempty"`
+
+	SearchTerm       string      `url:"search_term,omitempty"`
+	BillingEntityIDs []uuid.UUID `url:"billing_entity_ids[],omitempty"`
+	Currency         Currency    `url:"currency,omitempty"`
+}
+
+type CustomerCreditNoteListInput struct {
+	PerPage *int `url:"per_page,omitempty,string"`
+	Page    *int `url:"page,omitempty,string"`
+
+	IssuingDateFrom string `url:"issuing_date_from,omitempty"`
+	IssuingDateTo   string `url:"issuing_date_to,omitempty"`
+
+	AmountFrom int `url:"amount_from,omitempty,string"`
+	AmountTo   int `url:"amount_to,omitempty,string"`
+
+	SearchTerm       string                 `url:"search_term,omitempty"`
+	BillingEntityIDs []uuid.UUID            `url:"billing_entity_ids[],omitempty"`
+	CreditStatus     CreditNoteCreditStatus `url:"credit_status,omitempty"`
+	Currency         Currency               `url:"currency,omitempty"`
+	InvoiceNumber    string                 `url:"invoice_number,omitempty"`
+	Reason           CreditNoteReason       `url:"reason,omitempty"`
+	RefundStatus     CreditNoteRefundStatus `url:"refund_status,omitempty"`
+	SelfBilled       *bool                  `url:"self_billed,omitempty,string"`
+}
+
+type CustomerPaymentListInput struct {
+	PerPage *int `url:"per_page,omitempty,string"`
+	Page    *int `url:"page,omitempty,string"`
+
+	InvoiceID string `url:"invoice_id,omitempty"`
+}
+
+type CustomerPaymentRequestListInput struct {
+	PerPage *int `url:"per_page,omitempty,string"`
+	Page    *int `url:"page,omitempty,string"`
+
+	PaymentStatus string `url:"payment_status,omitempty"`
+}
+
+type CustomerAppliedCouponListInput struct {
+	PerPage *int `url:"per_page,omitempty,string"`
+	Page    *int `url:"page,omitempty,string"`
+
+	Status     AppliedCouponStatus `url:"status,omitempty"`
+	CouponCode []string            `url:"coupon_code[],omitempty"`
+}
+
+type CustomerSubscriptionListInput struct {
+	PerPage *int `url:"per_page,omitempty"`
+	Page    *int `url:"page,omitempty"`
+
+	PlanCode string               `url:"plan_code,omitempty"`
+	Status   []SubscriptionStatus `url:"status[],omitempty"`
+}
+
 type Customer struct {
 	LagoID            uuid.UUID `json:"lago_id,omitempty"`
 	SequentialID      int       `json:"sequential_id,omitempty"`
@@ -577,4 +657,184 @@ func (cr *CustomerRequest) ProjectedUsage(ctx context.Context, externalCustomerI
 	}
 
 	return projectedUsageResult.CustomerProjectedUsage, nil
+}
+
+func (cr *CustomerRequest) GetWalletList(ctx context.Context, externalCustomerID string, customerWalletListInput *CustomerWalletListInput) (*WalletResult, *Error) {
+	jsonQueryParams, err := json.Marshal(customerWalletListInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	queryParams := make(map[string]string)
+	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	clientRequest := &ClientRequest{
+		Path:        fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "wallets"),
+		QueryParams: queryParams,
+		Result:      &WalletResult{},
+	}
+
+	result, clientErr := cr.client.Get(ctx, clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
+	}
+
+	customerWalletResult, ok := result.(*WalletResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return customerWalletResult, nil
+}
+
+func (cr *CustomerRequest) GetInvoiceList(ctx context.Context, externalCustomerID string, customerInvoiceListInput *CustomerInvoiceListInput) (*InvoiceResult, *Error) {
+	urlValues, err := query.Values(customerInvoiceListInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	clientRequest := &ClientRequest{
+		Path:      fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "invoices"),
+		UrlValues: urlValues,
+		Result:    &InvoiceResult{},
+	}
+
+	result, clientErr := cr.client.Get(ctx, clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
+	}
+
+	customerInvoiceResult, ok := result.(*InvoiceResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return customerInvoiceResult, nil
+}
+
+func (cr *CustomerRequest) GetCreditNoteList(ctx context.Context, externalCustomerID string, customerCreditNoteListInput *CustomerCreditNoteListInput) (*CreditNoteResult, *Error) {
+	urlValues, err := query.Values(customerCreditNoteListInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	clientRequest := &ClientRequest{
+		Path:      fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "credit_notes"),
+		UrlValues: urlValues,
+		Result:    &CreditNoteResult{},
+	}
+
+	result, clientErr := cr.client.Get(ctx, clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
+	}
+
+	customerCreditNoteResult, ok := result.(*CreditNoteResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return customerCreditNoteResult, nil
+}
+
+func (cr *CustomerRequest) GetPaymentList(ctx context.Context, externalCustomerID string, customerPaymentListInput *CustomerPaymentListInput) (*PaymentResult, *Error) {
+	urlValues, err := query.Values(customerPaymentListInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	clientRequest := &ClientRequest{
+		Path:      fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "payments"),
+		UrlValues: urlValues,
+		Result:    &PaymentResult{},
+	}
+
+	result, clientErr := cr.client.Get(ctx, clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
+	}
+
+	customerPaymentResult, ok := result.(*PaymentResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return customerPaymentResult, nil
+}
+
+func (cr *CustomerRequest) GetPaymentRequestList(ctx context.Context, externalCustomerID string, customerPaymentRequestListInput *CustomerPaymentRequestListInput) (*PaymentRequestResult, *Error) {
+	urlValues, err := query.Values(customerPaymentRequestListInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	clientRequest := &ClientRequest{
+		Path:      fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "payment_requests"),
+		UrlValues: urlValues,
+		Result:    &PaymentRequestResult{},
+	}
+
+	result, clientErr := cr.client.Get(ctx, clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
+	}
+
+	customerPaymentRequestResult, ok := result.(*PaymentRequestResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return customerPaymentRequestResult, nil
+}
+
+func (cr *CustomerRequest) GetAppliedCouponList(ctx context.Context, externalCustomerID string, customerAppliedCouponListInput *CustomerAppliedCouponListInput) (*AppliedCouponResult, *Error) {
+	urlValues, err := query.Values(customerAppliedCouponListInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	clientRequest := &ClientRequest{
+		Path:      fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "applied_coupons"),
+		UrlValues: urlValues,
+		Result:    &AppliedCouponResult{},
+	}
+
+	result, clientErr := cr.client.Get(ctx, clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
+	}
+
+	customerAppliedCouponResult, ok := result.(*AppliedCouponResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return customerAppliedCouponResult, nil
+}
+
+func (cr *CustomerRequest) GetSubscriptionList(ctx context.Context, externalCustomerID string, customerSubscriptionListInput *CustomerSubscriptionListInput) (*SubscriptionResult, *Error) {
+	urlValues, err := query.Values(customerSubscriptionListInput)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	clientRequest := &ClientRequest{
+		Path:      fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "subscriptions"),
+		UrlValues: urlValues,
+		Result:    &SubscriptionResult{},
+	}
+
+	result, clientErr := cr.client.Get(ctx, clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
+	}
+
+	customerSubscriptionResult, ok := result.(*SubscriptionResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return customerSubscriptionResult, nil
 }

@@ -125,7 +125,7 @@ func assertApiLog(c *qt.C, apiLog ApiLog) {
 	c.Assert(apiLog.CreatedAt.Format(time.RFC3339), qt.Equals, "2025-06-20T14:34:25Z")
 }
 
-func TestApiLogGetList(t *testing.T) {
+func TestApiLogRequest_GetList(t *testing.T) {
 	t.Run("When query for all api logs", func(t *testing.T) {
 		c := qt.New(t)
 
@@ -141,7 +141,7 @@ func TestApiLogGetList(t *testing.T) {
 	})
 }
 
-func TestApiLogGet(t *testing.T) {
+func TestApiLogRequest_Get(t *testing.T) {
 	t.Run("When query for a specific api log", func(t *testing.T) {
 		c := qt.New(t)
 

@@ -99,7 +99,7 @@ func assertAppliedCoupontGetListResponse(c *qt.C, result *AppliedCouponResult) {
 	c.Assert(result.Meta.TotalCount, qt.Equals, 1)
 }
 
-func TestAppliedCouponGetList(t *testing.T) {
+func TestAppliedCouponRequest_GetList(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 

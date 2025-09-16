@@ -252,7 +252,7 @@ func terminateSubscription(c *qt.C, server *lt.MockServer, input SubscriptionTer
 	return subscription
 }
 
-func TestSubscriptionTerminate(t *testing.T) {
+func TestSubscriptionRequest_Terminate(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 

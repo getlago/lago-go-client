@@ -40,7 +40,7 @@ var mockWalletTransactionListResponse = `{
 			}
 		}`
 
-func TestWalletTransaction_Create(t *testing.T) {
+func TestWalletTransactionRequest_Create(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
