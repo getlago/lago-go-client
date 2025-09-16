@@ -226,7 +226,7 @@ func TestCustomerRequest_GetInvoiceList(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("GET").
 			MatchPath("/api/v1/customers/CUSTOMER_1/invoices").
-			MatchQuery("per_page=10&page=1&issuing_date_from=2022-01-01&issuing_date_to=2022-12-31&invoice_type=subscription&status=finalized&payment_status=succeeded&payment_overdue=true&partially_paid=false&self_billed=true&payment_dispute_lost=false&amount_from=100&amount_to=1000&search_term=test&currency=EUR").
+			MatchQuery("per_page=10&page=1&issuing_date_from=2022-01-01&issuing_date_to=2022-12-31&invoice_type=subscription&status=finalized&payment_status=succeeded&payment_overdue=true&partially_paid=false&self_billed=true&payment_dispute_lost=false&amount_from=100&amount_to=1000&search_term=test").
 			MockResponse(mockCustomerInvoiceListResponse)
 		defer server.Close()
 
@@ -253,7 +253,6 @@ func TestCustomerRequest_GetInvoiceList(t *testing.T) {
 			AmountFrom:         &amountFrom,
 			AmountTo:           &amountTo,
 			SearchTerm:         "test",
-			Currency:           EUR,
 		})
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result.Invoices, qt.HasLen, 1)
@@ -301,7 +300,6 @@ func TestCustomerRequest_GetCreditNoteList(t *testing.T) {
 				"&amount_to=1000" +
 				"&search_term=test" +
 				"&credit_status=available" +
-				"&currency=EUR" +
 				"&invoice_number=INV-001" +
 				"&reason=duplicated_charge" +
 				"&refund_status=pending" +
@@ -321,7 +319,6 @@ func TestCustomerRequest_GetCreditNoteList(t *testing.T) {
 			AmountTo:        1000,
 			SearchTerm:      "test",
 			CreditStatus:    CreditNoteCreditStatusAvailable,
-			Currency:        EUR,
 			InvoiceNumber:   "INV-001",
 			Reason:          CreditNoteReasonDuplicatedCharge,
 			RefundStatus:    CreditNoteRefundStatusPending,
