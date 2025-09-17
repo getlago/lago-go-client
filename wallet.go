@@ -73,6 +73,7 @@ type WalletInput struct {
 	ExternalCustomerID               string                          `json:"external_customer_id,omitempty"`
 	InvoiceRequiresSuccessfulPayment bool                            `json:"invoice_requires_successful_payment,omitempty"`
 	TransactionMetadata              []WalletTransactionMetadata     `json:"transaction_metadata,omitempty"`
+	TransactionName                  string                          `json:"transaction_name,omitempty"`
 	RecurringTransactionRules        []RecurringTransactionRuleInput `json:"recurring_transaction_rules"`
 	AppliesTo                        AppliesTo                       `json:"applies_to,omitempty"`
 }

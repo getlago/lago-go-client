@@ -131,10 +131,39 @@ func TestWallet_Create(t *testing.T) {
 	t.Run("When the server returns a successful response", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := lt.NewMockServer(c)
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/wallets").
+			MatchJSONBody(`{
+				"wallet": {
+					"external_customer_id": "12345",
+					"rate_amount": "1.00",
+					"name": "wallet name",
+					"paid_credits": "100.00",
+					"granted_credits": "100.00",
+					"transaction_name": "wallet transaction name",
+					"expiration_at": "2022-07-07T23:59:59Z",
+					"recurring_transaction_rules": [
+						{
+							"paid_credits": "105.00",
+							"granted_credits": "105.00",
+							"threshold_credits": "0.00",
+							"lago_id": "00000000-0000-0000-0000-000000000000",
+							"trigger": "interval",
+							"interval": "monthly",
+							"method": "fixed",
+							"expiration_at": "2026-12-31T23:59:59Z",
+							"transaction_name": "Recurring Transaction Rule"
+						}
+					],
+					"applies_to": {
+						"fee_types": ["charge"],
+						"billable_metric_codes": ["bm1"]
+					}
+				}
+			}`).
+			MockResponse(mockWalletResponse)
 		defer server.Close()
-
-		server.MockResponse(mockWalletResponse)
 
 		result, err := server.Client().Wallet().Create(context.Background(), &WalletInput{
 			ExternalCustomerID: "12345",
@@ -142,6 +171,7 @@ func TestWallet_Create(t *testing.T) {
 			Name:               "wallet name",
 			PaidCredits:        "100.00",
 			GrantedCredits:     "100.00",
+			TransactionName:    "wallet transaction name",
 			ExpirationAt:       Ptr(time.Date(2022, 7, 7, 23, 59, 59, 0, time.UTC)),
 			RecurringTransactionRules: []RecurringTransactionRuleInput{
 				{
