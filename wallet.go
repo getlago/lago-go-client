@@ -30,6 +30,7 @@ type RecurringTransactionRuleInput struct {
 	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
 	TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
 	TransactionName                  string                      `json:"transaction_name,omitempty"`
+	IgnorePaidTopUpLimits            bool                        `json:"ignore_paid_top_up_limits,omitempty"`
 }
 
 type RecurringTransactionRuleResponse struct {
@@ -48,6 +49,7 @@ type RecurringTransactionRuleResponse struct {
 	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
 	TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
 	TransactionName                  string                      `json:"transaction_name,omitempty"`
+	IgnorePaidTopUpLimits            bool                        `json:"ignore_paid_top_up_limits"`
 }
 
 type WalletRequest struct {
@@ -76,6 +78,8 @@ type WalletInput struct {
 	TransactionName                  string                          `json:"transaction_name,omitempty"`
 	RecurringTransactionRules        []RecurringTransactionRuleInput `json:"recurring_transaction_rules"`
 	AppliesTo                        AppliesTo                       `json:"applies_to,omitempty"`
+	PaidTopUpMaxAmountCents          *int64                          `json:"paid_top_up_max_amount_cents,omitempty"`
+	PaidTopUpMinAmountCents          *int64                          `json:"paid_top_up_min_amount_cents,omitempty"`
 }
 
 type WalletListInput struct {
@@ -113,6 +117,8 @@ type Wallet struct {
 	CreditsOngoingBalance            string                             `json:"credits_ongoing_balance,omitempty"`
 	CreditsOngoingUsageBalance       string                             `json:"credits_ongoing_usage_balance,omitempty"`
 	AppliesTo                        AppliesTo                          `json:"applies_to,omitempty"`
+	PaidTopUpMaxAmountCents          *int64                             `json:"paid_top_up_max_amount_cents,omitempty"`
+	PaidTopUpMinAmountCents          *int64                             `json:"paid_top_up_min_amount_cents,omitempty"`
 }
 
 func (c *Client) Wallet() *WalletRequest {
