@@ -58,6 +58,7 @@ type WalletTransactionInput struct {
 	VoidedCredits                    string                      `json:"voided_credits,omitempty"`
 	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
 	Metadata                         []WalletTransactionMetadata `json:"metadata,omitempty"`
+	IgnorePaidTopUpLimits            bool                        `json:"ignore_paid_top_up_limits,omitempty"`
 }
 
 type WalletTransactionMetadata struct {

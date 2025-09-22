@@ -80,6 +80,7 @@ type WalletInput struct {
 	AppliesTo                        AppliesTo                       `json:"applies_to,omitempty"`
 	PaidTopUpMaxAmountCents          *int64                          `json:"paid_top_up_max_amount_cents,omitempty"`
 	PaidTopUpMinAmountCents          *int64                          `json:"paid_top_up_min_amount_cents,omitempty"`
+	IgnorePaidTopUpLimitsOnCreation  bool                            `json:"ignore_paid_top_up_limits_on_creation,omitempty"`
 }
 
 type WalletListInput struct {
