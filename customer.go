@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -131,9 +132,29 @@ type CustomerInput struct {
 	InvoiceCustomSectionCodes []string                          `json:"invoice_custom_section_codes,omitempty"`
 }
 
+type CustomerListInputMetadata map[string]string
+
+func (m CustomerListInputMetadata) EncodeValues(key string, values *url.Values) error {
+	for k, v := range m {
+		metadataKey := fmt.Sprintf("metadata[%s]", k)
+		values.Set(metadataKey, fmt.Sprintf("%v", v))
+	}
+	return nil
+}
+
 type CustomerListInput struct {
-	PerPage *int `json:"per_page,omitempty,string"`
-	Page    *int `json:"page,omitempty,string"`
+	PerPage *int `url:"per_page,omitempty,string"`
+	Page    *int `url:"page,omitempty,string"`
+
+	SearchTerm                 string                    `url:"search_term,omitempty"`
+	Countries                  []string                  `url:"countries[],omitempty"`
+	States                     []string                  `url:"states[],omitempty"`
+	Zipcodes                   []string                  `url:"zipcodes[],omitempty"`
+	Currencies                 []Currency                `url:"currencies[],omitempty"`
+	HasTaxIdentificationNumber *bool                     `url:"has_tax_identification_number,omitempty"`
+	CustomerType               CustomerType              `url:"customer_type,omitempty"`
+	HasCustomerType            *bool                     `url:"has_customer_type,omitempty"`
+	Metadata                   CustomerListInputMetadata `url:"metadata,omitempty"`
 }
 
 type CustomerBillingConfigurationInput struct {
@@ -599,20 +620,14 @@ func (cr *CustomerRequest) Get(ctx context.Context, externalCustomerID string) (
 }
 
 func (cr *CustomerRequest) GetList(ctx context.Context, customerListInput *CustomerListInput) (*CustomerResult, *Error) {
-	jsonQueryParams, err := json.Marshal(customerListInput)
+	urlValues, err := query.Values(customerListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
-
-	queryParams := make(map[string]string)
-	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
-		return nil, &Error{Err: err}
-	}
-
 	clientRequest := &ClientRequest{
-		Path:        "customers",
-		QueryParams: queryParams,
-		Result:      &CustomerResult{},
+		Path:      "customers",
+		UrlValues: urlValues,
+		Result:    &CustomerResult{},
 	}
 
 	result, clientErr := cr.client.Get(ctx, clientRequest)
