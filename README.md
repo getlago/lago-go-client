@@ -54,7 +54,7 @@ func main() {
 }
 ```
 
-For detailed usage, refer to the [lago API reference](https://doc.getlago.com/docs/api/intro).
+For detailed usage, refer to the [lago API reference](https://doc.getlago.com/api-reference/intro).
 
 ## Development
 
@@ -106,7 +106,7 @@ golangci-lint run
 
 ## Documentation
 
-The Lago documentation is available at [doc.getlago.com](https://doc.getlago.com/docs/api/intro).
+The Lago documentation is available at [doc.getlago.com](https://doc.getlago.com/api-reference/intro).
 
 ## Contributing
 
