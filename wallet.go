@@ -78,8 +78,8 @@ type WalletInput struct {
 	TransactionName                  string                          `json:"transaction_name,omitempty"`
 	RecurringTransactionRules        []RecurringTransactionRuleInput `json:"recurring_transaction_rules"`
 	AppliesTo                        AppliesTo                       `json:"applies_to,omitempty"`
-	PaidTopUpMaxAmountCents          *int                          `json:"paid_top_up_max_amount_cents,omitempty"`
-	PaidTopUpMinAmountCents          *int                          `json:"paid_top_up_min_amount_cents,omitempty"`
+	PaidTopUpMaxAmountCents          *int                            `json:"paid_top_up_max_amount_cents,omitempty"`
+	PaidTopUpMinAmountCents          *int                            `json:"paid_top_up_min_amount_cents,omitempty"`
 	IgnorePaidTopUpLimitsOnCreation  bool                            `json:"ignore_paid_top_up_limits_on_creation,omitempty"`
 }
 
@@ -118,8 +118,8 @@ type Wallet struct {
 	CreditsOngoingBalance            string                             `json:"credits_ongoing_balance,omitempty"`
 	CreditsOngoingUsageBalance       string                             `json:"credits_ongoing_usage_balance,omitempty"`
 	AppliesTo                        AppliesTo                          `json:"applies_to,omitempty"`
-	PaidTopUpMaxAmountCents          *int                             `json:"paid_top_up_max_amount_cents,omitempty"`
-	PaidTopUpMinAmountCents          *int                             `json:"paid_top_up_min_amount_cents,omitempty"`
+	PaidTopUpMaxAmountCents          *int                               `json:"paid_top_up_max_amount_cents,omitempty"`
+	PaidTopUpMinAmountCents          *int                               `json:"paid_top_up_min_amount_cents,omitempty"`
 }
 
 func (c *Client) Wallet() *WalletRequest {
