@@ -182,8 +182,8 @@ func TestWallet_Create(t *testing.T) {
 			GrantedCredits:          "100.00",
 			TransactionName:         "wallet transaction name",
 			ExpirationAt:            Ptr(time.Date(2022, 7, 7, 23, 59, 59, 0, time.UTC)),
-			PaidTopUpMaxAmountCents: Ptr(int64(1000)),
-			PaidTopUpMinAmountCents: Ptr(int64(200)),
+			PaidTopUpMaxAmountCents: Ptr(int(1000)),
+			PaidTopUpMinAmountCents: Ptr(int(200)),
 			RecurringTransactionRules: []RecurringTransactionRuleInput{
 				{
 					PaidCredits:           "105.00",
@@ -214,9 +214,9 @@ func TestWallet_Create(t *testing.T) {
 		c.Assert(result.Status, qt.Equals, Status("active"))
 		c.Assert(result.Currency, qt.Equals, Currency("USD"))
 		c.Assert(result.PaidTopUpMaxAmountCents, qt.IsNotNil)
-		c.Assert(*result.PaidTopUpMaxAmountCents, qt.Equals, int64(1000))
+		c.Assert(*result.PaidTopUpMaxAmountCents, qt.Equals, int(1000))
 		c.Assert(result.PaidTopUpMinAmountCents, qt.IsNotNil)
-		c.Assert(*result.PaidTopUpMinAmountCents, qt.Equals, int64(200))
+		c.Assert(*result.PaidTopUpMinAmountCents, qt.Equals, int(200))
 		c.Assert(len(result.RecurringTransactionRules), qt.Equals, 1)
 		c.Assert(result.RecurringTransactionRules[0].Trigger, qt.Equals, "interval")
 		c.Assert(result.RecurringTransactionRules[0].Interval, qt.Equals, "monthly")
@@ -259,9 +259,9 @@ func TestWallet_Get(t *testing.T) {
 		c.Assert(result.Status, qt.Equals, Status("active"))
 		c.Assert(result.Currency, qt.Equals, Currency("USD"))
 		c.Assert(result.PaidTopUpMaxAmountCents, qt.IsNotNil)
-		c.Assert(*result.PaidTopUpMaxAmountCents, qt.Equals, int64(1000))
+		c.Assert(*result.PaidTopUpMaxAmountCents, qt.Equals, int(1000))
 		c.Assert(result.PaidTopUpMinAmountCents, qt.IsNotNil)
-		c.Assert(*result.PaidTopUpMinAmountCents, qt.Equals, int64(200))
+		c.Assert(*result.PaidTopUpMinAmountCents, qt.Equals, int(200))
 		c.Assert(len(result.RecurringTransactionRules), qt.Equals, 1)
 		c.Assert(result.RecurringTransactionRules[0].Trigger, qt.Equals, "interval")
 		c.Assert(result.RecurringTransactionRules[0].Interval, qt.Equals, "monthly")
@@ -302,9 +302,9 @@ func TestWallet_GetList(t *testing.T) {
 		c.Assert(result.Wallets[0].Status, qt.Equals, Status("active"))
 		c.Assert(result.Wallets[0].Currency, qt.Equals, Currency("USD"))
 		c.Assert(result.Wallets[0].PaidTopUpMaxAmountCents, qt.IsNotNil)
-		c.Assert(*result.Wallets[0].PaidTopUpMaxAmountCents, qt.Equals, int64(1000))
+		c.Assert(*result.Wallets[0].PaidTopUpMaxAmountCents, qt.Equals, int(1000))
 		c.Assert(result.Wallets[0].PaidTopUpMinAmountCents, qt.IsNotNil)
-		c.Assert(*result.Wallets[0].PaidTopUpMinAmountCents, qt.Equals, int64(200))
+		c.Assert(*result.Wallets[0].PaidTopUpMinAmountCents, qt.Equals, int(200))
 		c.Assert(result.Meta.CurrentPage, qt.Equals, 1)
 		c.Assert(result.Meta.NextPage, qt.Equals, 2)
 		c.Assert(result.Meta.TotalPages, qt.Equals, 7)
