@@ -30,7 +30,7 @@ type RecurringTransactionRuleInput struct {
 	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
 	TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
 	TransactionName                  string                      `json:"transaction_name,omitempty"`
-	IgnorePaidTopUpLimits            bool                        `json:"ignore_paid_top_up_limits,omitempty"`
+	IgnorePaidTopUpLimits            *bool                       `json:"ignore_paid_top_up_limits,omitempty"`
 }
 
 type RecurringTransactionRuleResponse struct {
@@ -80,7 +80,7 @@ type WalletInput struct {
 	AppliesTo                        AppliesTo                       `json:"applies_to,omitempty"`
 	PaidTopUpMaxAmountCents          *int                            `json:"paid_top_up_max_amount_cents,omitempty"`
 	PaidTopUpMinAmountCents          *int                            `json:"paid_top_up_min_amount_cents,omitempty"`
-	IgnorePaidTopUpLimitsOnCreation  bool                            `json:"ignore_paid_top_up_limits_on_creation,omitempty"`
+	IgnorePaidTopUpLimitsOnCreation  *bool                           `json:"ignore_paid_top_up_limits_on_creation,omitempty"`
 }
 
 type WalletListInput struct {

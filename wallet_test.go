@@ -147,7 +147,7 @@ func TestWallet_Create(t *testing.T) {
 					"name": "wallet name",
 					"paid_credits": "100.00",
 					"granted_credits": "100.00",
-     "transaction_name": "wallet transaction name",
+                    "transaction_name": "wallet transaction name",
 					"expiration_at": "2022-07-07T23:59:59Z",
 					"paid_top_up_max_amount_cents": 1000,
 					"paid_top_up_min_amount_cents": 200,
@@ -195,7 +195,7 @@ func TestWallet_Create(t *testing.T) {
 					StartedAt:             nil,
 					ExpirationAt:          Ptr(time.Date(2026, 12, 31, 23, 59, 59, 0, time.UTC)),
 					TransactionName:       "Recurring Transaction Rule",
-					IgnorePaidTopUpLimits: true,
+					IgnorePaidTopUpLimits: Ptr(true),
 				},
 			},
 			AppliesTo: AppliesTo{
