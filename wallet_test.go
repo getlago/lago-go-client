@@ -23,6 +23,8 @@ var mockWalletResponse = `{
 		"rate_amount": "1.00",
 		"credits_balance": "100.00",
 		"balance_cents": 10000,
+		"paid_top_up_max_amount_cents": 1000,
+		"paid_top_up_min_amount_cents": 200,
 		"expiration_at": "2022-07-07T23:59:59Z",
 		"created_at": "2022-04-29T08:59:51Z",
 		"recurring_transaction_rules": [{
@@ -40,7 +42,8 @@ var mockWalletResponse = `{
 			"created_at": "2022-04-29T08:59:51Z",
 			"invoice_requires_successful_payment": false,
 			"transaction_metadata": [],
-			"transaction_name": "Recurring Transaction Rule"
+			"transaction_name": "Recurring Transaction Rule",
+			"ignore_paid_top_up_limits": false
 		}],
 		"applies_to": {
 			"fee_types": ["charge"],
@@ -60,6 +63,8 @@ var mockWalletListResponse = `{
 		"rate_amount": "1.00",
 		"credits_balance": "100.00",
 		"balance_cents": 10000,
+		"paid_top_up_max_amount_cents": 1000,
+		"paid_top_up_min_amount_cents": 200,
 		"expiration_at": "2022-07-07T23:59:59Z",
 		"created_at": "2022-04-29T08:59:51Z",
 		"recurring_transaction_rules": [{
@@ -77,7 +82,8 @@ var mockWalletListResponse = `{
 			"created_at": "2022-04-29T08:59:51Z",
 			"invoice_requires_successful_payment": false,
 			"transaction_metadata": [],
-			"transaction_name": "Recurring Transaction Rule"
+			"transaction_name": "Recurring Transaction Rule",
+			"ignore_paid_top_up_limits": false
 		}],
 		"applies_to": {
 			"fee_types": ["charge"],
@@ -141,8 +147,10 @@ func TestWallet_Create(t *testing.T) {
 					"name": "wallet name",
 					"paid_credits": "100.00",
 					"granted_credits": "100.00",
-					"transaction_name": "wallet transaction name",
+                    "transaction_name": "wallet transaction name",
 					"expiration_at": "2022-07-07T23:59:59Z",
+					"paid_top_up_max_amount_cents": 1000,
+					"paid_top_up_min_amount_cents": 200,
 					"recurring_transaction_rules": [
 						{
 							"paid_credits": "105.00",
@@ -153,7 +161,8 @@ func TestWallet_Create(t *testing.T) {
 							"interval": "monthly",
 							"method": "fixed",
 							"expiration_at": "2026-12-31T23:59:59Z",
-							"transaction_name": "Recurring Transaction Rule"
+							"transaction_name": "Recurring Transaction Rule",
+							"ignore_paid_top_up_limits": true
 						}
 					],
 					"applies_to": {
@@ -166,24 +175,27 @@ func TestWallet_Create(t *testing.T) {
 		defer server.Close()
 
 		result, err := server.Client().Wallet().Create(context.Background(), &WalletInput{
-			ExternalCustomerID: "12345",
-			RateAmount:         "1.00",
-			Name:               "wallet name",
-			PaidCredits:        "100.00",
-			GrantedCredits:     "100.00",
-			TransactionName:    "wallet transaction name",
-			ExpirationAt:       Ptr(time.Date(2022, 7, 7, 23, 59, 59, 0, time.UTC)),
+			ExternalCustomerID:      "12345",
+			RateAmount:              "1.00",
+			Name:                    "wallet name",
+			PaidCredits:             "100.00",
+			GrantedCredits:          "100.00",
+			TransactionName:         "wallet transaction name",
+			ExpirationAt:            Ptr(time.Date(2022, 7, 7, 23, 59, 59, 0, time.UTC)),
+			PaidTopUpMaxAmountCents: Ptr(int(1000)),
+			PaidTopUpMinAmountCents: Ptr(int(200)),
 			RecurringTransactionRules: []RecurringTransactionRuleInput{
 				{
-					PaidCredits:      "105.00",
-					GrantedCredits:   "105.00",
-					ThresholdCredits: "0.00",
-					Trigger:          "interval",
-					Interval:         "monthly",
-					Method:           "fixed",
-					StartedAt:        nil,
-					ExpirationAt:     Ptr(time.Date(2026, 12, 31, 23, 59, 59, 0, time.UTC)),
-					TransactionName:  "Recurring Transaction Rule",
+					PaidCredits:           "105.00",
+					GrantedCredits:        "105.00",
+					ThresholdCredits:      "0.00",
+					Trigger:               "interval",
+					Interval:              "monthly",
+					Method:                "fixed",
+					StartedAt:             nil,
+					ExpirationAt:          Ptr(time.Date(2026, 12, 31, 23, 59, 59, 0, time.UTC)),
+					TransactionName:       "Recurring Transaction Rule",
+					IgnorePaidTopUpLimits: Ptr(true),
 				},
 			},
 			AppliesTo: AppliesTo{
@@ -201,10 +213,15 @@ func TestWallet_Create(t *testing.T) {
 		c.Assert(result.CreditsBalance, qt.Equals, "100.00")
 		c.Assert(result.Status, qt.Equals, Status("active"))
 		c.Assert(result.Currency, qt.Equals, Currency("USD"))
+		c.Assert(result.PaidTopUpMaxAmountCents, qt.IsNotNil)
+		c.Assert(*result.PaidTopUpMaxAmountCents, qt.Equals, int(1000))
+		c.Assert(result.PaidTopUpMinAmountCents, qt.IsNotNil)
+		c.Assert(*result.PaidTopUpMinAmountCents, qt.Equals, int(200))
 		c.Assert(len(result.RecurringTransactionRules), qt.Equals, 1)
 		c.Assert(result.RecurringTransactionRules[0].Trigger, qt.Equals, "interval")
 		c.Assert(result.RecurringTransactionRules[0].Interval, qt.Equals, "monthly")
 		c.Assert(result.RecurringTransactionRules[0].TransactionName, qt.Equals, "Recurring Transaction Rule")
+		c.Assert(result.RecurringTransactionRules[0].IgnorePaidTopUpLimits, qt.Equals, false)
 		c.Assert(result.RecurringTransactionRules[0].ExpirationAt, qt.DeepEquals, Ptr(time.Date(2026, 12, 31, 23, 59, 59, 0, time.UTC)))
 		c.Assert(result.AppliesTo.FeeTypes, qt.DeepEquals, []string{"charge"})
 		c.Assert(result.AppliesTo.BillableMetricCodes, qt.DeepEquals, []string{"bm1"})
@@ -241,10 +258,15 @@ func TestWallet_Get(t *testing.T) {
 		c.Assert(result.CreditsBalance, qt.Equals, "100.00")
 		c.Assert(result.Status, qt.Equals, Status("active"))
 		c.Assert(result.Currency, qt.Equals, Currency("USD"))
+		c.Assert(result.PaidTopUpMaxAmountCents, qt.IsNotNil)
+		c.Assert(*result.PaidTopUpMaxAmountCents, qt.Equals, int(1000))
+		c.Assert(result.PaidTopUpMinAmountCents, qt.IsNotNil)
+		c.Assert(*result.PaidTopUpMinAmountCents, qt.Equals, int(200))
 		c.Assert(len(result.RecurringTransactionRules), qt.Equals, 1)
 		c.Assert(result.RecurringTransactionRules[0].Trigger, qt.Equals, "interval")
 		c.Assert(result.RecurringTransactionRules[0].Interval, qt.Equals, "monthly")
 		c.Assert(result.RecurringTransactionRules[0].TransactionName, qt.Equals, "Recurring Transaction Rule")
+		c.Assert(result.RecurringTransactionRules[0].IgnorePaidTopUpLimits, qt.Equals, false)
 		c.Assert(result.AppliesTo.FeeTypes, qt.DeepEquals, []string{"charge"})
 		c.Assert(result.AppliesTo.BillableMetricCodes, qt.DeepEquals, []string{"bm1"})
 	})
@@ -279,6 +301,10 @@ func TestWallet_GetList(t *testing.T) {
 		c.Assert(result.Wallets[0].ExternalCustomerID, qt.Equals, "12345")
 		c.Assert(result.Wallets[0].Status, qt.Equals, Status("active"))
 		c.Assert(result.Wallets[0].Currency, qt.Equals, Currency("USD"))
+		c.Assert(result.Wallets[0].PaidTopUpMaxAmountCents, qt.IsNotNil)
+		c.Assert(*result.Wallets[0].PaidTopUpMaxAmountCents, qt.Equals, int(1000))
+		c.Assert(result.Wallets[0].PaidTopUpMinAmountCents, qt.IsNotNil)
+		c.Assert(*result.Wallets[0].PaidTopUpMinAmountCents, qt.Equals, int(200))
 		c.Assert(result.Meta.CurrentPage, qt.Equals, 1)
 		c.Assert(result.Meta.NextPage, qt.Equals, 2)
 		c.Assert(result.Meta.TotalPages, qt.Equals, 7)
@@ -338,7 +364,9 @@ func TestWallet_Update(t *testing.T) {
 				"name": "updated wallet name",
 				"rate_amount": "1.50",
 				"credits_balance": "200.00",
-				"balance_cents": 20000,
+    "balance_cents": 20000,
+				"paid_top_up_max_amount_cents": 1500,
+				"paid_top_up_min_amount_cents": 300,
 				"expiration_at": "2022-07-07T23:59:59Z",
 				"created_at": "2022-04-29T08:59:51Z",
 				"recurring_transaction_rules": [],
@@ -396,7 +424,9 @@ func TestWallet_Delete(t *testing.T) {
 				"name": "wallet name",
 				"rate_amount": "1.00",
 				"credits_balance": "100.00",
-				"balance_cents": 10000,
+    "balance_cents": 10000,
+				"paid_top_up_max_amount_cents": 1000,
+				"paid_top_up_min_amount_cents": 200,
 				"expiration_at": "2022-07-07T23:59:59Z",
 				"created_at": "2022-04-29T08:59:51Z",
 				"terminated_at": "2022-07-08T10:00:00Z",
