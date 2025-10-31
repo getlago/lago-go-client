@@ -7,6 +7,41 @@ on:
 permissions:
   contents: read
 jobs:
+  integration-tests:
+    name: Run Integration Tests
+    runs-on: ubuntu-latest
+    services:
+      lago:
+        image: getlago/lago:latest
+        options: >-
+          --health-cmd "curl -f http://localhost:3000/health || exit 1"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+          --health-start-period 15s
+        ports:
+          - 3000:3000
+        env:
+          LAGO_CREATE_ORG: true
+          LAGO_ORG_USER_PASSWORD: 123456
+          LAGO_ORG_USER_EMAIL: test@test.com
+          LAGO_ORG_NAME: Hooli
+          LAGO_ORG_API_KEY: 123456
+    env:
+      INTEGRATION_TESTS_ENABLED: true
+      TEST_LAGO_API_URL: http://localhost:3000
+      TEST_LAGO_API_KEY: 123456
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+          cache: true
+          cache-dependency-path: go.sum
+      - name: Install Dependencies
+        run: go mod tidy
+      - name: Run Tests
+        run: go test ./testing/integration/... -v
   test:
     name: Run Tests
     runs-on: ubuntu-latest

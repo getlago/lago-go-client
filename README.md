@@ -80,10 +80,26 @@ For detailed usage, refer to the [lago API reference](https://doc.getlago.com/ap
 
 ### Testing
 
+The repository includes two types of tests:
+
+1. Unit tests which tests the Ruby code itself
+2. Integration tests which tests the Ruby code against a running Lago instance.
+
+    To run these tests, you need to set the `INTEGRATION_TESTS_ENABLED` environment variable to `true` and provide the `TEST_LAGO_API_URL` and `TEST_LAGO_API_KEY` environment variables. These variables are set by default when using the Docker Compose file.
+
+#### Running the tests
+
 Run the test suite:
 
 ```shell
 go test ./...
+INTEGRATION_TESTS_ENABLED=true TEST_LAGO_API_URL=http://lago:3000 TEST_LAGO_API_KEY=123456 go test ./testing/integration/...
+```
+
+or with Docker Compose:
+
+```bash
+docker compose exec client go test ./...
 ```
 
 ### Code Quality
@@ -98,10 +114,17 @@ Run linting (requires golangci-lint):
 
 ```shell
 # Install golangci-lint
-go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.47.3
+go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.6.0
 
 # Run linter
 golangci-lint run
+```
+
+or with Docker Compose:
+
+```bash
+docker compose exec client go fmt ./...
+docker compose exec client golangci-lint run
 ```
 
 ## Documentation

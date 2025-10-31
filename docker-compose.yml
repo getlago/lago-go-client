@@ -1,0 +1,35 @@
+services:
+  lago:
+    image: getlago/lago:latest
+    container_name: lago-go-client-api
+    restart: unless-stopped
+    healthcheck:
+      test: curl -f http://localhost:3000/health || exit 1
+      interval: 5s
+      start_period: 10s
+      timeout: 5s
+      start_interval: 2s
+    environment:
+      LAGO_CREATE_ORG: ${LAGO_CREATE_ORG:-true}
+      LAGO_ORG_USER_PASSWORD: ${LAGO_ORG_USER_PASSWORD:-123456}
+      LAGO_ORG_USER_EMAIL: ${LAGO_ORG_USER_EMAIL:-test@test.com}
+      LAGO_ORG_NAME: ${LAGO_ORG_NAME:-Hooli}
+      LAGO_ORG_API_KEY: ${LAGO_ORG_API_KEY:-123456}
+
+  client:
+    build:
+      context: "."
+      dockerfile: docker/Dockerfile
+    command: ["tail", "-f", "/dev/null"]
+    container_name: lago-go-client
+    restart: unless-stopped
+    environment:
+      TEST_LAGO_API_KEY: ${TEST_LAGO_API_KEY:-123456}
+      TEST_LAGO_API_URL: ${TEST_LAGO_API_URL:-http://lago:3000}
+      INTEGRATION_TESTS_ENABLED: ${INTEGRATION_TESTS_ENABLED:-true}
+    depends_on:
+      lago:
+        condition: service_healthy
+        restart: true
+    volumes:
+      - .:/app
