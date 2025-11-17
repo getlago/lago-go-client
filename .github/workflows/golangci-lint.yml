@@ -26,7 +26,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v8
         with:
-          version: v2.1
+          version: v2.6
       # - name: install-golangci-lint
       #   # Install golangci-lint from source instead of using
       #   # golangci-lint-action to ensure the golangci-lint binary is built with
