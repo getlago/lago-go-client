@@ -40,6 +40,8 @@ var mockCustomerListResponse = `{
 			"finalize_zero_amount_invoice": "finalize",
 			"billing_configuration": {
 				"invoice_grace_period": 3,
+				"subscription_invoice_issuing_date_anchor": "current_period_end",
+				"subscription_invoice_issuing_date_adjustment": "keep_anchor",
 				"payment_provider": "stripe",
 				"payment_provider_code": "stripe_123",
 				"provider_customer_id": "cus_123456",
@@ -110,6 +112,8 @@ var mockCustomerListResponse = `{
 			"finalize_zero_amount_invoice": "skip",
 			"billing_configuration": {
 				"invoice_grace_period": 5,
+				"subscription_invoice_issuing_date_anchor": "current_period_end",
+				"subscription_invoice_issuing_date_adjustment": "keep_anchor",
 				"payment_provider": "adyen",
 				"payment_provider_code": "adyen_456",
 				"provider_customer_id": "adyen_customer_789",
