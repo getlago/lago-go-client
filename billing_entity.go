@@ -15,6 +15,20 @@ const (
 	BillingEntityDocumentNumberingPerBillingEntity BillingEntityDocumentNumbering = "per_billing_entity"
 )
 
+type SubscriptionInvoiceIssuingDateAnchorType string
+
+const (
+	SubscriptionInvoiceIssuingDateAnchorCurrentPeriodEnd SubscriptionInvoiceIssuingDateAnchorType = "current_period_end"
+	SubscriptionInvoiceIssuingDateAnchorNextPeriodStart  SubscriptionInvoiceIssuingDateAnchorType = "next_period_start"
+)
+
+type SubscriptionInvoiceIssuingDateAdjustmentType string
+
+const (
+	SubscriptionInvoiceIssuingDateAdjustmentKeepAnchor                SubscriptionInvoiceIssuingDateAdjustmentType = "keep_anchor"
+	SubscriptionInvoiceIssuingDateAdjustmentAlignWithFinalizationDate SubscriptionInvoiceIssuingDateAdjustmentType = "align_with_finalization_date"
+)
+
 type BillingEntityRequest struct {
 	client *Client
 }
@@ -34,46 +48,46 @@ type BillingEntityResult struct {
 }
 
 type BillingEntityBillingConfiguration struct {
-	InvoiceGracePeriod                       int    `json:"invoice_grace_period,omitempty"`
-	SubscriptionInvoiceIssuingDateAnchor     string `json:"subscription_invoice_issuing_date_anchor,omitempty"`
-	SubscriptionInvoiceIssuingDateAdjustment string `json:"subscription_invoice_issuing_date_adjustment,omitempty"`
-	InvoiceFooter                            string `json:"invoice_footer,omitempty"`
-	DocumentLocale                           string `json:"document_locale,omitempty"`
+	InvoiceGracePeriod                       int                                          `json:"invoice_grace_period,omitempty"`
+	SubscriptionInvoiceIssuingDateAnchor     SubscriptionInvoiceIssuingDateAnchorType     `json:"subscription_invoice_issuing_date_anchor,omitempty"`
+	SubscriptionInvoiceIssuingDateAdjustment SubscriptionInvoiceIssuingDateAdjustmentType `json:"subscription_invoice_issuing_date_adjustment,omitempty"`
+	InvoiceFooter                            string                                       `json:"invoice_footer,omitempty"`
+	DocumentLocale                           string                                       `json:"document_locale,omitempty"`
 }
 
 type BillingEntity struct {
-	LagoID                                   uuid.UUID                      `json:"lago_id,omitempty"`
-	Name                                     string                         `json:"name,omitempty"`
-	Code                                     string                         `json:"code,omitempty"`
-	Email                                    string                         `json:"email,omitempty"`
-	AddressLine1                             string                         `json:"address_line1,omitempty"`
-	AddressLine2                             string                         `json:"address_line2,omitempty"`
-	City                                     string                         `json:"city,omitempty"`
-	Zipcode                                  string                         `json:"zipcode,omitempty"`
-	State                                    string                         `json:"state,omitempty"`
-	Country                                  string                         `json:"country,omitempty"`
-	DefaultCurrency                          Currency                       `json:"default_currency,omitempty"`
-	LegalName                                string                         `json:"legal_name,omitempty"`
-	LegalNumber                              string                         `json:"legal_number,omitempty"`
-	DocumentNumbering                        BillingEntityDocumentNumbering `json:"document_numbering,omitempty"`
-	DocumentNumberPrefix                     string                         `json:"document_number_prefix,omitempty"`
-	NetPaymentTerm                           int                            `json:"net_payment_term,omitempty"`
-	CreatedAt                                time.Time                      `json:"created_at,omitempty"`
-	UpdatedAt                                time.Time                      `json:"updated_at,omitempty"`
-	IsDefault                                bool                           `json:"is_default,omitempty"`
-	Timezone                                 string                         `json:"timezone,omitempty"`
-	EmailSettings                            []string                       `json:"email_settings,omitempty"`
-	TaxIdentificationNumber                  string                         `json:"tax_identification_number,omitempty"`
-	FinalizeZeroAmountInvoice                bool                           `json:"finalize_zero_amount_invoice,omitempty"`
-	EuTaxManagement                          bool                           `json:"eu_tax_management,omitempty"`
-	LogoURL                                  string                         `json:"logo_url,omitempty"`
-	InvoiceFooter                            string                         `json:"invoice_footer,omitempty"`
-	InvoiceGracePeriod                       int                            `json:"invoice_grace_period,omitempty"`
-	SubscriptionInvoiceIssuingDateAnchor     string                         `json:"subscription_invoice_issuing_date_anchor,omitempty"`
-	SubscriptionInvoiceIssuingDateAdjustment string                         `json:"subscription_invoice_issuing_date_adjustment,omitempty"`
-	DocumentLocale                           string                         `json:"document_locale,omitempty"`
-	Taxes                                    []Tax                          `json:"taxes,omitempty"`
-	SelectedInvoiceCustomSections            []InvoiceCustomSection         `json:"selected_invoice_custom_sections,omitempty"`
+	LagoID                                   uuid.UUID                                    `json:"lago_id,omitempty"`
+	Name                                     string                                       `json:"name,omitempty"`
+	Code                                     string                                       `json:"code,omitempty"`
+	Email                                    string                                       `json:"email,omitempty"`
+	AddressLine1                             string                                       `json:"address_line1,omitempty"`
+	AddressLine2                             string                                       `json:"address_line2,omitempty"`
+	City                                     string                                       `json:"city,omitempty"`
+	Zipcode                                  string                                       `json:"zipcode,omitempty"`
+	State                                    string                                       `json:"state,omitempty"`
+	Country                                  string                                       `json:"country,omitempty"`
+	DefaultCurrency                          Currency                                     `json:"default_currency,omitempty"`
+	LegalName                                string                                       `json:"legal_name,omitempty"`
+	LegalNumber                              string                                       `json:"legal_number,omitempty"`
+	DocumentNumbering                        BillingEntityDocumentNumbering               `json:"document_numbering,omitempty"`
+	DocumentNumberPrefix                     string                                       `json:"document_number_prefix,omitempty"`
+	NetPaymentTerm                           int                                          `json:"net_payment_term,omitempty"`
+	CreatedAt                                time.Time                                    `json:"created_at,omitempty"`
+	UpdatedAt                                time.Time                                    `json:"updated_at,omitempty"`
+	IsDefault                                bool                                         `json:"is_default,omitempty"`
+	Timezone                                 string                                       `json:"timezone,omitempty"`
+	EmailSettings                            []string                                     `json:"email_settings,omitempty"`
+	TaxIdentificationNumber                  string                                       `json:"tax_identification_number,omitempty"`
+	FinalizeZeroAmountInvoice                bool                                         `json:"finalize_zero_amount_invoice,omitempty"`
+	EuTaxManagement                          bool                                         `json:"eu_tax_management,omitempty"`
+	LogoURL                                  string                                       `json:"logo_url,omitempty"`
+	InvoiceFooter                            string                                       `json:"invoice_footer,omitempty"`
+	InvoiceGracePeriod                       int                                          `json:"invoice_grace_period,omitempty"`
+	SubscriptionInvoiceIssuingDateAnchor     SubscriptionInvoiceIssuingDateAnchorType     `json:"subscription_invoice_issuing_date_anchor,omitempty"`
+	SubscriptionInvoiceIssuingDateAdjustment SubscriptionInvoiceIssuingDateAdjustmentType `json:"subscription_invoice_issuing_date_adjustment,omitempty"`
+	DocumentLocale                           string                                       `json:"document_locale,omitempty"`
+	Taxes                                    []Tax                                        `json:"taxes,omitempty"`
+	SelectedInvoiceCustomSections            []InvoiceCustomSection                       `json:"selected_invoice_custom_sections,omitempty"`
 }
 
 type BillingEntityCreateInput struct {
