@@ -56,6 +56,10 @@ type CreditNoteResult struct {
 	Meta        Metadata     `json:"meta,omitempty"`
 }
 
+type CreditNoteMetadataResult struct {
+	Metadata map[string]*string `json:"metadata"`
+}
+
 type EstimatedCreditNoteResult struct {
 	CreditNoteEstimated *EstimatedCreditNote `json:"estimated_credit_note"`
 }
@@ -141,6 +145,7 @@ type CreditNote struct {
 	Items        []CreditNoteItem         `json:"items,omitempty"`
 	AppliedTaxes []CreditNoteAppliedTax   `json:"applied_taxes,omitempty"`
 	ErrorDetails []CreditNoteErrorDetails `json:"error_details,omitempty"`
+	Metadata     map[string]*string       `json:"metadata,omitempty"`
 }
 
 type EstimatedCreditNote struct {
@@ -208,6 +213,10 @@ type EstimateCreditNoteInput struct {
 
 type EstimateCreditNoteParams struct {
 	CreditNote *EstimateCreditNoteInput `json:"credit_note"`
+}
+
+type CreditNoteMetadataParams struct {
+	Metadata map[string]*string `json:"metadata"`
 }
 
 func (c *Client) CreditNote() *CreditNoteRequest {
@@ -378,4 +387,90 @@ func (cr *CreditNoteRequest) Estimate(ctx context.Context, estimateCreditNoteInp
 	}
 
 	return estimatedCreditNoteResult.CreditNoteEstimated, nil
+}
+
+func (cr *CreditNoteRequest) ReplaceMetadata(ctx context.Context, creditNoteID uuid.UUID, metadata map[string]*string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "credit_notes", creditNoteID, "metadata")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &CreditNoteMetadataResult{},
+		Body:   &CreditNoteMetadataParams{Metadata: metadata},
+	}
+
+	result, err := cr.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	metadataResult, ok := result.(*CreditNoteMetadataResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return metadataResult.Metadata, nil
+}
+
+func (cr *CreditNoteRequest) MergeMetadata(ctx context.Context, creditNoteID uuid.UUID, metadata map[string]*string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "credit_notes", creditNoteID, "metadata")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &CreditNoteMetadataResult{},
+		Body:   &CreditNoteMetadataParams{Metadata: metadata},
+	}
+
+	result, err := cr.client.Patch(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	metadataResult, ok := result.(*CreditNoteMetadataResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return metadataResult.Metadata, nil
+}
+
+func (cr *CreditNoteRequest) DeleteAllMetadata(ctx context.Context, creditNoteID uuid.UUID) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "credit_notes", creditNoteID, "metadata")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &CreditNoteMetadataResult{},
+	}
+
+	result, err := cr.client.Delete(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	metadataResult, ok := result.(*CreditNoteMetadataResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return metadataResult.Metadata, nil
+}
+
+func (cr *CreditNoteRequest) DeleteMetadataKey(ctx context.Context, creditNoteID uuid.UUID, key string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s", "credit_notes", creditNoteID, "metadata", key)
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &CreditNoteMetadataResult{},
+	}
+
+	result, err := cr.client.Delete(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	metadataResult, ok := result.(*CreditNoteMetadataResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return metadataResult.Metadata, nil
 }
