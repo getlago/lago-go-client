@@ -158,24 +158,28 @@ type CustomerListInput struct {
 }
 
 type CustomerBillingConfigurationInput struct {
-	InvoiceGracePeriod     int                         `json:"invoice_grace_period,omitempty"`
-	PaymentProvider        CustomerPaymentProvider     `json:"payment_provider,omitempty"`
-	PaymentProviderCode    string                      `json:"payment_provider_code,omitempty"`
-	ProviderCustomerID     string                      `json:"provider_customer_id,omitempty"`
-	Sync                   bool                        `json:"sync,omitempty"`
-	SyncWithProvider       bool                        `json:"sync_with_provider,omitempty"`
-	DocumentLocale         string                      `json:"document_locale,omitempty"`
-	ProviderPaymentMethods []ProviderPaymentMethodType `json:"provider_payment_methods,omitempty"`
+	InvoiceGracePeriod                       int                                           `json:"invoice_grace_period,omitempty"`
+	SubscriptionInvoiceIssuingDateAnchor     *SubscriptionInvoiceIssuingDateAnchorType     `json:"subscription_invoice_issuing_date_anchor"`
+	SubscriptionInvoiceIssuingDateAdjustment *SubscriptionInvoiceIssuingDateAdjustmentType `json:"subscription_invoice_issuing_date_adjustment"`
+	PaymentProvider                          CustomerPaymentProvider                       `json:"payment_provider,omitempty"`
+	PaymentProviderCode                      string                                        `json:"payment_provider_code,omitempty"`
+	ProviderCustomerID                       string                                        `json:"provider_customer_id,omitempty"`
+	Sync                                     bool                                          `json:"sync,omitempty"`
+	SyncWithProvider                         bool                                          `json:"sync_with_provider,omitempty"`
+	DocumentLocale                           string                                        `json:"document_locale,omitempty"`
+	ProviderPaymentMethods                   []ProviderPaymentMethodType                   `json:"provider_payment_methods,omitempty"`
 }
 
 type CustomerBillingConfiguration struct {
-	InvoiceGracePeriod     int                         `json:"invoice_grace_period,omitempty"`
-	PaymentProvider        CustomerPaymentProvider     `json:"payment_provider,omitempty"`
-	PaymentProviderCode    string                      `json:"payment_provider_code,omitempty"`
-	ProviderCustomerID     string                      `json:"provider_customer_id,omitempty"`
-	SyncWithProvider       bool                        `json:"sync_with_provider,omitempty"`
-	DocumentLocale         string                      `json:"document_locale,omitempty"`
-	ProviderPaymentMethods []ProviderPaymentMethodType `json:"provider_payment_methods,omitempty"`
+	InvoiceGracePeriod                       int                                          `json:"invoice_grace_period,omitempty"`
+	SubscriptionInvoiceIssuingDateAnchor     SubscriptionInvoiceIssuingDateAnchorType     `json:"subscription_invoice_issuing_date_anchor,omitempty"`
+	SubscriptionInvoiceIssuingDateAdjustment SubscriptionInvoiceIssuingDateAdjustmentType `json:"subscription_invoice_issuing_date_adjustment,omitempty"`
+	PaymentProvider                          CustomerPaymentProvider                      `json:"payment_provider,omitempty"`
+	PaymentProviderCode                      string                                       `json:"payment_provider_code,omitempty"`
+	ProviderCustomerID                       string                                       `json:"provider_customer_id,omitempty"`
+	SyncWithProvider                         bool                                         `json:"sync_with_provider,omitempty"`
+	DocumentLocale                           string                                       `json:"document_locale,omitempty"`
+	ProviderPaymentMethods                   []ProviderPaymentMethodType                  `json:"provider_payment_methods,omitempty"`
 }
 
 type Address struct {
