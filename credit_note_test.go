@@ -178,6 +178,17 @@ var mockCreditNoteResponse = map[string]interface{}{
 	"credit_note": mockCreditNote,
 }
 
+var mockMetadataResponse = map[string]interface{}{
+	"metadata": map[string]interface{}{
+		"foo": "bar",
+		"baz": nil,
+	},
+}
+
+var mockNullMetadataResponse = map[string]interface{}{
+	"metadata": nil,
+}
+
 var mockCreditNoteEstimateResponse = map[string]interface{}{
 	"estimated_credit_note": map[string]interface{}{
 		"lago_invoice_id":                         "1a901a90-1a90-1a90-1a90-1a901a901a90",
@@ -656,5 +667,111 @@ func TestCreditNoteRequest_Estimate(t *testing.T) {
 
 		c.Assert(err == nil, qt.IsTrue)
 		assertCreditNoteEstimateResponse(c, result)
+	})
+}
+
+func TestCreditNoteRequest_ReplaceMetadata(t *testing.T) {
+	t.Run("When replace metadata is called", func(t *testing.T) {
+		c := qt.New(t)
+
+		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
+
+		server := lt.ServerWithAssertions(c, mockMetadataResponse, func(c *qt.C, r *http.Request) {
+			c.Assert(r.Method, qt.Equals, "POST")
+			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/metadata")
+
+			body, err := io.ReadAll(r.Body)
+			c.Assert(err, qt.IsNil)
+
+			var requestData map[string]interface{}
+			err = json.Unmarshal(body, &requestData)
+			c.Assert(err, qt.IsNil)
+
+			c.Assert(requestData["metadata"], qt.IsNotNil)
+		})
+		defer server.Close()
+
+		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
+		bar := "bar"
+		result, err := client.CreditNote().ReplaceMetadata(context.Background(), creditNoteUUID, map[string]*string{
+			"foo": &bar,
+			"baz": nil,
+		})
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result["foo"], qt.IsNotNil)
+		c.Assert(*result["foo"], qt.Equals, "bar")
+		c.Assert(result["baz"], qt.IsNil)
+	})
+}
+
+func TestCreditNoteRequest_MergeMetadata(t *testing.T) {
+	t.Run("When merge metadata is called", func(t *testing.T) {
+		c := qt.New(t)
+
+		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
+
+		server := lt.ServerWithAssertions(c, mockMetadataResponse, func(c *qt.C, r *http.Request) {
+			c.Assert(r.Method, qt.Equals, "PATCH")
+			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/metadata")
+
+			body, err := io.ReadAll(r.Body)
+			c.Assert(err, qt.IsNil)
+
+			var requestData map[string]interface{}
+			err = json.Unmarshal(body, &requestData)
+			c.Assert(err, qt.IsNil)
+
+			c.Assert(requestData["metadata"], qt.IsNotNil)
+		})
+		defer server.Close()
+
+		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
+		qux := "qux"
+		result, err := client.CreditNote().MergeMetadata(context.Background(), creditNoteUUID, map[string]*string{
+			"foo": &qux,
+		})
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result["foo"], qt.IsNotNil)
+		c.Assert(*result["foo"], qt.Equals, "bar")
+		c.Assert(result["baz"], qt.IsNil)
+	})
+}
+
+func TestCreditNoteRequest_DeleteAllMetadata(t *testing.T) {
+	t.Run("When delete all metadata is called", func(t *testing.T) {
+		c := qt.New(t)
+
+		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
+
+		server := lt.NewMockServer(c).
+			MatchMethod("DELETE").
+			MatchPath("/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/metadata").
+			MockResponse(mockNullMetadataResponse)
+		defer server.Close()
+
+		result, err := server.Client().CreditNote().DeleteAllMetadata(context.Background(), creditNoteUUID)
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result, qt.IsNil)
+	})
+}
+
+func TestCreditNoteRequest_DeleteMetadataKey(t *testing.T) {
+	t.Run("When delete metadata key is called", func(t *testing.T) {
+		c := qt.New(t)
+
+		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
+
+		server := lt.NewMockServer(c).
+			MatchMethod("DELETE").
+			MatchPath("/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/metadata/foo").
+			MockResponse(mockMetadataResponse)
+		defer server.Close()
+
+		result, err := server.Client().CreditNote().DeleteMetadataKey(context.Background(), creditNoteUUID, "foo")
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result["foo"], qt.IsNotNil)
+		c.Assert(*result["foo"], qt.Equals, "bar")
 	})
 }
