@@ -15,17 +15,17 @@ const (
 )
 
 type GraduatedRange struct {
-	FromValue     int     `json:"from_value"`
-	ToValue       *int    `json:"to_value"`
-	FlatAmount    string  `json:"flat_amount,omitempty"`
-	PerUnitAmount string  `json:"per_unit_amount,omitempty"`
+	FromValue     int    `json:"from_value"`
+	ToValue       *int   `json:"to_value"`
+	FlatAmount    string `json:"flat_amount,omitempty"`
+	PerUnitAmount string `json:"per_unit_amount,omitempty"`
 }
 
 type VolumeRange struct {
-	FromValue     int     `json:"from_value"`
-	ToValue       *int    `json:"to_value"`
-	FlatAmount    string  `json:"flat_amount,omitempty"`
-	PerUnitAmount string  `json:"per_unit_amount,omitempty"`
+	FromValue     int    `json:"from_value"`
+	ToValue       *int   `json:"to_value"`
+	FlatAmount    string `json:"flat_amount,omitempty"`
+	PerUnitAmount string `json:"per_unit_amount,omitempty"`
 }
 
 type FixedChargeProperties struct {
@@ -51,17 +51,17 @@ type FixedCharge struct {
 }
 
 type FixedChargeInput struct {
-	LagoID             *uuid.UUID             `json:"id,omitempty"`
-	AddOnID            uuid.UUID              `json:"add_on_id,omitempty"`
-	ChargeModel        FixedChargeModel       `json:"charge_model,omitempty"`
-	Code               string                 `json:"code,omitempty"`
-	InvoiceDisplayName string                 `json:"invoice_display_name,omitempty"`
-	Units              float64                `json:"units"`
-	PayInAdvance       bool                   `json:"pay_in_advance"`
-	Prorated           bool                   `json:"prorated"`
-	Properties         *FixedChargeProperties `json:"properties,omitempty"`
-	TaxCodes           []string               `json:"tax_codes,omitempty"`
-	ApplyUnitsImmediately bool               `json:"apply_units_immediately,omitempty"`
+	LagoID                *uuid.UUID             `json:"id,omitempty"`
+	AddOnID               uuid.UUID              `json:"add_on_id,omitempty"`
+	ChargeModel           FixedChargeModel       `json:"charge_model,omitempty"`
+	Code                  string                 `json:"code,omitempty"`
+	InvoiceDisplayName    string                 `json:"invoice_display_name,omitempty"`
+	Units                 float64                `json:"units"`
+	PayInAdvance          bool                   `json:"pay_in_advance"`
+	Prorated              bool                   `json:"prorated"`
+	Properties            *FixedChargeProperties `json:"properties,omitempty"`
+	TaxCodes              []string               `json:"tax_codes,omitempty"`
+	ApplyUnitsImmediately bool                   `json:"apply_units_immediately,omitempty"`
 }
 
 type FixedChargeOverridesInput struct {
