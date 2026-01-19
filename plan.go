@@ -57,21 +57,23 @@ type MinimumCommitmentInput struct {
 }
 
 type PlanInput struct {
-	Name               string                  `json:"name,omitempty"`
-	InvoiceDisplayName string                  `json:"invoice_display_name,omitempty"`
-	Code               string                  `json:"code,omitempty"`
-	Interval           PlanInterval            `json:"interval,omitempty"`
-	Description        string                  `json:"description,omitempty"`
-	AmountCents        int                     `json:"amount_cents"`
-	AmountCurrency     Currency                `json:"amount_currency,omitempty"`
-	PayInAdvance       bool                    `json:"pay_in_advance"`
-	BillChargesMonthly bool                    `json:"bill_charges_monthly"`
-	TrialPeriod        float32                 `json:"trial_period"`
-	Charges            []PlanChargeInput       `json:"charges,omitempty"`
-	MinimumCommitment  *MinimumCommitmentInput `json:"minimum_commitment,omitempty"`
-	TaxCodes           []string                `json:"tax_codes,omitempty"`
-	UsageThresholds    []UsageThresholdInput   `json:"usage_thresholds,omitempty"`
-	CascadeUpdates     bool                    `json:"cascade_updates"`
+	Name                    string                  `json:"name,omitempty"`
+	InvoiceDisplayName      string                  `json:"invoice_display_name,omitempty"`
+	Code                    string                  `json:"code,omitempty"`
+	Interval                PlanInterval            `json:"interval,omitempty"`
+	Description             string                  `json:"description,omitempty"`
+	AmountCents             int                     `json:"amount_cents"`
+	AmountCurrency          Currency                `json:"amount_currency,omitempty"`
+	PayInAdvance            bool                    `json:"pay_in_advance"`
+	BillChargesMonthly      bool                    `json:"bill_charges_monthly"`
+	BillFixedChargesMonthly *bool                   `json:"bill_fixed_charges_monthly,omitempty"`
+	TrialPeriod             float32                 `json:"trial_period"`
+	Charges                 []PlanChargeInput       `json:"charges,omitempty"`
+	FixedCharges            []FixedChargeInput      `json:"fixed_charges,omitempty"`
+	MinimumCommitment       *MinimumCommitmentInput `json:"minimum_commitment,omitempty"`
+	TaxCodes                []string                `json:"tax_codes,omitempty"`
+	UsageThresholds         []UsageThresholdInput   `json:"usage_thresholds,omitempty"`
+	CascadeUpdates          bool                    `json:"cascade_updates"`
 }
 
 type PlanListInput struct {
@@ -92,18 +94,20 @@ type MinimumCommitment struct {
 }
 
 type Plan struct {
-	LagoID             uuid.UUID          `json:"lago_id"`
-	Name               string             `json:"name,omitempty"`
-	InvoiceDisplayName string             `json:"invoice_display_name,omitempty"`
-	Code               string             `json:"code,omitempty"`
-	Interval           PlanInterval       `json:"interval,omitempty"`
-	Description        string             `json:"description,omitempty"`
-	AmountCents        int                `json:"amount_cents,omitempty"`
-	AmountCurrency     Currency           `json:"amount_currency,omitempty"`
-	PayInAdvance       bool               `json:"pay_in_advance,omitempty"`
-	BillChargesMonthly bool               `json:"bill_charges_monthly,omitempty"`
-	Charges            []Charge           `json:"charges,omitempty"`
-	MinimumCommitment  *MinimumCommitment `json:"minimum_commitment"`
+	LagoID                  uuid.UUID          `json:"lago_id"`
+	Name                    string             `json:"name,omitempty"`
+	InvoiceDisplayName      string             `json:"invoice_display_name,omitempty"`
+	Code                    string             `json:"code,omitempty"`
+	Interval                PlanInterval       `json:"interval,omitempty"`
+	Description             string             `json:"description,omitempty"`
+	AmountCents             int                `json:"amount_cents,omitempty"`
+	AmountCurrency          Currency           `json:"amount_currency,omitempty"`
+	PayInAdvance            bool               `json:"pay_in_advance,omitempty"`
+	BillChargesMonthly      bool               `json:"bill_charges_monthly,omitempty"`
+	BillFixedChargesMonthly *bool              `json:"bill_fixed_charges_monthly,omitempty"`
+	Charges                 []Charge           `json:"charges,omitempty"`
+	FixedCharges            []FixedCharge      `json:"fixed_charges,omitempty"`
+	MinimumCommitment       *MinimumCommitment `json:"minimum_commitment"`
 
 	Taxes           []Tax             `json:"taxes,omitempty"`
 	UsageThresholds []UsageThreshold  `json:"usage_thresholds,omitempty"`

@@ -16,7 +16,10 @@ type FeeItemType string
 const (
 	FeeItemSubscription FeeType = "subscription"
 	FeeItemCharge       FeeType = "charge"
+	FeeItemFixedCharge  FeeType = "fixed_charge"
 	FeeItemAddOn        FeeType = "add_on"
+	FeeItemCredit       FeeType = "credit"
+	FeeItemCommitment   FeeType = "commitment"
 )
 
 const (
@@ -114,13 +117,14 @@ type PricingUnitDetails struct {
 }
 
 type Fee struct {
-	LagoID                 uuid.UUID `json:"lago_id,omitempty"`
-	LagoChargeID           uuid.UUID `json:"lago_charge_id,omitempty"`
-	LagoChargeFilterID     uuid.UUID `json:"lago_charge_filter_id,omitempty"`
-	LagoInvoiceID          uuid.UUID `json:"lago_invoice_id,omitempty"`
-	LagoTrueUpFeeID        uuid.UUID `json:"lago_true_up_fee_id,omitempty"`
-	LagoTrueUpParentFeeID  uuid.UUID `json:"lago_true_up_parent_fee_id,omitempty"`
-	ExternalSubscriptionID string    `json:"external_subscription_id,omitempty"`
+	LagoID                 uuid.UUID  `json:"lago_id,omitempty"`
+	LagoChargeID           uuid.UUID  `json:"lago_charge_id,omitempty"`
+	LagoChargeFilterID     uuid.UUID  `json:"lago_charge_filter_id,omitempty"`
+	LagoFixedChargeID      *uuid.UUID `json:"lago_fixed_charge_id,omitempty"`
+	LagoInvoiceID          uuid.UUID  `json:"lago_invoice_id,omitempty"`
+	LagoTrueUpFeeID        uuid.UUID  `json:"lago_true_up_fee_id,omitempty"`
+	LagoTrueUpParentFeeID  uuid.UUID  `json:"lago_true_up_parent_fee_id,omitempty"`
+	ExternalSubscriptionID string     `json:"external_subscription_id,omitempty"`
 
 	AmountCents         int                    `json:"amount_cents,omitempty"`
 	AmountDetails       map[string]interface{} `json:"amount_details,omitempty"`
