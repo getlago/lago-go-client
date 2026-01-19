@@ -81,6 +81,7 @@ type PlanOverridesInput struct {
 	AmountCurrency     Currency                         `json:"amount_currency,omitempty"`
 	TrialPeriod        float32                          `json:"trial_period"`
 	Charges            []ChargeOverridesInput           `json:"charges,omitempty"`
+	FixedCharges       []FixedChargeOverridesInput      `json:"fixed_charges,omitempty"`
 	MinimumCommitment  *MinimumCommitmentOverridesInput `json:"minimum_commitment"`
 	TaxCodes           []string                         `json:"tax_codes,omitempty"`
 	UsageThresholds    []UsageThreshold                 `json:"usage_thresholds,omitempty"`
@@ -284,4 +285,25 @@ func (sr *SubscriptionRequest) Update(ctx context.Context, subscriptionInput *Su
 	}
 
 	return subscriptionResult.Subscription, nil
+}
+
+func (sr *SubscriptionRequest) GetFixedCharges(ctx context.Context, subscriptionExternalID string) (*FixedChargeResult, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", subscriptionExternalID, "fixed_charges")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &FixedChargeResult{},
+	}
+
+	result, err := sr.client.Get(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	fixedChargeResult, ok := result.(*FixedChargeResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return fixedChargeResult, nil
 }
