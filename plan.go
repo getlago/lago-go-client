@@ -23,6 +23,14 @@ type PlanParams struct {
 	Plan *PlanInput `json:"plan"`
 }
 
+type PlanMetadataResult struct {
+	Metadata map[string]*string `json:"metadata"`
+}
+
+type PlanMetadataParams struct {
+	Metadata map[string]*string `json:"metadata"`
+}
+
 type PlanInterval string
 
 const (
@@ -74,6 +82,7 @@ type PlanInput struct {
 	TaxCodes                []string                `json:"tax_codes,omitempty"`
 	UsageThresholds         []UsageThresholdInput   `json:"usage_thresholds,omitempty"`
 	CascadeUpdates          bool                    `json:"cascade_updates"`
+	Metadata                map[string]string       `json:"metadata,omitempty"`
 }
 
 type PlanListInput struct {
@@ -112,6 +121,7 @@ type Plan struct {
 	Taxes           []Tax             `json:"taxes,omitempty"`
 	UsageThresholds []UsageThreshold  `json:"usage_thresholds,omitempty"`
 	Entitlements    []PlanEntitlement `json:"entitlements,omitempty"`
+	Metadata        map[string]string `json:"metadata,omitempty"`
 }
 
 func (c *Client) Plan() *PlanRequest {
@@ -239,4 +249,90 @@ func (pr *PlanRequest) Delete(ctx context.Context, planCode string) (*Plan, *Err
 	}
 
 	return planResult.Plan, nil
+}
+
+func (pr *PlanRequest) ReplaceMetadata(ctx context.Context, planCode string, metadata map[string]*string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "plans", planCode, "metadata")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &PlanMetadataResult{},
+		Body:   &PlanMetadataParams{Metadata: metadata},
+	}
+
+	result, err := pr.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	metadataResult, ok := result.(*PlanMetadataResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return metadataResult.Metadata, nil
+}
+
+func (pr *PlanRequest) MergeMetadata(ctx context.Context, planCode string, metadata map[string]*string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "plans", planCode, "metadata")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &PlanMetadataResult{},
+		Body:   &PlanMetadataParams{Metadata: metadata},
+	}
+
+	result, err := pr.client.Patch(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	metadataResult, ok := result.(*PlanMetadataResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return metadataResult.Metadata, nil
+}
+
+func (pr *PlanRequest) DeleteAllMetadata(ctx context.Context, planCode string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "plans", planCode, "metadata")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &PlanMetadataResult{},
+	}
+
+	result, err := pr.client.Delete(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	metadataResult, ok := result.(*PlanMetadataResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return metadataResult.Metadata, nil
+}
+
+func (pr *PlanRequest) DeleteMetadataKey(ctx context.Context, planCode string, key string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s", "plans", planCode, "metadata", key)
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &PlanMetadataResult{},
+	}
+
+	result, err := pr.client.Delete(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	metadataResult, ok := result.(*PlanMetadataResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return metadataResult.Metadata, nil
 }
