@@ -48,7 +48,7 @@ type EventResult struct {
 }
 
 type Event struct {
-	LagoID                  uuid.UUID              `json:"lago_id"`
+	LagoID                  *uuid.UUID             `json:"lago_id,omitempty"`
 	TransactionID           string                 `json:"transaction_id"`
 	LagoCustomerID          *uuid.UUID             `json:"lago_customer_id,omitempty"`
 	Code                    string                 `json:"code,omitempty"`
@@ -57,7 +57,7 @@ type Event struct {
 	Properties              map[string]interface{} `json:"properties,omitempty"`
 	LagoSubscriptionID      *uuid.UUID             `json:"lago_subscription_id,omitempty"`
 	ExternalSubscriptionID  string                 `json:"external_subscription_id,omitempty"`
-	CreatedAt               time.Time              `json:"created_at"`
+	CreatedAt               *time.Time             `json:"created_at,omitempty"`
 }
 
 func (c *Client) Event() *EventRequest {
