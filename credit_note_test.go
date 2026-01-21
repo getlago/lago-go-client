@@ -37,6 +37,7 @@ var mockCreditNote = map[string]interface{}{
 	"balance_amount_cents":                   100,
 	"credit_amount_cents":                    100,
 	"refund_amount_cents":                    0,
+	"offset_amount_cents":                    100,
 	"coupons_adjustment_amount_cents":        20,
 	"created_at":                             "2022-09-14T16:35:31Z",
 	"updated_at":                             "2022-09-14T16:35:31Z",
@@ -248,6 +249,7 @@ func assertCreditNoteResponse(c *qt.C, result *CreditNote) {
 	c.Assert(result.CreditAmountCents, qt.Equals, 100)
 	c.Assert(result.BalanceAmountCents, qt.Equals, 100)
 	c.Assert(result.RefundAmountCents, qt.Equals, 0)
+	c.Assert(result.OffsetAmountCents, qt.Equals, 100)
 	c.Assert(result.TaxesAmountCents, qt.Equals, 20)
 	c.Assert(result.TaxesRate, qt.Equals, 20.0)
 	c.Assert(result.SubTotalExcludingTaxesAmountCents, qt.Equals, 100)
@@ -286,7 +288,7 @@ func assertCreditNoteEstimateResponse(c *qt.C, result *EstimatedCreditNote) {
 	c.Assert(result.InvoiceNumber, qt.Equals, "LAG-1234")
 	c.Assert(result.Currency, qt.Equals, Currency("EUR"))
 	c.Assert(result.MaxCreditableAmountCents, qt.Equals, 100)
-	c.Assert(result.MaxRefundableAmountCents, qt.Equals, 100)
+	c.Assert(result.MaxRefundableAmountCents, qt.Equals, 0)
 	c.Assert(result.MaxOffsettableAmountCents, qt.Equals, 100)
 	c.Assert(result.TaxesAmountCents, qt.Equals, 20)
 	c.Assert(result.TaxesRate, qt.Equals, 20.0)
@@ -497,6 +499,7 @@ func TestCreditNoteRequest_Create(t *testing.T) {
 				c.Assert(creditNote["description"], qt.Equals, "test description")
 				c.Assert(creditNote["credit_amount_cents"], qt.Equals, float64(10))
 				c.Assert(creditNote["refund_amount_cents"], qt.Equals, float64(20))
+				c.Assert(creditNote["offset_amount_cents"], qt.Equals, float64(20))
 
 				c.Assert(creditNote["items"], qt.HasLen, 1)
 
@@ -525,6 +528,7 @@ func TestCreditNoteRequest_Create(t *testing.T) {
 			},
 			CreditAmountCents: 10,
 			RefundAmountCents: 20,
+			OffsetAmountCents: 20,
 		})
 
 		c.Assert(err == nil, qt.IsTrue)
