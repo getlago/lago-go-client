@@ -69,6 +69,7 @@ type WalletInput struct {
 	RateAmount                       string                          `json:"rate_amount,omitempty"`
 	Currency                         Currency                        `json:"currency,omitempty"`
 	Name                             string                          `json:"name,omitempty"`
+	Priority                         *int                            `json:"priority,omitempty"`
 	PaidCredits                      string                          `json:"paid_credits,omitempty"`
 	GrantedCredits                   string                          `json:"granted_credits,omitempty"`
 	ExpirationAt                     *time.Time                      `json:"expiration_at,omitempty"`
@@ -102,6 +103,7 @@ type Wallet struct {
 	Status                           Status                             `json:"status,omitempty"`
 	Currency                         Currency                           `json:"currency,omitempty"`
 	Name                             string                             `json:"name,omitempty"`
+	Priority                         *int                               `json:"priority,omitempty"`
 	RateAmount                       string                             `json:"rate_amount,omitempty"`
 	CreditsBalance                   string                             `json:"credits_balance,omitempty"`
 	BalanceCents                     int                                `json:"balance_cents,omitempty"`
