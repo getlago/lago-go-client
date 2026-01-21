@@ -2,6 +2,9 @@ package lago_test
 
 import (
 	"context"
+	"encoding/json"
+	"io"
+	"net/http"
 	"testing"
 	"time"
 
@@ -449,5 +452,122 @@ func TestWallet_Delete(t *testing.T) {
 		c.Assert(result.Name, qt.Equals, "wallet name")
 		c.Assert(result.ExternalCustomerID, qt.Equals, "12345")
 		c.Assert(result.Currency, qt.Equals, Currency("USD"))
+	})
+}
+
+var mockWalletMetadataResponse = map[string]interface{}{
+	"metadata": map[string]interface{}{
+		"foo": "bar",
+		"baz": nil,
+	},
+}
+
+var mockWalletNullMetadataResponse = map[string]interface{}{
+	"metadata": nil,
+}
+
+func TestWalletRequest_ReplaceMetadata(t *testing.T) {
+	t.Run("When replace metadata is called", func(t *testing.T) {
+		c := qt.New(t)
+
+		walletID := "b1b2c3d4-e5f6-7890-1234-56789abcdef0"
+
+		server := lt.ServerWithAssertions(c, mockWalletMetadataResponse, func(c *qt.C, r *http.Request) {
+			c.Assert(r.Method, qt.Equals, "POST")
+			c.Assert(r.URL.Path, qt.Equals, "/api/v1/wallets/b1b2c3d4-e5f6-7890-1234-56789abcdef0/metadata")
+
+			body, err := io.ReadAll(r.Body)
+			c.Assert(err, qt.IsNil)
+
+			var requestData map[string]interface{}
+			err = json.Unmarshal(body, &requestData)
+			c.Assert(err, qt.IsNil)
+
+			c.Assert(requestData["metadata"], qt.IsNotNil)
+		})
+		defer server.Close()
+
+		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
+		bar := "bar"
+		result, err := client.Wallet().ReplaceMetadata(context.Background(), walletID, map[string]*string{
+			"foo": &bar,
+			"baz": nil,
+		})
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result["foo"], qt.IsNotNil)
+		c.Assert(*result["foo"], qt.Equals, "bar")
+		c.Assert(result["baz"], qt.IsNil)
+	})
+}
+
+func TestWalletRequest_MergeMetadata(t *testing.T) {
+	t.Run("When merge metadata is called", func(t *testing.T) {
+		c := qt.New(t)
+
+		walletID := "b1b2c3d4-e5f6-7890-1234-56789abcdef0"
+
+		server := lt.ServerWithAssertions(c, mockWalletMetadataResponse, func(c *qt.C, r *http.Request) {
+			c.Assert(r.Method, qt.Equals, "PATCH")
+			c.Assert(r.URL.Path, qt.Equals, "/api/v1/wallets/b1b2c3d4-e5f6-7890-1234-56789abcdef0/metadata")
+
+			body, err := io.ReadAll(r.Body)
+			c.Assert(err, qt.IsNil)
+
+			var requestData map[string]interface{}
+			err = json.Unmarshal(body, &requestData)
+			c.Assert(err, qt.IsNil)
+
+			c.Assert(requestData["metadata"], qt.IsNotNil)
+		})
+		defer server.Close()
+
+		client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
+		qux := "qux"
+		result, err := client.Wallet().MergeMetadata(context.Background(), walletID, map[string]*string{
+			"foo": &qux,
+		})
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result["foo"], qt.IsNotNil)
+		c.Assert(*result["foo"], qt.Equals, "bar")
+		c.Assert(result["baz"], qt.IsNil)
+	})
+}
+
+func TestWalletRequest_DeleteAllMetadata(t *testing.T) {
+	t.Run("When delete all metadata is called", func(t *testing.T) {
+		c := qt.New(t)
+
+		walletID := "b1b2c3d4-e5f6-7890-1234-56789abcdef0"
+
+		server := lt.NewMockServer(c).
+			MatchMethod("DELETE").
+			MatchPath("/api/v1/wallets/b1b2c3d4-e5f6-7890-1234-56789abcdef0/metadata").
+			MockResponse(mockWalletNullMetadataResponse)
+		defer server.Close()
+
+		result, err := server.Client().Wallet().DeleteAllMetadata(context.Background(), walletID)
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result, qt.IsNil)
+	})
+}
+
+func TestWalletRequest_DeleteMetadataKey(t *testing.T) {
+	t.Run("When delete metadata key is called", func(t *testing.T) {
+		c := qt.New(t)
+
+		walletID := "b1b2c3d4-e5f6-7890-1234-56789abcdef0"
+
+		server := lt.NewMockServer(c).
+			MatchMethod("DELETE").
+			MatchPath("/api/v1/wallets/b1b2c3d4-e5f6-7890-1234-56789abcdef0/metadata/foo").
+			MockResponse(mockWalletMetadataResponse)
+		defer server.Close()
+
+		result, err := server.Client().Wallet().DeleteMetadataKey(context.Background(), walletID, "foo")
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result["foo"], qt.IsNotNil)
+		c.Assert(*result["foo"], qt.Equals, "bar")
 	})
 }

@@ -81,6 +81,7 @@ type WalletInput struct {
 	PaidTopUpMaxAmountCents          *int                            `json:"paid_top_up_max_amount_cents,omitempty"`
 	PaidTopUpMinAmountCents          *int                            `json:"paid_top_up_min_amount_cents,omitempty"`
 	IgnorePaidTopUpLimitsOnCreation  *bool                           `json:"ignore_paid_top_up_limits_on_creation,omitempty"`
+	Metadata                         map[string]string               `json:"metadata,omitempty"`
 }
 
 type WalletListInput struct {
@@ -93,6 +94,14 @@ type WalletResult struct {
 	Wallet  *Wallet  `json:"wallet,omitempty"`
 	Wallets []Wallet `json:"wallets,omitempty"`
 	Meta    Metadata `json:"meta,omitempty"`
+}
+
+type WalletMetadataResult struct {
+	Metadata map[string]*string `json:"metadata"`
+}
+
+type WalletMetadataParams struct {
+	Metadata map[string]*string `json:"metadata"`
 }
 
 type Wallet struct {
@@ -120,6 +129,7 @@ type Wallet struct {
 	AppliesTo                        AppliesTo                          `json:"applies_to,omitempty"`
 	PaidTopUpMaxAmountCents          *int                               `json:"paid_top_up_max_amount_cents,omitempty"`
 	PaidTopUpMinAmountCents          *int                               `json:"paid_top_up_min_amount_cents,omitempty"`
+	Metadata                         map[string]string                  `json:"metadata,omitempty"`
 }
 
 func (c *Client) Wallet() *WalletRequest {
@@ -245,4 +255,90 @@ func (bmr *WalletRequest) Delete(ctx context.Context, walletID string) (*Wallet,
 	}
 
 	return walletResult.Wallet, nil
+}
+
+func (bmr *WalletRequest) ReplaceMetadata(ctx context.Context, walletID string, metadata map[string]*string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "wallets", walletID, "metadata")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &WalletMetadataResult{},
+		Body:   &WalletMetadataParams{Metadata: metadata},
+	}
+
+	result, err := bmr.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	metadataResult, ok := result.(*WalletMetadataResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return metadataResult.Metadata, nil
+}
+
+func (bmr *WalletRequest) MergeMetadata(ctx context.Context, walletID string, metadata map[string]*string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "wallets", walletID, "metadata")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &WalletMetadataResult{},
+		Body:   &WalletMetadataParams{Metadata: metadata},
+	}
+
+	result, err := bmr.client.Patch(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	metadataResult, ok := result.(*WalletMetadataResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return metadataResult.Metadata, nil
+}
+
+func (bmr *WalletRequest) DeleteAllMetadata(ctx context.Context, walletID string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "wallets", walletID, "metadata")
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &WalletMetadataResult{},
+	}
+
+	result, err := bmr.client.Delete(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	metadataResult, ok := result.(*WalletMetadataResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return metadataResult.Metadata, nil
+}
+
+func (bmr *WalletRequest) DeleteMetadataKey(ctx context.Context, walletID string, key string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s", "wallets", walletID, "metadata", key)
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &WalletMetadataResult{},
+	}
+
+	result, err := bmr.client.Delete(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	metadataResult, ok := result.(*WalletMetadataResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return metadataResult.Metadata, nil
 }
