@@ -199,6 +199,7 @@ var mockCreditNoteEstimateResponse = map[string]interface{}{
 		"sub_total_excluding_taxes_amount_cents":  100,
 		"max_creditable_amount_cents":             100,
 		"max_refundable_amount_cents":             0,
+		"max_offsettable_amount_cents":            100,
 		"coupons_adjustment_amount_cents":         20,
 		"precise_coupons_adjustment_amount_cents": 20,
 		"precise_taxes_amount_cents":              20,
@@ -285,7 +286,8 @@ func assertCreditNoteEstimateResponse(c *qt.C, result *EstimatedCreditNote) {
 	c.Assert(result.InvoiceNumber, qt.Equals, "LAG-1234")
 	c.Assert(result.Currency, qt.Equals, Currency("EUR"))
 	c.Assert(result.MaxCreditableAmountCents, qt.Equals, 100)
-	c.Assert(result.MaxRefundableAmountCents, qt.Equals, 0)
+	c.Assert(result.MaxRefundableAmountCents, qt.Equals, 100)
+	c.Assert(result.MaxOffsettableAmountCents, qt.Equals, 100)
 	c.Assert(result.TaxesAmountCents, qt.Equals, 20)
 	c.Assert(result.TaxesRate, qt.Equals, 20.0)
 	c.Assert(result.SubTotalExcludingTaxesAmountCents, qt.Equals, 100)

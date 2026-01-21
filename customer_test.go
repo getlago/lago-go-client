@@ -196,6 +196,7 @@ var mockCustomerCreditNoteListResponse = map[string]any{
 			"sub_total_excluding_taxes_amount_cents":  100,
 			"max_creditable_amount_cents":             100,
 			"max_refundable_amount_cents":             100,
+			"max_offsettable_amount_cents":            100,
 			"precise_coupons_adjustment_amount_cents": "0.0",
 			"created_at":                              "2022-04-29T08:59:51Z",
 			"updated_at":                              "2022-04-29T08:59:51Z",

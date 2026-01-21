@@ -131,6 +131,7 @@ type CreditNote struct {
 	CreditAmountCents                 int      `json:"credit_amount_cents,omitempty"`
 	BalanceAmountCents                int      `json:"balance_amount_cents,omitempty"`
 	RefundAmountCents                 int      `json:"refund_amount_cents,omitempty"`
+	OffsetAmountCents                 int      `json:"offset_amount_cents,omitempty"`
 	TaxesAmountCents                  int      `json:"taxes_amount_cents,omitempty"`
 	TaxesRate                         float64  `json:"taxes_rate,omitempty"`
 	SubTotalExcludingTaxesAmountCents int      `json:"sub_total_excluding_taxes_amount_cents,omitempty"`
@@ -155,6 +156,7 @@ type EstimatedCreditNote struct {
 	Currency                            Currency `json:"currency,omitempty"`
 	MaxCreditableAmountCents            int      `json:"max_creditable_amount_cents,omitempty"`
 	MaxRefundableAmountCents            int      `json:"max_refundable_amount_cents,omitempty"`
+	MaxOffsettableAmountCents           int      `json:"max_offsettable_amount_cents,omitempty"`
 	TaxesAmountCents                    int      `json:"taxes_amount_cents,omitempty"`
 	PreciseTaxesAmountCents             float64  `json:"precise_taxes_amount_cents,omitempty"`
 	TaxesRate                           float64  `json:"taxes_rate,omitempty"`
@@ -195,6 +197,7 @@ type CreditNoteInput struct {
 	Items             []CreditNoteItemInput `json:"items,omitempty"`
 	CreditAmountCents int                   `json:"credit_amount_cents,omitempty"`
 	RefundAmountCents int                   `json:"refund_amount_cents,omitempty"`
+	OffsetAmountCents int                   `json:"offset_amount_cents,omitempty"`
 }
 
 type CreditNoteUpdateInput struct {
