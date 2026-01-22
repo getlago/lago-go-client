@@ -208,7 +208,7 @@ type IntegrationCustomer struct {
 
 type IntegrationCustomersResponse struct {
 	LagoID             uuid.UUID       `json:"lago_id,omitempty"`
-	ExternalCustomerId string          `json:"external_customer_id,omitempty"`
+	ExternalCustomerID string          `json:"external_customer_id,omitempty"`
 	IntegrationType    IntegrationType `json:"type,omitempty"`
 	IntegrationCode    string          `json:"integration_code,omitempty"`
 	SubsidiaryId       string          `json:"subsidiary_id,omitempty"`

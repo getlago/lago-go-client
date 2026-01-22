@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
+	"github.com/google/uuid"
 )
 
 var tests = []struct {
@@ -33,9 +34,23 @@ var tests = []struct {
 		},
 	},
 	{
+		fixture: "credit_note_refund_failure",
+		test: func(object any) bool {
+			_, ok := object.(*PaymentProviderCreditNoteRefundError)
+			return ok
+		},
+	},
+	{
 		fixture: "customer_accounting_provider_created",
 		test: func(object any) bool {
 			_, ok := object.(*Customer)
+			return ok
+		},
+	},
+	{
+		fixture: "customer_accounting_provider_error",
+		test: func(object any) bool {
+			_, ok := object.(*IntegrationCustomerError)
 			return ok
 		},
 	},
@@ -61,9 +76,30 @@ var tests = []struct {
 		},
 	},
 	{
+		fixture: "customer_crm_provider_error",
+		test: func(object any) bool {
+			_, ok := object.(*IntegrationCustomerError)
+			return ok
+		},
+	},
+	{
 		fixture: "customer_payment_provider_created",
 		test: func(object any) bool {
 			_, ok := object.(*Customer)
+			return ok
+		},
+	},
+	{
+		fixture: "customer_payment_provider_error",
+		test: func(object any) bool {
+			_, ok := object.(*PaymentProviderCustomerError)
+			return ok
+		},
+	},
+	{
+		fixture: "customer_tax_provider_error",
+		test: func(object any) bool {
+			_, ok := object.(*TaxProviderCustomerError)
 			return ok
 		},
 	},
@@ -78,6 +114,20 @@ var tests = []struct {
 		fixture: "customer_vies_check",
 		test: func(object any) bool {
 			_, ok := object.(*Customer)
+			return ok
+		},
+	},
+	{
+		fixture: "dunning_campaign_finished",
+		test: func(object any) bool {
+			_, ok := object.(*DunningCampaign)
+			return ok
+		},
+	},
+	{
+		fixture: "events_errors",
+		test: func(object any) bool {
+			_, ok := object.(*EventsErrors)
 			return ok
 		},
 	},
@@ -106,6 +156,20 @@ var tests = []struct {
 		fixture: "fee_created",
 		test: func(object any) bool {
 			_, ok := object.(*Fee)
+			return ok
+		},
+	},
+	{
+		fixture: "fee_tax_provider_error",
+		test: func(object any) bool {
+			_, ok := object.(*TaxProviderFeeError)
+			return ok
+		},
+	},
+	{
+		fixture: "integration_provider_error",
+		test: func(object any) bool {
+			_, ok := object.(*IntegrationProviderError)
 			return ok
 		},
 	},
@@ -152,6 +216,20 @@ var tests = []struct {
 		},
 	},
 	{
+		fixture: "invoice_payment_dispute_lost",
+		test: func(object any) bool {
+			_, ok := object.(*InvoicePaymentDisputLost)
+			return ok
+		},
+	},
+	{
+		fixture: "invoice_payment_failure",
+		test: func(object any) bool {
+			_, ok := object.(*PaymentProviderInvoiceError)
+			return ok
+		},
+	},
+	{
 		fixture: "invoice_payment_overdue",
 		test: func(object any) bool {
 			_, ok := object.(*Invoice)
@@ -180,9 +258,23 @@ var tests = []struct {
 		},
 	},
 	{
+		fixture: "payment_provider_error",
+		test: func(object any) bool {
+			_, ok := object.(*PaymentProviderError)
+			return ok
+		},
+	},
+	{
 		fixture: "payment_request_created",
 		test: func(object any) bool {
 			_, ok := object.(*PaymentRequest)
+			return ok
+		},
+	},
+	{
+		fixture: "payment_request_payment_failure",
+		test: func(object any) bool {
+			_, ok := object.(*PaymentProviderPaymentRequestError)
 			return ok
 		},
 	},
@@ -278,6 +370,13 @@ var tests = []struct {
 		},
 	},
 	{
+		fixture: "wallet_transaction_payment_failure",
+		test: func(object any) bool {
+			_, ok := object.(*PaymentProviderWalletTransactionError)
+			return ok
+		},
+	},
+	{
 		fixture: "wallet_transaction_updated",
 		test: func(object any) bool {
 			_, ok := object.(*WalletTransaction)
@@ -303,6 +402,42 @@ func TestWebhookMessage_ParseWebhook_AllFixtures(t *testing.T) {
 			c.Assert(tt.test(msg.Object), qt.IsTrue)
 		})
 	}
+}
+
+func TestWebhookMessage_ParseWebhook_CustomerAccountingProviderError(t *testing.T) {
+	c := qt.New(t)
+
+	jsonData := []byte(`{
+		"webhook_type": "customer.accounting_provider_error",
+		"object_type": "accounting_provider_customer_error",
+		"organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+		"accounting_provider_customer_error": {
+  		"lago_customer_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+	    "external_customer_id": "customer_1234",
+	    "accounting_provider": "netsuite",
+	    "accounting_provider_code": "Netsuite Prod",
+	    "provider_error": {
+     		"error_message": "message",
+        "error_code": "code"
+			}
+		}
+	}`)
+
+	msg, err := ParseWebhook(jsonData)
+
+	c.Assert(err, qt.IsNil)
+	c.Assert(msg.WebhookType, qt.Equals, "customer.accounting_provider_error")
+	c.Assert(msg.ObjectType, qt.Equals, "accounting_provider_customer_error")
+	c.Assert(msg.OrganizationID, qt.Equals, uuid.MustParse("1a901a90-1a90-1a90-1a90-1a901a901a90"))
+
+	c.Assert(msg.Object, qt.IsNotNil)
+
+	object, ok := msg.Object.(*IntegrationCustomerError)
+	c.Assert(ok, qt.IsTrue)
+	c.Assert(object.LagoCustomerID, qt.Equals, uuid.MustParse("1a901a90-1a90-1a90-1a90-1a901a901a90"))
+
+	c.Assert(object.ProviderError["error_code"], qt.Equals, "code")
+	c.Assert(object.ProviderError["error_message"], qt.Equals, "message")
 }
 
 func TestWebhookMessage_ParseWebhook_MissingObjectField(t *testing.T) {
