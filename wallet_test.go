@@ -23,6 +23,7 @@ var mockWalletResponse = `{
 		"status": "active",
 		"currency": "USD",
 		"name": "wallet name",
+		"priority": 30,
 		"rate_amount": "1.00",
 		"credits_balance": "100.00",
 		"balance_cents": 10000,
@@ -63,6 +64,7 @@ var mockWalletListResponse = `{
 		"status": "active",
 		"currency": "USD",
 		"name": "wallet name",
+		"priority": 30,
 		"rate_amount": "1.00",
 		"credits_balance": "100.00",
 		"balance_cents": 10000,
@@ -111,6 +113,7 @@ func TestWallet_Create(t *testing.T) {
 			ExternalCustomerID: "12345",
 			RateAmount:         "1.00",
 			Name:               "wallet name",
+			Priority:           Ptr(int(30)),
 			PaidCredits:        "100.00",
 			GrantedCredits:     "100.00",
 			ExpirationAt:       Ptr(time.Date(2022, 7, 7, 23, 59, 59, 0, time.UTC)),
@@ -148,6 +151,7 @@ func TestWallet_Create(t *testing.T) {
 					"external_customer_id": "12345",
 					"rate_amount": "1.00",
 					"name": "wallet name",
+					"priority": 30,
 					"paid_credits": "100.00",
 					"granted_credits": "100.00",
                     "transaction_name": "wallet transaction name",
@@ -181,6 +185,7 @@ func TestWallet_Create(t *testing.T) {
 			ExternalCustomerID:      "12345",
 			RateAmount:              "1.00",
 			Name:                    "wallet name",
+			Priority:                Ptr(int(30)),
 			PaidCredits:             "100.00",
 			GrantedCredits:          "100.00",
 			TransactionName:         "wallet transaction name",
@@ -211,6 +216,7 @@ func TestWallet_Create(t *testing.T) {
 		c.Assert(result, qt.IsNotNil)
 		c.Assert(result.LagoID, qt.Equals, uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"))
 		c.Assert(result.Name, qt.Equals, "wallet name")
+		c.Assert(result.Priority, qt.Equals, int(30))
 		c.Assert(result.ExternalCustomerID, qt.Equals, "12345")
 		c.Assert(result.RateAmount, qt.Equals, "1.00")
 		c.Assert(result.CreditsBalance, qt.Equals, "100.00")
@@ -256,6 +262,7 @@ func TestWallet_Get(t *testing.T) {
 		c.Assert(result, qt.IsNotNil)
 		c.Assert(result.LagoID, qt.Equals, uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"))
 		c.Assert(result.Name, qt.Equals, "wallet name")
+		c.Assert(result.Priority, qt.Equals, int(30))
 		c.Assert(result.ExternalCustomerID, qt.Equals, "12345")
 		c.Assert(result.RateAmount, qt.Equals, "1.00")
 		c.Assert(result.CreditsBalance, qt.Equals, "100.00")
@@ -301,6 +308,7 @@ func TestWallet_GetList(t *testing.T) {
 		c.Assert(result.Wallets, qt.HasLen, 1)
 		c.Assert(result.Wallets[0].LagoID, qt.Equals, uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"))
 		c.Assert(result.Wallets[0].Name, qt.Equals, "wallet name")
+		c.Assert(result.Wallets[0].Priority, qt.Equals, 30)
 		c.Assert(result.Wallets[0].ExternalCustomerID, qt.Equals, "12345")
 		c.Assert(result.Wallets[0].Status, qt.Equals, Status("active"))
 		c.Assert(result.Wallets[0].Currency, qt.Equals, Currency("USD"))
@@ -343,6 +351,7 @@ func TestWallet_Update(t *testing.T) {
 		client := New().SetBaseURL("http://localhost:88888").SetApiKey("test_api_key")
 		result, err := client.Wallet().Update(context.Background(), &WalletInput{
 			Name:        "updated wallet name",
+			Priority:    Ptr(int(40)),
 			RateAmount:  "1.50",
 			PaidCredits: "200.00",
 		}, "b1b2c3d4-e5f6-7890-1234-56789abcdef0")
@@ -365,6 +374,7 @@ func TestWallet_Update(t *testing.T) {
 				"status": "active",
 				"currency": "USD",
 				"name": "updated wallet name",
+				"priority": 40,
 				"rate_amount": "1.50",
 				"credits_balance": "200.00",
     "balance_cents": 20000,
@@ -384,6 +394,7 @@ func TestWallet_Update(t *testing.T) {
 
 		result, err := server.Client().Wallet().Update(context.Background(), &WalletInput{
 			Name:        "updated wallet name",
+			Priority:    Ptr(int(40)),
 			RateAmount:  "1.50",
 			PaidCredits: "200.00",
 		}, "b1b2c3d4-e5f6-7890-1234-56789abcdef0")
@@ -392,6 +403,7 @@ func TestWallet_Update(t *testing.T) {
 		c.Assert(result, qt.IsNotNil)
 		c.Assert(result.LagoID, qt.Equals, uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"))
 		c.Assert(result.Name, qt.Equals, "updated wallet name")
+		c.Assert(result.Priority, qt.Equals, int(40))
 		c.Assert(result.RateAmount, qt.Equals, "1.50")
 		c.Assert(result.CreditsBalance, qt.Equals, "200.00")
 		c.Assert(result.BalanceCents, qt.Equals, 20000)
@@ -425,6 +437,7 @@ func TestWallet_Delete(t *testing.T) {
 				"status": "terminated",
 				"currency": "USD",
 				"name": "wallet name",
+				"priority": 30,
 				"rate_amount": "1.00",
 				"credits_balance": "100.00",
     "balance_cents": 10000,
@@ -450,6 +463,7 @@ func TestWallet_Delete(t *testing.T) {
 		c.Assert(result.LagoID, qt.Equals, uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"))
 		c.Assert(result.Status, qt.Equals, Status("terminated"))
 		c.Assert(result.Name, qt.Equals, "wallet name")
+		c.Assert(result.Priority, qt.Equals, int(30))
 		c.Assert(result.ExternalCustomerID, qt.Equals, "12345")
 		c.Assert(result.Currency, qt.Equals, Currency("USD"))
 	})
