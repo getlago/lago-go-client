@@ -103,7 +103,7 @@ type Wallet struct {
 	Status                           Status                             `json:"status,omitempty"`
 	Currency                         Currency                           `json:"currency,omitempty"`
 	Name                             string                             `json:"name,omitempty"`
-	Priority                         *int                               `json:"priority,omitempty"`
+	Priority                         int                                `json:"priority"`
 	RateAmount                       string                             `json:"rate_amount,omitempty"`
 	CreditsBalance                   string                             `json:"credits_balance,omitempty"`
 	BalanceCents                     int                                `json:"balance_cents,omitempty"`
