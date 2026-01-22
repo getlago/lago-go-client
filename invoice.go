@@ -246,6 +246,11 @@ type InvoicePaymentDetails struct {
 	PaymentUrl         string    `json:"payment_url,omitempty"`
 }
 
+type InvoicePaymentDisputLost struct {
+	Invoice       Invoice       `json:"invoice"`
+	ProviderError ProviderError `json:"provider_error,omitempty"`
+}
+
 func (c *Client) Invoice() *InvoiceRequest {
 	return &InvoiceRequest{
 		client: c,
