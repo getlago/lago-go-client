@@ -1,0 +1,96 @@
+{
+  "webhook_type": "customer.vies_check",
+  "object_type": "customer",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "customer": {
+    "lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "external_id": "customer_1234",
+    "billing_entity_code": "test-company",
+    "address_line1": "5230 Penfield Ave",
+    "address_line2": null,
+    "city": "Woodland Hills",
+    "country": "US",
+    "created_at": "2022-04-29T08:59:51Z",
+    "updated_at": "2022-04-29T08:59:51Z",
+    "email": "dinesh@piedpiper.test",
+    "legal_name": "Coleman-Blair",
+    "legal_number": "49-008-2965",
+    "tax_identification_number": "EU123456789",
+    "logo_url": "http://hooli.com/logo.png",
+    "name": "Gavin Belson",
+    "firstname": "Gavin",
+    "lastname": "Belson",
+    "customer_type": "individual",
+    "phone": "1-171-883-3711 x245",
+    "state": "CA",
+    "url": "http://hooli.com",
+    "zipcode": "91364",
+    "currency": "EUR",
+    "timezone": "Europe/Paris",
+    "applicable_timezone": "Europe/Paris",
+    "net_payment_term": null,
+    "finalize_zero_amount_invoice": "inherit",
+    "billing_configuration": {
+      "invoice_grace_period": 3,
+      "subscription_invoice_issuing_date_anchor": "current_period_end",
+      "subscription_invoice_issuing_date_adjustment": "keep_anchor",
+      "payment_provider": "stripe",
+      "payment_provider_code": "stripe-eu-1",
+      "provider_customer_id": "cus_12345",
+      "sync_with_provider": true,
+      "document_locale": "fr",
+      "provider_payment_methods": ["card", "sepa_debit"]
+    },
+    "shipping_address": {
+      "city": "Paris",
+      "zipcode": "123",
+      "country": "FR",
+      "address_line1": "Test Ave",
+      "address_line2": null,
+      "state": "XZ"
+    },
+    "integration_customers": [
+      {
+        "lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+        "external_customer_id": "test-12345",
+        "type": "netsuite",
+        "integration_code": "test",
+        "subsidiary_id": "2",
+        "sync_with_provider": true
+      }
+    ],
+    "metadata": [
+      {
+        "lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+        "key": "key",
+        "value": "value",
+        "display_in_invoice": true
+      }
+    ],
+    "taxes": [
+      {
+        "lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+        "name": "tax_name",
+        "code": "tax_code",
+        "rate": 15.0,
+        "description": "tax_desc",
+        "add_ons_count": 0,
+        "customers_count": 0,
+        "plans_count": 0,
+        "charges_count": 0,
+        "applied_to_organization": false,
+        "created_at": "2022-04-29T08:59:51Z"
+      }
+    ],
+    "applicable_invoice_custom_sections": [
+      {
+        "lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+        "name": "custom_section_name",
+        "code": "custom_section_code",
+        "description": "custom_section_description",
+        "details": "custom_section_details",
+        "display_name": "custom_section_display_name"
+      }
+    ]
+  }
+}
