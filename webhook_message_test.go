@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
-	"github.com/google/uuid"
 )
 
 var tests = []struct {
@@ -402,42 +401,6 @@ func TestWebhookMessage_ParseWebhook_AllFixtures(t *testing.T) {
 			c.Assert(tt.test(msg.Object), qt.IsTrue)
 		})
 	}
-}
-
-func TestWebhookMessage_ParseWebhook_CustomerAccountingProviderError(t *testing.T) {
-	c := qt.New(t)
-
-	jsonData := []byte(`{
-		"webhook_type": "customer.accounting_provider_error",
-		"object_type": "accounting_provider_customer_error",
-		"organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
-		"accounting_provider_customer_error": {
-  		"lago_customer_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
-	    "external_customer_id": "customer_1234",
-	    "accounting_provider": "netsuite",
-	    "accounting_provider_code": "Netsuite Prod",
-	    "provider_error": {
-     		"error_message": "message",
-        "error_code": "code"
-			}
-		}
-	}`)
-
-	msg, err := ParseWebhook(jsonData)
-
-	c.Assert(err, qt.IsNil)
-	c.Assert(msg.WebhookType, qt.Equals, "customer.accounting_provider_error")
-	c.Assert(msg.ObjectType, qt.Equals, "accounting_provider_customer_error")
-	c.Assert(msg.OrganizationID, qt.Equals, uuid.MustParse("1a901a90-1a90-1a90-1a90-1a901a901a90"))
-
-	c.Assert(msg.Object, qt.IsNotNil)
-
-	object, ok := msg.Object.(*IntegrationCustomerError)
-	c.Assert(ok, qt.IsTrue)
-	c.Assert(object.LagoCustomerID, qt.Equals, uuid.MustParse("1a901a90-1a90-1a90-1a90-1a901a901a90"))
-
-	c.Assert(object.ProviderError["error_code"], qt.Equals, "code")
-	c.Assert(object.ProviderError["error_message"], qt.Equals, "message")
 }
 
 func TestWebhookMessage_ParseWebhook_MissingObjectField(t *testing.T) {
