@@ -284,6 +284,7 @@ func TestSubscriptionRequest_Terminate(t *testing.T) {
 	for _, onTerminationCreditNote := range []OnTerminationCreditNote{
 		OnTerminationCreditNoteCredit,
 		OnTerminationCreditNoteRefund,
+		OnTerminationCreditNoteOffset,
 		OnTerminationCreditNoteSkip,
 	} {
 		title := fmt.Sprintf("When providing the on_termination_credit_note=%s parameter", onTerminationCreditNote)

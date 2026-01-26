@@ -31,6 +31,7 @@ type OnTerminationCreditNote string
 const (
 	OnTerminationCreditNoteCredit OnTerminationCreditNote = "credit"
 	OnTerminationCreditNoteRefund OnTerminationCreditNote = "refund"
+	OnTerminationCreditNoteOffset OnTerminationCreditNote = "offset"
 	OnTerminationCreditNoteSkip   OnTerminationCreditNote = "skip"
 )
 
