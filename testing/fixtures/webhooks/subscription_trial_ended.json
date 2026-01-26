@@ -1,0 +1,26 @@
+{
+  "webhook_type": "subscription.trial_ended",
+  "object_type": "subscription",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "subscription": {
+    "lago_id": "b7ab2926-1de8-4428-9bcd-779314ac129b",
+    "lago_customer_id": "99a6094e-199b-4101-896a-54e927ce7bd7",
+    "external_customer_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+    "canceled_at": "2022-04-29T08:59:51Z",
+    "created_at": "2022-04-29T08:59:51Z",
+    "plan_code": "eartha lynch",
+    "started_at": "2022-04-29T08:59:51Z",
+    "ending_at": "2022-08-29T08:59:51Z",
+    "status": "active",
+    "billing_time": "anniversary",
+    "terminated_at": null,
+    "on_termination_credit_note": "skip",
+    "on_termination_invoice": "skip",
+    "subscription_at": "2022-04-29T08:59:51Z",
+    "previous_plan_code": null,
+    "next_plan_code": null,
+    "downgrade_plan_date": null,
+    "current_billing_period_started_at": "2022-04-29T08:59:51Z",
+    "current_billing_period_ending_at": "2022-05-29T23:59:59Z"
+  }
+}

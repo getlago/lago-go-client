@@ -1,0 +1,28 @@
+{
+  "webhook_type": "alert.triggered",
+  "object_type": "triggered_alert",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "triggered_alert": {
+    "lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "lago_organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "lago_alert_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "lago_subscription_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "subscription_external_id": "subscription_1234",
+    "customer_external_id": "customer_1234",
+    "billable_metric_code": "bm_code",
+    "alert_type": "UsageMonitoring::CurrentUsageAmountAlert",
+    "alert_code": "alert",
+    "alert_name": "Usage Alert",
+    "current_value": "150",
+    "previous_value": "100",
+    "last_processed_at": "2022-04-29T08:59:51Z",
+    "crossed_thresholds": [
+      {
+        "code": "threshold_1",
+        "value": "100",
+        "recurring": false
+      }
+    ],
+    "triggered_at": "2022-04-29T08:59:51Z"
+  }
+}

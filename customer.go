@@ -15,9 +15,12 @@ import (
 type CustomerPaymentProvider string
 
 const (
-	PaymentProviderAdyen      CustomerPaymentProvider = "adyen"
-	PaymentProviderStripe     CustomerPaymentProvider = "stripe"
-	PaymentProviderGocardless CustomerPaymentProvider = "gocardless"
+	PaymentProviderAdyen       CustomerPaymentProvider = "adyen"
+	PaymentProviderCashfree    CustomerPaymentProvider = "cashfree"
+	PaymentProviderFlutterwave CustomerPaymentProvider = "flutterwave"
+	PaymentProviderGocardless  CustomerPaymentProvider = "gocardless"
+	PaymentProviderMoneyHash   CustomerPaymentProvider = "moneyhash"
+	PaymentProviderStripe      CustomerPaymentProvider = "stripe"
 )
 
 type FinalizeZeroAmountInvoice string
@@ -31,9 +34,12 @@ const (
 type IntegrationType string
 
 const (
-	IntegrationNetsuite IntegrationType = "netsuite"
-	IntegrationAnrok    IntegrationType = "anrok"
-	IntegrationXero     IntegrationType = "xero"
+	IntegrationAnrok      IntegrationType = "anrok"
+	IntegrationHubspot    IntegrationType = "hubspot"
+	IntegrationNetsuite   IntegrationType = "netsuite"
+	IntegrationOkta       IntegrationType = "okta"
+	IntegrationSalesforce IntegrationType = "salesforce"
+	IntegrationXero       IntegrationType = "xero"
 )
 
 type CustomerType string
@@ -202,7 +208,7 @@ type IntegrationCustomer struct {
 
 type IntegrationCustomersResponse struct {
 	LagoID             uuid.UUID       `json:"lago_id,omitempty"`
-	ExternalCustomerId string          `json:"external_customer_id,omitempty"`
+	ExternalCustomerID string          `json:"external_customer_id,omitempty"`
 	IntegrationType    IntegrationType `json:"type,omitempty"`
 	IntegrationCode    string          `json:"integration_code,omitempty"`
 	SubsidiaryId       string          `json:"subsidiary_id,omitempty"`
@@ -314,7 +320,11 @@ type CustomerPortalUrl struct {
 }
 
 type CustomerCheckoutUrl struct {
-	CheckoutUrl string `json:"checkout_url,omitempty"`
+	LagoCustomerID      uuid.UUID               `json:"lago_customer_id"`
+	ExternalCustomerID  string                  `json:"external_customer_id"`
+	PaymentProvider     CustomerPaymentProvider `json:"payment_provider"`
+	PaymentProviderCode string                  `json:"payment_provider_code,omitempty"`
+	CheckoutUrl         string                  `json:"checkout_url,omitempty"`
 }
 
 type CustomerUsageInput struct {
