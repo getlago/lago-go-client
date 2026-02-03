@@ -179,6 +179,53 @@ var mockCreditNoteResponse = map[string]interface{}{
 	"credit_note": mockCreditNote,
 }
 
+var mockCustomer = map[string]interface{}{
+	"lago_id":                      "1a901a90-1a90-1a90-1a90-1a901a901a90",
+	"sequential_id":                1,
+	"slug":                         "LAG-1234-001",
+	"external_id":                  "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+	"billing_entity_code":          "acme_corp",
+	"address_line1":                "5230 Penfield Ave",
+	"address_line2":                nil,
+	"applicable_timezone":          "America/Los_Angeles",
+	"city":                         "Woodland Hills",
+	"country":                      "US",
+	"currency":                     "USD",
+	"email":                        "dinesh@piedpiper.test",
+	"legal_name":                   "Coleman-Blair",
+	"legal_number":                 "49-008-2965",
+	"logo_url":                     "http://hooli.com/logo.png",
+	"name":                         "Gavin Belson",
+	"firstname":                    "Gavin",
+	"lastname":                     "Belson",
+	"account_type":                 "customer",
+	"customer_type":                "company",
+	"phone":                        "1-171-883-3711 x245",
+	"state":                        "CA",
+	"tax_identification_number":    "EU123456789",
+	"timezone":                     "America/Los_Angeles",
+	"url":                          "http://hooli.com",
+	"zipcode":                      "91364",
+	"net_payment_term":             30,
+	"created_at":                   "2022-04-29T08:59:51Z",
+	"updated_at":                   "2022-04-29T08:59:51Z",
+	"finalize_zero_amount_invoice": "inherit",
+	"skip_invoice_custom_sections": false,
+}
+
+var mockCreditNoteWithCustomer = func() map[string]interface{} {
+	result := make(map[string]interface{})
+	for k, v := range mockCreditNote {
+		result[k] = v
+	}
+	result["customer"] = mockCustomer
+	return result
+}()
+
+var mockCreditNoteWithCustomerResponse = map[string]interface{}{
+	"credit_note": mockCreditNoteWithCustomer,
+}
+
 var mockMetadataResponse = map[string]interface{}{
 	"metadata": map[string]interface{}{
 		"foo": "bar",
@@ -283,6 +330,15 @@ func assertCreditNoteResponse(c *qt.C, result *CreditNote) {
 	c.Assert(result.ErrorDetails, qt.HasLen, 0)
 }
 
+func assertCreditNoteWithCustomerResponse(c *qt.C, result *CreditNoteWithCustomer) {
+	assertCreditNoteResponse(c, &result.CreditNote)
+
+	c.Assert(result.Customer.LagoID.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
+	c.Assert(result.Customer.ExternalID, qt.Equals, "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba")
+	c.Assert(result.Customer.Name, qt.Equals, "Gavin Belson")
+	c.Assert(result.Customer.Email, qt.Equals, "dinesh@piedpiper.test")
+}
+
 func assertCreditNoteEstimateResponse(c *qt.C, result *EstimatedCreditNote) {
 	c.Assert(result.LagoInvoiceID.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
 	c.Assert(result.InvoiceNumber, qt.Equals, "LAG-1234")
@@ -334,12 +390,12 @@ func TestCreditNoteRequest_Get(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("GET").
 			MatchPath("/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90").
-			MockResponse(mockCreditNoteResponse)
+			MockResponse(mockCreditNoteWithCustomerResponse)
 		defer server.Close()
 
 		result, err := server.Client().CreditNote().Get(context.Background(), creditNoteUUID)
 		c.Assert(err == nil, qt.IsTrue)
-		assertCreditNoteResponse(c, result)
+		assertCreditNoteWithCustomerResponse(c, result)
 	})
 }
 
@@ -481,7 +537,7 @@ func TestCreditNoteRequest_Create(t *testing.T) {
 	t.Run("When create is called", func(t *testing.T) {
 		c := qt.New(t)
 
-		server := lt.ServerWithAssertions(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
+		server := lt.ServerWithAssertions(c, mockCreditNoteWithCustomerResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "POST")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes")
 
@@ -532,7 +588,7 @@ func TestCreditNoteRequest_Create(t *testing.T) {
 		})
 
 		c.Assert(err == nil, qt.IsTrue)
-		assertCreditNoteResponse(c, result)
+		assertCreditNoteWithCustomerResponse(c, result)
 	})
 }
 
@@ -555,7 +611,7 @@ func TestCreditNoteRequest_Update(t *testing.T) {
 
 		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
 
-		server := lt.ServerWithAssertions(c, mockCreditNoteResponse, func(c *qt.C, r *http.Request) {
+		server := lt.ServerWithAssertions(c, mockCreditNoteWithCustomerResponse, func(c *qt.C, r *http.Request) {
 			c.Assert(r.Method, qt.Equals, "PUT")
 			c.Assert(r.URL.Path, qt.Equals, "/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90")
 
@@ -580,7 +636,7 @@ func TestCreditNoteRequest_Update(t *testing.T) {
 		})
 
 		c.Assert(err == nil, qt.IsTrue)
-		assertCreditNoteResponse(c, result)
+		assertCreditNoteWithCustomerResponse(c, result)
 	})
 }
 
@@ -604,12 +660,12 @@ func TestCreditNoteRequest_Void(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("PUT").
 			MatchPath("/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/void").
-			MockResponse(mockCreditNoteResponse)
+			MockResponse(mockCreditNoteWithCustomerResponse)
 		defer server.Close()
 
 		result, err := server.Client().CreditNote().Void(context.Background(), creditNoteUUID)
 		c.Assert(err == nil, qt.IsTrue)
-		assertCreditNoteResponse(c, result)
+		assertCreditNoteWithCustomerResponse(c, result)
 	})
 }
 

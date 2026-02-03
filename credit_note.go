@@ -56,6 +56,10 @@ type CreditNoteResult struct {
 	Meta        Metadata     `json:"meta,omitempty"`
 }
 
+type CreditNoteWithCustomerResult struct {
+	CreditNote *CreditNoteWithCustomer `json:"credit_note,omitempty"`
+}
+
 type CreditNoteMetadataResult struct {
 	Metadata map[string]*string `json:"metadata"`
 }
@@ -149,6 +153,11 @@ type CreditNote struct {
 	Metadata     map[string]*string       `json:"metadata,omitempty"`
 }
 
+type CreditNoteWithCustomer struct {
+	CreditNote
+	Customer Customer `json:"customer"`
+}
+
 type EstimatedCreditNote struct {
 	LagoInvoiceID uuid.UUID `json:"lago_invoice_id,omitempty"`
 	InvoiceNumber string    `json:"invoice_number,omitempty"`
@@ -228,12 +237,12 @@ func (c *Client) CreditNote() *CreditNoteRequest {
 	}
 }
 
-func (cr *CreditNoteRequest) Get(ctx context.Context, creditNoteID uuid.UUID) (*CreditNote, *Error) {
+func (cr *CreditNoteRequest) Get(ctx context.Context, creditNoteID uuid.UUID) (*CreditNoteWithCustomer, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "credit_notes", creditNoteID)
 
 	clientRequest := &ClientRequest{
 		Path:   subPath,
-		Result: &CreditNoteResult{},
+		Result: &CreditNoteWithCustomerResult{},
 	}
 
 	result, err := cr.client.Get(ctx, clientRequest)
@@ -241,7 +250,7 @@ func (cr *CreditNoteRequest) Get(ctx context.Context, creditNoteID uuid.UUID) (*
 		return nil, err
 	}
 
-	creditNoteResult, ok := result.(*CreditNoteResult)
+	creditNoteResult, ok := result.(*CreditNoteWithCustomerResult)
 	if !ok {
 		return nil, &ErrorTypeAssert
 	}
@@ -298,14 +307,14 @@ func (cr *CreditNoteRequest) GetList(ctx context.Context, creditNoteListInput *C
 	return creditNoteResult, nil
 }
 
-func (cr *CreditNoteRequest) Create(ctx context.Context, creditNoteInput *CreditNoteInput) (*CreditNote, *Error) {
+func (cr *CreditNoteRequest) Create(ctx context.Context, creditNoteInput *CreditNoteInput) (*CreditNoteWithCustomer, *Error) {
 	creditNoteParams := &CreditNoteParams{
 		CreditNote: creditNoteInput,
 	}
 
 	clientRequest := &ClientRequest{
 		Path:   "credit_notes",
-		Result: &CreditNoteResult{},
+		Result: &CreditNoteWithCustomerResult{},
 		Body:   creditNoteParams,
 	}
 
@@ -314,7 +323,7 @@ func (cr *CreditNoteRequest) Create(ctx context.Context, creditNoteInput *Credit
 		return nil, err
 	}
 
-	creditNoteResult, ok := result.(*CreditNoteResult)
+	creditNoteResult, ok := result.(*CreditNoteWithCustomerResult)
 	if !ok {
 		return nil, &ErrorTypeAssert
 	}
@@ -322,7 +331,7 @@ func (cr *CreditNoteRequest) Create(ctx context.Context, creditNoteInput *Credit
 	return creditNoteResult.CreditNote, nil
 }
 
-func (cr *CreditNoteRequest) Update(ctx context.Context, creditNoteUpdateInput *CreditNoteUpdateInput) (*CreditNote, *Error) {
+func (cr *CreditNoteRequest) Update(ctx context.Context, creditNoteUpdateInput *CreditNoteUpdateInput) (*CreditNoteWithCustomer, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "credit_notes", creditNoteUpdateInput.LagoID)
 	creditNoteParams := &CreditNoteUpdateParams{
 		CreditNote: creditNoteUpdateInput,
@@ -330,7 +339,7 @@ func (cr *CreditNoteRequest) Update(ctx context.Context, creditNoteUpdateInput *
 
 	ClientRequest := &ClientRequest{
 		Path:   subPath,
-		Result: &CreditNoteResult{},
+		Result: &CreditNoteWithCustomerResult{},
 		Body:   creditNoteParams,
 	}
 
@@ -339,7 +348,7 @@ func (cr *CreditNoteRequest) Update(ctx context.Context, creditNoteUpdateInput *
 		return nil, err
 	}
 
-	creditNoteResult, ok := result.(*CreditNoteResult)
+	creditNoteResult, ok := result.(*CreditNoteWithCustomerResult)
 	if !ok {
 		return nil, &ErrorTypeAssert
 	}
@@ -347,12 +356,12 @@ func (cr *CreditNoteRequest) Update(ctx context.Context, creditNoteUpdateInput *
 	return creditNoteResult.CreditNote, nil
 }
 
-func (cr *CreditNoteRequest) Void(ctx context.Context, creditNoteID uuid.UUID) (*CreditNote, *Error) {
+func (cr *CreditNoteRequest) Void(ctx context.Context, creditNoteID uuid.UUID) (*CreditNoteWithCustomer, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "credit_notes", creditNoteID, "void")
 
 	clientRequest := &ClientRequest{
 		Path:   subPath,
-		Result: &CreditNoteResult{},
+		Result: &CreditNoteWithCustomerResult{},
 	}
 
 	result, err := cr.client.Put(ctx, clientRequest)
@@ -360,7 +369,7 @@ func (cr *CreditNoteRequest) Void(ctx context.Context, creditNoteID uuid.UUID) (
 		return nil, err
 	}
 
-	creditNoteResult, ok := result.(*CreditNoteResult)
+	creditNoteResult, ok := result.(*CreditNoteWithCustomerResult)
 	if !ok {
 		return nil, &ErrorTypeAssert
 	}
