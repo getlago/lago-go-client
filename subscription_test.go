@@ -21,6 +21,8 @@ var mockSubscriptionResponse = `{
     "billing_time": "anniversary",
     "name": "Repository A",
     "plan_code": "premium",
+    "plan_amount_cents": 10000,
+    "plan_amount_currency": "USD",
     "status": "terminated",
     "created_at": "2022-08-08T00:00:00Z",
     "canceled_at": "2022-09-14T16:35:31Z",
