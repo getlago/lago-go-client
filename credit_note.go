@@ -139,6 +139,8 @@ type CreditNote struct {
 
 	FileURL string `json:"file_url,omitempty"`
 
+	Customer *Customer `json:"customer,omitempty"`
+
 	IssuingDate string    `json:"issuing_date,omitempty"`
 	CreatedAt   time.Time `json:"created_at,omitempty"`
 	UpdatedAt   time.Time `json:"updated_at,omitempty"`
