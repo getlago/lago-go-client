@@ -128,8 +128,8 @@ type Subscription struct {
 
 	PlanCode string `json:"plan_code"`
 
-	PlanAmountCents    int    `json:"plan_amount_cents"`
-	PlanAmountCurrency string `json:"plan_amount_currency"`
+	PlanAmountCents    int      `json:"plan_amount_cents"`
+	PlanAmountCurrency Currency `json:"plan_amount_currency"`
 
 	Name string `json:"name"`
 
