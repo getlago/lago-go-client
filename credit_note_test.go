@@ -330,8 +330,8 @@ func assertCreditNoteResponse(c *qt.C, result *CreditNote) {
 	c.Assert(result.ErrorDetails, qt.HasLen, 0)
 }
 
-func assertCreditNoteWithCustomerResponse(c *qt.C, result *CreditNoteWithCustomer) {
-	assertCreditNoteResponse(c, &result.CreditNote)
+func assertCreditNoteWithCustomerResponse(c *qt.C, result *CreditNote) {
+	assertCreditNoteResponse(c, result)
 
 	c.Assert(result.Customer.LagoID.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
 	c.Assert(result.Customer.ExternalID, qt.Equals, "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba")
