@@ -1,0 +1,14 @@
+{
+  "webhook_type": "credit_note.refund_failure",
+  "object_type": "credit_note_payment_provider_refund_error",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "credit_note_payment_provider_refund_error": {
+    "lago_credit_note_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "lago_customer_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "external_customer_id": "customer_1234",
+    "provider_customer_id": "stripe_id",
+    "payment_provider": "stripe",
+    "payment_provider_code": "Stripe Account",
+    "provider_error": "stripe error"
+  }
+}

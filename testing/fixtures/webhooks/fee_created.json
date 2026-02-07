@@ -1,0 +1,45 @@
+{
+  "webhook_type": "fee.created",
+  "object_type": "fee",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "fee": {
+    "lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "billing_entity_code": "test-company",
+    "lago_charge_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "lago_charge_filter_id": "1a2d9c8d-5875-4688-9854-5ccfd414bc5e",
+    "lago_invoice_id": "1a2d9c8d-5875-4688-9854-5ccfd414bc5e",
+    "lago_true_up_fee_id": "1a2d9c8d-5875-4688-9854-5ccfd414bc5e",
+    "lago_true_up_parent_fee_id": null,
+    "invoice_display_name": "fee_invoice_display_name",
+    "item": {
+      "type": "charge",
+      "code": "fee_code",
+      "name": "Fee Code",
+      "invoice_display_name": "charge_invoice_display_name",
+      "charge_filter_invoice_display_name": "charge_filter_invoice_display_name",
+      "grouped_by": {
+        "agent_name": "aragorn"
+      }
+    },
+    "amount_cents": 120,
+    "amount_currency": "EUR",
+    "taxes_amount_cents": 20,
+    "taxes_rate": 20.0,
+    "total_aggregated_units": "10.0",
+    "total_amount_cents": 140,
+    "total_amount_currency": "EUR",
+    "units": "10.0",
+    "events_count": 10,
+    "pricing_unit_details": {
+      "lago_pricing_unit_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+      "pricing_unit_code": "unit_code",
+      "short_name": "UC",
+      "amount_cents": 120,
+      "precise_amount_cents": "120.00",
+      "unit_amount_cents": 12,
+      "precise_unit_amount": "12.00",
+      "conversion_rate": 1.0
+    },
+    "applied_taxes": []
+  }
+}
