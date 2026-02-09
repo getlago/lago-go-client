@@ -15,8 +15,8 @@ func (c *Client) CustomerWalletMetadata() *CustomerWalletMetadataRequest {
 	}
 }
 
-func (cwmr *CustomerWalletMetadataRequest) Replace(ctx context.Context, customerId string, walletCode string, metadata map[string]*string) (map[string]*string, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s/%s/%s", "customers", customerId, "wallets", walletCode, "metadata")
+func (cwmr *CustomerWalletMetadataRequest) Replace(ctx context.Context, customerID string, walletCode string, metadata map[string]*string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s/%s", "customers", customerID, "wallets", walletCode, "metadata")
 
 	clientRequest := &ClientRequest{
 		Path:   subPath,
@@ -37,8 +37,8 @@ func (cwmr *CustomerWalletMetadataRequest) Replace(ctx context.Context, customer
 	return metadataResult.Metadata, nil
 }
 
-func (cwmr *CustomerWalletMetadataRequest) Merge(ctx context.Context, customerId string, walletCode string, metadata map[string]*string) (map[string]*string, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s/%s/%s", "customers", customerId, "wallets", walletCode, "metadata")
+func (cwmr *CustomerWalletMetadataRequest) Merge(ctx context.Context, customerID string, walletCode string, metadata map[string]*string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s/%s", "customers", customerID, "wallets", walletCode, "metadata")
 
 	clientRequest := &ClientRequest{
 		Path:   subPath,
@@ -59,8 +59,8 @@ func (cwmr *CustomerWalletMetadataRequest) Merge(ctx context.Context, customerId
 	return metadataResult.Metadata, nil
 }
 
-func (cwmr *CustomerWalletMetadataRequest) DeleteAll(ctx context.Context, customerId string, walletCode string) (map[string]*string, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s/%s/%s", "customers", customerId, "wallets", walletCode, "metadata")
+func (cwmr *CustomerWalletMetadataRequest) DeleteAll(ctx context.Context, customerID string, walletCode string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s/%s", "customers", customerID, "wallets", walletCode, "metadata")
 
 	clientRequest := &ClientRequest{
 		Path:   subPath,
@@ -80,8 +80,8 @@ func (cwmr *CustomerWalletMetadataRequest) DeleteAll(ctx context.Context, custom
 	return metadataResult.Metadata, nil
 }
 
-func (cwmr *CustomerWalletMetadataRequest) DeleteKey(ctx context.Context, customerId string, walletCode string, key string) (map[string]*string, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s/%s/%s/%s", "customers", customerId, "wallets", walletCode, "metadata", key)
+func (cwmr *CustomerWalletMetadataRequest) DeleteKey(ctx context.Context, customerID string, walletCode string, key string) (map[string]*string, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s/%s/%s", "customers", customerID, "wallets", walletCode, "metadata", key)
 
 	clientRequest := &ClientRequest{
 		Path:   subPath,
