@@ -42,18 +42,19 @@ const (
 )
 
 type PlanChargeInput struct {
-	LagoID             *uuid.UUID             `json:"id,omitempty"`
-	BillableMetricID   uuid.UUID              `json:"billable_metric_id,omitempty"`
-	AmountCurrency     Currency               `json:"amount_currency,omitempty"`
-	ChargeModel        ChargeModel            `json:"charge_model,omitempty"`
-	PayInAdvance       bool                   `json:"pay_in_advance,omitempty"`
-	Invoiceable        bool                   `json:"invoiceable,omitempty"`
-	RegroupPaidFees    string                 `json:"regroup_paid_fees,omitempty"`
-	Prorated           bool                   `json:"prorated,omitempty"`
-	MinAmountCents     int                    `json:"min_amount_cents,omitempty"`
-	Properties         map[string]interface{} `json:"properties"`
-	Filters            []ChargeFilter         `json:"filters,omitempty"`
-	AppliedPricingUnit *AppliedPricingUnit    `json:"applied_pricing_unit,omitempty"`
+	LagoID              *uuid.UUID             `json:"id,omitempty"`
+	BillableMetricID    uuid.UUID              `json:"billable_metric_id,omitempty"`
+	AmountCurrency      Currency               `json:"amount_currency,omitempty"`
+	ChargeModel         ChargeModel            `json:"charge_model,omitempty"`
+	PayInAdvance        bool                   `json:"pay_in_advance,omitempty"`
+	Invoiceable         bool                   `json:"invoiceable,omitempty"`
+	RegroupPaidFees     string                 `json:"regroup_paid_fees,omitempty"`
+	Prorated            bool                   `json:"prorated,omitempty"`
+	MinAmountCents      int                    `json:"min_amount_cents,omitempty"`
+	Properties          map[string]interface{} `json:"properties"`
+	Filters             []ChargeFilter         `json:"filters,omitempty"`
+	AppliedPricingUnit  *AppliedPricingUnit    `json:"applied_pricing_unit,omitempty"`
+	AcceptsTargetWallet *bool                  `json:"accepts_target_wallet,omitempty"`
 
 	TaxCodes []string `json:"tax_codes,omitempty"`
 }
