@@ -140,12 +140,12 @@ func TestAlertRequest_Create(t *testing.T) {
 	})
 }
 
-func TestAlertRequest_BatchCreate(t *testing.T) {
+func TestAlertRequest_CreateList(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
 
 		client := New().SetBaseURL("http://localhost:88888").SetApiKey("test_api_key")
-		result, err := client.Alert().BatchCreate(context.Background(), "sub_1234", []AlertInput{})
+		result, err := client.Alert().CreateList(context.Background(), "sub_1234", []AlertInput{})
 		c.Assert(result, qt.IsNil)
 		c.Assert(err, qt.IsNotNil)
 	})
@@ -159,7 +159,7 @@ func TestAlertRequest_BatchCreate(t *testing.T) {
 			MockResponse(mockAlertsResponse)
 		defer server.Close()
 
-		result, err := server.Client().Alert().BatchCreate(context.Background(), "sub_1234", []AlertInput{
+		result, err := server.Client().Alert().CreateList(context.Background(), "sub_1234", []AlertInput{
 			{
 				Code:      "alert1",
 				AlertType: CurrentUsageAmountAlertType,

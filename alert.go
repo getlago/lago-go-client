@@ -31,7 +31,7 @@ type AlertParams struct {
 	Alert *AlertInput `json:"alert"`
 }
 
-type AlertBatchParams struct {
+type AlertListParams struct {
 	Alerts []AlertInput `json:"alerts"`
 }
 
@@ -170,12 +170,12 @@ func (ar *AlertRequest) Update(ctx context.Context, subscriptionExternalID, aler
 	return alertResult.Alert, nil
 }
 
-func (ar *AlertRequest) BatchCreate(ctx context.Context, subscriptionExternalID string, alertInputs []AlertInput) ([]Alert, *Error) {
+func (ar *AlertRequest) CreateList(ctx context.Context, subscriptionExternalID string, alertInputs []AlertInput) ([]Alert, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", subscriptionExternalID, "alerts")
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &AlertResult{},
-		Body:   &AlertBatchParams{Alerts: alertInputs},
+		Body:   &AlertListParams{Alerts: alertInputs},
 	}
 
 	result, err := ar.client.Post(ctx, clientRequest)
