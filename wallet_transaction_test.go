@@ -29,7 +29,11 @@ var mockWalletTransactionListResponse = `{
 					"key": "source",
 					"value": "test"
 				}],
-				"name": "Test Transaction"
+				"name": "Test Transaction",
+				"payment_method": {
+					"payment_method_type": "card",
+					"payment_method_id": "pm_wt_123"
+				}
 			}],
 			"meta": {
 				"current_page": 1,
@@ -100,6 +104,10 @@ func TestWalletTransactionRequest_Create(t *testing.T) {
 					FailedAt:                         time.Date(2024, 6, 1, 12, 10, 0, 0, time.UTC),
 					Metadata:                         []WalletTransactionMetadata{{Key: "source", Value: "test"}},
 					Name:                             "Test Transaction",
+					PaymentMethod: &PaymentMethodInput{
+						PaymentMethodType: "card",
+						PaymentMethodID:   "pm_wt_123",
+					},
 				},
 			},
 			Meta: Metadata{
@@ -110,5 +118,110 @@ func TestWalletTransactionRequest_Create(t *testing.T) {
 				TotalCount:  1,
 			},
 		})
+	})
+}
+
+func TestWalletTransactionRequest_CreateWithPaymentMethod(t *testing.T) {
+	t.Run("When creating a wallet transaction with an invalid payment method", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/wallet_transactions").
+			MatchJSONBody(`{
+				"wallet_transaction": {
+					"granted_credits":                     "0.00",
+					"invoice_requires_successful_payment": true,
+					"metadata":                            [{"key": "source", "value": "test"}],
+					"name":                                "Test Transaction",
+					"paid_credits":                        "50.00",
+					"voided_credits":                      "0.00",
+					"wallet_id":                           "1a901a90-1a90-1a90-1a90-1a901a901a90",
+					"payment_method": {
+						"payment_method_type": "invalid",
+						"payment_method_id": "pm_invalid"
+					}
+				}
+			}`).
+			MockResponseWithCode(422, map[string]any{
+				"status": 422,
+				"error":  "Unprocessable Entity",
+				"code":   "validation_errors",
+				"error_details": map[string]any{
+					"payment_method": []string{"invalid_payment_method"},
+				},
+			})
+		defer server.Close()
+
+		result, err := server.Client().WalletTransaction().Create(context.Background(), &WalletTransactionInput{
+			WalletID:                         "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			Name:                             "Test Transaction",
+			PaidCredits:                      "50.00",
+			GrantedCredits:                   "0.00",
+			VoidedCredits:                    "0.00",
+			InvoiceRequiresSuccessfulPayment: true,
+			Metadata: []WalletTransactionMetadata{
+				{Key: "source", Value: "test"},
+			},
+			PaymentMethod: &PaymentMethodInput{
+				PaymentMethodType: "invalid",
+				PaymentMethodID:   "pm_invalid",
+			},
+		})
+		c.Assert(result, qt.IsNil)
+		c.Assert(err, qt.IsNotNil)
+		c.Assert(err.HTTPStatusCode, qt.Equals, 422)
+		c.Assert(err.Message, qt.Equals, "Unprocessable Entity")
+		c.Assert(err.ErrorCode, qt.Equals, "validation_errors")
+		c.Assert(err.ErrorDetail, qt.IsNotNil)
+		details, detailErr := err.ErrorDetail.Details()
+		c.Assert(detailErr, qt.IsNil)
+		c.Assert(details["payment_method"], qt.DeepEquals, []string{"invalid_payment_method"})
+	})
+
+	t.Run("When creating a wallet transaction with a payment method", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/wallet_transactions").
+			MatchJSONBody(`{
+				"wallet_transaction": {
+					"granted_credits":                     "0.00",
+					"invoice_requires_successful_payment": true,
+					"metadata":                            [{"key": "source", "value": "test"}],
+					"name":                                "Test Transaction",
+					"paid_credits":                        "50.00",
+					"voided_credits":                      "0.00",
+					"wallet_id":                           "1a901a90-1a90-1a90-1a90-1a901a901a90",
+					"payment_method": {
+						"payment_method_type": "card",
+						"payment_method_id": "pm_wt_123"
+					}
+				}
+			}`).
+			MockResponse(mockWalletTransactionListResponse)
+		defer server.Close()
+
+		result, err := server.Client().WalletTransaction().Create(context.Background(), &WalletTransactionInput{
+			WalletID:                         "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			Name:                             "Test Transaction",
+			PaidCredits:                      "50.00",
+			GrantedCredits:                   "0.00",
+			VoidedCredits:                    "0.00",
+			InvoiceRequiresSuccessfulPayment: true,
+			Metadata: []WalletTransactionMetadata{
+				{Key: "source", Value: "test"},
+			},
+			PaymentMethod: &PaymentMethodInput{
+				PaymentMethodType: "card",
+				PaymentMethodID:   "pm_wt_123",
+			},
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.WalletTransactions, qt.HasLen, 1)
+		c.Assert(result.WalletTransactions[0].PaymentMethod, qt.IsNotNil)
+		c.Assert(result.WalletTransactions[0].PaymentMethod.PaymentMethodType, qt.Equals, "card")
+		c.Assert(result.WalletTransactions[0].PaymentMethod.PaymentMethodID, qt.Equals, "pm_wt_123")
 	})
 }

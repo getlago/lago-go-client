@@ -59,6 +59,7 @@ type WalletTransactionInput struct {
 	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
 	Metadata                         []WalletTransactionMetadata `json:"metadata,omitempty"`
 	IgnorePaidTopUpLimits            bool                        `json:"ignore_paid_top_up_limits,omitempty"`
+	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
 }
 
 type WalletTransactionMetadata struct {
@@ -85,6 +86,7 @@ type WalletTransaction struct {
 	FailedAt                         time.Time                   `json:"failed_at,omitempty"`
 	Metadata                         []WalletTransactionMetadata `json:"metadata,omitempty"`
 	Name                             string                      `json:"name,omitempty"`
+	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
 }
 
 type WalletTransactionPaymentUrl struct {
