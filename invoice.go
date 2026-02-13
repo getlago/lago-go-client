@@ -96,10 +96,15 @@ type InvoiceInput struct {
 }
 
 type InvoiceOneOffInput struct {
-	ExternalCustomerId string             `json:"external_customer_id,omitempty"`
-	Currency           string             `json:"currency,omitempty"`
-	Fees               []InvoiceFeesInput `json:"fees,omitempty"`
-	SkipPsp            bool               `json:"skip_psp,omitempty"`
+	ExternalCustomerId string              `json:"external_customer_id,omitempty"`
+	Currency           string              `json:"currency,omitempty"`
+	Fees               []InvoiceFeesInput  `json:"fees,omitempty"`
+	SkipPsp            bool                `json:"skip_psp,omitempty"`
+	PaymentMethod      *PaymentMethodInput `json:"payment_method,omitempty"`
+}
+
+type RetryPaymentParams struct {
+	PaymentMethod *PaymentMethodInput `json:"payment_method,omitempty"`
 }
 
 type InvoicePreviewInput struct {
@@ -526,7 +531,7 @@ func (ir *InvoiceRequest) LoseDispute(ctx context.Context, invoiceID string) (*I
 }
 
 // We have Invoice as a possible return to be consitent with other endpoints, but no Invoice will be returned.
-func (ir *InvoiceRequest) RetryPayment(ctx context.Context, invoiceID string) (*Invoice, *Error) {
+func (ir *InvoiceRequest) RetryPayment(ctx context.Context, invoiceID string, paymentMethod ...*PaymentMethodInput) (*Invoice, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "retry_payment")
 	clientRequest := &ClientRequest{
 		Path:   subPath,
@@ -534,9 +539,19 @@ func (ir *InvoiceRequest) RetryPayment(ctx context.Context, invoiceID string) (*
 	}
 
 	// We don't return an invoice here due to async retry payment processing
-	_, err := ir.client.PostWithoutBody(ctx, clientRequest)
-	if err != nil {
-		return nil, err
+	if len(paymentMethod) > 0 && paymentMethod[0] != nil {
+		clientRequest.Body = &RetryPaymentParams{
+			PaymentMethod: paymentMethod[0],
+		}
+		_, err := ir.client.Post(ctx, clientRequest)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		_, err := ir.client.PostWithoutBody(ctx, clientRequest)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return nil, nil

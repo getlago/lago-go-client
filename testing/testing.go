@@ -11,7 +11,7 @@ import (
 	"github.com/getlago/lago-go-client"
 )
 
-func handlerFuncWithResponse(c *qt.C, responseFunc func() interface{}, assertRequestFunc func(*qt.C, *http.Request)) http.HandlerFunc {
+func handlerFuncWithResponse(c *qt.C, responseFunc func() interface{}, statusCodeFunc func() int, assertRequestFunc func(*qt.C, *http.Request)) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		assertRequestFunc(c, r)
 		mockResponse := responseFunc()
@@ -19,6 +19,10 @@ func handlerFuncWithResponse(c *qt.C, responseFunc func() interface{}, assertReq
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
+
+		if code := statusCodeFunc(); code != 0 {
+			w.WriteHeader(code)
+		}
 
 		if mockResponseMap, ok := mockResponse.(map[string]interface{}); ok {
 			_ = json.NewEncoder(w).Encode(mockResponseMap)
@@ -36,7 +40,8 @@ func ServerWithAssertions(c *qt.C, mockResponse interface{}, assertRequestFunc f
 	responseFunc := func() interface{} {
 		return mockResponse
 	}
-	return httptest.NewServer(handlerFuncWithResponse(c, responseFunc, assertRequestFunc))
+	statusCodeFunc := func() int { return 0 }
+	return httptest.NewServer(handlerFuncWithResponse(c, responseFunc, statusCodeFunc, assertRequestFunc))
 }
 
 type MockServer struct {
@@ -49,6 +54,7 @@ type MockServer struct {
 	expectedBody     string
 	jsonBodyExpected bool
 	mockResponse     interface{}
+	statusCode       int
 }
 
 func NewMockServer(c *qt.C) *MockServer {
@@ -56,7 +62,8 @@ func NewMockServer(c *qt.C) *MockServer {
 	responseFunc := func() interface{} {
 		return mockServer.mockResponse
 	}
-	mockServer.server = httptest.NewServer(handlerFuncWithResponse(c, responseFunc, func(c *qt.C, r *http.Request) {
+	statusCodeFunc := func() int { return mockServer.statusCode }
+	mockServer.server = httptest.NewServer(handlerFuncWithResponse(c, responseFunc, statusCodeFunc, func(c *qt.C, r *http.Request) {
 		apiKey := r.Header.Get("Authorization")
 		mockServer.c.Assert(apiKey, qt.Equals, "Bearer test_api_key")
 		mockServer.called = true
@@ -159,6 +166,12 @@ func (m *MockServer) MatchQuery(queryParams interface{}) *MockServer {
 }
 
 func (m *MockServer) MockResponse(mockResponse interface{}) *MockServer {
+	m.mockResponse = mockResponse
+	return m
+}
+
+func (m *MockServer) MockResponseWithCode(statusCode int, mockResponse interface{}) *MockServer {
+	m.statusCode = statusCode
 	m.mockResponse = mockResponse
 	return m
 }

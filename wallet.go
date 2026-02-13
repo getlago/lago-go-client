@@ -31,6 +31,7 @@ type RecurringTransactionRuleInput struct {
 	TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
 	TransactionName                  string                      `json:"transaction_name,omitempty"`
 	IgnorePaidTopUpLimits            *bool                       `json:"ignore_paid_top_up_limits,omitempty"`
+	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
 }
 
 type RecurringTransactionRuleResponse struct {
@@ -50,6 +51,7 @@ type RecurringTransactionRuleResponse struct {
 	TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
 	TransactionName                  string                      `json:"transaction_name,omitempty"`
 	IgnorePaidTopUpLimits            bool                        `json:"ignore_paid_top_up_limits"`
+	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
 }
 
 type WalletRequest struct {
@@ -84,6 +86,7 @@ type WalletInput struct {
 	PaidTopUpMinAmountCents          *int                            `json:"paid_top_up_min_amount_cents,omitempty"`
 	IgnorePaidTopUpLimitsOnCreation  *bool                           `json:"ignore_paid_top_up_limits_on_creation,omitempty"`
 	Metadata                         map[string]string               `json:"metadata,omitempty"`
+	PaymentMethod                    *PaymentMethodInput             `json:"payment_method,omitempty"`
 }
 
 type WalletListInput struct {
@@ -134,6 +137,7 @@ type Wallet struct {
 	PaidTopUpMaxAmountCents          *int                               `json:"paid_top_up_max_amount_cents,omitempty"`
 	PaidTopUpMinAmountCents          *int                               `json:"paid_top_up_min_amount_cents,omitempty"`
 	Metadata                         map[string]string                  `json:"metadata,omitempty"`
+	PaymentMethod                    *PaymentMethodInput                `json:"payment_method,omitempty"`
 }
 
 func (c *Client) Wallet() *WalletRequest {

@@ -97,6 +97,7 @@ type SubscriptionInput struct {
 	PlanOverrides      *PlanOverridesInput `json:"plan_overrides,omitempty"`
 	ExternalID         string              `json:"external_id"`
 	Name               string              `json:"name"`
+	PaymentMethod      *PaymentMethodInput `json:"payment_method,omitempty"`
 }
 
 type SubscriptionsInput struct {
@@ -151,6 +152,8 @@ type Subscription struct {
 	Plan *Plan `json:"plan,omitempty"`
 
 	Entitlements []SubscriptionEntitlement `json:"entitlements,omitempty"`
+
+	PaymentMethod *PaymentMethodInput `json:"payment_method,omitempty"`
 
 	CreatedAt    time.Time  `json:"created_at"`
 	StartedAt    *time.Time `json:"started_at"`
