@@ -16,8 +16,8 @@ func (c *Client) CustomerWallet() *CustomerWalletRequest {
 	}
 }
 
-func (cwr *CustomerWalletRequest) Get(ctx context.Context, customerID string, walletCode string) (*Wallet, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s/%s", "customers", customerID, "wallets", walletCode)
+func (cwr *CustomerWalletRequest) Get(ctx context.Context, customerExternalID string, walletCode string) (*Wallet, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s", "customers", customerExternalID, "wallets", walletCode)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &WalletResult{},
@@ -36,8 +36,8 @@ func (cwr *CustomerWalletRequest) Get(ctx context.Context, customerID string, wa
 	return walletResult.Wallet, nil
 }
 
-func (cwr *CustomerWalletRequest) GetList(ctx context.Context, customerID string, walletListInput *WalletListInput) (*WalletResult, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s", "customers", customerID, "wallets")
+func (cwr *CustomerWalletRequest) GetList(ctx context.Context, customerExternalID string, walletListInput *WalletListInput) (*WalletResult, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", customerExternalID, "wallets")
 
 	jsonQueryParams, err := json.Marshal(walletListInput)
 	if err != nil {
@@ -68,8 +68,8 @@ func (cwr *CustomerWalletRequest) GetList(ctx context.Context, customerID string
 	return walletResult, nil
 }
 
-func (cwr *CustomerWalletRequest) Create(ctx context.Context, customerID string, walletInput *WalletInput) (*Wallet, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s", "customers", customerID, "wallets")
+func (cwr *CustomerWalletRequest) Create(ctx context.Context, customerExternalID string, walletInput *WalletInput) (*Wallet, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", customerExternalID, "wallets")
 
 	walletParams := &WalletParams{
 		WalletInput: walletInput,
@@ -94,12 +94,12 @@ func (cwr *CustomerWalletRequest) Create(ctx context.Context, customerID string,
 	return walletResult.Wallet, nil
 }
 
-func (cwr *CustomerWalletRequest) Update(ctx context.Context, customerID string, walletCode string, walletInput *WalletInput) (*Wallet, *Error) {
+func (cwr *CustomerWalletRequest) Update(ctx context.Context, customerExternalID string, walletCode string, walletInput *WalletInput) (*Wallet, *Error) {
 	walletParams := &WalletParams{
 		WalletInput: walletInput,
 	}
 
-	subPath := fmt.Sprintf("%s/%s/%s/%s", "customers", customerID, "wallets", walletCode)
+	subPath := fmt.Sprintf("%s/%s/%s/%s", "customers", customerExternalID, "wallets", walletCode)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &WalletResult{},
@@ -119,8 +119,8 @@ func (cwr *CustomerWalletRequest) Update(ctx context.Context, customerID string,
 	return walletResult.Wallet, nil
 }
 
-func (cwr *CustomerWalletRequest) Delete(ctx context.Context, customerID string, walletCode string) (*Wallet, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s/%s", "customers", customerID, "wallets", walletCode)
+func (cwr *CustomerWalletRequest) Delete(ctx context.Context, customerExternalID string, walletCode string) (*Wallet, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s", "customers", customerExternalID, "wallets", walletCode)
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &WalletResult{},

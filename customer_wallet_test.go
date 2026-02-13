@@ -16,7 +16,7 @@ var mockCustomerWalletResponse = `{
 	"wallet": {
 		"lago_id": "b1b2c3d4-e5f6-7890-1234-56789abcdef0",
 		"lago_customer_id": "a1a2b3b4-c5d6-7890-1234-56789abcdef0",
-		"external_customer_id": "12345",
+		"external_customer_id": "customer_id",
 		"status": "active",
 		"currency": "USD",
 		"name": "wallet name",
@@ -58,7 +58,7 @@ var mockCustomerWalletListResponse = `{
 	"wallets": [{
 		"lago_id": "b1b2c3d4-e5f6-7890-1234-56789abcdef0",
 		"lago_customer_id": "a1a2b3b4-c5d6-7890-1234-56789abcdef0",
-		"external_customer_id": "12345",
+		"external_customer_id": "customer_id",
 		"status": "active",
 		"currency": "USD",
 		"name": "wallet name",
@@ -108,7 +108,7 @@ func TestCustomerWallet_Create(t *testing.T) {
 		c := qt.New(t)
 
 		client := New().SetBaseURL("http://localhost:88888").SetApiKey("test_api_key")
-		result, err := client.CustomerWallet().Create(context.Background(), "12345", &WalletInput{
+		result, err := client.CustomerWallet().Create(context.Background(), "customer_id", &WalletInput{
 			RateAmount:     "1.00",
 			Name:           "wallet name",
 			Code:           Ptr("wallet_code"),
@@ -144,7 +144,7 @@ func TestCustomerWallet_Create(t *testing.T) {
 
 		server := lt.NewMockServer(c).
 			MatchMethod("POST").
-			MatchPath("/api/v1/customers/12345/wallets").
+			MatchPath("/api/v1/customers/customer_id/wallets").
 			MatchJSONBody(`{
 				"wallet": {
 					"rate_amount": "1.00",
@@ -180,7 +180,7 @@ func TestCustomerWallet_Create(t *testing.T) {
 			MockResponse(mockCustomerWalletResponse)
 		defer server.Close()
 
-		result, err := server.Client().CustomerWallet().Create(context.Background(), "12345", &WalletInput{
+		result, err := server.Client().CustomerWallet().Create(context.Background(), "customer_id", &WalletInput{
 			RateAmount:              "1.00",
 			Name:                    "wallet name",
 			Code:                    Ptr("wallet_code"),
@@ -217,7 +217,7 @@ func TestCustomerWallet_Create(t *testing.T) {
 		c.Assert(result.Name, qt.Equals, "wallet name")
 		c.Assert(result.Code, qt.DeepEquals, Ptr("wallet_code"))
 		c.Assert(result.Priority, qt.Equals, int(30))
-		c.Assert(result.ExternalCustomerID, qt.Equals, "12345")
+		c.Assert(result.ExternalCustomerID, qt.Equals, "customer_id")
 		c.Assert(result.RateAmount, qt.Equals, "1.00")
 		c.Assert(result.CreditsBalance, qt.Equals, "100.00")
 		c.Assert(result.Status, qt.Equals, Status("active"))
@@ -242,7 +242,7 @@ func TestCustomerWallet_Get(t *testing.T) {
 		c := qt.New(t)
 
 		client := New().SetBaseURL("http://localhost:88888").SetApiKey("test_api_key")
-		result, err := client.CustomerWallet().Get(context.Background(), "12345", "wallet_code")
+		result, err := client.CustomerWallet().Get(context.Background(), "customer_id", "wallet_code")
 
 		c.Assert(err, qt.IsNotNil)
 		c.Assert(result, qt.IsNil)
@@ -253,11 +253,11 @@ func TestCustomerWallet_Get(t *testing.T) {
 
 		server := lt.NewMockServer(c).
 			MatchMethod("GET").
-			MatchPath("/api/v1/customers/12345/wallets/wallet_code").
+			MatchPath("/api/v1/customers/customer_id/wallets/wallet_code").
 			MockResponse(mockCustomerWalletResponse)
 		defer server.Close()
 
-		result, err := server.Client().CustomerWallet().Get(context.Background(), "12345", "wallet_code")
+		result, err := server.Client().CustomerWallet().Get(context.Background(), "customer_id", "wallet_code")
 
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result, qt.IsNotNil)
@@ -265,7 +265,7 @@ func TestCustomerWallet_Get(t *testing.T) {
 		c.Assert(result.Name, qt.Equals, "wallet name")
 		c.Assert(result.Code, qt.DeepEquals, Ptr("wallet_code"))
 		c.Assert(result.Priority, qt.Equals, int(30))
-		c.Assert(result.ExternalCustomerID, qt.Equals, "12345")
+		c.Assert(result.ExternalCustomerID, qt.Equals, "customer_id")
 		c.Assert(result.RateAmount, qt.Equals, "1.00")
 		c.Assert(result.CreditsBalance, qt.Equals, "100.00")
 		c.Assert(result.Status, qt.Equals, Status("active"))
@@ -289,7 +289,7 @@ func TestCustomerWallet_GetList(t *testing.T) {
 		c := qt.New(t)
 
 		client := New().SetBaseURL("http://localhost:88888").SetApiKey("test_api_key")
-		result, err := client.CustomerWallet().GetList(context.Background(), "12345", &WalletListInput{})
+		result, err := client.CustomerWallet().GetList(context.Background(), "customer_id", &WalletListInput{})
 
 		c.Assert(err, qt.IsNotNil)
 		c.Assert(result, qt.IsNil)
@@ -300,11 +300,11 @@ func TestCustomerWallet_GetList(t *testing.T) {
 
 		server := lt.NewMockServer(c).
 			MatchMethod("GET").
-			MatchPath("/api/v1/customers/12345/wallets").
+			MatchPath("/api/v1/customers/customer_id/wallets").
 			MockResponse(mockCustomerWalletListResponse)
 		defer server.Close()
 
-		result, err := server.Client().CustomerWallet().GetList(context.Background(), "12345", &WalletListInput{})
+		result, err := server.Client().CustomerWallet().GetList(context.Background(), "customer_id", &WalletListInput{})
 
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result, qt.IsNotNil)
@@ -312,7 +312,7 @@ func TestCustomerWallet_GetList(t *testing.T) {
 		c.Assert(result.Wallets[0].LagoID, qt.Equals, uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"))
 		c.Assert(result.Wallets[0].Name, qt.Equals, "wallet name")
 		c.Assert(result.Wallets[0].Priority, qt.Equals, 30)
-		c.Assert(result.Wallets[0].ExternalCustomerID, qt.Equals, "12345")
+		c.Assert(result.Wallets[0].ExternalCustomerID, qt.Equals, "customer_id")
 		c.Assert(result.Wallets[0].Status, qt.Equals, Status("active"))
 		c.Assert(result.Wallets[0].Currency, qt.Equals, Currency("USD"))
 		c.Assert(result.Wallets[0].PaidTopUpMaxAmountCents, qt.IsNotNil)
@@ -330,11 +330,11 @@ func TestCustomerWallet_GetList(t *testing.T) {
 
 		server := lt.NewMockServer(c).
 			MatchMethod("GET").
-			MatchPath("/api/v1/customers/12345/wallets").
+			MatchPath("/api/v1/customers/customer_id/wallets").
 			MockResponse(mockCustomerWalletListResponse)
 		defer server.Close()
 
-		result, err := server.Client().CustomerWallet().GetList(context.Background(), "12345", &WalletListInput{
+		result, err := server.Client().CustomerWallet().GetList(context.Background(), "customer_id", &WalletListInput{
 			PerPage: Ptr(10),
 			Page:    Ptr(1),
 		})
@@ -343,7 +343,7 @@ func TestCustomerWallet_GetList(t *testing.T) {
 		c.Assert(result, qt.IsNotNil)
 		c.Assert(result.Wallets, qt.HasLen, 1)
 		c.Assert(result.Wallets[0].LagoID, qt.Equals, uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"))
-		c.Assert(result.Wallets[0].ExternalCustomerID, qt.Equals, "12345")
+		c.Assert(result.Wallets[0].ExternalCustomerID, qt.Equals, "customer_id")
 	})
 }
 
@@ -352,7 +352,7 @@ func TestCustomerWallet_Update(t *testing.T) {
 		c := qt.New(t)
 
 		client := New().SetBaseURL("http://localhost:88888").SetApiKey("test_api_key")
-		result, err := client.CustomerWallet().Update(context.Background(), "12345", "wallet_code", &WalletInput{
+		result, err := client.CustomerWallet().Update(context.Background(), "customer_id", "wallet_code", &WalletInput{
 			Name:        "updated wallet name",
 			Priority:    Ptr(int(40)),
 			RateAmount:  "1.50",
@@ -368,14 +368,14 @@ func TestCustomerWallet_Update(t *testing.T) {
 
 		server := lt.NewMockServer(c).
 			MatchMethod("PUT").
-			MatchPath("/api/v1/customers/12345/wallets/wallet_code")
+			MatchPath("/api/v1/customers/customer_id/wallets/wallet_code")
 		defer server.Close()
 
 		updatedWalletResponse := `{
 			"wallet": {
 				"lago_id": "b1b2c3d4-e5f6-7890-1234-56789abcdef0",
 				"lago_customer_id": "a1a2b3b4-c5d6-7890-1234-56789abcdef0",
-				"external_customer_id": "12345",
+				"external_customer_id": "customer_id",
 				"status": "active",
 				"currency": "USD",
 				"name": "updated wallet name",
@@ -397,7 +397,7 @@ func TestCustomerWallet_Update(t *testing.T) {
 
 		server.MockResponse(updatedWalletResponse)
 
-		result, err := server.Client().CustomerWallet().Update(context.Background(), "12345", "wallet_code", &WalletInput{
+		result, err := server.Client().CustomerWallet().Update(context.Background(), "customer_id", "wallet_code", &WalletInput{
 			Name:        "updated wallet name",
 			Priority:    Ptr(int(40)),
 			RateAmount:  "1.50",
@@ -422,7 +422,7 @@ func TestCustomerWallet_Delete(t *testing.T) {
 		c := qt.New(t)
 
 		client := New().SetBaseURL("http://localhost:88888").SetApiKey("test_api_key")
-		result, err := client.CustomerWallet().Delete(context.Background(), "12345", "wallet_code")
+		result, err := client.CustomerWallet().Delete(context.Background(), "customer_id", "wallet_code")
 
 		c.Assert(err, qt.IsNotNil)
 		c.Assert(result, qt.IsNil)
@@ -433,14 +433,14 @@ func TestCustomerWallet_Delete(t *testing.T) {
 
 		server := lt.NewMockServer(c).
 			MatchMethod("DELETE").
-			MatchPath("/api/v1/customers/12345/wallets/wallet_code")
+			MatchPath("/api/v1/customers/customer_id/wallets/wallet_code")
 		defer server.Close()
 
 		deletedWalletResponse := `{
 			"wallet": {
 				"lago_id": "b1b2c3d4-e5f6-7890-1234-56789abcdef0",
 				"lago_customer_id": "a1a2b3b4-c5d6-7890-1234-56789abcdef0",
-				"external_customer_id": "12345",
+				"external_customer_id": "customer_id",
 				"status": "terminated",
 				"currency": "USD",
 				"name": "wallet name",
@@ -463,7 +463,7 @@ func TestCustomerWallet_Delete(t *testing.T) {
 
 		server.MockResponse(deletedWalletResponse)
 
-		result, err := server.Client().CustomerWallet().Delete(context.Background(), "12345", "wallet_code")
+		result, err := server.Client().CustomerWallet().Delete(context.Background(), "customer_id", "wallet_code")
 
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result, qt.IsNotNil)
@@ -471,7 +471,7 @@ func TestCustomerWallet_Delete(t *testing.T) {
 		c.Assert(result.Status, qt.Equals, Status("terminated"))
 		c.Assert(result.Name, qt.Equals, "wallet name")
 		c.Assert(result.Priority, qt.Equals, int(30))
-		c.Assert(result.ExternalCustomerID, qt.Equals, "12345")
+		c.Assert(result.ExternalCustomerID, qt.Equals, "customer_id")
 		c.Assert(result.Currency, qt.Equals, Currency("USD"))
 	})
 }
