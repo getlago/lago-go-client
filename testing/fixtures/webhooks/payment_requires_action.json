@@ -1,0 +1,16 @@
+{
+  "webhook_type": "payment.requires_action",
+  "object_type": "payment",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "payment": {
+    "lago_id": "8e5d5ec2-bdc7-4c43-a944-5ababae775d4",
+    "invoice_ids": ["f8e194df-5d90-4382-b146-c881d2c67f28"],
+    "amount_cents": 100,
+    "amount_currency": "USD",
+    "payment_status": "succeeded",
+    "type": "manual",
+    "reference": "123",
+    "external_payment_id": null,
+    "created_at": "2025-02-18T18:31:13Z"
+  }
+}

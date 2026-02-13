@@ -1,0 +1,186 @@
+{
+  "webhook_type": "invoice.one_off_created",
+  "object_type": "invoice",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "invoice": {
+    "lago_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+    "billing_entity_code": "test-company",
+    "sequential_id": 15,
+    "number": "LAG-1234-001-002",
+    "issuing_date": "2022-06-02",
+    "payment_due_date": "2022-06-02",
+    "payment_overdue": false,
+    "net_payment_term": 0,
+    "invoice_type": "type1",
+    "version_number": 2,
+    "status": "finalized",
+    "payment_status": "failed",
+    "currency": "EUR",
+    "fees_amount_cents": 100,
+    "taxes_amount_cents": 20,
+    "coupons_amount_cents": 0,
+    "credit_notes_amount_cents": 0,
+    "progressive_billing_credit_amount_cents": 0,
+    "sub_total_excluding_taxes_amount_cents": 100,
+    "sub_total_including_taxes_amount_cents": 120,
+    "prepaid_credit_amount_cents": 0,
+    "total_amount_cents": 120,
+    "total_due_amount_cents": 120,
+    "metadata": [
+      {
+        "key": "key",
+        "value": "value",
+        "display_in_invoice": true
+      }
+    ],
+    "applied_usage_thresholds": [
+      {
+        "lifetime_usage_amount_cents": 120,
+        "created_at": "2022-04-29T08:59:51Z",
+        "usage_threshold": {
+          "id": "7b6a2799-6db5-4f82-8362-1483b65f8f90",
+          "threshold_display_name": "Threshold 1",
+          "amount_cents": 100,
+          "recurring": false
+        }
+      }
+    ],
+    "applied_taxes": [
+      {
+        "lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+        "lago_invoice_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+        "lago_tax_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+        "tax_name": "tax name",
+        "tax_code": "tax_code",
+        "tax_rate": 20.0,
+        "tax_description": "tax description",
+        "amount_cents": 100,
+        "amount_currency": "EUR",
+        "fees_amount_cents": 500,
+        "created_at": "2022-04-29T08:59:51Z"
+      }
+    ],
+    "customer": {
+      "lago_id": "99a6094e-199b-4101-896a-54e927ce7bd7",
+      "external_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+      "address_line1": "5230 Penfield Ave",
+      "address_line2": null,
+      "city": "Woodland Hills",
+      "country": "US",
+      "created_at": "2022-04-29T08:59:51Z",
+      "updated_at": "2022-04-29T08:59:51Z",
+      "email": "dinesh@piedpiper.test",
+      "legal_name": "Coleman-Blair",
+      "legal_number": "49-008-2965",
+      "logo_url": "http://hooli.com/logo.png",
+      "name": "Gavin Belson",
+      "phone": "1-171-883-3711 x245",
+      "state": "CA",
+      "url": "http://hooli.com",
+      "zipcode": "91364",
+      "currency": "EUR",
+      "timezone": "Europe/Paris",
+      "applicable_timezone": "Europe/Paris",
+      "billing_configuration": {
+        "payment_provider": "stripe",
+        "payment_provider_code": "stripe-eu-1",
+        "provider_customer_id": "cus_12345"
+      },
+      "taxes": [
+        {
+          "lago_id": "b7ab2926-1de8-4428-9bcd-779314ac129b",
+          "name": "tax_name",
+          "code": "tax_code",
+          "rate": 15.0,
+          "description": "tax_desc",
+          "add_ons_count": 0,
+          "customers_count": 0,
+          "plans_count": 0,
+          "charges_count": 0,
+          "applied_to_organization": false,
+          "created_at": "2022-04-29T08:59:51Z"
+        }
+      ]
+    },
+    "billing_periods": [
+      {
+        "lago_subscription_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+        "external_subscription_id": "LAG-EXT-1234",
+        "lago_plan_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+        "subscription_from_datetime": "2025-02-01T00:00:00Z",
+        "subscription_to_datetime": "2025-02-28T23:59:59Z",
+        "charges_from_datetime": "2025-01-01T00:00:00Z",
+        "charges_to_datetime": "2025-01-31T23:59:59Z",
+        "invoicing_reason": "subscription_periodic"
+      }
+    ],
+    "subscriptions": [
+      {
+        "lago_id": "b7ab2926-1de8-4428-9bcd-779314ac129b",
+        "lago_customer_id": "99a6094e-199b-4101-896a-54e927ce7bd7",
+        "external_customer_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+        "canceled_at": "2022-04-29T08:59:51Z",
+        "created_at": "2022-04-29T08:59:51Z",
+        "plan_code": "eartha lynch",
+        "started_at": "2022-04-29T08:59:51Z",
+        "status": "active",
+        "billing_time": "anniversary",
+        "terminated_at": null,
+        "subscription_at": "2022-04-29T08:59:51Z",
+        "previous_plan_code": null,
+        "next_plan_code": null,
+        "downgrade_plan_date": null
+      }
+    ],
+    "fees": [
+      {
+        "lago_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+        "lago_charge_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+        "invoice_display_name": "fee_invoice_display_name",
+        "item": {
+          "type": "charge",
+          "code": "seats",
+          "name": "User Seats",
+          "invoice_display_name": "charge_invoice_display_name",
+          "filters": {
+            "region": ["us-east-1"]
+          }
+        },
+        "amount_cents": 100,
+        "amount_currency": "EUR",
+        "taxes_amount_cents": 20,
+        "taxes_rate": 20.0,
+        "total_amount_cents": 120,
+        "total_amount_currency": "EUR",
+        "units": "12.6",
+        "events_count": 4,
+        "applied_taxes": [
+          {
+            "lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+            "lago_fee_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+            "lago_tax_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+            "tax_name": "tax name",
+            "tax_code": "tax_code",
+            "tax_rate": 20.0,
+            "tax_description": "tax description",
+            "amount_cents": 100,
+            "amount_currency": "EUR",
+            "created_at": "2022-04-29T08:59:51Z"
+          }
+        ]
+      }
+    ],
+    "credits": [
+      {
+        "amount_cents": 20,
+        "amount_currency": "EUR",
+        "before_taxes": true,
+        "item": {
+          "type": "coupon",
+          "code": "free_beer",
+          "name": "Free Beer"
+        }
+      }
+    ]
+  }
+}
