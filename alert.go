@@ -15,6 +15,8 @@ const (
 	BillableMetricCurrentUsageAmountAlertType AlertType = "billable_metric_current_usage_amount"
 	BillableMetricCurrentUsageUnitsAlertType  AlertType = "billable_metric_current_usage_units"
 	LifetimeUsageAmountAlertType              AlertType = "lifetime_usage_amount"
+	WalletBalanceAmountAlertType              AlertType = "wallet_balance_amount"
+	WalletCreditsBalanceAlertType             AlertType = "wallet_credits_balance"
 )
 
 type AlertRequest struct {
@@ -41,6 +43,11 @@ type AlertInput struct {
 	Name               string           `json:"name,omitempty"`
 	AlertType          AlertType        `json:"alert_type,omitempty"`
 	Thresholds         []AlertThreshold `json:"thresholds,omitempty"`
+}
+
+type AlertListInput struct {
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
 }
 
 type AlertThreshold struct {
