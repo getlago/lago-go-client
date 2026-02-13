@@ -1,0 +1,12 @@
+{
+  "webhook_type": "customer.crm_provider_error",
+  "object_type": "crm_provider_customer_error",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "crm_provider_customer_error": {
+    "lago_customer_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "external_customer_id": "customer_1234",
+    "accounting_provider": "netsuite",
+    "accounting_provider_code": "Netsuite_Prod",
+    "provider_error": "error message"
+  }
+}

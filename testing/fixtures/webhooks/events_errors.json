@@ -1,0 +1,10 @@
+{
+  "webhook_type": "events.errors",
+  "object_type": "events_errors",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "events_errors": {
+    "invalid_code": ["transaction_1"],
+    "missing_aggregation_properties": ["transaction_3"],
+    "invalid_filter_values": ["transaction_5"]
+  }
+}

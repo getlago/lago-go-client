@@ -60,6 +60,12 @@ type Event struct {
 	CreatedAt               *time.Time             `json:"created_at,omitempty"`
 }
 
+type EventsErrors struct {
+	InvalidCode                  []string `json:"invalid_code"`
+	MissingAggregationProperties []string `json:"missing_aggregation_properties"`
+	InvalidFilterValues          []string `json:"invalid_filter_values"`
+}
+
 func (c *Client) Event() *EventRequest {
 	return &EventRequest{
 		client: c,

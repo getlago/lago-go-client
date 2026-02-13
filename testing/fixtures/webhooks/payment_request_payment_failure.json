@@ -1,0 +1,15 @@
+{
+  "webhook_type": "payment_request.payment_failure",
+  "object_type": "payment_provider_payment_request_payment_error",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "payment_provider_payment_request_payment_error": {
+    "lago_payment_request_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "lago_invoice_ids": ["1a901a90-1a90-1a90-1a90-1a901a901a90"],
+    "lago_customer_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "external_customer_id": "customer_1234",
+    "provider_customer_id": "stripe_id",
+    "payment_provider": "stripe",
+    "payment_provider_code": "Stripe_Prod",
+    "provider_error": "error_message"
+  }
+}
