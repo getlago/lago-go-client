@@ -1,0 +1,85 @@
+{
+  "webhook_type": "plan.updated",
+  "object_type": "plan",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "plan": {
+    "lago_id": "b7ab2926-1de8-4428-9bcd-779314ac129b",
+    "name": "test1",
+    "invoice_display_name": "test plan 1",
+    "created_at": "2022-07-01T14:47:14Z",
+    "code": "plan_code",
+    "interval": "weekly",
+    "description": "hello_this_is_desc333",
+    "amount_cents": 900,
+    "amount_currency": "EUR",
+    "trial_period": 3.0,
+    "pay_in_advance": true,
+    "bill_charges_monthly": null,
+    "charges": [
+      {
+        "lago_id": "51c1e851-5be6-4343-a0ee-39a81d8b4ee1",
+        "lago_billable_metric_id": "a6947936-628f-4945-8857-db6858ee7941",
+        "billable_metric_code": "bm_code",
+        "created_at": "2022-07-01T14:47:14Z",
+        "amount_currency": "EUR",
+        "prorated": false,
+        "charge_model": "standard",
+        "pay_in_advance": true,
+        "invoiceable": true,
+        "invoice_display_name": "Setup",
+        "min_amount_cents": 0,
+        "properties": {
+          "amount": "0.22",
+          "pricing_group_keys": ["agent_name"]
+        },
+        "filters": [
+          {
+            "invoice_display_name": "From France",
+            "properties": {
+              "amount": "0.33"
+            },
+            "values": {
+              "country": ["France"]
+            }
+          }
+        ],
+        "taxes": [
+          {
+            "lago_id": "b7ab2926-1de8-4428-9bcd-779314ac129b",
+            "name": "tax_name",
+            "code": "tax_code",
+            "rate": 15.0,
+            "description": "tax_desc",
+            "applied_to_organization": false,
+            "created_at": "2022-04-29T08:59:51Z"
+          }
+        ]
+      }
+    ],
+    "minimum_commitment": {
+      "lago_id": "9474537e-2070-44fe-b8ba-3a25e0aa2d8e",
+      "invoice_display_name": "Minimum commitment (C1)",
+      "amount_cents": 1000,
+      "interval": "weekly"
+    },
+    "usage_thresholds": [
+      {
+        "lago_id": "85898fbd-0ec6-40a6-8ef1-f863d4b1668a",
+        "amount_cents": 20,
+        "threshold_display_name": "Threshold 1",
+        "recurring": false
+      }
+    ],
+    "taxes": [
+      {
+        "lago_id": "b7ab2926-1de8-4428-9bcd-779314ac129b",
+        "name": "tax_name",
+        "code": "tax_code",
+        "rate": 15.0,
+        "description": "tax_desc",
+        "applied_to_organization": false,
+        "created_at": "2022-04-29T08:59:51Z"
+      }
+    ]
+  }
+}

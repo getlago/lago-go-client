@@ -1,0 +1,51 @@
+{
+  "webhook_type": "credit_note.generated",
+  "object_type": "credit_note",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "credit_note": {
+    "lago_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+    "sequential_id": 16,
+    "number": "LAG15-CN16",
+    "lago_invoice_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+    "invoice_number": "LAG15",
+    "credit_status": "available",
+    "refund_status": "pending",
+    "reason": "other",
+    "currency": "EUR",
+    "total_amount_cents": 240,
+    "credit_amount_cents": 100,
+    "balance_amount_cents": 100,
+    "refund_amount_cents": 100,
+    "taxes_amount_cents": 40,
+    "taxes_rate": 20.0,
+    "sub_total_excluding_taxes_amount_cents": 200,
+    "coupons_adjustment_amount_cents": 0,
+    "created_at": "2022-10-04T16:21:00Z",
+    "updated_at": "2022-10-04T16:21:00Z",
+    "items": [
+      {
+        "lago_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+        "fee": {
+          "lago_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+          "invoice_display_name": "credit_note_invoice_display_name",
+          "item": {
+            "type": "charge",
+            "code": "seats",
+            "name": "User Seats",
+            "invoice_display_name": "credit_note_invoice_display_name"
+          },
+          "credit_amount_cents": 100,
+          "credit_amount_currency": "EUR",
+          "refund_amount_cents": 50,
+          "refund_amount_currency": "EUR",
+          "taxes_amount_cents": 20,
+          "taxes_rate": 20.0,
+          "total_amount_cents": 120,
+          "total_amount_currency": "EUR",
+          "units": "12.6",
+          "events_count": 4
+        }
+      }
+    ]
+  }
+}
