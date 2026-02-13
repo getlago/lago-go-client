@@ -2,6 +2,7 @@ package lago
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 )
 
@@ -35,16 +36,27 @@ func (ar *CustomerWalletAlertRequest) Get(ctx context.Context, customerExternalI
 	return alertResult.Alert, nil
 }
 
-func (ar *CustomerWalletAlertRequest) GetList(ctx context.Context, customerExternalID string, walletCode string) (*AlertResult, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s/%s/%s", "customers", customerExternalID, "wallets", walletCode, "alerts")
-	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &AlertResult{},
+func (ar *CustomerWalletAlertRequest) GetList(ctx context.Context, customerExternalID string, walletCode string, alertListInput *AlertListInput) (*AlertResult, *Error) {
+	jsonQueryParams, err := json.Marshal(alertListInput)
+	if err != nil {
+		return nil, &Error{Err: err}
 	}
 
-	result, err := ar.client.Get(ctx, clientRequest)
+	queryParams := make(map[string]string)
+	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	subPath := fmt.Sprintf("%s/%s/%s/%s/%s", "customers", customerExternalID, "wallets", walletCode, "alerts")
+	clientRequest := &ClientRequest{
+		Path:        subPath,
+		QueryParams: queryParams,
+		Result:      &AlertResult{},
+	}
+
+	result, clientErr := ar.client.Get(ctx, clientRequest)
 	if err != nil {
-		return nil, err
+		return nil, clientErr
 	}
 
 	alertResult, ok := result.(*AlertResult)

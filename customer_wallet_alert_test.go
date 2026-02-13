@@ -101,7 +101,7 @@ func TestCustomerWalletAlertRequest_Get(t *testing.T) {
 }
 
 func TestCustomerWalletAlertRequest_GetList(t *testing.T) {
-	t.Run("When alerts are found", func(t *testing.T) {
+	t.Run("When no parameters are provided", func(t *testing.T) {
 		c := qt.New(t)
 
 		server := lt.NewMockServer(c).
@@ -110,7 +110,26 @@ func TestCustomerWalletAlertRequest_GetList(t *testing.T) {
 			MockResponse(mockCustomerWalletAlertListResponse)
 		defer server.Close()
 
-		result, err := server.Client().CustomerWalletAlert().GetList(context.Background(), "customer_id", "wallet_code")
+		result, err := server.Client().CustomerWalletAlert().GetList(context.Background(), "customer_id", "wallet_code", &AlertListInput{})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.Alerts, qt.HasLen, 2)
+		c.Assert(result.Alerts[0].Code, qt.Equals, "alert1")
+		c.Assert(result.Alerts[1].Code, qt.Equals, "alert2")
+	})
+
+	t.Run("When parameters are provided", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/customers/customer_id/wallets/wallet_code/alerts").
+			MockResponse(mockCustomerWalletAlertListResponse)
+		defer server.Close()
+
+		result, err := server.Client().CustomerWalletAlert().GetList(context.Background(), "customer_id", "wallet_code", &AlertListInput{
+			PerPage: Ptr(10),
+			Page:    Ptr(1),
+		})
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result.Alerts, qt.HasLen, 2)
 		c.Assert(result.Alerts[0].Code, qt.Equals, "alert1")

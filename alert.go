@@ -45,6 +45,11 @@ type AlertInput struct {
 	Thresholds         []AlertThreshold `json:"thresholds,omitempty"`
 }
 
+type AlertListInput struct {
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
+}
+
 type AlertThreshold struct {
 	Code      string `json:"code,omitempty"`
 	Value     string `json:"value"`
