@@ -295,13 +295,19 @@ func (c *Client) Put(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 }
 
 func (c *Client) Delete(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
-	resp, err := c.HttpClient.R().
+	hasResult := cr.Result != nil
+
+	request := c.HttpClient.R().
 		SetContext(ctx).
 		SetError(&Error{}).
-		SetResult(cr.Result).
 		SetBody(cr.Body).
-		SetQueryParams(cr.QueryParams).
-		Delete(cr.Path)
+		SetQueryParams(cr.QueryParams)
+
+	if hasResult {
+		request.SetResult(cr.Result)
+	}
+
+	resp, err := request.Delete(cr.Path)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
