@@ -221,8 +221,7 @@ func (ar *AlertRequest) Delete(ctx context.Context, subscriptionExternalID, aler
 func (ar *AlertRequest) DeleteAll(ctx context.Context, subscriptionExternalID string) *Error {
 	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", subscriptionExternalID, "alerts")
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &AlertResult{},
+		Path: subPath,
 	}
 
 	_, err := ar.client.Delete(ctx, clientRequest)
