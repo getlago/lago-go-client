@@ -62,6 +62,7 @@ type FixedChargeInput struct {
 	Properties            *FixedChargeProperties `json:"properties,omitempty"`
 	TaxCodes              []string               `json:"tax_codes,omitempty"`
 	ApplyUnitsImmediately bool                   `json:"apply_units_immediately,omitempty"`
+	CascadeUpdates        *bool                  `json:"cascade_updates,omitempty"`
 }
 
 type FixedChargeOverridesInput struct {
@@ -73,6 +74,17 @@ type FixedChargeOverridesInput struct {
 	TaxCodes              []string               `json:"tax_codes,omitempty"`
 }
 
+type FixedChargeParams struct {
+	FixedCharge *FixedChargeInput `json:"fixed_charge"`
+}
+
 type FixedChargeResult struct {
+	FixedCharge  *FixedCharge  `json:"fixed_charge,omitempty"`
 	FixedCharges []FixedCharge `json:"fixed_charges,omitempty"`
+	Meta         Metadata      `json:"meta,omitempty"`
+}
+
+type FixedChargeListInput struct {
+	PerPage int `json:"per_page,omitempty,string"`
+	Page    int `json:"page,omitempty,string"`
 }
