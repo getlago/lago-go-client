@@ -1,0 +1,11 @@
+{
+  "webhook_type": "fee.tax_provider_error",
+  "object_type": "tax_provider_fee_error",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "tax_provider_fee_error": {
+    "tax_provider_code": "Netsuite_Prod",
+    "lago_charge_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "event_transaction_id": "transaction_1",
+    "provider_error": "error_message"
+  }
+}

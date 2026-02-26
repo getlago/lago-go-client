@@ -1,0 +1,11 @@
+{
+  "webhook_type": "integration.provider_error",
+  "object_type": "provider_error",
+  "organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+  "provider_error": {
+    "lago_integration_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "provider": "netsuite",
+    "provider_code": "Netsuite_Prod",
+    "provider_error": "error_message"
+  }
+}

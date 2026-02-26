@@ -342,6 +342,16 @@ var mockCustomerSubscriptionListResponse = map[string]any{
 	},
 }
 
+var mockCustomerCheckoutUrlResponse = map[string]any{
+	"customer": map[string]any{
+		"lago_customer_id":      "1a901a90-1a90-1a90-1a90-1a901a901a90",
+		"external_customer_id":  "CUSTOMER_1",
+		"payment_provider":      "stripe",
+		"payment_provider_code": "Stripe Provider",
+		"checkout_url":          "https://example.com",
+	},
+}
+
 func TestCustomerRequest_GetInvoiceList(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
@@ -789,5 +799,35 @@ func TestCustomerRequest_GetList(t *testing.T) {
 			c.Assert(customer.ExternalID, qt.Not(qt.Equals), "")
 			c.Assert(customer.Name, qt.Not(qt.Equals), "")
 		}
+	})
+}
+
+func TestCustomerCheckoutUrl(t *testing.T) {
+	t.Run("When the server is not reachable", func(t *testing.T) {
+		c := qt.New(t)
+
+		client := New().SetBaseURL("http://localhost:88888").SetApiKey("test_api_key")
+		result, err := client.Customer().CheckoutUrl(context.Background(), "CUSTOMER_1")
+		c.Assert(result, qt.IsNil)
+		c.Assert(err.Error(), qt.Equals, `{"status":0,"error":"","code":"","err":"Post \"http://localhost:88888/api/v1/customers/CUSTOMER_1/checkout_url\": dial tcp: address 88888: invalid port"}`)
+	})
+
+	t.Run("When receiving a response", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/customers/CUSTOMER_1/checkout_url").
+			MockResponse(mockCustomerCheckoutUrlResponse)
+		defer server.Close()
+
+		result, err := server.Client().Customer().CheckoutUrl(context.Background(), "CUSTOMER_1")
+		c.Assert(err == nil, qt.IsTrue)
+
+		c.Assert(result.LagoCustomerID.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
+		c.Assert(result.ExternalCustomerID, qt.Equals, "CUSTOMER_1")
+		c.Assert(result.PaymentProvider, qt.Equals, PaymentProviderStripe)
+		c.Assert(result.PaymentProviderCode, qt.Equals, "Stripe Provider")
+		c.Assert(result.CheckoutUrl, qt.Equals, "https://example.com")
 	})
 }

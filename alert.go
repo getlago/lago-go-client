@@ -31,6 +31,10 @@ type AlertParams struct {
 	Alert *AlertInput `json:"alert"`
 }
 
+type AlertListParams struct {
+	Alerts []AlertInput `json:"alerts"`
+}
+
 type AlertInput struct {
 	Code               string           `json:"code,omitempty"`
 	BillableMetricCode string           `json:"billable_metric_code,omitempty"`
@@ -166,6 +170,27 @@ func (ar *AlertRequest) Update(ctx context.Context, subscriptionExternalID, aler
 	return alertResult.Alert, nil
 }
 
+func (ar *AlertRequest) CreateList(ctx context.Context, subscriptionExternalID string, alertInputs []AlertInput) ([]Alert, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", subscriptionExternalID, "alerts")
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &AlertResult{},
+		Body:   &AlertListParams{Alerts: alertInputs},
+	}
+
+	result, err := ar.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	alertResult, ok := result.(*AlertResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return alertResult.Alerts, nil
+}
+
 func (ar *AlertRequest) Delete(ctx context.Context, subscriptionExternalID, alertCode string) (*Alert, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s", "subscriptions", subscriptionExternalID, "alerts", alertCode)
 	clientRequest := &ClientRequest{
@@ -184,4 +209,19 @@ func (ar *AlertRequest) Delete(ctx context.Context, subscriptionExternalID, aler
 	}
 
 	return alertResult.Alert, nil
+}
+
+func (ar *AlertRequest) DeleteAll(ctx context.Context, subscriptionExternalID string) *Error {
+	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", subscriptionExternalID, "alerts")
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &AlertResult{},
+	}
+
+	_, err := ar.client.Delete(ctx, clientRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
