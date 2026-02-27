@@ -339,3 +339,127 @@ func TestInvoiceRequest_PaymentUrl(t *testing.T) {
 		assertPaymentUrlResponse(c, result)
 	})
 }
+
+func TestInvoiceRequest_RetryPayment(t *testing.T) {
+	t.Run("When retrying payment without a payment method", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/invoices/1a901a90-1a90-1a90-1a90-1a901a901a90/retry_payment").
+			MockResponse(map[string]any{})
+		defer server.Close()
+
+		_, err := server.Client().Invoice().RetryPayment(context.Background(), "1a901a90-1a90-1a90-1a90-1a901a901a90")
+		c.Assert(err == nil, qt.IsTrue)
+	})
+
+	t.Run("When retrying payment with a payment method", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/invoices/1a901a90-1a90-1a90-1a90-1a901a901a90/retry_payment").
+			MatchJSONBody(`{
+				"payment_method": {
+					"payment_method_type": "card",
+					"payment_method_id": "pm_123456"
+				}
+			}`).
+			MockResponse(map[string]any{})
+		defer server.Close()
+
+		_, err := server.Client().Invoice().RetryPayment(context.Background(), "1a901a90-1a90-1a90-1a90-1a901a901a90", &PaymentMethodInput{
+			PaymentMethodType: "card",
+			PaymentMethodID:   "pm_123456",
+		})
+		c.Assert(err == nil, qt.IsTrue)
+	})
+}
+
+func TestInvoiceRequest_CreateWithPaymentMethod(t *testing.T) {
+	t.Run("When creating a one-off invoice with an invalid payment method", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/invoices").
+			MatchJSONBody(`{
+				"invoice": {
+					"external_customer_id": "CUSTOMER_1",
+					"currency": "USD",
+					"fees": [{"add_on_code": "setup_fee", "units": 1}],
+					"payment_method": {
+						"payment_method_type": "invalid",
+						"payment_method_id": "pm_invalid"
+					}
+				}
+			}`).
+			MockResponseWithCode(422, map[string]any{
+				"status": 422,
+				"error":  "Unprocessable Entity",
+				"code":   "validation_errors",
+				"error_details": map[string]any{
+					"payment_method": []string{"invalid_payment_method"},
+				},
+			})
+		defer server.Close()
+
+		result, err := server.Client().Invoice().Create(context.Background(), &InvoiceOneOffInput{
+			ExternalCustomerId: "CUSTOMER_1",
+			Currency:           "USD",
+			Fees: []InvoiceFeesInput{
+				{AddOnCode: "setup_fee", Units: 1},
+			},
+			PaymentMethod: &PaymentMethodInput{
+				PaymentMethodType: "invalid",
+				PaymentMethodID:   "pm_invalid",
+			},
+		})
+		c.Assert(result, qt.IsNil)
+		c.Assert(err, qt.IsNotNil)
+		c.Assert(err.HTTPStatusCode, qt.Equals, 422)
+		c.Assert(err.Message, qt.Equals, "Unprocessable Entity")
+		c.Assert(err.ErrorCode, qt.Equals, "validation_errors")
+		c.Assert(err.ErrorDetail, qt.IsNotNil)
+		details, detailErr := err.ErrorDetail.Details()
+		c.Assert(detailErr, qt.IsNil)
+		c.Assert(details["payment_method"], qt.DeepEquals, []string{"invalid_payment_method"})
+	})
+
+	t.Run("When creating a one-off invoice with a payment method", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/invoices").
+			MatchJSONBody(`{
+				"invoice": {
+					"external_customer_id": "CUSTOMER_1",
+					"currency": "USD",
+					"fees": [{"add_on_code": "setup_fee", "units": 1}],
+					"payment_method": {
+						"payment_method_type": "card",
+						"payment_method_id": "pm_123456"
+					}
+				}
+			}`).
+			MockResponse(map[string]any{"invoice": mockInvoice})
+		defer server.Close()
+
+		result, err := server.Client().Invoice().Create(context.Background(), &InvoiceOneOffInput{
+			ExternalCustomerId: "CUSTOMER_1",
+			Currency:           "USD",
+			Fees: []InvoiceFeesInput{
+				{AddOnCode: "setup_fee", Units: 1},
+			},
+			PaymentMethod: &PaymentMethodInput{
+				PaymentMethodType: "card",
+				PaymentMethodID:   "pm_123456",
+			},
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result, qt.IsNotNil)
+		c.Assert(result.LagoID.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
+	})
+}
