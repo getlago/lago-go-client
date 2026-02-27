@@ -155,6 +155,7 @@ func (c *Client) Patch(ctx context.Context, cr *ClientRequest) (interface{}, *Er
 		SetError(&Error{}).
 		SetResult(cr.Result).
 		SetBody(cr.Body).
+		SetQueryParams(cr.QueryParams).
 		Patch(cr.Path)
 
 	if err != nil {
@@ -189,6 +190,7 @@ func (c *Client) Post(ctx context.Context, cr *ClientRequest) (interface{}, *Err
 		SetError(&Error{}).
 		SetResult(cr.Result).
 		SetBody(cr.Body).
+		SetQueryParams(cr.QueryParams).
 		Post(cr.Path)
 
 	if err != nil {
@@ -272,6 +274,7 @@ func (c *Client) Put(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 		SetError(&Error{}).
 		SetResult(cr.Result).
 		SetBody(cr.Body).
+		SetQueryParams(cr.QueryParams).
 		Put(cr.Path)
 	if err != nil {
 		return nil, &Error{Err: err}

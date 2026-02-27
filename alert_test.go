@@ -242,3 +242,114 @@ func TestAlertRequest_DeleteAll(t *testing.T) {
 		c.Assert(err == nil, qt.IsTrue)
 	})
 }
+
+// --- Status parameter tests ---
+
+func TestAlertRequest_GetWithStatus(t *testing.T) {
+	t.Run("When alert is found with status parameter", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/subscriptions/sub_1234/alerts/usage_alert").
+			MatchQuery(map[string]string{"status": "pending"}).
+			MockResponse(mockAlertResponse)
+		defer server.Close()
+
+		result, err := server.Client().Alert().Get(context.Background(), "sub_1234", "usage_alert", "pending")
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.Code, qt.Equals, "usage_alert")
+	})
+}
+
+func TestAlertRequest_GetListWithStatus(t *testing.T) {
+	t.Run("When alerts are found with status parameter", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/subscriptions/sub_1234/alerts").
+			MatchQuery(map[string]string{"status": "pending"}).
+			MockResponse(mockAlertsResponse)
+		defer server.Close()
+
+		result, err := server.Client().Alert().GetList(context.Background(), "sub_1234", "pending")
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.Alerts, qt.HasLen, 2)
+	})
+}
+
+func TestAlertRequest_CreateWithStatus(t *testing.T) {
+	t.Run("When alert is created with status parameter", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/subscriptions/sub_1234/alerts").
+			MatchQuery(map[string]string{"status": "pending"}).
+			MockResponse(mockAlertResponse)
+		defer server.Close()
+
+		result, err := server.Client().Alert().Create(context.Background(), "sub_1234", &AlertInput{
+			Code:      "usage_alert",
+			AlertType: CurrentUsageAmountAlertType,
+			Thresholds: []AlertThreshold{
+				{Code: "warn", Value: "1000"},
+			},
+		}, "pending")
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.Code, qt.Equals, "usage_alert")
+	})
+}
+
+func TestAlertRequest_UpdateWithStatus(t *testing.T) {
+	t.Run("When alert is updated with status parameter", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("PUT").
+			MatchPath("/api/v1/subscriptions/sub_1234/alerts/usage_alert").
+			MatchQuery(map[string]string{"status": "pending"}).
+			MockResponse(mockAlertResponse)
+		defer server.Close()
+
+		result, err := server.Client().Alert().Update(context.Background(), "sub_1234", "usage_alert", &AlertInput{
+			Name: "Updated Alert",
+		}, "pending")
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.Code, qt.Equals, "usage_alert")
+	})
+}
+
+func TestAlertRequest_DeleteWithStatus(t *testing.T) {
+	t.Run("When alert is deleted with status parameter", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("DELETE").
+			MatchPath("/api/v1/subscriptions/sub_1234/alerts/usage_alert").
+			MatchQuery(map[string]string{"status": "pending"}).
+			MockResponse(mockAlertResponse)
+		defer server.Close()
+
+		result, err := server.Client().Alert().Delete(context.Background(), "sub_1234", "usage_alert", "pending")
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.Code, qt.Equals, "usage_alert")
+	})
+}
+
+func TestAlertRequest_DeleteAllWithStatus(t *testing.T) {
+	t.Run("When all alerts are deleted with status parameter", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("DELETE").
+			MatchPath("/api/v1/subscriptions/sub_1234/alerts").
+			MatchQuery(map[string]string{"status": "pending"}).
+			MockResponse(nil)
+		defer server.Close()
+
+		err := server.Client().Alert().DeleteAll(context.Background(), "sub_1234", "pending")
+		c.Assert(err == nil, qt.IsTrue)
+	})
+}
