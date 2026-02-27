@@ -328,8 +328,12 @@ type CustomerCheckoutUrl struct {
 }
 
 type CustomerUsageInput struct {
-	ExternalSubscriptionID string `json:"external_subscription_id,omitempty"`
-	ApplyTaxes             bool   `json:"apply_taxes,omitempty"`
+	ExternalSubscriptionID string            `json:"external_subscription_id,omitempty"`
+	ApplyTaxes             bool              `json:"apply_taxes,omitempty"`
+	FilterByChargeID       string            `json:"filter_by_charge_id,omitempty"`
+	FilterByChargeCode     string            `json:"filter_by_charge_code,omitempty"`
+	FilterByGroup          map[string]string `json:"filter_by_group,omitempty"`
+	FullUsage              bool              `json:"full_usage,omitempty"`
 }
 
 type CustomerPastUsageInput struct {
@@ -501,6 +505,19 @@ func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID 
 	queryParams := map[string]string{
 		"external_subscription_id": customerUsageInput.ExternalSubscriptionID,
 		"apply_taxes":              strconv.FormatBool(customerUsageInput.ApplyTaxes),
+	}
+
+	if customerUsageInput.FilterByChargeID != "" {
+		queryParams["filter_by_charge_id"] = customerUsageInput.FilterByChargeID
+	}
+	if customerUsageInput.FilterByChargeCode != "" {
+		queryParams["filter_by_charge_code"] = customerUsageInput.FilterByChargeCode
+	}
+	for k, v := range customerUsageInput.FilterByGroup {
+		queryParams[fmt.Sprintf("filter_by_group[%s]", k)] = v
+	}
+	if customerUsageInput.FullUsage {
+		queryParams["full_usage"] = "true"
 	}
 
 	clientRequest := &ClientRequest{
