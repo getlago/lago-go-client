@@ -88,6 +88,27 @@ func (ar *CustomerWalletAlertRequest) Create(ctx context.Context, customerExtern
 	return alertResult.Alert, nil
 }
 
+func (ar *CustomerWalletAlertRequest) CreateList(ctx context.Context, customerExternalID string, walletCode string, alertInputs []AlertInput) ([]Alert, *Error) {
+	subPath := fmt.Sprintf("%s/%s/%s/%s/%s", "customers", customerExternalID, "wallets", walletCode, "alerts")
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &AlertResult{},
+		Body:   &AlertListParams{Alerts: alertInputs},
+	}
+
+	result, err := ar.client.Post(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	alertResult, ok := result.(*AlertResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return alertResult.Alerts, nil
+}
+
 func (ar *CustomerWalletAlertRequest) Update(ctx context.Context, customerExternalID string, walletCode string, alertCode string, alertInput *AlertInput) (*Alert, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s/%s/%s", "customers", customerExternalID, "wallets", walletCode, "alerts", alertCode)
 	clientRequest := &ClientRequest{
@@ -127,4 +148,18 @@ func (ar *CustomerWalletAlertRequest) Delete(ctx context.Context, customerExtern
 	}
 
 	return alertResult.Alert, nil
+}
+
+func (ar *CustomerWalletAlertRequest) DeleteAll(ctx context.Context, customerExternalID string, walletCode string) *Error {
+	subPath := fmt.Sprintf("%s/%s/%s/%s/%s", "customers", customerExternalID, "wallets", walletCode, "alerts")
+	clientRequest := &ClientRequest{
+		Path: subPath,
+	}
+
+	_, err := ar.client.Delete(ctx, clientRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
