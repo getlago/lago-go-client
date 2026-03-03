@@ -8,12 +8,12 @@ import (
 
 // Charges
 
-func (sr *SubscriptionRequest) GetCharge(ctx context.Context, externalID string, chargeCode string, status ...string) (*Charge, *Error) {
+func (sr *SubscriptionRequest) GetCharge(ctx context.Context, externalID string, chargeCode string, subscriptionStatus ...string) (*Charge, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s", "subscriptions", externalID, "charges", chargeCode)
 
 	clientRequest := &ClientRequest{
 		Path:        subPath,
-		QueryParams: statusQueryParams(status),
+		QueryParams: statusQueryParams(subscriptionStatus),
 		Result:      &ChargeResult{},
 	}
 
@@ -30,7 +30,7 @@ func (sr *SubscriptionRequest) GetCharge(ctx context.Context, externalID string,
 	return chargeResult.Charge, nil
 }
 
-func (sr *SubscriptionRequest) GetChargeList(ctx context.Context, externalID string, chargeListInput *ChargeListInput, status ...string) (*ChargeResult, *Error) {
+func (sr *SubscriptionRequest) GetChargeList(ctx context.Context, externalID string, chargeListInput *ChargeListInput, subscriptionStatus ...string) (*ChargeResult, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", externalID, "charges")
 
 	jsonQueryParams, err := json.Marshal(chargeListInput)
@@ -43,8 +43,8 @@ func (sr *SubscriptionRequest) GetChargeList(ctx context.Context, externalID str
 		return nil, &Error{Err: err}
 	}
 
-	if len(status) > 0 && status[0] != "" {
-		queryParams["status"] = status[0]
+	if len(subscriptionStatus) > 0 && subscriptionStatus[0] != "" {
+		queryParams["subscription_status"] = subscriptionStatus[0]
 	}
 
 	clientRequest := &ClientRequest{
@@ -66,7 +66,7 @@ func (sr *SubscriptionRequest) GetChargeList(ctx context.Context, externalID str
 	return chargeResult, nil
 }
 
-func (sr *SubscriptionRequest) UpdateCharge(ctx context.Context, externalID string, chargeCode string, chargeInput *ChargeInput, status ...string) (*Charge, *Error) {
+func (sr *SubscriptionRequest) UpdateCharge(ctx context.Context, externalID string, chargeCode string, chargeInput *ChargeInput, subscriptionStatus ...string) (*Charge, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s", "subscriptions", externalID, "charges", chargeCode)
 
 	chargeParams := &ChargeParams{
@@ -75,7 +75,7 @@ func (sr *SubscriptionRequest) UpdateCharge(ctx context.Context, externalID stri
 
 	clientRequest := &ClientRequest{
 		Path:        subPath,
-		QueryParams: statusQueryParams(status),
+		QueryParams: statusQueryParams(subscriptionStatus),
 		Result:      &ChargeResult{},
 		Body:        chargeParams,
 	}
@@ -95,12 +95,12 @@ func (sr *SubscriptionRequest) UpdateCharge(ctx context.Context, externalID stri
 
 // Fixed Charges
 
-func (sr *SubscriptionRequest) GetFixedCharge(ctx context.Context, externalID string, fixedChargeCode string, status ...string) (*FixedCharge, *Error) {
+func (sr *SubscriptionRequest) GetFixedCharge(ctx context.Context, externalID string, fixedChargeCode string, subscriptionStatus ...string) (*FixedCharge, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s", "subscriptions", externalID, "fixed_charges", fixedChargeCode)
 
 	clientRequest := &ClientRequest{
 		Path:        subPath,
-		QueryParams: statusQueryParams(status),
+		QueryParams: statusQueryParams(subscriptionStatus),
 		Result:      &FixedChargeResult{},
 	}
 
@@ -117,7 +117,7 @@ func (sr *SubscriptionRequest) GetFixedCharge(ctx context.Context, externalID st
 	return fixedChargeResult.FixedCharge, nil
 }
 
-func (sr *SubscriptionRequest) GetFixedChargeList(ctx context.Context, externalID string, fixedChargeListInput *FixedChargeListInput, status ...string) (*FixedChargeResult, *Error) {
+func (sr *SubscriptionRequest) GetFixedChargeList(ctx context.Context, externalID string, fixedChargeListInput *FixedChargeListInput, subscriptionStatus ...string) (*FixedChargeResult, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", externalID, "fixed_charges")
 
 	jsonQueryParams, err := json.Marshal(fixedChargeListInput)
@@ -130,8 +130,8 @@ func (sr *SubscriptionRequest) GetFixedChargeList(ctx context.Context, externalI
 		return nil, &Error{Err: err}
 	}
 
-	if len(status) > 0 && status[0] != "" {
-		queryParams["status"] = status[0]
+	if len(subscriptionStatus) > 0 && subscriptionStatus[0] != "" {
+		queryParams["subscription_status"] = subscriptionStatus[0]
 	}
 
 	clientRequest := &ClientRequest{
@@ -153,7 +153,7 @@ func (sr *SubscriptionRequest) GetFixedChargeList(ctx context.Context, externalI
 	return fixedChargeResult, nil
 }
 
-func (sr *SubscriptionRequest) UpdateFixedCharge(ctx context.Context, externalID string, fixedChargeCode string, fixedChargeInput *FixedChargeInput, status ...string) (*FixedCharge, *Error) {
+func (sr *SubscriptionRequest) UpdateFixedCharge(ctx context.Context, externalID string, fixedChargeCode string, fixedChargeInput *FixedChargeInput, subscriptionStatus ...string) (*FixedCharge, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s", "subscriptions", externalID, "fixed_charges", fixedChargeCode)
 
 	fixedChargeParams := &FixedChargeParams{
@@ -162,7 +162,7 @@ func (sr *SubscriptionRequest) UpdateFixedCharge(ctx context.Context, externalID
 
 	clientRequest := &ClientRequest{
 		Path:        subPath,
-		QueryParams: statusQueryParams(status),
+		QueryParams: statusQueryParams(subscriptionStatus),
 		Result:      &FixedChargeResult{},
 		Body:        fixedChargeParams,
 	}
@@ -182,12 +182,12 @@ func (sr *SubscriptionRequest) UpdateFixedCharge(ctx context.Context, externalID
 
 // Charge Filters
 
-func (sr *SubscriptionRequest) GetChargeFilter(ctx context.Context, externalID string, chargeCode string, filterID string, status ...string) (*ChargeFilterResponse, *Error) {
+func (sr *SubscriptionRequest) GetChargeFilter(ctx context.Context, externalID string, chargeCode string, filterID string, subscriptionStatus ...string) (*ChargeFilterResponse, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s/%s/%s", "subscriptions", externalID, "charges", chargeCode, "filters", filterID)
 
 	clientRequest := &ClientRequest{
 		Path:        subPath,
-		QueryParams: statusQueryParams(status),
+		QueryParams: statusQueryParams(subscriptionStatus),
 		Result:      &ChargeFilterResult{},
 	}
 
@@ -204,7 +204,7 @@ func (sr *SubscriptionRequest) GetChargeFilter(ctx context.Context, externalID s
 	return filterResult.Filter, nil
 }
 
-func (sr *SubscriptionRequest) GetChargeFilterList(ctx context.Context, externalID string, chargeCode string, filterListInput *ChargeFilterListInput, status ...string) (*ChargeFilterResult, *Error) {
+func (sr *SubscriptionRequest) GetChargeFilterList(ctx context.Context, externalID string, chargeCode string, filterListInput *ChargeFilterListInput, subscriptionStatus ...string) (*ChargeFilterResult, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s/%s", "subscriptions", externalID, "charges", chargeCode, "filters")
 
 	jsonQueryParams, err := json.Marshal(filterListInput)
@@ -217,8 +217,8 @@ func (sr *SubscriptionRequest) GetChargeFilterList(ctx context.Context, external
 		return nil, &Error{Err: err}
 	}
 
-	if len(status) > 0 && status[0] != "" {
-		queryParams["status"] = status[0]
+	if len(subscriptionStatus) > 0 && subscriptionStatus[0] != "" {
+		queryParams["subscription_status"] = subscriptionStatus[0]
 	}
 
 	clientRequest := &ClientRequest{
@@ -240,7 +240,7 @@ func (sr *SubscriptionRequest) GetChargeFilterList(ctx context.Context, external
 	return filterResult, nil
 }
 
-func (sr *SubscriptionRequest) CreateChargeFilter(ctx context.Context, externalID string, chargeCode string, filterInput *ChargeFilterInput, status ...string) (*ChargeFilterResponse, *Error) {
+func (sr *SubscriptionRequest) CreateChargeFilter(ctx context.Context, externalID string, chargeCode string, filterInput *ChargeFilterInput, subscriptionStatus ...string) (*ChargeFilterResponse, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s/%s", "subscriptions", externalID, "charges", chargeCode, "filters")
 
 	filterParams := &ChargeFilterParams{
@@ -249,7 +249,7 @@ func (sr *SubscriptionRequest) CreateChargeFilter(ctx context.Context, externalI
 
 	clientRequest := &ClientRequest{
 		Path:        subPath,
-		QueryParams: statusQueryParams(status),
+		QueryParams: statusQueryParams(subscriptionStatus),
 		Result:      &ChargeFilterResult{},
 		Body:        filterParams,
 	}
@@ -267,7 +267,7 @@ func (sr *SubscriptionRequest) CreateChargeFilter(ctx context.Context, externalI
 	return filterResult.Filter, nil
 }
 
-func (sr *SubscriptionRequest) UpdateChargeFilter(ctx context.Context, externalID string, chargeCode string, filterID string, filterInput *ChargeFilterInput, status ...string) (*ChargeFilterResponse, *Error) {
+func (sr *SubscriptionRequest) UpdateChargeFilter(ctx context.Context, externalID string, chargeCode string, filterID string, filterInput *ChargeFilterInput, subscriptionStatus ...string) (*ChargeFilterResponse, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s/%s/%s", "subscriptions", externalID, "charges", chargeCode, "filters", filterID)
 
 	filterParams := &ChargeFilterParams{
@@ -276,7 +276,7 @@ func (sr *SubscriptionRequest) UpdateChargeFilter(ctx context.Context, externalI
 
 	clientRequest := &ClientRequest{
 		Path:        subPath,
-		QueryParams: statusQueryParams(status),
+		QueryParams: statusQueryParams(subscriptionStatus),
 		Result:      &ChargeFilterResult{},
 		Body:        filterParams,
 	}
@@ -294,12 +294,12 @@ func (sr *SubscriptionRequest) UpdateChargeFilter(ctx context.Context, externalI
 	return filterResult.Filter, nil
 }
 
-func (sr *SubscriptionRequest) DeleteChargeFilter(ctx context.Context, externalID string, chargeCode string, filterID string, status ...string) (*ChargeFilterResponse, *Error) {
+func (sr *SubscriptionRequest) DeleteChargeFilter(ctx context.Context, externalID string, chargeCode string, filterID string, subscriptionStatus ...string) (*ChargeFilterResponse, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s/%s/%s", "subscriptions", externalID, "charges", chargeCode, "filters", filterID)
 
 	clientRequest := &ClientRequest{
 		Path:        subPath,
-		QueryParams: statusQueryParams(status),
+		QueryParams: statusQueryParams(subscriptionStatus),
 		Result:      &ChargeFilterResult{},
 	}
 

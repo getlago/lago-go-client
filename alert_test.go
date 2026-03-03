@@ -252,7 +252,7 @@ func TestAlertRequest_GetWithStatus(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("GET").
 			MatchPath("/api/v1/subscriptions/sub_1234/alerts/usage_alert").
-			MatchQuery(map[string]string{"status": "pending"}).
+			MatchQuery(map[string]string{"subscription_status": "pending"}).
 			MockResponse(mockAlertResponse)
 		defer server.Close()
 
@@ -269,7 +269,7 @@ func TestAlertRequest_GetListWithStatus(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("GET").
 			MatchPath("/api/v1/subscriptions/sub_1234/alerts").
-			MatchQuery(map[string]string{"status": "pending"}).
+			MatchQuery(map[string]string{"subscription_status": "pending"}).
 			MockResponse(mockAlertsResponse)
 		defer server.Close()
 
@@ -286,7 +286,7 @@ func TestAlertRequest_CreateWithStatus(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("POST").
 			MatchPath("/api/v1/subscriptions/sub_1234/alerts").
-			MatchQuery(map[string]string{"status": "pending"}).
+			MatchQuery(map[string]string{"subscription_status": "pending"}).
 			MockResponse(mockAlertResponse)
 		defer server.Close()
 
@@ -309,7 +309,7 @@ func TestAlertRequest_UpdateWithStatus(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("PUT").
 			MatchPath("/api/v1/subscriptions/sub_1234/alerts/usage_alert").
-			MatchQuery(map[string]string{"status": "pending"}).
+			MatchQuery(map[string]string{"subscription_status": "pending"}).
 			MockResponse(mockAlertResponse)
 		defer server.Close()
 
@@ -328,7 +328,7 @@ func TestAlertRequest_DeleteWithStatus(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("DELETE").
 			MatchPath("/api/v1/subscriptions/sub_1234/alerts/usage_alert").
-			MatchQuery(map[string]string{"status": "pending"}).
+			MatchQuery(map[string]string{"subscription_status": "pending"}).
 			MockResponse(mockAlertResponse)
 		defer server.Close()
 
@@ -345,7 +345,7 @@ func TestAlertRequest_DeleteAllWithStatus(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("DELETE").
 			MatchPath("/api/v1/subscriptions/sub_1234/alerts").
-			MatchQuery(map[string]string{"status": "pending"}).
+			MatchQuery(map[string]string{"subscription_status": "pending"}).
 			MockResponse(nil)
 		defer server.Close()
 
