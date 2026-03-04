@@ -94,7 +94,7 @@ func TestWalletTransactionRequest_Create(t *testing.T) {
 				{
 					LagoID:                           uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"),
 					LagoWalletID:                     uuid.MustParse("a1a2b3b4-c5d6-7890-1234-56789abcdef0"),
-					LagoInvoiceID: uuid.MustParse("c1c2d3d4-e5f6-7890-1234-56789abcdef0"),
+					LagoInvoiceID:                    uuid.MustParse("c1c2d3d4-e5f6-7890-1234-56789abcdef0"),
 					Status:                           "settled",
 					TransactionType:                  "outbound",
 					TransactionStatus:                "granted",
