@@ -292,6 +292,13 @@ var tests = []struct {
 		},
 	},
 	{
+		fixture: "payment_succeeded",
+		test: func(object any) bool {
+			_, ok := object.(*Payment)
+			return ok
+		},
+	},
+	{
 		fixture: "plan_created",
 		test: func(object any) bool {
 			_, ok := object.(*Plan)
