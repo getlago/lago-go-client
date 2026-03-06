@@ -38,12 +38,13 @@ func (c *Client) SubscriptionEntitlement() *SubscriptionEntitlementRequest {
 	}
 }
 
-func (sr *SubscriptionEntitlementRequest) GetList(ctx context.Context, subscriptionExternalId string) (*SubscriptionEntitlementResult, *Error) {
+func (sr *SubscriptionEntitlementRequest) GetList(ctx context.Context, subscriptionExternalId string, subscriptionStatus ...string) (*SubscriptionEntitlementResult, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", subscriptionExternalId, "entitlements")
 
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &SubscriptionEntitlementResult{},
+		Path:        subPath,
+		QueryParams: statusQueryParams(subscriptionStatus),
+		Result:      &SubscriptionEntitlementResult{},
 	}
 
 	result, clientErr := sr.client.Get(ctx, clientRequest)
@@ -59,12 +60,13 @@ func (sr *SubscriptionEntitlementRequest) GetList(ctx context.Context, subscript
 	return subscriptionEntitlementResult, nil
 }
 
-func (sr *SubscriptionEntitlementRequest) Delete(ctx context.Context, subscriptionExternalId string, featureCode string) (*SubscriptionEntitlementResult, *Error) {
+func (sr *SubscriptionEntitlementRequest) Delete(ctx context.Context, subscriptionExternalId string, featureCode string, subscriptionStatus ...string) (*SubscriptionEntitlementResult, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s", "subscriptions", subscriptionExternalId, "entitlements", featureCode)
 
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &SubscriptionEntitlementResult{},
+		Path:        subPath,
+		QueryParams: statusQueryParams(subscriptionStatus),
+		Result:      &SubscriptionEntitlementResult{},
 	}
 
 	result, clientErr := sr.client.Delete(ctx, clientRequest)
@@ -80,12 +82,13 @@ func (sr *SubscriptionEntitlementRequest) Delete(ctx context.Context, subscripti
 	return subscriptionEntitlementResult, nil
 }
 
-func (sr *SubscriptionEntitlementRequest) DeletePrivilege(ctx context.Context, subscriptionExternalId string, featureCode string, privilegeCode string) (*SubscriptionEntitlementResult, *Error) {
+func (sr *SubscriptionEntitlementRequest) DeletePrivilege(ctx context.Context, subscriptionExternalId string, featureCode string, privilegeCode string, subscriptionStatus ...string) (*SubscriptionEntitlementResult, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s/%s/%s", "subscriptions", subscriptionExternalId, "entitlements", featureCode, "privileges", privilegeCode)
 
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &SubscriptionEntitlementResult{},
+		Path:        subPath,
+		QueryParams: statusQueryParams(subscriptionStatus),
+		Result:      &SubscriptionEntitlementResult{},
 	}
 
 	result, clientErr := sr.client.Delete(ctx, clientRequest)
@@ -100,17 +103,19 @@ func (sr *SubscriptionEntitlementRequest) DeletePrivilege(ctx context.Context, s
 
 	return subscriptionEntitlementResult, nil
 }
-func (sr *SubscriptionEntitlementRequest) Update(ctx context.Context, subscriptionExternalId string, input []EntitlementInput) (*SubscriptionEntitlementResult, *Error) {
-	return sr.update(ctx, subscriptionExternalId, input, true)
+
+func (sr *SubscriptionEntitlementRequest) Update(ctx context.Context, subscriptionExternalId string, input []EntitlementInput, subscriptionStatus ...string) (*SubscriptionEntitlementResult, *Error) {
+	return sr.update(ctx, subscriptionExternalId, input, true, subscriptionStatus...)
 }
 
-func (sr *SubscriptionEntitlementRequest) update(ctx context.Context, subscriptionExternalId string, input []EntitlementInput, partial bool) (*SubscriptionEntitlementResult, *Error) {
+func (sr *SubscriptionEntitlementRequest) update(ctx context.Context, subscriptionExternalId string, input []EntitlementInput, partial bool, subscriptionStatus ...string) (*SubscriptionEntitlementResult, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", subscriptionExternalId, "entitlements")
 
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &SubscriptionEntitlementResult{},
-		Body:   EntitlementsInput{Entitlements: input},
+		Path:        subPath,
+		QueryParams: statusQueryParams(subscriptionStatus),
+		Result:      &SubscriptionEntitlementResult{},
+		Body:        EntitlementsInput{Entitlements: input},
 	}
 
 	var result interface{}
