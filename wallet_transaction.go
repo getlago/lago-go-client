@@ -46,6 +46,11 @@ type WalletTransactionListInput struct {
 	TransactionType   TransactionType         `json:"transaction_type,omitempty"`
 }
 
+type WalletTransactionConsumptionListInput struct {
+	PerPage *int `json:"per_page,omitempty,string"`
+	Page    *int `json:"page,omitempty,string"`
+}
+
 type WalletTransactionParams struct {
 	WalletTransactionInput *WalletTransactionInput `json:"wallet_transaction"`
 }
@@ -80,6 +85,8 @@ type WalletTransaction struct {
 	TransactionStatus                TransactionStatus           `json:"transaction_status,omitempty"`
 	Amount                           string                      `json:"amount,omitempty"`
 	CreditAmount                     string                      `json:"credit_amount,omitempty"`
+	RemainingAmountCents             *int                        `json:"remaining_amount_cents,omitempty"`
+	RemainingCreditAmount            *string                     `json:"remaining_credit_amount,omitempty"`
 	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
 	CreatedAt                        time.Time                   `json:"created_at,omitempty"`
 	SettledAt                        time.Time                   `json:"settled_at,omitempty"`
@@ -87,6 +94,24 @@ type WalletTransaction struct {
 	Metadata                         []WalletTransactionMetadata `json:"metadata,omitempty"`
 	Name                             string                      `json:"name,omitempty"`
 	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
+}
+
+type WalletTransactionConsumption struct {
+	LagoID            uuid.UUID          `json:"lago_id,omitempty"`
+	AmountCents       int                `json:"amount_cents,omitempty"`
+	CreditAmount      string             `json:"credit_amount,omitempty"`
+	CreatedAt         time.Time          `json:"created_at,omitempty"`
+	WalletTransaction *WalletTransaction `json:"wallet_transaction,omitempty"`
+}
+
+type WalletTransactionConsumptionResult struct {
+	WalletTransactionConsumptions []WalletTransactionConsumption `json:"wallet_transaction_consumptions,omitempty"`
+	Meta                          Metadata                       `json:"meta,omitempty"`
+}
+
+type WalletTransactionFundingResult struct {
+	WalletTransactionFundings []WalletTransactionConsumption `json:"wallet_transaction_fundings,omitempty"`
+	Meta                      Metadata                       `json:"meta,omitempty"`
 }
 
 type WalletTransactionPaymentUrl struct {
@@ -180,4 +205,66 @@ func (wtr *WalletTransactionRequest) PaymentUrl(ctx context.Context, walletTrans
 	}
 
 	return nil, nil
+}
+
+func (wtr *WalletTransactionRequest) Consumptions(ctx context.Context, walletTransactionID string, input *WalletTransactionConsumptionListInput) (*WalletTransactionConsumptionResult, *Error) {
+	jsonQueryParams, err := json.Marshal(input)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	queryParams := make(map[string]string)
+	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	subPath := fmt.Sprintf("%s/%s/%s", "wallet_transactions", walletTransactionID, "consumptions")
+	clientRequest := &ClientRequest{
+		Path:        subPath,
+		QueryParams: queryParams,
+		Result:      &WalletTransactionConsumptionResult{},
+	}
+
+	result, clientErr := wtr.client.Get(ctx, clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
+	}
+
+	consumptionResult, ok := result.(*WalletTransactionConsumptionResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return consumptionResult, nil
+}
+
+func (wtr *WalletTransactionRequest) Fundings(ctx context.Context, walletTransactionID string, input *WalletTransactionConsumptionListInput) (*WalletTransactionFundingResult, *Error) {
+	jsonQueryParams, err := json.Marshal(input)
+	if err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	queryParams := make(map[string]string)
+	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
+		return nil, &Error{Err: err}
+	}
+
+	subPath := fmt.Sprintf("%s/%s/%s", "wallet_transactions", walletTransactionID, "fundings")
+	clientRequest := &ClientRequest{
+		Path:        subPath,
+		QueryParams: queryParams,
+		Result:      &WalletTransactionFundingResult{},
+	}
+
+	result, clientErr := wtr.client.Get(ctx, clientRequest)
+	if clientErr != nil {
+		return nil, clientErr
+	}
+
+	fundingResult, ok := result.(*WalletTransactionFundingResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return fundingResult, nil
 }

@@ -21,6 +21,8 @@ var mockWalletTransactionListResponse = `{
 				"transaction_status": "granted",
 				"amount": "50.00",
 				"credit_amount": "50.00",
+				"remaining_amount_cents": 5000,
+				"remaining_credit_amount": "50.00",
 				"invoice_requires_successful_payment": true,
 				"created_at": "2024-06-01T12:00:00Z",
 				"settled_at": "2024-06-01T12:05:00Z",
@@ -98,6 +100,8 @@ func TestWalletTransactionRequest_Create(t *testing.T) {
 					TransactionStatus:                "granted",
 					Amount:                           "50.00",
 					CreditAmount:                     "50.00",
+					RemainingAmountCents:             Ptr(5000),
+					RemainingCreditAmount:            Ptr("50.00"),
 					InvoiceRequiresSuccessfulPayment: true,
 					CreatedAt:                        time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC),
 					SettledAt:                        time.Date(2024, 6, 1, 12, 5, 0, 0, time.UTC),
@@ -223,5 +227,109 @@ func TestWalletTransactionRequest_CreateWithPaymentMethod(t *testing.T) {
 		c.Assert(result.WalletTransactions[0].PaymentMethod, qt.IsNotNil)
 		c.Assert(result.WalletTransactions[0].PaymentMethod.PaymentMethodType, qt.Equals, "card")
 		c.Assert(result.WalletTransactions[0].PaymentMethod.PaymentMethodID, qt.Equals, "pm_wt_123")
+	})
+}
+
+var mockConsumptionsResponse = `{
+	"wallet_transaction_consumptions": [{
+		"lago_id": "c1c2d3d4-e5f6-7890-1234-56789abcdef0",
+		"amount_cents": 5000,
+		"credit_amount": "50.00",
+		"created_at": "2024-06-01T12:00:00Z",
+		"wallet_transaction": {
+			"lago_id": "b1b2c3d4-e5f6-7890-1234-56789abcdef0",
+			"lago_wallet_id": "a1a2b3b4-c5d6-7890-1234-56789abcdef0",
+			"status": "settled",
+			"transaction_type": "outbound",
+			"transaction_status": "invoiced",
+			"amount": "50.00",
+			"credit_amount": "50.00",
+			"created_at": "2024-06-01T12:00:00Z",
+			"settled_at": "2024-06-01T12:05:00Z"
+		}
+	}],
+	"meta": {
+		"current_page": 1,
+		"next_page": null,
+		"prev_page": null,
+		"total_pages": 1,
+		"total_count": 1
+	}
+}`
+
+var mockFundingsResponse = `{
+	"wallet_transaction_fundings": [{
+		"lago_id": "d1d2e3e4-f5f6-7890-1234-56789abcdef0",
+		"amount_cents": 3000,
+		"credit_amount": "30.00",
+		"created_at": "2024-06-01T12:00:00Z",
+		"wallet_transaction": {
+			"lago_id": "a1a2b3b4-c5d6-7890-1234-56789abcdef0",
+			"lago_wallet_id": "a1a2b3b4-c5d6-7890-1234-56789abcdef0",
+			"status": "settled",
+			"transaction_type": "inbound",
+			"transaction_status": "purchased",
+			"amount": "100.00",
+			"credit_amount": "100.00",
+			"created_at": "2024-06-01T12:00:00Z",
+			"settled_at": "2024-06-01T12:05:00Z"
+		}
+	}],
+	"meta": {
+		"current_page": 1,
+		"next_page": null,
+		"prev_page": null,
+		"total_pages": 1,
+		"total_count": 1
+	}
+}`
+
+func TestWalletTransactionRequest_Consumptions(t *testing.T) {
+	t.Run("When listing consumptions for an inbound transaction", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/wallet_transactions/b1b2c3d4-e5f6-7890-1234-56789abcdef0/consumptions").
+			MockResponse(mockConsumptionsResponse)
+		defer server.Close()
+
+		result, err := server.Client().WalletTransaction().Consumptions(context.Background(), "b1b2c3d4-e5f6-7890-1234-56789abcdef0", &WalletTransactionConsumptionListInput{})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.WalletTransactionConsumptions, qt.HasLen, 1)
+		c.Assert(result.WalletTransactionConsumptions[0].LagoID, qt.Equals, uuid.MustParse("c1c2d3d4-e5f6-7890-1234-56789abcdef0"))
+		c.Assert(result.WalletTransactionConsumptions[0].AmountCents, qt.Equals, 5000)
+		c.Assert(result.WalletTransactionConsumptions[0].CreditAmount, qt.Equals, "50.00")
+		c.Assert(result.WalletTransactionConsumptions[0].CreatedAt, qt.Equals, time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC))
+		c.Assert(result.WalletTransactionConsumptions[0].WalletTransaction, qt.IsNotNil)
+		c.Assert(result.WalletTransactionConsumptions[0].WalletTransaction.LagoID, qt.Equals, uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"))
+		c.Assert(result.WalletTransactionConsumptions[0].WalletTransaction.TransactionType, qt.Equals, TransactionType("outbound"))
+		c.Assert(result.Meta.CurrentPage, qt.Equals, 1)
+		c.Assert(result.Meta.TotalCount, qt.Equals, 1)
+	})
+}
+
+func TestWalletTransactionRequest_Fundings(t *testing.T) {
+	t.Run("When listing fundings for an outbound transaction", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/wallet_transactions/b1b2c3d4-e5f6-7890-1234-56789abcdef0/fundings").
+			MockResponse(mockFundingsResponse)
+		defer server.Close()
+
+		result, err := server.Client().WalletTransaction().Fundings(context.Background(), "b1b2c3d4-e5f6-7890-1234-56789abcdef0", &WalletTransactionConsumptionListInput{})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.WalletTransactionFundings, qt.HasLen, 1)
+		c.Assert(result.WalletTransactionFundings[0].LagoID, qt.Equals, uuid.MustParse("d1d2e3e4-f5f6-7890-1234-56789abcdef0"))
+		c.Assert(result.WalletTransactionFundings[0].AmountCents, qt.Equals, 3000)
+		c.Assert(result.WalletTransactionFundings[0].CreditAmount, qt.Equals, "30.00")
+		c.Assert(result.WalletTransactionFundings[0].CreatedAt, qt.Equals, time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC))
+		c.Assert(result.WalletTransactionFundings[0].WalletTransaction, qt.IsNotNil)
+		c.Assert(result.WalletTransactionFundings[0].WalletTransaction.LagoID, qt.Equals, uuid.MustParse("a1a2b3b4-c5d6-7890-1234-56789abcdef0"))
+		c.Assert(result.WalletTransactionFundings[0].WalletTransaction.TransactionType, qt.Equals, TransactionType("inbound"))
+		c.Assert(result.Meta.CurrentPage, qt.Equals, 1)
+		c.Assert(result.Meta.TotalCount, qt.Equals, 1)
 	})
 }
