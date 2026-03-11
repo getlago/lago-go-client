@@ -88,11 +88,12 @@ func (c *Client) Alert() *AlertRequest {
 	}
 }
 
-func (ar *AlertRequest) Get(ctx context.Context, subscriptionExternalID, alertCode string) (*Alert, *Error) {
+func (ar *AlertRequest) Get(ctx context.Context, subscriptionExternalID, alertCode string, subscriptionStatus ...string) (*Alert, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s", "subscriptions", subscriptionExternalID, "alerts", alertCode)
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &AlertResult{},
+		Path:        subPath,
+		QueryParams: statusQueryParams(subscriptionStatus),
+		Result:      &AlertResult{},
 	}
 
 	result, err := ar.client.Get(ctx, clientRequest)
@@ -108,11 +109,12 @@ func (ar *AlertRequest) Get(ctx context.Context, subscriptionExternalID, alertCo
 	return alertResult.Alert, nil
 }
 
-func (ar *AlertRequest) GetList(ctx context.Context, subscriptionExternalID string) (*AlertResult, *Error) {
+func (ar *AlertRequest) GetList(ctx context.Context, subscriptionExternalID string, subscriptionStatus ...string) (*AlertResult, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", subscriptionExternalID, "alerts")
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &AlertResult{},
+		Path:        subPath,
+		QueryParams: statusQueryParams(subscriptionStatus),
+		Result:      &AlertResult{},
 	}
 
 	result, err := ar.client.Get(ctx, clientRequest)
@@ -128,12 +130,13 @@ func (ar *AlertRequest) GetList(ctx context.Context, subscriptionExternalID stri
 	return alertResult, nil
 }
 
-func (ar *AlertRequest) Create(ctx context.Context, subscriptionExternalID string, alertInput *AlertInput) (*Alert, *Error) {
+func (ar *AlertRequest) Create(ctx context.Context, subscriptionExternalID string, alertInput *AlertInput, subscriptionStatus ...string) (*Alert, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", subscriptionExternalID, "alerts")
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &AlertResult{},
-		Body:   &AlertParams{Alert: alertInput},
+		Path:        subPath,
+		QueryParams: statusQueryParams(subscriptionStatus),
+		Result:      &AlertResult{},
+		Body:        &AlertParams{Alert: alertInput},
 	}
 
 	result, err := ar.client.Post(ctx, clientRequest)
@@ -149,12 +152,13 @@ func (ar *AlertRequest) Create(ctx context.Context, subscriptionExternalID strin
 	return alertResult.Alert, nil
 }
 
-func (ar *AlertRequest) Update(ctx context.Context, subscriptionExternalID, alertCode string, alertInput *AlertInput) (*Alert, *Error) {
+func (ar *AlertRequest) Update(ctx context.Context, subscriptionExternalID, alertCode string, alertInput *AlertInput, subscriptionStatus ...string) (*Alert, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s", "subscriptions", subscriptionExternalID, "alerts", alertCode)
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &AlertResult{},
-		Body:   &AlertParams{Alert: alertInput},
+		Path:        subPath,
+		QueryParams: statusQueryParams(subscriptionStatus),
+		Result:      &AlertResult{},
+		Body:        &AlertParams{Alert: alertInput},
 	}
 
 	result, err := ar.client.Put(ctx, clientRequest)
@@ -170,12 +174,13 @@ func (ar *AlertRequest) Update(ctx context.Context, subscriptionExternalID, aler
 	return alertResult.Alert, nil
 }
 
-func (ar *AlertRequest) CreateList(ctx context.Context, subscriptionExternalID string, alertInputs []AlertInput) ([]Alert, *Error) {
+func (ar *AlertRequest) CreateList(ctx context.Context, subscriptionExternalID string, alertInputs []AlertInput, subscriptionStatus ...string) ([]Alert, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", subscriptionExternalID, "alerts")
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &AlertResult{},
-		Body:   &AlertListParams{Alerts: alertInputs},
+		Path:        subPath,
+		QueryParams: statusQueryParams(subscriptionStatus),
+		Result:      &AlertResult{},
+		Body:        &AlertListParams{Alerts: alertInputs},
 	}
 
 	result, err := ar.client.Post(ctx, clientRequest)
@@ -191,11 +196,12 @@ func (ar *AlertRequest) CreateList(ctx context.Context, subscriptionExternalID s
 	return alertResult.Alerts, nil
 }
 
-func (ar *AlertRequest) Delete(ctx context.Context, subscriptionExternalID, alertCode string) (*Alert, *Error) {
+func (ar *AlertRequest) Delete(ctx context.Context, subscriptionExternalID, alertCode string, subscriptionStatus ...string) (*Alert, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s/%s", "subscriptions", subscriptionExternalID, "alerts", alertCode)
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &AlertResult{},
+		Path:        subPath,
+		QueryParams: statusQueryParams(subscriptionStatus),
+		Result:      &AlertResult{},
 	}
 
 	result, err := ar.client.Delete(ctx, clientRequest)
@@ -211,11 +217,12 @@ func (ar *AlertRequest) Delete(ctx context.Context, subscriptionExternalID, aler
 	return alertResult.Alert, nil
 }
 
-func (ar *AlertRequest) DeleteAll(ctx context.Context, subscriptionExternalID string) *Error {
+func (ar *AlertRequest) DeleteAll(ctx context.Context, subscriptionExternalID string, subscriptionStatus ...string) *Error {
 	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", subscriptionExternalID, "alerts")
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &AlertResult{},
+		Path:        subPath,
+		QueryParams: statusQueryParams(subscriptionStatus),
+		Result:      &AlertResult{},
 	}
 
 	_, err := ar.client.Delete(ctx, clientRequest)

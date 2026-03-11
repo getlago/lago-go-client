@@ -294,12 +294,13 @@ func (sr *SubscriptionRequest) Update(ctx context.Context, subscriptionInput *Su
 	return subscriptionResult.Subscription, nil
 }
 
-func (sr *SubscriptionRequest) GetFixedCharges(ctx context.Context, subscriptionExternalID string) (*FixedChargeResult, *Error) {
+func (sr *SubscriptionRequest) GetFixedCharges(ctx context.Context, subscriptionExternalID string, subscriptionStatus ...string) (*FixedChargeResult, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "subscriptions", subscriptionExternalID, "fixed_charges")
 
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &FixedChargeResult{},
+		Path:        subPath,
+		QueryParams: statusQueryParams(subscriptionStatus),
+		Result:      &FixedChargeResult{},
 	}
 
 	result, err := sr.client.Get(ctx, clientRequest)
