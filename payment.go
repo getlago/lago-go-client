@@ -47,6 +47,7 @@ type Payment struct {
 	ExternalPaymentID  string      `json:"external_payment_id,omitempty"`
 	CreatedAt          time.Time   `json:"created_at,omitempty"`
 	InvoiceIds         []string    `json:"invoice_ids,omitempty"`
+	InvoiceNumbers     []string    `json:"invoice_numbers,omitempty"`
 	ExternalCustomerID string      `json:"external_customer_id,omitempty"`
 	NextAction         *NextAction `json:"next_action,omitempty"`
 }

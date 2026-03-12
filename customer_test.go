@@ -227,6 +227,7 @@ var mockCustomerPaymentListResponse = map[string]any{
 			"external_payment_id":  "ext_payment_123",
 			"created_at":           "2022-04-29T08:59:51Z",
 			"invoice_ids":          []string{"1a901a90-1a90-1a90-1a90-1a901a901a90"},
+			"invoice_numbers":      []string{"LAG-1234-001-002"},
 			"external_customer_id": "CUSTOMER_1",
 		},
 	},

@@ -5,6 +5,7 @@
   "payment": {
     "lago_id": "8e5d5ec2-bdc7-4c43-a944-5ababae775d4",
     "invoice_ids": ["f8e194df-5d90-4382-b146-c881d2c67f28"],
+    "invoice_numbers": ["LAG-1234-001-002"],
     "amount_cents": 100,
     "amount_currency": "USD",
     "payment_status": "succeeded",
