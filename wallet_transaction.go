@@ -80,6 +80,7 @@ type WalletTransactionResult struct {
 type WalletTransaction struct {
 	LagoID                           uuid.UUID                   `json:"lago_id,omitempty"`
 	LagoWalletID                     uuid.UUID                   `json:"lago_wallet_id,omitempty"`
+	LagoVoidedInvoiceID              *uuid.UUID                  `json:"lago_voided_invoice_id,omitempty"`
 	Status                           WalletTransactionStatus     `json:"status,omitempty"`
 	TransactionType                  TransactionType             `json:"transaction_type,omitempty"`
 	TransactionStatus                TransactionStatus           `json:"transaction_status,omitempty"`
