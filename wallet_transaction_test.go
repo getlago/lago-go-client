@@ -16,6 +16,7 @@ var mockWalletTransactionListResponse = `{
 			"wallet_transactions": [{
 				"lago_id": "b1b2c3d4-e5f6-7890-1234-56789abcdef0",
 				"lago_wallet_id": "a1a2b3b4-c5d6-7890-1234-56789abcdef0",
+				"lago_voided_invoice_id": "f1f2a3a4-b5c6-7890-1234-56789abcdef0",
 				"status": "settled",
 				"transaction_type": "outbound",
 				"transaction_status": "granted",
@@ -95,6 +96,7 @@ func TestWalletTransactionRequest_Create(t *testing.T) {
 				{
 					LagoID:                           uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"),
 					LagoWalletID:                     uuid.MustParse("a1a2b3b4-c5d6-7890-1234-56789abcdef0"),
+					LagoVoidedInvoiceID:              Ptr(uuid.MustParse("f1f2a3a4-b5c6-7890-1234-56789abcdef0")),
 					Status:                           "settled",
 					TransactionType:                  "outbound",
 					TransactionStatus:                "granted",
@@ -294,7 +296,7 @@ func TestWalletTransactionRequest_Consumptions(t *testing.T) {
 			MockResponse(mockConsumptionsResponse)
 		defer server.Close()
 
-		result, err := server.Client().WalletTransaction().Consumptions(context.Background(), "b1b2c3d4-e5f6-7890-1234-56789abcdef0", &WalletTransactionConsumptionListInput{})
+		result, err := server.Client().WalletTransaction().Consumptions(context.Background(), "b1b2c3d4-e5f6-7890-1234-56789abcdef0", &WalletTransactionPaginationInput{})
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result.WalletTransactionConsumptions, qt.HasLen, 1)
 		c.Assert(result.WalletTransactionConsumptions[0].LagoID, qt.Equals, uuid.MustParse("c1c2d3d4-e5f6-7890-1234-56789abcdef0"))
@@ -319,7 +321,7 @@ func TestWalletTransactionRequest_Fundings(t *testing.T) {
 			MockResponse(mockFundingsResponse)
 		defer server.Close()
 
-		result, err := server.Client().WalletTransaction().Fundings(context.Background(), "b1b2c3d4-e5f6-7890-1234-56789abcdef0", &WalletTransactionConsumptionListInput{})
+		result, err := server.Client().WalletTransaction().Fundings(context.Background(), "b1b2c3d4-e5f6-7890-1234-56789abcdef0", &WalletTransactionPaginationInput{})
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result.WalletTransactionFundings, qt.HasLen, 1)
 		c.Assert(result.WalletTransactionFundings[0].LagoID, qt.Equals, uuid.MustParse("d1d2e3e4-f5f6-7890-1234-56789abcdef0"))

@@ -46,7 +46,7 @@ type WalletTransactionListInput struct {
 	TransactionType   TransactionType         `json:"transaction_type,omitempty"`
 }
 
-type WalletTransactionConsumptionListInput struct {
+type WalletTransactionPaginationInput struct {
 	PerPage *int `json:"per_page,omitempty,string"`
 	Page    *int `json:"page,omitempty,string"`
 }
@@ -110,9 +110,17 @@ type WalletTransactionConsumptionResult struct {
 	Meta                          Metadata                       `json:"meta,omitempty"`
 }
 
+type WalletTransactionFunding struct {
+	LagoID            uuid.UUID          `json:"lago_id,omitempty"`
+	AmountCents       int                `json:"amount_cents,omitempty"`
+	CreditAmount      string             `json:"credit_amount,omitempty"`
+	CreatedAt         time.Time          `json:"created_at,omitempty"`
+	WalletTransaction *WalletTransaction `json:"wallet_transaction,omitempty"`
+}
+
 type WalletTransactionFundingResult struct {
-	WalletTransactionFundings []WalletTransactionConsumption `json:"wallet_transaction_fundings,omitempty"`
-	Meta                      Metadata                       `json:"meta,omitempty"`
+	WalletTransactionFundings []WalletTransactionFunding `json:"wallet_transaction_fundings,omitempty"`
+	Meta                      Metadata                   `json:"meta,omitempty"`
 }
 
 type WalletTransactionPaymentUrl struct {
@@ -208,7 +216,7 @@ func (wtr *WalletTransactionRequest) PaymentUrl(ctx context.Context, walletTrans
 	return nil, nil
 }
 
-func (wtr *WalletTransactionRequest) Consumptions(ctx context.Context, walletTransactionID string, input *WalletTransactionConsumptionListInput) (*WalletTransactionConsumptionResult, *Error) {
+func (wtr *WalletTransactionRequest) Consumptions(ctx context.Context, walletTransactionID string, input *WalletTransactionPaginationInput) (*WalletTransactionConsumptionResult, *Error) {
 	jsonQueryParams, err := json.Marshal(input)
 	if err != nil {
 		return nil, &Error{Err: err}
@@ -239,7 +247,7 @@ func (wtr *WalletTransactionRequest) Consumptions(ctx context.Context, walletTra
 	return consumptionResult, nil
 }
 
-func (wtr *WalletTransactionRequest) Fundings(ctx context.Context, walletTransactionID string, input *WalletTransactionConsumptionListInput) (*WalletTransactionFundingResult, *Error) {
+func (wtr *WalletTransactionRequest) Fundings(ctx context.Context, walletTransactionID string, input *WalletTransactionPaginationInput) (*WalletTransactionFundingResult, *Error) {
 	jsonQueryParams, err := json.Marshal(input)
 	if err != nil {
 		return nil, &Error{Err: err}
