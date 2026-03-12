@@ -17,6 +17,8 @@ const (
 	LifetimeUsageAmountAlertType              AlertType = "lifetime_usage_amount"
 	WalletBalanceAmountAlertType              AlertType = "wallet_balance_amount"
 	WalletCreditsBalanceAlertType             AlertType = "wallet_credits_balance"
+	WalletOngoingBalanceAmountAlertType       AlertType = "wallet_ongoing_balance_amount"
+	WalletCreditsOngoingBalanceAlertType      AlertType = "wallet_credits_ongoing_balance"
 )
 
 type AlertRequest struct {
