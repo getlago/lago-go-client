@@ -42,6 +42,13 @@ var mockSubscriptionResponse = `{
     },
     "current_billing_period_started_at": "2022-08-08T00:00:00Z",
     "current_billing_period_ending_at": "2022-09-08T00:00:00Z",
+    "applied_invoice_custom_sections": [
+      {
+        "lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+        "invoice_custom_section_id": "2b902b90-2b90-2b90-2b90-2b902b902b90",
+        "created_at": "2022-08-08T00:00:00Z"
+      }
+    ],
     "plan": {
       "lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
       "name": "Startup",
@@ -425,6 +432,50 @@ func TestSubscriptionRequest_CreateWithPaymentMethod(t *testing.T) {
 		c.Assert(subscription.PaymentMethod, qt.IsNotNil)
 		c.Assert(subscription.PaymentMethod.PaymentMethodType, qt.Equals, "card")
 		c.Assert(subscription.PaymentMethod.PaymentMethodID, qt.Equals, "pm_123456")
+		c.Assert(subscription.AppliedInvoiceCustomSections, qt.HasLen, 1)
+		c.Assert(subscription.AppliedInvoiceCustomSections[0].LagoId.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
+		c.Assert(subscription.AppliedInvoiceCustomSections[0].InvoiceCustomSectionId.String(), qt.Equals, "2b902b90-2b90-2b90-2b90-2b902b902b90")
+	})
+}
+
+func TestSubscriptionRequest_CreateWithInvoiceCustomSections(t *testing.T) {
+	t.Run("When creating a subscription with invoice custom sections", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/subscriptions").
+			MatchJSONBody(`{
+				"subscription": {
+					"external_customer_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+					"plan_code": "premium",
+					"external_id": "my_sub_1",
+					"name": "Repository A",
+					"billing_time": "anniversary",
+					"invoice_custom_section": {
+						"invoice_custom_section_codes": ["section_1", "section_2"],
+						"skip_invoice_custom_sections": true
+					}
+				}
+			}`).
+			MockResponse(mockSubscriptionResponse)
+		defer server.Close()
+
+		subscription, err := server.Client().Subscription().Create(context.Background(), &SubscriptionInput{
+			ExternalCustomerID: "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+			PlanCode:           "premium",
+			ExternalID:         "my_sub_1",
+			Name:               "Repository A",
+			BillingTime:        Anniversary,
+			InvoiceCustomSection: &InvoiceCustomSectionInput{
+				InvoiceCustomSectionCodes: []string{"section_1", "section_2"},
+				SkipInvoiceCustomSections: true,
+			},
+		})
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(subscription.AppliedInvoiceCustomSections, qt.HasLen, 1)
+		c.Assert(subscription.AppliedInvoiceCustomSections[0].LagoId.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
 	})
 }
 

@@ -32,6 +32,7 @@ type RecurringTransactionRuleInput struct {
 	TransactionName                  string                      `json:"transaction_name,omitempty"`
 	IgnorePaidTopUpLimits            *bool                       `json:"ignore_paid_top_up_limits,omitempty"`
 	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
+	InvoiceCustomSection             *InvoiceCustomSectionInput  `json:"invoice_custom_section,omitempty"`
 }
 
 type RecurringTransactionRuleResponse struct {
@@ -50,8 +51,9 @@ type RecurringTransactionRuleResponse struct {
 	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
 	TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
 	TransactionName                  string                      `json:"transaction_name,omitempty"`
-	IgnorePaidTopUpLimits            bool                        `json:"ignore_paid_top_up_limits"`
-	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
+	IgnorePaidTopUpLimits            bool                          `json:"ignore_paid_top_up_limits"`
+	PaymentMethod                    *PaymentMethodInput           `json:"payment_method,omitempty"`
+	AppliedInvoiceCustomSections     []AppliedInvoiceCustomSection `json:"applied_invoice_custom_sections,omitempty"`
 }
 
 type WalletRequest struct {
@@ -87,6 +89,7 @@ type WalletInput struct {
 	IgnorePaidTopUpLimitsOnCreation  *bool                           `json:"ignore_paid_top_up_limits_on_creation,omitempty"`
 	Metadata                         map[string]string               `json:"metadata,omitempty"`
 	PaymentMethod                    *PaymentMethodInput             `json:"payment_method,omitempty"`
+	InvoiceCustomSection             *InvoiceCustomSectionInput      `json:"invoice_custom_section,omitempty"`
 }
 
 type WalletListInput struct {
@@ -138,6 +141,7 @@ type Wallet struct {
 	PaidTopUpMinAmountCents          *int                               `json:"paid_top_up_min_amount_cents,omitempty"`
 	Metadata                         map[string]string                  `json:"metadata,omitempty"`
 	PaymentMethod                    *PaymentMethodInput                `json:"payment_method,omitempty"`
+	AppliedInvoiceCustomSections     []AppliedInvoiceCustomSection      `json:"applied_invoice_custom_sections,omitempty"`
 }
 
 func (c *Client) Wallet() *WalletRequest {

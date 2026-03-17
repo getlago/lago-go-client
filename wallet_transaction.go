@@ -65,6 +65,7 @@ type WalletTransactionInput struct {
 	Metadata                         []WalletTransactionMetadata `json:"metadata,omitempty"`
 	IgnorePaidTopUpLimits            bool                        `json:"ignore_paid_top_up_limits,omitempty"`
 	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
+	InvoiceCustomSection             *InvoiceCustomSectionInput  `json:"invoice_custom_section,omitempty"`
 }
 
 type WalletTransactionMetadata struct {
@@ -93,8 +94,9 @@ type WalletTransaction struct {
 	SettledAt                        time.Time                   `json:"settled_at,omitempty"`
 	FailedAt                         time.Time                   `json:"failed_at,omitempty"`
 	Metadata                         []WalletTransactionMetadata `json:"metadata,omitempty"`
-	Name                             string                      `json:"name,omitempty"`
-	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
+	Name                             string                        `json:"name,omitempty"`
+	PaymentMethod                    *PaymentMethodInput           `json:"payment_method,omitempty"`
+	AppliedInvoiceCustomSections     []AppliedInvoiceCustomSection `json:"applied_invoice_custom_sections,omitempty"`
 }
 
 type WalletTransactionConsumption struct {
