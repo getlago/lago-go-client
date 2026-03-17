@@ -36,21 +36,21 @@ type RecurringTransactionRuleInput struct {
 }
 
 type RecurringTransactionRuleResponse struct {
-	LagoID                           uuid.UUID                   `json:"lago_id,omitempty"`
-	Interval                         string                      `json:"interval,omitempty"`
-	Method                           string                      `json:"method,omitempty"`
-	StartedAt                        *time.Time                  `json:"started_at,omitempty"`
-	ExpirationAt                     *time.Time                  `json:"expiration_at,omitempty"`
-	Status                           Status                      `json:"status,omitempty"`
-	TargetOngoingBalance             string                      `json:"target_ongoing_balance,omitempty"`
-	ThresholdCredits                 string                      `json:"threshold_credits,omitempty"`
-	Trigger                          string                      `json:"trigger,omitempty"`
-	PaidCredits                      string                      `json:"paid_credits,omitempty"`
-	GrantedCredits                   string                      `json:"granted_credits,omitempty"`
-	CreatedAt                        time.Time                   `json:"created_at,omitempty"`
-	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
-	TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
-	TransactionName                  string                      `json:"transaction_name,omitempty"`
+	LagoID                           uuid.UUID                     `json:"lago_id,omitempty"`
+	Interval                         string                        `json:"interval,omitempty"`
+	Method                           string                        `json:"method,omitempty"`
+	StartedAt                        *time.Time                    `json:"started_at,omitempty"`
+	ExpirationAt                     *time.Time                    `json:"expiration_at,omitempty"`
+	Status                           Status                        `json:"status,omitempty"`
+	TargetOngoingBalance             string                        `json:"target_ongoing_balance,omitempty"`
+	ThresholdCredits                 string                        `json:"threshold_credits,omitempty"`
+	Trigger                          string                        `json:"trigger,omitempty"`
+	PaidCredits                      string                        `json:"paid_credits,omitempty"`
+	GrantedCredits                   string                        `json:"granted_credits,omitempty"`
+	CreatedAt                        time.Time                     `json:"created_at,omitempty"`
+	InvoiceRequiresSuccessfulPayment bool                          `json:"invoice_requires_successful_payment,omitempty"`
+	TransactionMetadata              []WalletTransactionMetadata   `json:"transaction_metadata,omitempty"`
+	TransactionName                  string                        `json:"transaction_name,omitempty"`
 	IgnorePaidTopUpLimits            bool                          `json:"ignore_paid_top_up_limits"`
 	PaymentMethod                    *PaymentMethodInput           `json:"payment_method,omitempty"`
 	AppliedInvoiceCustomSections     []AppliedInvoiceCustomSection `json:"applied_invoice_custom_sections,omitempty"`

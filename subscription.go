@@ -89,12 +89,12 @@ type PlanOverridesInput struct {
 }
 
 type SubscriptionInput struct {
-	ExternalCustomerID string              `json:"external_customer_id,omitempty"`
-	PlanCode           string              `json:"plan_code,omitempty"`
-	SubscriptionAt     *time.Time          `json:"subscription_at,omitempty"`
-	EndingAt           *time.Time          `json:"ending_at,omitempty"`
-	BillingTime        BillingTime         `json:"billing_time,omitempty"`
-	PlanOverrides      *PlanOverridesInput `json:"plan_overrides,omitempty"`
+	ExternalCustomerID   string                     `json:"external_customer_id,omitempty"`
+	PlanCode             string                     `json:"plan_code,omitempty"`
+	SubscriptionAt       *time.Time                 `json:"subscription_at,omitempty"`
+	EndingAt             *time.Time                 `json:"ending_at,omitempty"`
+	BillingTime          BillingTime                `json:"billing_time,omitempty"`
+	PlanOverrides        *PlanOverridesInput        `json:"plan_overrides,omitempty"`
 	ExternalID           string                     `json:"external_id"`
 	Name                 string                     `json:"name"`
 	PaymentMethod        *PaymentMethodInput        `json:"payment_method,omitempty"`
