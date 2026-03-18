@@ -1,6 +1,8 @@
 package lago
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -11,4 +13,15 @@ type InvoiceCustomSection struct {
 	Description string    `json:"description,omitempty"`
 	Details     string    `json:"details,omitempty"`
 	DisplayName string    `json:"display_name,omitempty"`
+}
+
+type InvoiceCustomSectionInput struct {
+	InvoiceCustomSectionCodes []string `json:"invoice_custom_section_codes,omitempty"`
+	SkipInvoiceCustomSections bool     `json:"skip_invoice_custom_sections,omitempty"`
+}
+
+type AppliedInvoiceCustomSection struct {
+	LagoId                 uuid.UUID `json:"lago_id,omitempty"`
+	InvoiceCustomSectionId uuid.UUID `json:"invoice_custom_section_id,omitempty"`
+	CreatedAt              time.Time `json:"created_at,omitempty"`
 }

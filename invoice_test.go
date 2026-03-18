@@ -463,3 +463,39 @@ func TestInvoiceRequest_CreateWithPaymentMethod(t *testing.T) {
 		c.Assert(result.LagoID.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
 	})
 }
+
+func TestInvoiceRequest_CreateWithInvoiceCustomSections(t *testing.T) {
+	t.Run("When creating a one-off invoice with invoice custom sections", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/invoices").
+			MatchJSONBody(`{
+				"invoice": {
+					"external_customer_id": "CUSTOMER_1",
+					"currency": "USD",
+					"fees": [{"add_on_code": "setup_fee", "units": 1}],
+					"invoice_custom_section": {
+						"invoice_custom_section_codes": ["section_1", "section_2"],
+						"skip_invoice_custom_sections": true
+					}
+				}
+			}`).
+			MockResponse(map[string]any{"invoice": mockInvoice})
+		defer server.Close()
+
+		result, err := server.Client().Invoice().Create(context.Background(), &InvoiceOneOffInput{
+			ExternalCustomerId: "CUSTOMER_1",
+			Currency:           "USD",
+			Fees:               []InvoiceFeesInput{{AddOnCode: "setup_fee", Units: 1}},
+			InvoiceCustomSection: &InvoiceCustomSectionInput{
+				InvoiceCustomSectionCodes: []string{"section_1", "section_2"},
+				SkipInvoiceCustomSections: true,
+			},
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result, qt.IsNotNil)
+		c.Assert(result.LagoID.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
+	})
+}

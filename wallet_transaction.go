@@ -65,6 +65,7 @@ type WalletTransactionInput struct {
 	Metadata                         []WalletTransactionMetadata `json:"metadata,omitempty"`
 	IgnorePaidTopUpLimits            bool                        `json:"ignore_paid_top_up_limits,omitempty"`
 	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
+	InvoiceCustomSection             *InvoiceCustomSectionInput  `json:"invoice_custom_section,omitempty"`
 }
 
 type WalletTransactionMetadata struct {
@@ -78,23 +79,24 @@ type WalletTransactionResult struct {
 }
 
 type WalletTransaction struct {
-	LagoID                           uuid.UUID                   `json:"lago_id,omitempty"`
-	LagoWalletID                     uuid.UUID                   `json:"lago_wallet_id,omitempty"`
-	LagoVoidedInvoiceID              *uuid.UUID                  `json:"lago_voided_invoice_id,omitempty"`
-	Status                           WalletTransactionStatus     `json:"status,omitempty"`
-	TransactionType                  TransactionType             `json:"transaction_type,omitempty"`
-	TransactionStatus                TransactionStatus           `json:"transaction_status,omitempty"`
-	Amount                           string                      `json:"amount,omitempty"`
-	CreditAmount                     string                      `json:"credit_amount,omitempty"`
-	RemainingAmountCents             *int                        `json:"remaining_amount_cents,omitempty"`
-	RemainingCreditAmount            *string                     `json:"remaining_credit_amount,omitempty"`
-	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
-	CreatedAt                        time.Time                   `json:"created_at,omitempty"`
-	SettledAt                        time.Time                   `json:"settled_at,omitempty"`
-	FailedAt                         time.Time                   `json:"failed_at,omitempty"`
-	Metadata                         []WalletTransactionMetadata `json:"metadata,omitempty"`
-	Name                             string                      `json:"name,omitempty"`
-	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
+	LagoID                           uuid.UUID                     `json:"lago_id,omitempty"`
+	LagoWalletID                     uuid.UUID                     `json:"lago_wallet_id,omitempty"`
+	LagoVoidedInvoiceID              *uuid.UUID                    `json:"lago_voided_invoice_id,omitempty"`
+	Status                           WalletTransactionStatus       `json:"status,omitempty"`
+	TransactionType                  TransactionType               `json:"transaction_type,omitempty"`
+	TransactionStatus                TransactionStatus             `json:"transaction_status,omitempty"`
+	Amount                           string                        `json:"amount,omitempty"`
+	CreditAmount                     string                        `json:"credit_amount,omitempty"`
+	RemainingAmountCents             *int                          `json:"remaining_amount_cents,omitempty"`
+	RemainingCreditAmount            *string                       `json:"remaining_credit_amount,omitempty"`
+	InvoiceRequiresSuccessfulPayment bool                          `json:"invoice_requires_successful_payment,omitempty"`
+	CreatedAt                        time.Time                     `json:"created_at,omitempty"`
+	SettledAt                        time.Time                     `json:"settled_at,omitempty"`
+	FailedAt                         time.Time                     `json:"failed_at,omitempty"`
+	Metadata                         []WalletTransactionMetadata   `json:"metadata,omitempty"`
+	Name                             string                        `json:"name,omitempty"`
+	PaymentMethod                    *PaymentMethodInput           `json:"payment_method,omitempty"`
+	AppliedInvoiceCustomSections     []AppliedInvoiceCustomSection `json:"applied_invoice_custom_sections,omitempty"`
 }
 
 type WalletTransactionConsumption struct {

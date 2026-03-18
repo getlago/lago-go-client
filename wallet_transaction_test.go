@@ -36,7 +36,12 @@ var mockWalletTransactionListResponse = `{
 				"payment_method": {
 					"payment_method_type": "card",
 					"payment_method_id": "pm_wt_123"
-				}
+				},
+				"applied_invoice_custom_sections": [{
+					"lago_id": "e1e2f3f4-a5b6-7890-1234-56789abcdef0",
+					"invoice_custom_section_id": "f1f2a3a4-b5c6-7890-1234-56789abcdef0",
+					"created_at": "2024-06-01T12:00:00Z"
+				}]
 			}],
 			"meta": {
 				"current_page": 1,
@@ -113,6 +118,13 @@ func TestWalletTransactionRequest_Create(t *testing.T) {
 					PaymentMethod: &PaymentMethodInput{
 						PaymentMethodType: "card",
 						PaymentMethodID:   "pm_wt_123",
+					},
+					AppliedInvoiceCustomSections: []AppliedInvoiceCustomSection{
+						{
+							LagoId:                 uuid.MustParse("e1e2f3f4-a5b6-7890-1234-56789abcdef0"),
+							InvoiceCustomSectionId: uuid.MustParse("f1f2a3a4-b5c6-7890-1234-56789abcdef0"),
+							CreatedAt:              time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC),
+						},
 					},
 				},
 			},

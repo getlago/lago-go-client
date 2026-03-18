@@ -32,26 +32,28 @@ type RecurringTransactionRuleInput struct {
 	TransactionName                  string                      `json:"transaction_name,omitempty"`
 	IgnorePaidTopUpLimits            *bool                       `json:"ignore_paid_top_up_limits,omitempty"`
 	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
+	InvoiceCustomSection             *InvoiceCustomSectionInput  `json:"invoice_custom_section,omitempty"`
 }
 
 type RecurringTransactionRuleResponse struct {
-	LagoID                           uuid.UUID                   `json:"lago_id,omitempty"`
-	Interval                         string                      `json:"interval,omitempty"`
-	Method                           string                      `json:"method,omitempty"`
-	StartedAt                        *time.Time                  `json:"started_at,omitempty"`
-	ExpirationAt                     *time.Time                  `json:"expiration_at,omitempty"`
-	Status                           Status                      `json:"status,omitempty"`
-	TargetOngoingBalance             string                      `json:"target_ongoing_balance,omitempty"`
-	ThresholdCredits                 string                      `json:"threshold_credits,omitempty"`
-	Trigger                          string                      `json:"trigger,omitempty"`
-	PaidCredits                      string                      `json:"paid_credits,omitempty"`
-	GrantedCredits                   string                      `json:"granted_credits,omitempty"`
-	CreatedAt                        time.Time                   `json:"created_at,omitempty"`
-	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
-	TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
-	TransactionName                  string                      `json:"transaction_name,omitempty"`
-	IgnorePaidTopUpLimits            bool                        `json:"ignore_paid_top_up_limits"`
-	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
+	LagoID                           uuid.UUID                     `json:"lago_id,omitempty"`
+	Interval                         string                        `json:"interval,omitempty"`
+	Method                           string                        `json:"method,omitempty"`
+	StartedAt                        *time.Time                    `json:"started_at,omitempty"`
+	ExpirationAt                     *time.Time                    `json:"expiration_at,omitempty"`
+	Status                           Status                        `json:"status,omitempty"`
+	TargetOngoingBalance             string                        `json:"target_ongoing_balance,omitempty"`
+	ThresholdCredits                 string                        `json:"threshold_credits,omitempty"`
+	Trigger                          string                        `json:"trigger,omitempty"`
+	PaidCredits                      string                        `json:"paid_credits,omitempty"`
+	GrantedCredits                   string                        `json:"granted_credits,omitempty"`
+	CreatedAt                        time.Time                     `json:"created_at,omitempty"`
+	InvoiceRequiresSuccessfulPayment bool                          `json:"invoice_requires_successful_payment,omitempty"`
+	TransactionMetadata              []WalletTransactionMetadata   `json:"transaction_metadata,omitempty"`
+	TransactionName                  string                        `json:"transaction_name,omitempty"`
+	IgnorePaidTopUpLimits            bool                          `json:"ignore_paid_top_up_limits"`
+	PaymentMethod                    *PaymentMethodInput           `json:"payment_method,omitempty"`
+	AppliedInvoiceCustomSections     []AppliedInvoiceCustomSection `json:"applied_invoice_custom_sections,omitempty"`
 }
 
 type WalletRequest struct {
@@ -87,6 +89,7 @@ type WalletInput struct {
 	IgnorePaidTopUpLimitsOnCreation  *bool                           `json:"ignore_paid_top_up_limits_on_creation,omitempty"`
 	Metadata                         map[string]string               `json:"metadata,omitempty"`
 	PaymentMethod                    *PaymentMethodInput             `json:"payment_method,omitempty"`
+	InvoiceCustomSection             *InvoiceCustomSectionInput      `json:"invoice_custom_section,omitempty"`
 }
 
 type WalletListInput struct {
@@ -138,6 +141,7 @@ type Wallet struct {
 	PaidTopUpMinAmountCents          *int                               `json:"paid_top_up_min_amount_cents,omitempty"`
 	Metadata                         map[string]string                  `json:"metadata,omitempty"`
 	PaymentMethod                    *PaymentMethodInput                `json:"payment_method,omitempty"`
+	AppliedInvoiceCustomSections     []AppliedInvoiceCustomSection      `json:"applied_invoice_custom_sections,omitempty"`
 }
 
 func (c *Client) Wallet() *WalletRequest {
