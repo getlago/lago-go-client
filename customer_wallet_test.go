@@ -45,12 +45,30 @@ var mockCustomerWalletResponse = `{
 			"invoice_requires_successful_payment": false,
 			"transaction_metadata": [],
 			"transaction_name": "Recurring Transaction Rule",
-			"ignore_paid_top_up_limits": false
+			"ignore_paid_top_up_limits": false,
+			"payment_method": {
+				"payment_method_type": "card",
+				"payment_method_id": "pm_rule_123"
+			},
+			"applied_invoice_custom_sections": [{
+				"lago_id": "d1d2e3e4-f5f6-7890-1234-56789abcdef0",
+				"invoice_custom_section_id": "a1a2b3b4-c5d6-7890-1234-56789abcdef0",
+				"created_at": "2022-04-29T08:59:51Z"
+			}]
 		}],
 		"applies_to": {
 			"fee_types": ["charge"],
 			"billable_metric_codes": ["bm1"]
-		}
+		},
+		"payment_method": {
+			"payment_method_type": "card",
+			"payment_method_id": "pm_wallet_123"
+		},
+		"applied_invoice_custom_sections": [{
+			"lago_id": "e1e2f3f4-a5b6-7890-1234-56789abcdef0",
+			"invoice_custom_section_id": "b2b3c4c5-d6e7-8901-2345-6789abcdef01",
+			"created_at": "2022-04-29T08:59:51Z"
+		}]
 	}
 }`
 
@@ -87,11 +105,19 @@ var mockCustomerWalletListResponse = `{
 			"invoice_requires_successful_payment": false,
 			"transaction_metadata": [],
 			"transaction_name": "Recurring Transaction Rule",
-			"ignore_paid_top_up_limits": false
+			"ignore_paid_top_up_limits": false,
+			"payment_method": {
+				"payment_method_type": "card",
+				"payment_method_id": "pm_rule_123"
+			}
 		}],
 		"applies_to": {
 			"fee_types": ["charge"],
 			"billable_metric_codes": ["bm1"]
+		},
+		"payment_method": {
+			"payment_method_type": "card",
+			"payment_method_id": "pm_wallet_123"
 		}
 	}],
 	"meta": {
@@ -279,8 +305,13 @@ func TestCustomerWallet_Get(t *testing.T) {
 		c.Assert(result.RecurringTransactionRules[0].Interval, qt.Equals, "monthly")
 		c.Assert(result.RecurringTransactionRules[0].TransactionName, qt.Equals, "Recurring Transaction Rule")
 		c.Assert(result.RecurringTransactionRules[0].IgnorePaidTopUpLimits, qt.Equals, false)
+		c.Assert(result.RecurringTransactionRules[0].AppliedInvoiceCustomSections, qt.HasLen, 1)
+		c.Assert(result.RecurringTransactionRules[0].AppliedInvoiceCustomSections[0].LagoId, qt.Equals, uuid.MustParse("d1d2e3e4-f5f6-7890-1234-56789abcdef0"))
 		c.Assert(result.AppliesTo.FeeTypes, qt.DeepEquals, []string{"charge"})
 		c.Assert(result.AppliesTo.BillableMetricCodes, qt.DeepEquals, []string{"bm1"})
+		c.Assert(result.AppliedInvoiceCustomSections, qt.HasLen, 1)
+		c.Assert(result.AppliedInvoiceCustomSections[0].LagoId, qt.Equals, uuid.MustParse("e1e2f3f4-a5b6-7890-1234-56789abcdef0"))
+		c.Assert(result.AppliedInvoiceCustomSections[0].InvoiceCustomSectionId, qt.Equals, uuid.MustParse("b2b3c4c5-d6e7-8901-2345-6789abcdef01"))
 	})
 }
 
@@ -473,5 +504,448 @@ func TestCustomerWallet_Delete(t *testing.T) {
 		c.Assert(result.Priority, qt.Equals, int(30))
 		c.Assert(result.ExternalCustomerID, qt.Equals, "customer_id")
 		c.Assert(result.Currency, qt.Equals, Currency("USD"))
+	})
+}
+
+func TestCustomerWallet_CreateWithPaymentMethod(t *testing.T) {
+	t.Run("When creating a wallet with an invalid payment method", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/customers/customer_id/wallets").
+			MatchJSONBody(`{
+				"wallet": {
+					"rate_amount": "1.00",
+					"name": "wallet name",
+					"currency": "USD",
+					"paid_credits": "100.00",
+					"granted_credits": "100.00",
+					"recurring_transaction_rules": null,
+					"applies_to": {},
+					"payment_method": {
+						"payment_method_type": "invalid",
+						"payment_method_id": "pm_invalid"
+					}
+				}
+			}`).
+			MockResponseWithCode(422, map[string]any{
+				"status": 422,
+				"error":  "Unprocessable Entity",
+				"code":   "validation_errors",
+				"error_details": map[string]any{
+					"payment_method": []string{"invalid_payment_method"},
+				},
+			})
+		defer server.Close()
+
+		result, err := server.Client().CustomerWallet().Create(context.Background(), "customer_id", &WalletInput{
+			RateAmount:     "1.00",
+			Name:           "wallet name",
+			Currency:       "USD",
+			PaidCredits:    "100.00",
+			GrantedCredits: "100.00",
+			PaymentMethod: &PaymentMethodInput{
+				PaymentMethodType: "invalid",
+				PaymentMethodID:   "pm_invalid",
+			},
+		})
+		c.Assert(result, qt.IsNil)
+		c.Assert(err, qt.IsNotNil)
+		c.Assert(err.HTTPStatusCode, qt.Equals, 422)
+		c.Assert(err.Message, qt.Equals, "Unprocessable Entity")
+		c.Assert(err.ErrorCode, qt.Equals, "validation_errors")
+		c.Assert(err.ErrorDetail, qt.IsNotNil)
+		details, detailErr := err.ErrorDetail.Details()
+		c.Assert(detailErr, qt.IsNil)
+		c.Assert(details["payment_method"], qt.DeepEquals, []string{"invalid_payment_method"})
+	})
+
+	t.Run("When creating a wallet with an invalid payment method in recurring transaction rules", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/customers/customer_id/wallets").
+			MatchJSONBody(`{
+				"wallet": {
+					"rate_amount": "1.00",
+					"name": "wallet name",
+					"currency": "USD",
+					"paid_credits": "100.00",
+					"granted_credits": "100.00",
+					"applies_to": {},
+					"recurring_transaction_rules": [
+						{
+							"paid_credits": "105.00",
+							"granted_credits": "105.00",
+							"threshold_credits": "0.00",
+							"lago_id": "00000000-0000-0000-0000-000000000000",
+							"trigger": "interval",
+							"interval": "monthly",
+							"method": "fixed",
+							"transaction_name": "Recurring Transaction Rule",
+							"payment_method": {
+								"payment_method_type": "invalid",
+								"payment_method_id": "pm_invalid"
+							}
+						}
+					]
+				}
+			}`).
+			MockResponseWithCode(422, map[string]any{
+				"status": 422,
+				"error":  "Unprocessable Entity",
+				"code":   "validation_errors",
+				"error_details": map[string]any{
+					"payment_method": []string{"invalid_payment_method"},
+				},
+			})
+		defer server.Close()
+
+		result, err := server.Client().CustomerWallet().Create(context.Background(), "customer_id", &WalletInput{
+			RateAmount:     "1.00",
+			Name:           "wallet name",
+			Currency:       "USD",
+			PaidCredits:    "100.00",
+			GrantedCredits: "100.00",
+			RecurringTransactionRules: []RecurringTransactionRuleInput{
+				{
+					PaidCredits:      "105.00",
+					GrantedCredits:   "105.00",
+					ThresholdCredits: "0.00",
+					Trigger:          "interval",
+					Interval:         "monthly",
+					Method:           "fixed",
+					TransactionName:  "Recurring Transaction Rule",
+					PaymentMethod: &PaymentMethodInput{
+						PaymentMethodType: "invalid",
+						PaymentMethodID:   "pm_invalid",
+					},
+				},
+			},
+		})
+		c.Assert(result, qt.IsNil)
+		c.Assert(err, qt.IsNotNil)
+		c.Assert(err.HTTPStatusCode, qt.Equals, 422)
+		c.Assert(err.Message, qt.Equals, "Unprocessable Entity")
+		c.Assert(err.ErrorCode, qt.Equals, "validation_errors")
+		c.Assert(err.ErrorDetail, qt.IsNotNil)
+		details, detailErr := err.ErrorDetail.Details()
+		c.Assert(detailErr, qt.IsNil)
+		c.Assert(details["payment_method"], qt.DeepEquals, []string{"invalid_payment_method"})
+	})
+
+	t.Run("When creating a wallet with a payment method", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/customers/customer_id/wallets").
+			MatchJSONBody(`{
+				"wallet": {
+					"rate_amount": "1.00",
+					"name": "wallet name",
+					"currency": "USD",
+					"paid_credits": "100.00",
+					"granted_credits": "100.00",
+					"applies_to": {},
+					"recurring_transaction_rules": [
+						{
+							"paid_credits": "105.00",
+							"granted_credits": "105.00",
+							"threshold_credits": "0.00",
+							"lago_id": "00000000-0000-0000-0000-000000000000",
+							"trigger": "interval",
+							"interval": "monthly",
+							"method": "fixed",
+							"transaction_name": "Recurring Transaction Rule",
+							"payment_method": {
+								"payment_method_type": "card",
+								"payment_method_id": "pm_rule_123"
+							}
+						}
+					],
+					"payment_method": {
+						"payment_method_type": "card",
+						"payment_method_id": "pm_wallet_123"
+					}
+				}
+			}`).
+			MockResponse(mockCustomerWalletResponse)
+		defer server.Close()
+
+		result, err := server.Client().CustomerWallet().Create(context.Background(), "customer_id", &WalletInput{
+			RateAmount:     "1.00",
+			Name:           "wallet name",
+			Currency:       "USD",
+			PaidCredits:    "100.00",
+			GrantedCredits: "100.00",
+			RecurringTransactionRules: []RecurringTransactionRuleInput{
+				{
+					PaidCredits:      "105.00",
+					GrantedCredits:   "105.00",
+					ThresholdCredits: "0.00",
+					Trigger:          "interval",
+					Interval:         "monthly",
+					Method:           "fixed",
+					TransactionName:  "Recurring Transaction Rule",
+					PaymentMethod: &PaymentMethodInput{
+						PaymentMethodType: "card",
+						PaymentMethodID:   "pm_rule_123",
+					},
+				},
+			},
+			PaymentMethod: &PaymentMethodInput{
+				PaymentMethodType: "card",
+				PaymentMethodID:   "pm_wallet_123",
+			},
+		})
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result, qt.IsNotNil)
+		c.Assert(result.PaymentMethod, qt.IsNotNil)
+		c.Assert(result.PaymentMethod.PaymentMethodType, qt.Equals, "card")
+		c.Assert(result.PaymentMethod.PaymentMethodID, qt.Equals, "pm_wallet_123")
+		c.Assert(len(result.RecurringTransactionRules), qt.Equals, 1)
+		c.Assert(result.RecurringTransactionRules[0].PaymentMethod, qt.IsNotNil)
+		c.Assert(result.RecurringTransactionRules[0].PaymentMethod.PaymentMethodType, qt.Equals, "card")
+		c.Assert(result.RecurringTransactionRules[0].PaymentMethod.PaymentMethodID, qt.Equals, "pm_rule_123")
+	})
+}
+
+func TestCustomerWallet_UpdateWithPaymentMethod(t *testing.T) {
+	t.Run("When updating a wallet with an invalid payment method", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("PUT").
+			MatchPath("/api/v1/customers/customer_id/wallets/wallet_code").
+			MatchJSONBody(`{
+				"wallet": {
+					"name": "updated wallet name",
+					"rate_amount": "1.50",
+					"recurring_transaction_rules": null,
+					"applies_to": {},
+					"payment_method": {
+						"payment_method_type": "invalid",
+						"payment_method_id": "pm_invalid"
+					}
+				}
+			}`).
+			MockResponseWithCode(422, map[string]any{
+				"status": 422,
+				"error":  "Unprocessable Entity",
+				"code":   "validation_errors",
+				"error_details": map[string]any{
+					"payment_method": []string{"invalid_payment_method"},
+				},
+			})
+		defer server.Close()
+
+		result, err := server.Client().CustomerWallet().Update(context.Background(), "customer_id", "wallet_code", &WalletInput{
+			Name:       "updated wallet name",
+			RateAmount: "1.50",
+			PaymentMethod: &PaymentMethodInput{
+				PaymentMethodType: "invalid",
+				PaymentMethodID:   "pm_invalid",
+			},
+		})
+		c.Assert(result, qt.IsNil)
+		c.Assert(err, qt.IsNotNil)
+		c.Assert(err.HTTPStatusCode, qt.Equals, 422)
+		c.Assert(err.Message, qt.Equals, "Unprocessable Entity")
+		c.Assert(err.ErrorCode, qt.Equals, "validation_errors")
+		c.Assert(err.ErrorDetail, qt.IsNotNil)
+		details, detailErr := err.ErrorDetail.Details()
+		c.Assert(detailErr, qt.IsNil)
+		c.Assert(details["payment_method"], qt.DeepEquals, []string{"invalid_payment_method"})
+	})
+
+	t.Run("When updating a wallet with an invalid payment method in recurring transaction rules", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("PUT").
+			MatchPath("/api/v1/customers/customer_id/wallets/wallet_code").
+			MatchJSONBody(`{
+				"wallet": {
+					"name": "updated wallet name",
+					"rate_amount": "1.50",
+					"applies_to": {},
+					"recurring_transaction_rules": [
+						{
+							"lago_id": "c1c2d3d4-e5f6-7890-1234-56789abcdef0",
+							"trigger": "interval",
+							"interval": "monthly",
+							"method": "fixed",
+							"paid_credits": "105.00",
+							"granted_credits": "105.00",
+							"threshold_credits": "0.00",
+							"transaction_name": "Recurring Transaction Rule",
+							"payment_method": {
+								"payment_method_type": "invalid",
+								"payment_method_id": "pm_invalid"
+							}
+						}
+					]
+				}
+			}`).
+			MockResponseWithCode(422, map[string]any{
+				"status": 422,
+				"error":  "Unprocessable Entity",
+				"code":   "validation_errors",
+				"error_details": map[string]any{
+					"payment_method": []string{"invalid_payment_method"},
+				},
+			})
+		defer server.Close()
+
+		result, err := server.Client().CustomerWallet().Update(context.Background(), "customer_id", "wallet_code", &WalletInput{
+			Name:       "updated wallet name",
+			RateAmount: "1.50",
+			RecurringTransactionRules: []RecurringTransactionRuleInput{
+				{
+					LagoID:           uuid.MustParse("c1c2d3d4-e5f6-7890-1234-56789abcdef0"),
+					Trigger:          "interval",
+					Interval:         "monthly",
+					Method:           "fixed",
+					PaidCredits:      "105.00",
+					GrantedCredits:   "105.00",
+					ThresholdCredits: "0.00",
+					TransactionName:  "Recurring Transaction Rule",
+					PaymentMethod: &PaymentMethodInput{
+						PaymentMethodType: "invalid",
+						PaymentMethodID:   "pm_invalid",
+					},
+				},
+			},
+		})
+		c.Assert(result, qt.IsNil)
+		c.Assert(err, qt.IsNotNil)
+		c.Assert(err.HTTPStatusCode, qt.Equals, 422)
+		c.Assert(err.Message, qt.Equals, "Unprocessable Entity")
+		c.Assert(err.ErrorCode, qt.Equals, "validation_errors")
+		c.Assert(err.ErrorDetail, qt.IsNotNil)
+		details, detailErr := err.ErrorDetail.Details()
+		c.Assert(detailErr, qt.IsNil)
+		c.Assert(details["payment_method"], qt.DeepEquals, []string{"invalid_payment_method"})
+	})
+
+	t.Run("When updating a wallet with a payment method", func(t *testing.T) {
+		c := qt.New(t)
+
+		updatedWalletWithPaymentMethodResponse := `{
+			"wallet": {
+				"lago_id": "b1b2c3d4-e5f6-7890-1234-56789abcdef0",
+				"lago_customer_id": "a1a2b3b4-c5d6-7890-1234-56789abcdef0",
+				"external_customer_id": "customer_id",
+				"status": "active",
+				"currency": "USD",
+				"name": "updated wallet name",
+				"priority": 40,
+				"rate_amount": "1.50",
+				"credits_balance": "200.00",
+				"balance_cents": 20000,
+				"expiration_at": "2022-07-07T23:59:59Z",
+				"created_at": "2022-04-29T08:59:51Z",
+				"recurring_transaction_rules": [{
+					"lago_id": "c1c2d3d4-e5f6-7890-1234-56789abcdef0",
+					"interval": "monthly",
+					"method": "fixed",
+					"status": "active",
+					"target_ongoing_balance": "0.00",
+					"threshold_credits": "0.00",
+					"trigger": "interval",
+					"paid_credits": "105.00",
+					"granted_credits": "105.00",
+					"created_at": "2022-04-29T08:59:51Z",
+					"invoice_requires_successful_payment": false,
+					"transaction_metadata": [],
+					"transaction_name": "Recurring Transaction Rule",
+					"ignore_paid_top_up_limits": false,
+					"payment_method": {
+						"payment_method_type": "card",
+						"payment_method_id": "pm_rule_updated"
+					}
+				}],
+				"applies_to": {
+					"fee_types": ["charge"],
+					"billable_metric_codes": ["bm1"]
+				},
+				"payment_method": {
+					"payment_method_type": "card",
+					"payment_method_id": "pm_wallet_updated"
+				}
+			}
+		}`
+
+		server := lt.NewMockServer(c).
+			MatchMethod("PUT").
+			MatchPath("/api/v1/customers/customer_id/wallets/wallet_code").
+			MatchJSONBody(`{
+				"wallet": {
+					"name": "updated wallet name",
+					"rate_amount": "1.50",
+					"applies_to": {},
+					"recurring_transaction_rules": [
+						{
+							"lago_id": "c1c2d3d4-e5f6-7890-1234-56789abcdef0",
+							"trigger": "interval",
+							"interval": "monthly",
+							"method": "fixed",
+							"paid_credits": "105.00",
+							"granted_credits": "105.00",
+							"threshold_credits": "0.00",
+							"transaction_name": "Recurring Transaction Rule",
+							"payment_method": {
+								"payment_method_type": "card",
+								"payment_method_id": "pm_rule_updated"
+							}
+						}
+					],
+					"payment_method": {
+						"payment_method_type": "card",
+						"payment_method_id": "pm_wallet_updated"
+					}
+				}
+			}`).
+			MockResponse(updatedWalletWithPaymentMethodResponse)
+		defer server.Close()
+
+		result, err := server.Client().CustomerWallet().Update(context.Background(), "customer_id", "wallet_code", &WalletInput{
+			Name:       "updated wallet name",
+			RateAmount: "1.50",
+			RecurringTransactionRules: []RecurringTransactionRuleInput{
+				{
+					LagoID:           uuid.MustParse("c1c2d3d4-e5f6-7890-1234-56789abcdef0"),
+					Trigger:          "interval",
+					Interval:         "monthly",
+					Method:           "fixed",
+					PaidCredits:      "105.00",
+					GrantedCredits:   "105.00",
+					ThresholdCredits: "0.00",
+					TransactionName:  "Recurring Transaction Rule",
+					PaymentMethod: &PaymentMethodInput{
+						PaymentMethodType: "card",
+						PaymentMethodID:   "pm_rule_updated",
+					},
+				},
+			},
+			PaymentMethod: &PaymentMethodInput{
+				PaymentMethodType: "card",
+				PaymentMethodID:   "pm_wallet_updated",
+			},
+		})
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result, qt.IsNotNil)
+		c.Assert(result.PaymentMethod, qt.IsNotNil)
+		c.Assert(result.PaymentMethod.PaymentMethodType, qt.Equals, "card")
+		c.Assert(result.PaymentMethod.PaymentMethodID, qt.Equals, "pm_wallet_updated")
+		c.Assert(len(result.RecurringTransactionRules), qt.Equals, 1)
+		c.Assert(result.RecurringTransactionRules[0].PaymentMethod, qt.IsNotNil)
+		c.Assert(result.RecurringTransactionRules[0].PaymentMethod.PaymentMethodType, qt.Equals, "card")
+		c.Assert(result.RecurringTransactionRules[0].PaymentMethod.PaymentMethodID, qt.Equals, "pm_rule_updated")
 	})
 }
