@@ -10,6 +10,89 @@ import (
 	lt "github.com/getlago/lago-go-client/testing"
 )
 
+// Mock response for customer get
+var mockCustomerGetResponse = `{
+	"customer": {
+		"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+		"sequential_id": 1,
+		"slug": "LAG-1234-001",
+		"external_id": "CUSTOMER_1",
+		"billing_entity_code": "acme_corp",
+		"name": "John Doe",
+		"firstname": "John",
+		"lastname": "Doe",
+		"customer_type": "company",
+		"email": "customer@example.com",
+		"address_line1": "5230 Penfield Ave",
+		"address_line2": null,
+		"city": "Woodland Hills",
+		"state": "CA",
+		"zipcode": "91364",
+		"country": "US",
+		"legal_name": "Acme Corp",
+		"legal_number": "123456789",
+		"net_payment_term": 30,
+		"tax_identification_number": "US123456789",
+		"logo_url": "https://getlago.com/logo.png",
+		"phone": "+1-555-123-4567",
+		"url": "https://acme.com",
+		"finalize_zero_amount_invoice": "finalize",
+		"billing_configuration": {
+			"invoice_grace_period": 3,
+			"subscription_invoice_issuing_date_anchor": "current_period_end",
+			"subscription_invoice_issuing_date_adjustment": "keep_anchor",
+			"payment_provider": "stripe",
+			"payment_provider_code": "stripe_123",
+			"provider_customer_id": "cus_123456",
+			"sync_with_provider": true,
+			"document_locale": "en",
+			"provider_payment_methods": ["card", "sepa_debit"]
+		},
+		"shipping_address": {
+			"address_line1": "123 Shipping St",
+			"address_line2": "Suite 456",
+			"city": "Shipping City",
+			"zipcode": "12345",
+			"state": "NY",
+			"country": "US"
+		},
+		"integration_customers": [
+			{
+				"lago_id": "2b902b90-2b90-2b90-2b90-2b902b902b90",
+				"external_customer_id": "netsuite_123",
+				"type": "netsuite",
+				"integration_code": "netsuite_integration",
+				"subsidiary_id": "sub_123",
+				"sync_with_provider": true
+			}
+		],
+		"metadata": [
+			{
+				"lago_id": "3c903c90-3c90-3c90-3c90-3c903c903c90",
+				"key": "department",
+				"value": "engineering",
+				"display_in_invoice": true,
+				"created_at": "2022-04-29T08:59:51Z"
+			}
+		],
+		"error_details": [
+			{
+   			"lago_id": "4c904c90-4c90-4c90-4c90-4c904c904c90",
+      	"error_code": "tax_error",
+        "details": { "tax_error": ["customerAddressCouldNotResolve: Service failure"] }
+			}
+		],
+		"currency": "USD",
+		"timezone": "America/New_York",
+		"applicable_timezone": "America/New_York",
+		"skip_invoice_custom_sections": false,
+		"taxes": [],
+		"applicable_invoice_custom_sections": [],
+		"created_at": "2022-04-29T08:59:51Z",
+		"updated_at": "2022-04-29T08:59:51Z"
+	}
+}`
+
 // Mock response for customer list
 var mockCustomerListResponse = `{
 	"customers": [
@@ -830,5 +913,36 @@ func TestCustomerCheckoutUrl(t *testing.T) {
 		c.Assert(result.PaymentProvider, qt.Equals, PaymentProviderStripe)
 		c.Assert(result.PaymentProviderCode, qt.Equals, "Stripe Provider")
 		c.Assert(result.CheckoutUrl, qt.Equals, "https://example.com")
+	})
+}
+
+func TestCustomerRequest_Get(t *testing.T) {
+	t.Run("When the server is not reachable", func(t *testing.T) {
+		c := qt.New(t)
+
+		client := New().SetBaseURL("http://localhost:88888").SetApiKey("test_api_key")
+		result, err := client.Customer().Get(context.Background(), "CUSTOMER_1")
+		c.Assert(result, qt.IsNil)
+		c.Assert(err.Error(), qt.Equals, `{"status":0,"error":"","code":"","err":"Get \"http://localhost:88888/api/v1/customers/CUSTOMER_1\": dial tcp: address 88888: invalid port"}`)
+	})
+
+	t.Run("When receiving a response", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/customers/CUSTOMER_1").
+			MockResponse(mockCustomerGetResponse)
+		defer server.Close()
+
+		result, err := server.Client().Customer().Get(context.Background(), "CUSTOMER_1")
+		c.Assert(err == nil, qt.IsTrue)
+
+		c.Assert(result.LagoID.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
+		c.Assert(result.ExternalID, qt.Equals, "CUSTOMER_1")
+		c.Assert(result.SequentialID, qt.Equals, 1)
+		c.Assert(result.ErrorDetails, qt.HasLen, 1)
+		c.Assert(result.ErrorDetails[0].ErrorCode, qt.Equals, "tax_error")
+		c.Assert(result.ErrorDetails[0].Details["tax_error"], qt.DeepEquals, []any{"customerAddressCouldNotResolve: Service failure"})
 	})
 }

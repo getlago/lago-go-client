@@ -454,9 +454,16 @@ type Customer struct {
 
 	Taxes                           []Tax                  `json:"taxes,omitempty"`
 	ApplicableInvoiceCustomSections []InvoiceCustomSection `json:"applicable_invoice_custom_sections,omitempty"`
+	ErrorDetails                    []CustomerErrorDetail  `json:"error_details,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+}
+
+type CustomerErrorDetail struct {
+	LagoId    uuid.UUID      `json:"lago_id,omitempty"`
+	ErrorCode string         `json:"error_code,omitempty"`
+	Details   map[string]any `json:"details,omitempty"`
 }
 
 type CustomerRequest struct {
