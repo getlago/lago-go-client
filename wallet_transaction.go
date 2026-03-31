@@ -81,14 +81,18 @@ type WalletTransactionResult struct {
 type WalletTransaction struct {
 	LagoID                           uuid.UUID                     `json:"lago_id,omitempty"`
 	LagoWalletID                     uuid.UUID                     `json:"lago_wallet_id,omitempty"`
+	LagoInvoiceID                    *uuid.UUID                    `json:"lago_invoice_id,omitempty"`
+	LagoCreditNoteID                 *uuid.UUID                    `json:"lago_credit_note_id,omitempty"`
 	LagoVoidedInvoiceID              *uuid.UUID                    `json:"lago_voided_invoice_id,omitempty"`
 	Status                           WalletTransactionStatus       `json:"status,omitempty"`
+	Source                           string                        `json:"source,omitempty"`
 	TransactionType                  TransactionType               `json:"transaction_type,omitempty"`
 	TransactionStatus                TransactionStatus             `json:"transaction_status,omitempty"`
 	Amount                           string                        `json:"amount,omitempty"`
 	CreditAmount                     string                        `json:"credit_amount,omitempty"`
 	RemainingAmountCents             *int                          `json:"remaining_amount_cents,omitempty"`
 	RemainingCreditAmount            *string                       `json:"remaining_credit_amount,omitempty"`
+	Priority                         int                           `json:"priority,omitempty"`
 	InvoiceRequiresSuccessfulPayment bool                          `json:"invoice_requires_successful_payment,omitempty"`
 	CreatedAt                        time.Time                     `json:"created_at,omitempty"`
 	SettledAt                        time.Time                     `json:"settled_at,omitempty"`
