@@ -143,12 +143,12 @@ type Fee struct {
 	ToDate              string                 `json:"to_date,omitempty"`
 	InvoiceDisplayName  string                 `json:"invoice_display_name,omitempty"`
 
-	TotalAggregatedUnits string `json:"total_aggregated_units,omitempty"`
-	Units                string `json:"units,omitempty"`
-	Description          string `json:"description,omitempty"`
+	TotalAggregatedUnits                     string `json:"total_aggregated_units,omitempty"`
+	Units                                    string `json:"units,omitempty"`
+	Description                              string `json:"description,omitempty"`
 	SubTotalExcludingTaxesAmountCents        int    `json:"sub_total_excluding_taxes_amount_cents,omitempty"`
 	SubTotalExcludingTaxesPreciseAmountCents string `json:"sub_total_excluding_taxes_precise_amount_cents,omitempty"`
-	EventsCount                             int    `json:"events_count,omitempty"`
+	EventsCount                              int    `json:"events_count,omitempty"`
 
 	PaymentStatus FeePaymentStatus `json:"payment_status,omitempty"`
 
