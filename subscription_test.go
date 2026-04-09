@@ -45,8 +45,15 @@ var mockSubscriptionResponse = `{
     "applied_invoice_custom_sections": [
       {
         "lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
-        "invoice_custom_section_id": "2b902b90-2b90-2b90-2b90-2b902b902b90",
-        "created_at": "2022-08-08T00:00:00Z"
+        "created_at": "2022-08-08T00:00:00Z",
+        "invoice_custom_section": {
+          "lago_id": "2b902b90-2b90-2b90-2b90-2b902b902b90",
+          "code": "section_code",
+          "name": "Section Name",
+          "description": "Section description",
+          "details": "Section details",
+          "display_name": "Display Name"
+        }
       }
     ],
     "plan": {
@@ -434,7 +441,9 @@ func TestSubscriptionRequest_CreateWithPaymentMethod(t *testing.T) {
 		c.Assert(subscription.PaymentMethod.PaymentMethodID, qt.Equals, "pm_123456")
 		c.Assert(subscription.AppliedInvoiceCustomSections, qt.HasLen, 1)
 		c.Assert(subscription.AppliedInvoiceCustomSections[0].LagoId.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
-		c.Assert(subscription.AppliedInvoiceCustomSections[0].InvoiceCustomSectionId.String(), qt.Equals, "2b902b90-2b90-2b90-2b90-2b902b902b90")
+		c.Assert(subscription.AppliedInvoiceCustomSections[0].InvoiceCustomSection.LagoId.String(), qt.Equals, "2b902b90-2b90-2b90-2b90-2b902b902b90")
+		c.Assert(subscription.AppliedInvoiceCustomSections[0].InvoiceCustomSection.Name, qt.Equals, "Section Name")
+		c.Assert(subscription.AppliedInvoiceCustomSections[0].InvoiceCustomSection.Code, qt.Equals, "section_code")
 	})
 }
 
@@ -476,6 +485,7 @@ func TestSubscriptionRequest_CreateWithInvoiceCustomSections(t *testing.T) {
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(subscription.AppliedInvoiceCustomSections, qt.HasLen, 1)
 		c.Assert(subscription.AppliedInvoiceCustomSections[0].LagoId.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
+		c.Assert(subscription.AppliedInvoiceCustomSections[0].InvoiceCustomSection.Name, qt.Equals, "Section Name")
 	})
 }
 

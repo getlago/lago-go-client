@@ -52,8 +52,12 @@ var mockCustomerWalletResponse = `{
 			},
 			"applied_invoice_custom_sections": [{
 				"lago_id": "d1d2e3e4-f5f6-7890-1234-56789abcdef0",
-				"invoice_custom_section_id": "a1a2b3b4-c5d6-7890-1234-56789abcdef0",
-				"created_at": "2022-04-29T08:59:51Z"
+				"created_at": "2022-04-29T08:59:51Z",
+				"invoice_custom_section": {
+					"lago_id": "a1a2b3b4-c5d6-7890-1234-56789abcdef0",
+					"code": "rule_section_code",
+					"name": "Rule Section Name"
+				}
 			}]
 		}],
 		"applies_to": {
@@ -66,8 +70,12 @@ var mockCustomerWalletResponse = `{
 		},
 		"applied_invoice_custom_sections": [{
 			"lago_id": "e1e2f3f4-a5b6-7890-1234-56789abcdef0",
-			"invoice_custom_section_id": "b2b3c4c5-d6e7-8901-2345-6789abcdef01",
-			"created_at": "2022-04-29T08:59:51Z"
+			"created_at": "2022-04-29T08:59:51Z",
+			"invoice_custom_section": {
+				"lago_id": "b2b3c4c5-d6e7-8901-2345-6789abcdef01",
+				"code": "wallet_section_code",
+				"name": "Wallet Section Name"
+			}
 		}]
 	}
 }`
@@ -311,7 +319,8 @@ func TestCustomerWallet_Get(t *testing.T) {
 		c.Assert(result.AppliesTo.BillableMetricCodes, qt.DeepEquals, []string{"bm1"})
 		c.Assert(result.AppliedInvoiceCustomSections, qt.HasLen, 1)
 		c.Assert(result.AppliedInvoiceCustomSections[0].LagoId, qt.Equals, uuid.MustParse("e1e2f3f4-a5b6-7890-1234-56789abcdef0"))
-		c.Assert(result.AppliedInvoiceCustomSections[0].InvoiceCustomSectionId, qt.Equals, uuid.MustParse("b2b3c4c5-d6e7-8901-2345-6789abcdef01"))
+		c.Assert(result.AppliedInvoiceCustomSections[0].InvoiceCustomSection.LagoId, qt.Equals, uuid.MustParse("b2b3c4c5-d6e7-8901-2345-6789abcdef01"))
+		c.Assert(result.AppliedInvoiceCustomSections[0].InvoiceCustomSection.Name, qt.Equals, "Wallet Section Name")
 	})
 }
 
