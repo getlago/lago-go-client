@@ -12,14 +12,16 @@ import (
 	. "github.com/getlago/lago-go-client"
 )
 
+func intPtr(v int) *int { return &v }
+
 func TestRateLimitError_Error(t *testing.T) {
 	c := qt.New(t)
 	rlErr := &RateLimitError{
 		HTTPStatusCode: 429,
 		Message:        "Too Many Requests",
-		Limit:          100,
-		Remaining:      0,
-		Reset:          60,
+		Limit:          intPtr(100),
+		Remaining:      intPtr(0),
+		Reset:          intPtr(60),
 	}
 
 	errStr := rlErr.Error()
@@ -45,9 +47,9 @@ func TestParseRateLimitHeaders(t *testing.T) {
 			expectedErr: &RateLimitError{
 				HTTPStatusCode: 429,
 				Message:        "Rate limit exceeded",
-				Limit:          100,
-				Remaining:      50,
-				Reset:          30,
+				Limit:          intPtr(100),
+				Remaining:      intPtr(50),
+				Reset:          intPtr(30),
 			},
 		},
 		{
@@ -58,9 +60,9 @@ func TestParseRateLimitHeaders(t *testing.T) {
 			expectedErr: &RateLimitError{
 				HTTPStatusCode: 429,
 				Message:        "Rate limit exceeded",
-				Limit:          100,
-				Remaining:      0,
-				Reset:          0,
+				Limit:          intPtr(100),
+				Remaining:      nil,
+				Reset:          nil,
 			},
 		},
 		{
@@ -81,9 +83,9 @@ func TestParseRateLimitHeaders(t *testing.T) {
 			expectedErr: &RateLimitError{
 				HTTPStatusCode: 429,
 				Message:        "Rate limit exceeded",
-				Limit:          0,
-				Remaining:      0,
-				Reset:          0,
+				Limit:          nil,
+				Remaining:      nil,
+				Reset:          nil,
 			},
 		},
 	}
@@ -99,9 +101,9 @@ func TestParseRateLimitHeaders(t *testing.T) {
 			rlErr := ParseRateLimitError(baseErr, tt.headers)
 
 			c.Assert(rlErr.HTTPStatusCode, qt.Equals, tt.expectedErr.HTTPStatusCode)
-			c.Assert(rlErr.Limit, qt.Equals, tt.expectedErr.Limit)
-			c.Assert(rlErr.Remaining, qt.Equals, tt.expectedErr.Remaining)
-			c.Assert(rlErr.Reset, qt.Equals, tt.expectedErr.Reset)
+			c.Assert(rlErr.Limit, qt.DeepEquals, tt.expectedErr.Limit)
+			c.Assert(rlErr.Remaining, qt.DeepEquals, tt.expectedErr.Remaining)
+			c.Assert(rlErr.Reset, qt.DeepEquals, tt.expectedErr.Reset)
 		})
 	}
 }
@@ -118,22 +120,32 @@ func TestDefaultRetryPolicy(t *testing.T) {
 
 func TestWaitForRateLimit(t *testing.T) {
 	tests := []struct {
-		name           string
-		resetSeconds   int
-		minWaitTime    time.Duration
-		maxWaitTime    time.Duration
+		name        string
+		reset       *int
+		attempt     int
+		minWaitTime time.Duration
+		maxWaitTime time.Duration
 	}{
 		{
-			name:           "Wait with reset header",
-			resetSeconds:   1,
-			minWaitTime:    1 * time.Second,
-			maxWaitTime:    2 * time.Second,
+			name:        "Wait with reset header",
+			reset:       intPtr(1),
+			attempt:     0,
+			minWaitTime: 1 * time.Second,
+			maxWaitTime: 2 * time.Second,
 		},
 		{
-			name:           "Fallback exponential backoff when reset is 0",
-			resetSeconds:   0,
-			minWaitTime:    1 * time.Second, // InitialBackoff * 2^0 = 1 second
-			maxWaitTime:    2 * time.Second,
+			name:        "Fallback exponential backoff attempt 0",
+			reset:       nil,
+			attempt:     0,
+			minWaitTime: 1 * time.Second, // InitialBackoff * 2^0 = 1 second
+			maxWaitTime: 2 * time.Second,
+		},
+		{
+			name:        "Fallback exponential backoff attempt 1",
+			reset:       nil,
+			attempt:     1,
+			minWaitTime: 2 * time.Second, // InitialBackoff * 2^1 = 2 seconds
+			maxWaitTime: 3 * time.Second,
 		},
 	}
 
@@ -145,13 +157,13 @@ func TestWaitForRateLimit(t *testing.T) {
 
 			rlErr := &RateLimitError{
 				HTTPStatusCode: 429,
-				Reset:          tt.resetSeconds,
+				Reset:          tt.reset,
 			}
 
 			policy := DefaultRetryPolicy()
 
 			startTime := time.Now()
-			err := WaitForRateLimit(ctx, rlErr, policy)
+			err := WaitForRateLimit(ctx, rlErr, policy, tt.attempt)
 			duration := time.Since(startTime)
 
 			c.Assert(err, qt.IsNil)
@@ -167,7 +179,7 @@ func TestWaitForRateLimitContextCancellation(t *testing.T) {
 
 	rlErr := &RateLimitError{
 		HTTPStatusCode: 429,
-		Reset:          10, // Long wait
+		Reset:          intPtr(10), // Long wait
 	}
 
 	policy := DefaultRetryPolicy()
@@ -175,7 +187,7 @@ func TestWaitForRateLimitContextCancellation(t *testing.T) {
 	// Cancel context immediately
 	cancel()
 
-	err := WaitForRateLimit(ctx, rlErr, policy)
+	err := WaitForRateLimit(ctx, rlErr, policy, 0)
 
 	c.Assert(err, qt.Equals, context.Canceled)
 }
@@ -191,11 +203,11 @@ func TestRetryPolicyDisabled(t *testing.T) {
 
 	rlErr := &RateLimitError{
 		HTTPStatusCode: 429,
-		Reset:          10,
+		Reset:          intPtr(10),
 	}
 
 	startTime := time.Now()
-	err := WaitForRateLimit(ctx, rlErr, policy)
+	err := WaitForRateLimit(ctx, rlErr, policy, 0)
 	duration := time.Since(startTime)
 
 	c.Assert(err, qt.IsNil)

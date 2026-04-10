@@ -154,6 +154,29 @@ func (c *Client) SetBaseIngestUrl(url string) *Client {
 	return c
 }
 
+// handleErrorResponse converts an error HTTP response into the appropriate error type.
+// For 429 responses, it returns a RateLimitError with parsed rate limit headers.
+// For all other errors, it returns the standard Error type.
+func (c *Client) handleErrorResponse(resp *resty.Response) *Error {
+	errObj, ok := resp.Error().(*Error)
+	if !ok {
+		return &ErrorTypeAssert
+	}
+
+	if resp.StatusCode() == 429 {
+		rlErr := ParseRateLimitError(errObj, resp.RawResponse.Header)
+		return &Error{
+			Err:            rlErr,
+			HTTPStatusCode: rlErr.HTTPStatusCode,
+			Message:        rlErr.Message,
+			ErrorCode:      rlErr.ErrorCode,
+			ErrorDetail:    rlErr.ErrorDetail,
+		}
+	}
+
+	return errObj
+}
+
 func (c *Client) Get(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
 	hasResult := cr.Result != nil
 
@@ -180,24 +203,7 @@ func (c *Client) Get(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 	}
 
 	if resp.IsError() {
-		errObj, ok := resp.Error().(*Error)
-		if !ok {
-			return nil, &ErrorTypeAssert
-		}
-
-		// Return a RateLimitError with parsed headers for 429 responses
-		if resp.StatusCode() == 429 {
-			rlErr := ParseRateLimitError(errObj, resp.RawResponse.Header)
-			return nil, &Error{
-				Err:            rlErr.Err,
-				HTTPStatusCode: rlErr.HTTPStatusCode,
-				Message:        rlErr.Message,
-				ErrorCode:      rlErr.ErrorCode,
-				ErrorDetail:    rlErr.ErrorDetail,
-			}
-		}
-
-		return nil, errObj
+		return nil, c.handleErrorResponse(resp)
 	}
 
 	if hasResult {
@@ -232,12 +238,7 @@ func (c *Client) Patch(ctx context.Context, cr *ClientRequest) (interface{}, *Er
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
-		if !ok {
-			return nil, &ErrorTypeAssert
-		}
-
-		return nil, err
+		return nil, c.handleErrorResponse(resp)
 	}
 
 	return resp.Result(), nil
@@ -268,12 +269,7 @@ func (c *Client) Post(ctx context.Context, cr *ClientRequest) (interface{}, *Err
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
-		if !ok {
-			return nil, &ErrorTypeAssert
-		}
-
-		return nil, err
+		return nil, c.handleErrorResponse(resp)
 	}
 
 	return resp.Result(), nil
@@ -297,12 +293,7 @@ func (c *Client) PostWithoutResult(ctx context.Context, cr *ClientRequest) *Erro
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
-		if !ok {
-			return &ErrorTypeAssert
-		}
-
-		return err
+		return c.handleErrorResponse(resp)
 	}
 
 	return nil
@@ -326,12 +317,7 @@ func (c *Client) PostWithoutBody(ctx context.Context, cr *ClientRequest) (interf
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
-		if !ok {
-			return nil, &ErrorTypeAssert
-		}
-
-		return nil, err
+		return nil, c.handleErrorResponse(resp)
 	}
 
 	return resp.Result(), nil
@@ -357,12 +343,7 @@ func (c *Client) Put(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
-		if !ok {
-			return nil, &ErrorTypeAssert
-		}
-
-		return nil, err
+		return nil, c.handleErrorResponse(resp)
 	}
 
 	return resp.Result(), nil
@@ -394,12 +375,7 @@ func (c *Client) Delete(ctx context.Context, cr *ClientRequest) (interface{}, *E
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
-		if !ok {
-			return nil, &ErrorTypeAssert
-		}
-
-		return nil, err
+		return nil, c.handleErrorResponse(resp)
 	}
 
 	return resp.Result(), nil

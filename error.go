@@ -105,6 +105,7 @@ func (e ErrorCode) Error() string {
 
 // RateLimitError represents a rate limit (HTTP 429) error response.
 // It includes the rate limit information from response headers.
+// Pointer fields are nil when the corresponding header was absent or unparseable.
 type RateLimitError struct {
 	Err            error `json:"-"`
 	HTTPStatusCode int   `json:"status"`
@@ -112,10 +113,10 @@ type RateLimitError struct {
 	ErrorCode      string `json:"code"`
 	ErrorDetail    *ErrorDetail `json:"error_details,omitempty"`
 
-	// Rate limit headers
-	Limit     int `json:"limit"`      // x-ratelimit-limit header value
-	Remaining int `json:"remaining"`  // x-ratelimit-remaining header value
-	Reset     int `json:"reset"`      // x-ratelimit-reset header value (seconds)
+	// Rate limit headers (nil when header is absent or unparseable)
+	Limit     *int `json:"limit,omitempty"`      // x-ratelimit-limit header value
+	Remaining *int `json:"remaining,omitempty"`  // x-ratelimit-remaining header value
+	Reset     *int `json:"reset,omitempty"`      // x-ratelimit-reset header value (seconds)
 }
 
 // Error returns a JSON string representation of the RateLimitError.
@@ -147,23 +148,27 @@ func ParseRateLimitError(baseErr *Error, headers http.Header) *RateLimitError {
 	// Parse x-ratelimit-limit header
 	if limit := headers.Get("x-ratelimit-limit"); limit != "" {
 		if val, err := strconv.Atoi(limit); err == nil {
-			rlErr.Limit = val
+			rlErr.Limit = intPtr(val)
 		}
 	}
 
 	// Parse x-ratelimit-remaining header
 	if remaining := headers.Get("x-ratelimit-remaining"); remaining != "" {
 		if val, err := strconv.Atoi(remaining); err == nil {
-			rlErr.Remaining = val
+			rlErr.Remaining = intPtr(val)
 		}
 	}
 
 	// Parse x-ratelimit-reset header (seconds until window resets)
 	if reset := headers.Get("x-ratelimit-reset"); reset != "" {
 		if val, err := strconv.Atoi(reset); err == nil {
-			rlErr.Reset = val
+			rlErr.Reset = intPtr(val)
 		}
 	}
 
 	return rlErr
+}
+
+func intPtr(v int) *int {
+	return &v
 }

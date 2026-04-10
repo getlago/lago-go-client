@@ -58,24 +58,25 @@ func (rp *RetryPolicy) waitDuration(resp *http.Response, attempt int) time.Durat
 
 // WaitForRateLimit blocks the current goroutine until the rate limit window resets.
 // It uses the x-ratelimit-reset value from a RateLimitError if available, otherwise
-// uses exponential backoff.
+// uses exponential backoff based on the attempt number.
 //
-// This is useful for cases where the client chooses not to use automatic retries
-// but still wants to wait before making the next request.
-func WaitForRateLimit(ctx context.Context, rlErr *RateLimitError, policy *RetryPolicy) error {
+// The attempt parameter is 0-based and controls exponential backoff when the reset
+// header is unavailable. This is useful for cases where the client chooses not to
+// use automatic retries but still wants to wait before making the next request.
+func WaitForRateLimit(ctx context.Context, rlErr *RateLimitError, policy *RetryPolicy, attempt int) error {
 	if rlErr == nil || policy == nil || !policy.EnableRetry {
 		return nil
 	}
 
 	var waitDuration time.Duration
 
-	if rlErr.Reset > 0 {
+	if rlErr.Reset != nil && *rlErr.Reset > 0 {
 		// Use the Reset value from the error (seconds until window resets)
-		waitDuration = time.Duration(rlErr.Reset) * time.Second
+		waitDuration = time.Duration(*rlErr.Reset) * time.Second
 	} else {
 		// Fallback to exponential backoff
-		backoffSeconds := int(float64(policy.InitialBackoff) * math.Pow(policy.BackoffMultiplier, 1))
-		waitDuration = time.Duration(backoffSeconds) * time.Second
+		backoffSeconds := float64(policy.InitialBackoff) * math.Pow(policy.BackoffMultiplier, float64(attempt))
+		waitDuration = time.Duration(backoffSeconds * float64(time.Second))
 	}
 
 	// Use a timer with context to allow early cancellation
