@@ -3,13 +3,13 @@ package lago_test
 import (
 	"context"
 	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
 
 	qt "github.com/frankban/quicktest"
 	. "github.com/getlago/lago-go-client"
-	lt "github.com/getlago/lago-go-client/testing"
 )
 
 func TestRateLimitError_Error(t *testing.T) {
@@ -38,9 +38,9 @@ func TestParseRateLimitHeaders(t *testing.T) {
 		{
 			name: "All headers present",
 			headers: http.Header{
-				"x-ratelimit-limit":     {"100"},
-				"x-ratelimit-remaining": {"50"},
-				"x-ratelimit-reset":     {"30"},
+				"X-Ratelimit-Limit":     {"100"},
+				"X-Ratelimit-Remaining": {"50"},
+				"X-Ratelimit-Reset":     {"30"},
 			},
 			expectedErr: &RateLimitError{
 				HTTPStatusCode: 429,
@@ -53,7 +53,7 @@ func TestParseRateLimitHeaders(t *testing.T) {
 		{
 			name: "Missing headers",
 			headers: http.Header{
-				"x-ratelimit-limit": {"100"},
+				"X-Ratelimit-Limit": {"100"},
 			},
 			expectedErr: &RateLimitError{
 				HTTPStatusCode: 429,
@@ -74,9 +74,9 @@ func TestParseRateLimitHeaders(t *testing.T) {
 		{
 			name: "Invalid numeric values",
 			headers: http.Header{
-				"x-ratelimit-limit":     {"not-a-number"},
-				"x-ratelimit-remaining": {"also-not-a-number"},
-				"x-ratelimit-reset":     {"still-not-a-number"},
+				"X-Ratelimit-Limit":     {"not-a-number"},
+				"X-Ratelimit-Remaining": {"also-not-a-number"},
+				"X-Ratelimit-Reset":     {"still-not-a-number"},
 			},
 			expectedErr: &RateLimitError{
 				HTTPStatusCode: 429,
@@ -208,45 +208,34 @@ func TestClientRateLimitRetry(t *testing.T) {
 	c := qt.New(t)
 	requestCount := 0
 
-	// Create a mock server that returns 429 on first request, then 200
-	mockServer := lt.NewMockServer(c)
-	defer func() {
-		// Verify the server received requests
-		c.Assert(requestCount >= 2, qt.IsTrue, qt.Commentf(
-			"Expected at least 2 requests (initial + 1 retry), got %d", requestCount))
-		mockServer.Close()
-	}()
-
-	// Track requests
-	originalHandler := mockServer.server.Config.Handler
-	mockServer.server.Config.Handler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	// Create a custom httptest server that returns 429 on first request, then 200
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		requestCount++
 		if requestCount == 1 {
-			// First request returns 429 with rate limit headers
+			w.Header().Set("Content-Type", "application/json")
 			w.Header().Set("x-ratelimit-limit", "100")
 			w.Header().Set("x-ratelimit-remaining", "0")
 			w.Header().Set("x-ratelimit-reset", "1")
 			w.WriteHeader(http.StatusTooManyRequests)
 			w.Write([]byte(`{"status": 429, "error": "Too Many Requests"}`))
 		} else {
-			// Subsequent requests return success
-			w.Header().Set("x-ratelimit-limit", "100")
-			w.Header().Set("x-ratelimit-remaining", "99")
-			w.Header().Set("x-ratelimit-reset", "60")
+			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			w.Write([]byte(`{"data": "success"}`))
 		}
-	})
+	}))
+	defer server.Close()
 
-	client := mockServer.Client()
+	client := New().SetBaseURL(server.URL).SetApiKey("test_api_key")
 
 	ctx := context.Background()
 	_, err := client.Get(ctx, &ClientRequest{
-		Path: "/api/v1/test",
+		Path: "test",
 	})
 
-	// The client should either succeed after retry or fail with a rate limit error if retries exhausted
-	c.Assert(requestCount >= 1, qt.IsTrue)
+	// Should have retried: first request got 429, second got 200
+	c.Assert(requestCount, qt.Equals, 2)
+	c.Assert(err == nil, qt.IsTrue, qt.Commentf("expected nil error after successful retry, got: %v", err))
 }
 
 func TestSetRetryPolicy(t *testing.T) {

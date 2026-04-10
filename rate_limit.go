@@ -3,9 +3,9 @@ package lago
 import (
 	"context"
 	"math"
+	"net/http"
+	"strconv"
 	"time"
-
-	"github.com/go-resty/resty/v2"
 )
 
 // RetryPolicy defines the configuration for rate limit retry behavior.
@@ -38,69 +38,22 @@ func DefaultRetryPolicy() *RetryPolicy {
 	}
 }
 
-// retryCount holds retry state for a specific request.
-type retryCount struct {
-	count int
-}
-
-// setupRateLimitRetry configures resty's built-in retry mechanism with a custom
-// condition to detect rate limit (429) responses and a backoff strategy that
-// respects the x-ratelimit-reset header when available.
-//
-// The retry logic:
-// 1. Intercepts 429 responses and checks if retry is enabled and attempts remain
-// 2. If x-ratelimit-reset header is present, waits that many seconds
-// 3. Otherwise uses exponential backoff starting at InitialBackoff seconds
-// 4. Retries up to MaxAttempts (including initial request)
-func (rp *RetryPolicy) setupRateLimitRetry(client *resty.Client) {
-	if !rp.EnableRetry || rp.MaxAttempts < 1 {
-		return
+// waitDuration calculates how long to wait before retrying.
+// It prefers the x-ratelimit-reset header value if available,
+// otherwise falls back to exponential backoff.
+func (rp *RetryPolicy) waitDuration(resp *http.Response, attempt int) time.Duration {
+	// Try to use x-ratelimit-reset header (seconds until window resets)
+	if resp != nil {
+		if resetStr := resp.Header.Get("x-ratelimit-reset"); resetStr != "" {
+			if resetSeconds, err := strconv.Atoi(resetStr); err == nil && resetSeconds > 0 {
+				return time.Duration(resetSeconds) * time.Second
+			}
+		}
 	}
 
-	// Configure retry condition: only retry on 429 (Too Many Requests)
-	client.AddRetryCondition(func(r *resty.Response, err error) bool {
-		if err != nil {
-			return false
-		}
-		return r.StatusCode() == 429
-	})
-
-	// Configure retry attempts
-	client.SetRetryCount(rp.MaxAttempts - 1) // SetRetryCount is retries, not total attempts
-
-	// Configure backoff strategy
-	client.SetRetryWaitTime(100 * time.Millisecond).
-		SetRetryMaxWaitTime(10 * time.Second).
-		SetRetryAfter(func(client *resty.Client, resp *resty.Response) time.Duration {
-			// Check for x-ratelimit-reset header (seconds until window resets)
-			if resetHeader := resp.Header().Get("x-ratelimit-reset"); resetHeader != "" {
-				// If the header is present, parse it and use it as the wait duration
-				var resetSeconds int
-				_, _ = time.Parse("2006-01-02 15:04:05 MST", resetHeader)
-				// Try to parse as integer (seconds)
-				if _, err := time.Parse(time.RFC3339, resetHeader); err == nil {
-					// If it's a timestamp, calculate the difference
-					resetTime, _ := time.Parse(time.RFC3339, resetHeader)
-					waitDuration := time.Until(resetTime)
-					if waitDuration > 0 {
-						return waitDuration
-					}
-				}
-				// If it's a simple integer, use it as seconds
-				if n, err := time.ParseDuration(resetHeader + "s"); err == nil {
-					return n
-				}
-			}
-
-			// Fallback: exponential backoff if no reset header or parsing failed
-			// Calculate backoff: InitialBackoff * (BackoffMultiplier ^ attemptNumber)
-			retryCount := client.RetryCount - resp.Request.Attempt + 1
-			if retryCount < 1 {
-				retryCount = 1
-			}
-			backoffSeconds := int(float64(rp.InitialBackoff) * math.Pow(rp.BackoffMultiplier, float64(retryCount-1)))
-			return time.Duration(backoffSeconds) * time.Second
-		})
+	// Fallback: exponential backoff
+	backoffSeconds := float64(rp.InitialBackoff) * math.Pow(rp.BackoffMultiplier, float64(attempt))
+	return time.Duration(backoffSeconds * float64(time.Second))
 }
 
 // WaitForRateLimit blocks the current goroutine until the rate limit window resets.
