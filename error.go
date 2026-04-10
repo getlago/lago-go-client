@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 )
 
 type ErrorCode string
@@ -100,4 +101,69 @@ func (e Error) Error() string {
 
 func (e ErrorCode) Error() string {
 	return string(e)
+}
+
+// RateLimitError represents a rate limit (HTTP 429) error response.
+// It includes the rate limit information from response headers.
+type RateLimitError struct {
+	Err            error `json:"-"`
+	HTTPStatusCode int   `json:"status"`
+	Message        string `json:"error"`
+	ErrorCode      string `json:"code"`
+	ErrorDetail    *ErrorDetail `json:"error_details,omitempty"`
+
+	// Rate limit headers
+	Limit     int `json:"limit"`      // x-ratelimit-limit header value
+	Remaining int `json:"remaining"`  // x-ratelimit-remaining header value
+	Reset     int `json:"reset"`      // x-ratelimit-reset header value (seconds)
+}
+
+// Error returns a JSON string representation of the RateLimitError.
+func (e RateLimitError) Error() string {
+	type alias struct {
+		RateLimitError
+		ErrMsg string `json:"err,omitempty"`
+	}
+	err := alias{RateLimitError: e}
+	if e.Err != nil {
+		err.ErrMsg = e.Err.Error()
+	}
+	msg, _ := json.Marshal(&err)
+	return string(msg)
+}
+
+// ParseRateLimitHeaders extracts rate limit information from response headers
+// and returns a RateLimitError. It uses provided error values and supplements
+// them with rate limit header data.
+func ParseRateLimitError(baseErr *Error, headers http.Header) *RateLimitError {
+	rlErr := &RateLimitError{
+		Err:            baseErr.Err,
+		HTTPStatusCode: baseErr.HTTPStatusCode,
+		Message:        baseErr.Message,
+		ErrorCode:      baseErr.ErrorCode,
+		ErrorDetail:    baseErr.ErrorDetail,
+	}
+
+	// Parse x-ratelimit-limit header
+	if limit := headers.Get("x-ratelimit-limit"); limit != "" {
+		if val, err := strconv.Atoi(limit); err == nil {
+			rlErr.Limit = val
+		}
+	}
+
+	// Parse x-ratelimit-remaining header
+	if remaining := headers.Get("x-ratelimit-remaining"); remaining != "" {
+		if val, err := strconv.Atoi(remaining); err == nil {
+			rlErr.Remaining = val
+		}
+	}
+
+	// Parse x-ratelimit-reset header (seconds until window resets)
+	if reset := headers.Get("x-ratelimit-reset"); reset != "" {
+		if val, err := strconv.Atoi(reset); err == nil {
+			rlErr.Reset = val
+		}
+	}
+
+	return rlErr
 }

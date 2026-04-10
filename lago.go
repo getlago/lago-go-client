@@ -19,6 +19,7 @@ type Client struct {
 	Debug            bool
 	HttpClient       *resty.Client
 	IngestHttpClient *resty.Client
+	RetryPolicy      *RetryPolicy
 }
 
 type ClientRequest struct {
@@ -51,11 +52,18 @@ func New() *Client {
 		SetHeader("Content-Type", "application/json").
 		SetHeader("User-Agent", "lago-go-client github.com/getlago/lago-go-client/v1")
 
+	retryPolicy := DefaultRetryPolicy()
+
+	// Apply rate limit retry middleware to both clients
+	retryPolicy.setupRateLimitRetry(restyClient)
+	retryPolicy.setupRateLimitRetry(ingestRestyClient)
+
 	return &Client{
 		BaseUrl:          url,
 		BaseIngestUrl:    url,
 		HttpClient:       restyClient,
 		IngestHttpClient: ingestRestyClient,
+		RetryPolicy:      retryPolicy,
 	}
 }
 
@@ -79,6 +87,25 @@ func (c *Client) SetBaseURL(url string) *Client {
 
 func (c *Client) SetDebug(debug bool) *Client {
 	c.Debug = debug
+
+	return c
+}
+
+// SetRetryPolicy updates the retry policy for both HTTP clients.
+// This allows customization of rate limit retry behavior.
+// Pass nil to disable retries.
+func (c *Client) SetRetryPolicy(policy *RetryPolicy) *Client {
+	if policy == nil {
+		// Disable retries by creating a no-op policy
+		c.RetryPolicy = &RetryPolicy{EnableRetry: false}
+		c.RetryPolicy.setupRateLimitRetry(c.HttpClient)
+		c.RetryPolicy.setupRateLimitRetry(c.IngestHttpClient)
+		return c
+	}
+
+	c.RetryPolicy = policy
+	policy.setupRateLimitRetry(c.HttpClient)
+	policy.setupRateLimitRetry(c.IngestHttpClient)
 
 	return c
 }
@@ -129,12 +156,23 @@ func (c *Client) Get(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
+		errObj, ok := resp.Error().(*Error)
 		if !ok {
 			return nil, &ErrorTypeAssert
 		}
 
-		return nil, err
+		// Check if this is a rate limit error (429)
+		if resp.StatusCode() == 429 {
+			return nil, &Error{
+				Err:            errObj.Err,
+				HTTPStatusCode: errObj.HTTPStatusCode,
+				Message:        errObj.Message,
+				ErrorCode:      errObj.ErrorCode,
+				ErrorDetail:    errObj.ErrorDetail,
+			}
+		}
+
+		return nil, errObj
 	}
 
 	if hasResult {
