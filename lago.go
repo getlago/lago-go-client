@@ -4,9 +4,41 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"time"
 
 	"github.com/go-resty/resty/v2"
 )
+
+// executeWithRetry runs the given request function with automatic retry on HTTP 429 responses.
+// It respects the client's RetryPolicy settings including max attempts, backoff, and
+// the x-ratelimit-reset header from the server.
+func (c *Client) executeWithRetry(ctx context.Context, fn func() (*resty.Response, error)) (*resty.Response, error) {
+	for attempt := 0; ; attempt++ {
+		resp, err := fn()
+		if err != nil {
+			return resp, err
+		}
+
+		// If not rate limited, or retries disabled, or max attempts reached, return
+		if resp.StatusCode() != 429 ||
+			c.RetryPolicy == nil ||
+			!c.RetryPolicy.EnableRetry ||
+			attempt >= c.RetryPolicy.MaxAttempts-1 {
+			return resp, nil
+		}
+
+		// Calculate wait duration from headers or exponential backoff
+		waitDuration := c.RetryPolicy.waitDuration(resp.RawResponse, attempt)
+		timer := time.NewTimer(waitDuration)
+		select {
+		case <-timer.C:
+			// continue to next attempt
+		case <-ctx.Done():
+			timer.Stop()
+			return resp, ctx.Err()
+		}
+	}
+}
 
 const baseURL string = "https://api.getlago.com"
 const baseIngestURL string = "https://ingest.getlago.com"
@@ -19,6 +51,7 @@ type Client struct {
 	Debug            bool
 	HttpClient       *resty.Client
 	IngestHttpClient *resty.Client
+	RetryPolicy      *RetryPolicy
 }
 
 type ClientRequest struct {
@@ -51,11 +84,14 @@ func New() *Client {
 		SetHeader("Content-Type", "application/json").
 		SetHeader("User-Agent", "lago-go-client github.com/getlago/lago-go-client/v1")
 
+	retryPolicy := DefaultRetryPolicy()
+
 	return &Client{
 		BaseUrl:          url,
 		BaseIngestUrl:    url,
 		HttpClient:       restyClient,
 		IngestHttpClient: ingestRestyClient,
+		RetryPolicy:      retryPolicy,
 	}
 }
 
@@ -83,6 +119,20 @@ func (c *Client) SetDebug(debug bool) *Client {
 	return c
 }
 
+// SetRetryPolicy updates the retry policy for both HTTP clients.
+// This allows customization of rate limit retry behavior.
+// Pass nil to disable retries.
+func (c *Client) SetRetryPolicy(policy *RetryPolicy) *Client {
+	if policy == nil {
+		// Disable retries by creating a no-op policy
+		c.RetryPolicy = &RetryPolicy{EnableRetry: false}
+		return c
+	}
+
+	c.RetryPolicy = policy
+	return c
+}
+
 func (c *Client) SetUseIngestService(useIngestService bool) *Client {
 	c.UseIngestService = useIngestService
 
@@ -104,23 +154,47 @@ func (c *Client) SetBaseIngestUrl(url string) *Client {
 	return c
 }
 
+// handleErrorResponse converts an error HTTP response into the appropriate error type.
+// For 429 responses, it returns a RateLimitError with parsed rate limit headers.
+// For all other errors, it returns the standard Error type.
+func (c *Client) handleErrorResponse(resp *resty.Response) *Error {
+	errObj, ok := resp.Error().(*Error)
+	if !ok {
+		return &ErrorTypeAssert
+	}
+
+	if resp.StatusCode() == 429 {
+		rlErr := ParseRateLimitError(errObj, resp.RawResponse.Header)
+		return &Error{
+			Err:            rlErr,
+			HTTPStatusCode: rlErr.HTTPStatusCode,
+			Message:        rlErr.Message,
+			ErrorCode:      rlErr.ErrorCode,
+			ErrorDetail:    rlErr.ErrorDetail,
+		}
+	}
+
+	return errObj
+}
+
 func (c *Client) Get(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
 	hasResult := cr.Result != nil
 
-	request := c.HttpClient.R().
-		SetContext(ctx).
-		SetError(&Error{}).
-		SetQueryParams(cr.QueryParams).
-		SetQueryParamsFromValues(cr.UrlValues)
+	resp, retryErr := c.executeWithRetry(ctx, func() (*resty.Response, error) {
+		request := c.HttpClient.R().
+			SetContext(ctx).
+			SetError(&Error{}).
+			SetQueryParams(cr.QueryParams).
+			SetQueryParamsFromValues(cr.UrlValues)
 
-	if hasResult {
-		request.SetResult(cr.Result)
-	}
+		if hasResult {
+			request.SetResult(cr.Result)
+		}
 
-	resp, err := request.
-		Get(cr.Path)
-	if err != nil {
-		return nil, &Error{Err: err}
+		return request.Get(cr.Path)
+	})
+	if retryErr != nil {
+		return nil, &Error{Err: retryErr}
 	}
 
 	if c.Debug {
@@ -129,12 +203,7 @@ func (c *Client) Get(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
-		if !ok {
-			return nil, &ErrorTypeAssert
-		}
-
-		return nil, err
+		return nil, c.handleErrorResponse(resp)
 	}
 
 	if hasResult {
@@ -150,16 +219,17 @@ func (c *Client) Patch(ctx context.Context, cr *ClientRequest) (interface{}, *Er
 		httpClient = c.IngestHttpClient
 	}
 
-	resp, err := httpClient.R().
-		SetContext(ctx).
-		SetError(&Error{}).
-		SetResult(cr.Result).
-		SetBody(cr.Body).
-		SetQueryParams(cr.QueryParams).
-		Patch(cr.Path)
-
-	if err != nil {
-		return nil, &Error{Err: err}
+	resp, retryErr := c.executeWithRetry(ctx, func() (*resty.Response, error) {
+		return httpClient.R().
+			SetContext(ctx).
+			SetError(&Error{}).
+			SetResult(cr.Result).
+			SetBody(cr.Body).
+			SetQueryParams(cr.QueryParams).
+			Patch(cr.Path)
+	})
+	if retryErr != nil {
+		return nil, &Error{Err: retryErr}
 	}
 
 	if c.Debug {
@@ -168,12 +238,7 @@ func (c *Client) Patch(ctx context.Context, cr *ClientRequest) (interface{}, *Er
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
-		if !ok {
-			return nil, &ErrorTypeAssert
-		}
-
-		return nil, err
+		return nil, c.handleErrorResponse(resp)
 	}
 
 	return resp.Result(), nil
@@ -185,16 +250,17 @@ func (c *Client) Post(ctx context.Context, cr *ClientRequest) (interface{}, *Err
 		httpClient = c.IngestHttpClient
 	}
 
-	resp, err := httpClient.R().
-		SetContext(ctx).
-		SetError(&Error{}).
-		SetResult(cr.Result).
-		SetBody(cr.Body).
-		SetQueryParams(cr.QueryParams).
-		Post(cr.Path)
-
-	if err != nil {
-		return nil, &Error{Err: err}
+	resp, retryErr := c.executeWithRetry(ctx, func() (*resty.Response, error) {
+		return httpClient.R().
+			SetContext(ctx).
+			SetError(&Error{}).
+			SetResult(cr.Result).
+			SetBody(cr.Body).
+			SetQueryParams(cr.QueryParams).
+			Post(cr.Path)
+	})
+	if retryErr != nil {
+		return nil, &Error{Err: retryErr}
 	}
 
 	if c.Debug {
@@ -203,25 +269,22 @@ func (c *Client) Post(ctx context.Context, cr *ClientRequest) (interface{}, *Err
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
-		if !ok {
-			return nil, &ErrorTypeAssert
-		}
-
-		return nil, err
+		return nil, c.handleErrorResponse(resp)
 	}
 
 	return resp.Result(), nil
 }
 
 func (c *Client) PostWithoutResult(ctx context.Context, cr *ClientRequest) *Error {
-	resp, err := c.HttpClient.R().
-		SetContext(ctx).
-		SetError(&Error{}).
-		SetBody(cr.Body).
-		Post(cr.Path)
-	if err != nil {
-		return &Error{Err: err}
+	resp, retryErr := c.executeWithRetry(ctx, func() (*resty.Response, error) {
+		return c.HttpClient.R().
+			SetContext(ctx).
+			SetError(&Error{}).
+			SetBody(cr.Body).
+			Post(cr.Path)
+	})
+	if retryErr != nil {
+		return &Error{Err: retryErr}
 	}
 
 	if c.Debug {
@@ -230,25 +293,22 @@ func (c *Client) PostWithoutResult(ctx context.Context, cr *ClientRequest) *Erro
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
-		if !ok {
-			return &ErrorTypeAssert
-		}
-
-		return err
+		return c.handleErrorResponse(resp)
 	}
 
 	return nil
 }
 
 func (c *Client) PostWithoutBody(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
-	resp, err := c.HttpClient.R().
-		SetContext(ctx).
-		SetError(&Error{}).
-		SetResult(cr.Result).
-		Post(cr.Path)
-	if err != nil {
-		return nil, &Error{Err: err}
+	resp, retryErr := c.executeWithRetry(ctx, func() (*resty.Response, error) {
+		return c.HttpClient.R().
+			SetContext(ctx).
+			SetError(&Error{}).
+			SetResult(cr.Result).
+			Post(cr.Path)
+	})
+	if retryErr != nil {
+		return nil, &Error{Err: retryErr}
 	}
 
 	if c.Debug {
@@ -257,27 +317,24 @@ func (c *Client) PostWithoutBody(ctx context.Context, cr *ClientRequest) (interf
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
-		if !ok {
-			return nil, &ErrorTypeAssert
-		}
-
-		return nil, err
+		return nil, c.handleErrorResponse(resp)
 	}
 
 	return resp.Result(), nil
 }
 
 func (c *Client) Put(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
-	resp, err := c.HttpClient.R().
-		SetContext(ctx).
-		SetError(&Error{}).
-		SetResult(cr.Result).
-		SetBody(cr.Body).
-		SetQueryParams(cr.QueryParams).
-		Put(cr.Path)
-	if err != nil {
-		return nil, &Error{Err: err}
+	resp, retryErr := c.executeWithRetry(ctx, func() (*resty.Response, error) {
+		return c.HttpClient.R().
+			SetContext(ctx).
+			SetError(&Error{}).
+			SetResult(cr.Result).
+			SetBody(cr.Body).
+			SetQueryParams(cr.QueryParams).
+			Put(cr.Path)
+	})
+	if retryErr != nil {
+		return nil, &Error{Err: retryErr}
 	}
 
 	if c.Debug {
@@ -286,12 +343,7 @@ func (c *Client) Put(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
-		if !ok {
-			return nil, &ErrorTypeAssert
-		}
-
-		return nil, err
+		return nil, c.handleErrorResponse(resp)
 	}
 
 	return resp.Result(), nil
@@ -300,19 +352,21 @@ func (c *Client) Put(ctx context.Context, cr *ClientRequest) (interface{}, *Erro
 func (c *Client) Delete(ctx context.Context, cr *ClientRequest) (interface{}, *Error) {
 	hasResult := cr.Result != nil
 
-	request := c.HttpClient.R().
-		SetContext(ctx).
-		SetError(&Error{}).
-		SetBody(cr.Body).
-		SetQueryParams(cr.QueryParams)
+	resp, retryErr := c.executeWithRetry(ctx, func() (*resty.Response, error) {
+		request := c.HttpClient.R().
+			SetContext(ctx).
+			SetError(&Error{}).
+			SetBody(cr.Body).
+			SetQueryParams(cr.QueryParams)
 
-	if hasResult {
-		request.SetResult(cr.Result)
-	}
+		if hasResult {
+			request.SetResult(cr.Result)
+		}
 
-	resp, err := request.Delete(cr.Path)
-	if err != nil {
-		return nil, &Error{Err: err}
+		return request.Delete(cr.Path)
+	})
+	if retryErr != nil {
+		return nil, &Error{Err: retryErr}
 	}
 
 	if c.Debug {
@@ -321,12 +375,7 @@ func (c *Client) Delete(ctx context.Context, cr *ClientRequest) (interface{}, *E
 	}
 
 	if resp.IsError() {
-		err, ok := resp.Error().(*Error)
-		if !ok {
-			return nil, &ErrorTypeAssert
-		}
-
-		return nil, err
+		return nil, c.handleErrorResponse(resp)
 	}
 
 	return resp.Result(), nil
