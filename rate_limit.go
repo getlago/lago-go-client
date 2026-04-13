@@ -26,6 +26,11 @@ type RetryPolicy struct {
 	// BackoffMultiplier is the multiplier for exponential backoff.
 	// Default is 2 (doubles the wait time on each retry).
 	BackoffMultiplier float64
+
+	// MaxRetryDelay is the maximum duration to wait before a retry, in seconds.
+	// Applies to both header-based and exponential backoff delays.
+	// Default is 20 seconds.
+	MaxRetryDelay int
 }
 
 // DefaultRetryPolicy returns a RetryPolicy with sensible defaults.
@@ -35,6 +40,7 @@ func DefaultRetryPolicy() *RetryPolicy {
 		EnableRetry:       true,
 		InitialBackoff:    1,
 		BackoffMultiplier: 2.0,
+		MaxRetryDelay:     20,
 	}
 }
 
@@ -42,18 +48,32 @@ func DefaultRetryPolicy() *RetryPolicy {
 // It prefers the x-ratelimit-reset header value if available,
 // otherwise falls back to exponential backoff.
 func (rp *RetryPolicy) waitDuration(resp *http.Response, attempt int) time.Duration {
+	var duration time.Duration
+
 	// Try to use x-ratelimit-reset header (seconds until window resets)
 	if resp != nil {
 		if resetStr := resp.Header.Get("x-ratelimit-reset"); resetStr != "" {
 			if resetSeconds, err := strconv.Atoi(resetStr); err == nil && resetSeconds > 0 {
-				return time.Duration(resetSeconds) * time.Second
+				duration = time.Duration(resetSeconds) * time.Second
 			}
 		}
 	}
 
 	// Fallback: exponential backoff
-	backoffSeconds := float64(rp.InitialBackoff) * math.Pow(rp.BackoffMultiplier, float64(attempt))
-	return time.Duration(backoffSeconds * float64(time.Second))
+	if duration == 0 {
+		backoffSeconds := float64(rp.InitialBackoff) * math.Pow(rp.BackoffMultiplier, float64(attempt))
+		duration = time.Duration(backoffSeconds * float64(time.Second))
+	}
+
+	// Cap at MaxRetryDelay
+	if rp.MaxRetryDelay > 0 {
+		maxDelay := time.Duration(rp.MaxRetryDelay) * time.Second
+		if duration > maxDelay {
+			duration = maxDelay
+		}
+	}
+
+	return duration
 }
 
 // WaitForRateLimit blocks the current goroutine until the rate limit window resets.
@@ -77,6 +97,14 @@ func WaitForRateLimit(ctx context.Context, rlErr *RateLimitError, policy *RetryP
 		// Fallback to exponential backoff
 		backoffSeconds := float64(policy.InitialBackoff) * math.Pow(policy.BackoffMultiplier, float64(attempt))
 		waitDuration = time.Duration(backoffSeconds * float64(time.Second))
+	}
+
+	// Cap at MaxRetryDelay
+	if policy.MaxRetryDelay > 0 {
+		maxDelay := time.Duration(policy.MaxRetryDelay) * time.Second
+		if waitDuration > maxDelay {
+			waitDuration = maxDelay
+		}
 	}
 
 	// Use a timer with context to allow early cancellation
