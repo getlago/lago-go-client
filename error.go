@@ -107,16 +107,16 @@ func (e ErrorCode) Error() string {
 // It includes the rate limit information from response headers.
 // Pointer fields are nil when the corresponding header was absent or unparseable.
 type RateLimitError struct {
-	Err            error `json:"-"`
-	HTTPStatusCode int   `json:"status"`
-	Message        string `json:"error"`
-	ErrorCode      string `json:"code"`
+	Err            error        `json:"-"`
+	HTTPStatusCode int          `json:"status"`
+	Message        string       `json:"error"`
+	ErrorCode      string       `json:"code"`
 	ErrorDetail    *ErrorDetail `json:"error_details,omitempty"`
 
 	// Rate limit headers (nil when header is absent or unparseable)
-	Limit     *int `json:"limit,omitempty"`      // x-ratelimit-limit header value
-	Remaining *int `json:"remaining,omitempty"`  // x-ratelimit-remaining header value
-	Reset     *int `json:"reset,omitempty"`      // x-ratelimit-reset header value (seconds)
+	Limit     *int `json:"limit,omitempty"`     // x-ratelimit-limit header value
+	Remaining *int `json:"remaining,omitempty"` // x-ratelimit-remaining header value
+	Reset     *int `json:"reset,omitempty"`     // x-ratelimit-reset header value (seconds)
 }
 
 // Error returns a JSON string representation of the RateLimitError.

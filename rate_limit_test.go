@@ -229,11 +229,11 @@ func TestClientRateLimitRetry(t *testing.T) {
 			w.Header().Set("x-ratelimit-remaining", "0")
 			w.Header().Set("x-ratelimit-reset", "1")
 			w.WriteHeader(http.StatusTooManyRequests)
-			w.Write([]byte(`{"status": 429, "error": "Too Many Requests"}`))
+			_, _ = w.Write([]byte(`{"status": 429, "error": "Too Many Requests"}`))
 		} else {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(`{"data": "success"}`))
+			_, _ = w.Write([]byte(`{"data": "success"}`))
 		}
 	}))
 	defer server.Close()
