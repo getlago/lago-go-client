@@ -21,7 +21,8 @@ type InvoiceCustomSectionInput struct {
 }
 
 type AppliedInvoiceCustomSection struct {
-	LagoId               uuid.UUID            `json:"lago_id,omitempty"`
-	CreatedAt            time.Time            `json:"created_at,omitempty"`
-	InvoiceCustomSection InvoiceCustomSection `json:"invoice_custom_section,omitempty"`
+	LagoId                 uuid.UUID            `json:"lago_id,omitempty"`
+	InvoiceCustomSectionId uuid.UUID            `json:"invoice_custom_section_id,omitempty"`
+	CreatedAt              time.Time            `json:"created_at,omitempty"`
+	InvoiceCustomSection   InvoiceCustomSection `json:"invoice_custom_section,omitempty"`
 }
