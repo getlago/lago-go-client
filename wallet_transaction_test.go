@@ -44,7 +44,12 @@ var mockWalletTransactionListResponse = `{
 				"applied_invoice_custom_sections": [{
 					"lago_id": "e1e2f3f4-a5b6-7890-1234-56789abcdef0",
 					"invoice_custom_section_id": "f1f2a3a4-b5c6-7890-1234-56789abcdef0",
-					"created_at": "2024-06-01T12:00:00Z"
+					"created_at": "2024-06-01T12:00:00Z",
+					"invoice_custom_section": {
+						"lago_id": "f1f2a3a4-b5c6-7890-1234-56789abcdef0",
+						"code": "wt_section_code",
+						"name": "WT Section Name"
+					}
 				}]
 			}],
 			"meta": {
@@ -132,6 +137,11 @@ func TestWalletTransactionRequest_Create(t *testing.T) {
 							LagoId:                 uuid.MustParse("e1e2f3f4-a5b6-7890-1234-56789abcdef0"),
 							InvoiceCustomSectionId: uuid.MustParse("f1f2a3a4-b5c6-7890-1234-56789abcdef0"),
 							CreatedAt:              time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC),
+							InvoiceCustomSection: InvoiceCustomSection{
+								LagoId: uuid.MustParse("f1f2a3a4-b5c6-7890-1234-56789abcdef0"),
+								Code:   "wt_section_code",
+								Name:   "WT Section Name",
+							},
 						},
 					},
 				},
