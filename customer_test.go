@@ -939,7 +939,7 @@ func TestCustomerRequest_CurrentUsage(t *testing.T) {
 			ExternalSubscriptionID: "SUB_1",
 		})
 		c.Assert(result, qt.IsNil)
-		c.Assert(err.Error(), qt.Equals, `{"status":0,"error":"","code":"","err":"Get \"http://localhost:88888/api/v1/customers/CUSTOMER_1/current_usage?apply_taxes=false&external_subscription_id=SUB_1\": dial tcp: address 88888: invalid port"}`)
+		c.Assert(err.Error(), qt.Equals, "{\"status\":0,\"error\":\"\",\"code\":\"\",\"err\":\"Get \\\"http://localhost:88888/api/v1/customers/CUSTOMER_1/current_usage?apply_taxes=false\\u0026external_subscription_id=SUB_1\\\": dial tcp: address 88888: invalid port\"}")
 	})
 
 	filterTests := []struct {
