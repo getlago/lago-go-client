@@ -12,6 +12,9 @@ import (
 // executeWithRetry runs the given request function with automatic retry on HTTP 429 responses.
 // It respects the client's RetryPolicy settings including max attempts, backoff, and
 // the x-ratelimit-reset header from the server.
+//
+// On a non-429 response, if the RetryPolicy.OnRateLimitInfo callback is set,
+// the parsed x-ratelimit-* headers are delivered to it for observability.
 func (c *Client) executeWithRetry(ctx context.Context, fn func() (*resty.Response, error)) (*resty.Response, error) {
 	for attempt := 0; ; attempt++ {
 		resp, err := fn()
@@ -19,9 +22,14 @@ func (c *Client) executeWithRetry(ctx context.Context, fn func() (*resty.Respons
 			return resp, err
 		}
 
-		// If not rate limited, or retries disabled, or max attempts reached, return
-		if resp.StatusCode() != 429 ||
-			c.RetryPolicy == nil ||
+		// If not rate limited, emit observability info and return
+		if resp.StatusCode() != 429 {
+			c.emitRateLimitInfo(resp)
+			return resp, nil
+		}
+
+		// Rate limited but retries disabled or max attempts reached: return as-is
+		if c.RetryPolicy == nil ||
 			!c.RetryPolicy.EnableRetry ||
 			attempt >= c.RetryPolicy.MaxAttempts-1 {
 			return resp, nil
@@ -38,6 +46,23 @@ func (c *Client) executeWithRetry(ctx context.Context, fn func() (*resty.Respons
 			return resp, ctx.Err()
 		}
 	}
+}
+
+// emitRateLimitInfo invokes the configured OnRateLimitInfo callback (if any)
+// with parsed x-ratelimit-* headers from the given response.
+func (c *Client) emitRateLimitInfo(resp *resty.Response) {
+	if c.RetryPolicy == nil || c.RetryPolicy.OnRateLimitInfo == nil || resp == nil || resp.RawResponse == nil {
+		return
+	}
+	method := ""
+	url := ""
+	if resp.Request != nil && resp.Request.RawRequest != nil {
+		method = resp.Request.RawRequest.Method
+		if resp.Request.RawRequest.URL != nil {
+			url = resp.Request.RawRequest.URL.String()
+		}
+	}
+	c.RetryPolicy.emitRateLimitInfo(resp.RawResponse, method, url)
 }
 
 const baseURL string = "https://api.getlago.com"

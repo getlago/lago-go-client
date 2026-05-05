@@ -2,11 +2,45 @@ package lago
 
 import (
 	"context"
+	"log"
 	"math"
 	"net/http"
 	"strconv"
 	"time"
 )
+
+// RateLimitInfo holds parsed rate limit headers from a Lago API response.
+//
+// It is delivered to the OnRateLimitInfo callback after every successful
+// request so callers can build observability around the rate limit (warn at
+// thresholds, emit metrics, etc.).
+type RateLimitInfo struct {
+	// Limit is the parsed x-ratelimit-limit header (nil when absent or unparseable).
+	Limit *int
+	// Remaining is the parsed x-ratelimit-remaining header (nil when absent or unparseable).
+	Remaining *int
+	// Reset is the parsed x-ratelimit-reset header in seconds (nil when absent or unparseable).
+	Reset *int
+	// Method is the HTTP method of the call (GET, POST, ...).
+	Method string
+	// URL is the request URL.
+	URL string
+}
+
+// UsagePct returns the fraction of the rate limit currently used in [0.0, 1.0].
+//
+// It returns (0, false) when the headers aren't usable (missing limit, zero
+// limit, missing remaining).
+func (i *RateLimitInfo) UsagePct() (float64, bool) {
+	if i == nil || i.Limit == nil || i.Remaining == nil || *i.Limit <= 0 {
+		return 0, false
+	}
+	return 1.0 - float64(*i.Remaining)/float64(*i.Limit), true
+}
+
+// RateLimitInfoCallback is invoked after every successful response with parsed
+// rate limit headers.
+type RateLimitInfoCallback func(info *RateLimitInfo)
 
 // RetryPolicy defines the configuration for rate limit retry behavior.
 type RetryPolicy struct {
@@ -31,6 +65,12 @@ type RetryPolicy struct {
 	// Applies to both header-based and exponential backoff delays.
 	// Default is 20 seconds.
 	MaxRetryDelay int
+
+	// OnRateLimitInfo, when set, is invoked after every successful (non-429)
+	// response with parsed rate limit headers. Use it to build observability
+	// (warn at 80/90/95%, emit metrics, etc.). Panics from the callback are
+	// recovered and logged so a buggy observer cannot break the request flow.
+	OnRateLimitInfo RateLimitInfoCallback
 }
 
 // DefaultRetryPolicy returns a RetryPolicy with sensible defaults.
@@ -42,6 +82,61 @@ func DefaultRetryPolicy() *RetryPolicy {
 		BackoffMultiplier: 2.0,
 		MaxRetryDelay:     20,
 	}
+}
+
+// parseRateLimitInfo extracts x-ratelimit-* headers from a response into a
+// RateLimitInfo. Returns nil when no rate limit headers are present (for
+// example, on a self-hosted Lago instance that doesn't enforce limits).
+func parseRateLimitInfo(resp *http.Response, method, url string) *RateLimitInfo {
+	if resp == nil {
+		return nil
+	}
+
+	info := &RateLimitInfo{Method: method, URL: url}
+	hasAny := false
+
+	if v := resp.Header.Get("x-ratelimit-limit"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil {
+			info.Limit = intPtr(n)
+			hasAny = true
+		}
+	}
+	if v := resp.Header.Get("x-ratelimit-remaining"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil {
+			info.Remaining = intPtr(n)
+			hasAny = true
+		}
+	}
+	if v := resp.Header.Get("x-ratelimit-reset"); v != "" {
+		if n, err := strconv.Atoi(v); err == nil {
+			info.Reset = intPtr(n)
+			hasAny = true
+		}
+	}
+
+	if !hasAny {
+		return nil
+	}
+	return info
+}
+
+// emitRateLimitInfo invokes the configured OnRateLimitInfo callback if any.
+// Panics from the callback are recovered and logged so the underlying request
+// flow is never affected.
+func (rp *RetryPolicy) emitRateLimitInfo(resp *http.Response, method, url string) {
+	if rp == nil || rp.OnRateLimitInfo == nil {
+		return
+	}
+	info := parseRateLimitInfo(resp, method, url)
+	if info == nil {
+		return
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("lago: OnRateLimitInfo callback panicked: %v", r)
+		}
+	}()
+	rp.OnRateLimitInfo(info)
 }
 
 // waitDuration calculates how long to wait before retrying.
