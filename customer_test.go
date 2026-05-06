@@ -916,6 +916,98 @@ func TestCustomerCheckoutUrl(t *testing.T) {
 	})
 }
 
+var mockCustomerCurrentUsageResponse = map[string]any{
+	"customer_usage": map[string]any{
+		"from_datetime":      "2022-07-01T00:00:00Z",
+		"to_datetime":        "2022-07-31T23:59:59Z",
+		"issuing_date":       "2022-07-31",
+		"lago_invoice_id":    "1a901a90-1a90-1a90-1a90-1a901a901a90",
+		"currency":           "EUR",
+		"amount_cents":       123,
+		"total_amount_cents": 150,
+		"taxes_amount_cents": 27,
+		"charges_usage":      []map[string]any{},
+	},
+}
+
+func TestCustomerRequest_CurrentUsage(t *testing.T) {
+	t.Run("When the server is not reachable", func(t *testing.T) {
+		c := qt.New(t)
+
+		client := New().SetBaseURL("http://localhost:88888").SetApiKey("test_api_key")
+		result, err := client.Customer().CurrentUsage(context.Background(), "CUSTOMER_1", &CustomerUsageInput{
+			ExternalSubscriptionID: "SUB_1",
+		})
+		c.Assert(result, qt.IsNil)
+		c.Assert(err.Error(), qt.Equals, "{\"status\":0,\"error\":\"\",\"code\":\"\",\"err\":\"Get \\\"http://localhost:88888/api/v1/customers/CUSTOMER_1/current_usage?apply_taxes=false\\u0026external_subscription_id=SUB_1\\\": dial tcp: address 88888: invalid port\"}")
+	})
+
+	filterTests := []struct {
+		name  string
+		input CustomerUsageInput
+		query string
+	}{
+		{
+			name:  "charge_id",
+			input: CustomerUsageInput{ChargeID: "charge_123"},
+			query: "external_subscription_id=SUB_1&apply_taxes=false&charge_id=charge_123",
+		},
+		{
+			name:  "charge_code",
+			input: CustomerUsageInput{ChargeCode: "my_charge"},
+			query: "external_subscription_id=SUB_1&apply_taxes=false&charge_code=my_charge",
+		},
+		{
+			name:  "billable_metric_code",
+			input: CustomerUsageInput{BillableMetricCode: "my_metric"},
+			query: "external_subscription_id=SUB_1&apply_taxes=false&billable_metric_code=my_metric",
+		},
+		{
+			name:  "group",
+			input: CustomerUsageInput{Group: map[string]string{"region": "us-east-1"}},
+			query: "external_subscription_id=SUB_1&apply_taxes=false&group[region]=us-east-1",
+		},
+		{
+			name:  "full_usage",
+			input: CustomerUsageInput{FullUsage: true},
+			query: "external_subscription_id=SUB_1&apply_taxes=false&full_usage=true",
+		},
+		{
+			name:  "filter_by_charge_id (deprecated)",
+			input: CustomerUsageInput{FilterByChargeID: "charge_123"},
+			query: "external_subscription_id=SUB_1&apply_taxes=false&filter_by_charge_id=charge_123",
+		},
+		{
+			name:  "filter_by_charge_code (deprecated)",
+			input: CustomerUsageInput{FilterByChargeCode: "my_charge"},
+			query: "external_subscription_id=SUB_1&apply_taxes=false&filter_by_charge_code=my_charge",
+		},
+		{
+			name:  "filter_by_group (deprecated)",
+			input: CustomerUsageInput{FilterByGroup: map[string]string{"region": "us-east-1"}},
+			query: "external_subscription_id=SUB_1&apply_taxes=false&filter_by_group[region]=us-east-1",
+		},
+	}
+
+	for _, tt := range filterTests {
+		t.Run("When using "+tt.name, func(t *testing.T) {
+			c := qt.New(t)
+
+			tt.input.ExternalSubscriptionID = "SUB_1"
+			server := lt.NewMockServer(c).
+				MatchMethod("GET").
+				MatchPath("/api/v1/customers/CUSTOMER_1/current_usage").
+				MatchQuery(tt.query).
+				MockResponse(mockCustomerCurrentUsageResponse)
+			defer server.Close()
+
+			result, err := server.Client().Customer().CurrentUsage(context.Background(), "CUSTOMER_1", &tt.input)
+			c.Assert(err == nil, qt.IsTrue)
+			c.Assert(result.AmountCents, qt.Equals, 123)
+		})
+	}
+}
+
 func TestCustomerRequest_Get(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)
