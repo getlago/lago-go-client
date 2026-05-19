@@ -99,6 +99,7 @@ type SubscriptionInput struct {
 	Name                 string                     `json:"name"`
 	PaymentMethod        *PaymentMethodInput        `json:"payment_method,omitempty"`
 	InvoiceCustomSection *InvoiceCustomSectionInput `json:"invoice_custom_section,omitempty"`
+	ConsolidateInvoice   *bool                      `json:"consolidate_invoice,omitempty"`
 }
 
 type SubscriptionsInput struct {
@@ -142,6 +143,7 @@ type Subscription struct {
 	TrialEndedAt            *time.Time              `json:"trial_ended_at"`
 	OnTerminationCreditNote OnTerminationCreditNote `json:"on_termination_credit_note,omitempty"`
 	OnTerminationInvoice    OnTerminationInvoice    `json:"on_termination_invoice,omitempty"`
+	ConsolidateInvoice      bool                    `json:"consolidate_invoice"`
 
 	PreviousPlanCode  string `json:"previous_plan_code"`
 	NextPlanCode      string `json:"next_plan_code"`
