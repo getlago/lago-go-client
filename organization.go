@@ -12,6 +12,13 @@ const (
 	DocumentNumberingPerOrganization OrganizationDocumentNumbering = "per_organization"
 )
 
+type OrganizationEventsStore string
+
+const (
+	OrganizationEventsStoreClickhouse OrganizationEventsStore = "clickhouse"
+	OrganizationEventsStorePostgres   OrganizationEventsStore = "postgres"
+)
+
 type OrganizationRequest struct {
 	client *Client
 }
@@ -83,6 +90,7 @@ type Organization struct {
 	Timezone                  string                        `json:"timezone,omitempty"`
 	EmailSettings             []string                      `json:"email_settings,omitempty"`
 	FinalizeZeroAmountInvoice bool                          `json:"finalize_zero_amount_invoice,omitempty"`
+	EventsStore               OrganizationEventsStore       `json:"events_store,omitempty"`
 
 	BillingConfiguration OrganizationBillingConfiguration `json:"billing_configuration,omitempty"`
 
