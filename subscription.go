@@ -118,6 +118,7 @@ type SubscriptionTerminateInput struct {
 type SubscriptionListInput struct {
 	ExternalCustomerID string               `url:"external_customer_id,omitempty"`
 	PlanCode           string               `url:"plan_code,omitempty"`
+	Currency           string               `url:"currency,omitempty"`
 	PerPage            *int                 `url:"per_page,omitempty"`
 	Page               *int                 `url:"page,omitempty"`
 	Status             []SubscriptionStatus `url:"status[],omitempty"`

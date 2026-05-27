@@ -96,6 +96,7 @@ type WalletListInput struct {
 	PerPage            *int   `json:"per_page,omitempty,string"`
 	Page               *int   `json:"page,omitempty,string"`
 	ExternalCustomerID string `json:"external_customer_id,omitempty"`
+	Currency           string `json:"currency,omitempty"`
 }
 
 type WalletResult struct {
