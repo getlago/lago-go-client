@@ -347,7 +347,7 @@ func TestInvoiceRequest_RetryPayment(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("POST").
 			MatchPath("/api/v1/invoices/1a901a90-1a90-1a90-1a90-1a901a901a90/retry_payment").
-			MockResponse(map[string]any{})
+			MockResponse(nil)
 		defer server.Close()
 
 		_, err := server.Client().Invoice().RetryPayment(context.Background(), "1a901a90-1a90-1a90-1a90-1a901a901a90")
@@ -366,7 +366,7 @@ func TestInvoiceRequest_RetryPayment(t *testing.T) {
 					"payment_method_id": "pm_123456"
 				}
 			}`).
-			MockResponse(map[string]any{})
+			MockResponse(nil)
 		defer server.Close()
 
 		_, err := server.Client().Invoice().RetryPayment(context.Background(), "1a901a90-1a90-1a90-1a90-1a901a901a90", &PaymentMethodInput{

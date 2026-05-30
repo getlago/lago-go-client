@@ -537,8 +537,7 @@ func (ir *InvoiceRequest) LoseDispute(ctx context.Context, invoiceID string) (*I
 func (ir *InvoiceRequest) RetryPayment(ctx context.Context, invoiceID string, paymentMethod ...*PaymentMethodInput) (*Invoice, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "invoices", invoiceID, "retry_payment")
 	clientRequest := &ClientRequest{
-		Path:   subPath,
-		Result: &InvoiceResult{},
+		Path: subPath,
 	}
 
 	// We don't return an invoice here due to async retry payment processing
@@ -546,15 +545,10 @@ func (ir *InvoiceRequest) RetryPayment(ctx context.Context, invoiceID string, pa
 		clientRequest.Body = &RetryPaymentParams{
 			PaymentMethod: paymentMethod[0],
 		}
-		_, err := ir.client.Post(ctx, clientRequest)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		_, err := ir.client.PostWithoutBody(ctx, clientRequest)
-		if err != nil {
-			return nil, err
-		}
+	}
+
+	if err := ir.client.PostWithoutResult(ctx, clientRequest); err != nil {
+		return nil, err
 	}
 
 	return nil, nil
