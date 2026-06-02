@@ -2,6 +2,7 @@ package lago_test
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 
 	qt "github.com/frankban/quicktest"
@@ -973,6 +974,16 @@ func TestCustomerRequest_CurrentUsage(t *testing.T) {
 			query: "external_subscription_id=SUB_1&apply_taxes=false&full_usage=true",
 		},
 		{
+			name:  "filter_by_presentation",
+			input: CustomerUsageInput{FilterByPresentation: []string{"engineering", "operations"}},
+			query: `external_subscription_id=SUB_1&apply_taxes=false&filter_by_presentation=["engineering","operations"]`,
+		},
+		{
+			name:  "empty filter_by_presentation",
+			input: CustomerUsageInput{FilterByPresentation: []string{}},
+			query: `external_subscription_id=SUB_1&apply_taxes=false&filter_by_presentation=[]`,
+		},
+		{
 			name:  "filter_by_charge_id (deprecated)",
 			input: CustomerUsageInput{FilterByChargeID: "charge_123"},
 			query: "external_subscription_id=SUB_1&apply_taxes=false&filter_by_charge_id=charge_123",
@@ -1006,6 +1017,128 @@ func TestCustomerRequest_CurrentUsage(t *testing.T) {
 			c.Assert(result.AmountCents, qt.Equals, 123)
 		})
 	}
+
+	t.Run("When receiving presentation breakdowns", func(t *testing.T) {
+		c := qt.New(t)
+
+		response := map[string]any{
+			"customer_usage": map[string]any{
+				"charges_usage": []map[string]any{
+					{
+						"presentation_breakdowns": []map[string]any{
+							{"presentation_by": map[string]any{"team": "engineering"}, "units": "9.0"},
+						},
+						"filters": []map[string]any{
+							{
+								"presentation_breakdowns": []map[string]any{
+									{"presentation_by": map[string]any{"team": "operations"}, "units": "3.0"},
+								},
+							},
+						},
+						"grouped_usage": []map[string]any{
+							{
+								"presentation_breakdowns": []map[string]any{
+									{"presentation_by": map[string]any{"region": "eu"}, "units": "5.0"},
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/customers/CUSTOMER_1/current_usage").
+			MatchQuery("external_subscription_id=SUB_1&apply_taxes=false").
+			MockResponse(response)
+		defer server.Close()
+
+		result, err := server.Client().Customer().CurrentUsage(context.Background(), "CUSTOMER_1", &CustomerUsageInput{
+			ExternalSubscriptionID: "SUB_1",
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.ChargesUsage[0].PresentationBreakdowns[0].PresentationBy["team"], qt.Equals, "engineering")
+		c.Assert(result.ChargesUsage[0].Filters[0].PresentationBreakdowns[0].Units, qt.Equals, "3.0")
+		c.Assert(result.ChargesUsage[0].GroupedUsage[0].PresentationBreakdowns[0].PresentationBy["region"], qt.Equals, "eu")
+	})
+
+	t.Run("When receiving projected presentation breakdowns", func(t *testing.T) {
+		c := qt.New(t)
+
+		response := map[string]any{
+			"customer_projected_usage": map[string]any{
+				"charges_usage": []map[string]any{
+					{
+						"presentation_breakdowns": []map[string]any{
+							{"presentation_by": map[string]any{"team": "engineering"}, "units": "9.0"},
+						},
+						"projected_presentation_breakdowns": []map[string]any{
+							{"presentation_by": map[string]any{"team": "engineering"}, "units": "18.0"},
+						},
+						"filters": []map[string]any{
+							{
+								"projected_units": "2.0",
+								"projected_presentation_breakdowns": []map[string]any{
+									{"presentation_by": map[string]any{"team": "operations"}, "units": "6.0"},
+								},
+							},
+						},
+						"grouped_usage": []map[string]any{
+							{
+								"filters": []map[string]any{
+									{"projected_units": "4.0"},
+								},
+								"projected_presentation_breakdowns": []map[string]any{
+									{"presentation_by": map[string]any{"region": "eu"}, "units": "10.0"},
+								},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/customers/CUSTOMER_1/projected_usage").
+			MatchQuery("external_subscription_id=SUB_1&apply_taxes=false").
+			MockResponse(response)
+		defer server.Close()
+
+		result, err := server.Client().Customer().ProjectedUsage(context.Background(), "CUSTOMER_1", &CustomerUsageInput{
+			ExternalSubscriptionID: "SUB_1",
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		chargeUsage := result.ChargesUsage[0]
+		c.Assert(chargeUsage.PresentationBreakdowns[0].Units, qt.Equals, "9.0")
+		c.Assert(chargeUsage.ProjectedPresentationBreakdowns[0].Units, qt.Equals, "18.0")
+		c.Assert(chargeUsage.Filters[0].ProjectedPresentationBreakdowns[0].Units, qt.Equals, "6.0")
+		c.Assert(chargeUsage.GroupedUsage[0].Filters[0].ProjectedUnits, qt.Equals, "4.0")
+		c.Assert(chargeUsage.GroupedUsage[0].ProjectedPresentationBreakdowns[0].PresentationBy["region"], qt.Equals, "eu")
+	})
+
+	t.Run("When marshaling presentation group keys", func(t *testing.T) {
+		c := qt.New(t)
+
+		chargeInput := ChargeInput{
+			Properties: map[string]interface{}{
+				"presentation_group_keys": []ChargePresentationGroupKey{
+					{
+						Value: "region",
+						Options: ChargePresentationGroupKeyOptions{
+							DisplayInInvoice: true,
+						},
+					},
+				},
+			},
+		}
+
+		payload, err := json.Marshal(chargeInput)
+		c.Assert(err, qt.IsNil)
+		c.Assert(string(payload), qt.Contains, `"presentation_group_keys"`)
+		c.Assert(string(payload), qt.Contains, `"display_in_invoice":true`)
+	})
 }
 
 func TestCustomerRequest_Get(t *testing.T) {

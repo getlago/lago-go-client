@@ -215,31 +215,39 @@ type IntegrationCustomersResponse struct {
 	SyncWithProvider   bool            `json:"sync_with_provider,omitempty"`
 }
 
+type PresentationBreakdown struct {
+	PresentationBy map[string]string `json:"presentation_by,omitempty"`
+	Units          string            `json:"units,omitempty"`
+}
+
 type CustomerChargeUsage struct {
-	TotalAggregatedUnits string                       `json:"total_aggregated_units,omitempty"`
-	Units                string                       `json:"units,omitempty"`
-	EventsCount          int                          `json:"events_count"`
-	AmountCents          int                          `json:"amount_cents,omitempty"`
-	AmountCurrency       Currency                     `json:"amount_currency,omitempty"`
-	Charge               *Charge                      `json:"charge,omitempty"`
-	BillableMetric       *BillableMetric              `json:"billable_metric,omitempty"`
-	PricingUnitDetails   *CustomerPricingUnitDetails  `json:"pricing_unit_details,omitempty"`
-	Filters              []CustomerChargeFilterUsage  `json:"filters,omitempty"`
-	GroupedUsage         []CustomerChargeGroupedUsage `json:"grouped_usage,omitempty"`
+	TotalAggregatedUnits   string                       `json:"total_aggregated_units,omitempty"`
+	Units                  string                       `json:"units,omitempty"`
+	EventsCount            int                          `json:"events_count"`
+	AmountCents            int                          `json:"amount_cents,omitempty"`
+	AmountCurrency         Currency                     `json:"amount_currency,omitempty"`
+	Charge                 *Charge                      `json:"charge,omitempty"`
+	BillableMetric         *BillableMetric              `json:"billable_metric,omitempty"`
+	PricingUnitDetails     *CustomerPricingUnitDetails  `json:"pricing_unit_details,omitempty"`
+	Filters                []CustomerChargeFilterUsage  `json:"filters,omitempty"`
+	GroupedUsage           []CustomerChargeGroupedUsage `json:"grouped_usage,omitempty"`
+	PresentationBreakdowns []PresentationBreakdown      `json:"presentation_breakdowns,omitempty"`
 }
 
 type CustomerProjectedChargeUsage struct {
-	Units                string                                `json:"units,omitempty"`
-	ProjectedUnits       string                                `json:"projected_units,omitempty"`
-	EventsCount          int                                   `json:"events_count"`
-	AmountCents          int                                   `json:"amount_cents,omitempty"`
-	ProjectedAmountCents int                                   `json:"projected_amount_cents,omitempty"`
-	AmountCurrency       Currency                              `json:"amount_currency,omitempty"`
-	Charge               *Charge                               `json:"charge,omitempty"`
-	BillableMetric       *BillableMetric                       `json:"billable_metric,omitempty"`
-	PricingUnitDetails   *CustomerPricingUnitDetails           `json:"pricing_unit_details,omitempty"`
-	Filters              []CustomerProjectedChargeFilterUsage  `json:"filters,omitempty"`
-	GroupedUsage         []CustomerProjectedChargeGroupedUsage `json:"grouped_usage,omitempty"`
+	Units                           string                                `json:"units,omitempty"`
+	ProjectedUnits                  string                                `json:"projected_units,omitempty"`
+	EventsCount                     int                                   `json:"events_count"`
+	AmountCents                     int                                   `json:"amount_cents,omitempty"`
+	ProjectedAmountCents            int                                   `json:"projected_amount_cents,omitempty"`
+	AmountCurrency                  Currency                              `json:"amount_currency,omitempty"`
+	Charge                          *Charge                               `json:"charge,omitempty"`
+	BillableMetric                  *BillableMetric                       `json:"billable_metric,omitempty"`
+	PricingUnitDetails              *CustomerPricingUnitDetails           `json:"pricing_unit_details,omitempty"`
+	Filters                         []CustomerProjectedChargeFilterUsage  `json:"filters,omitempty"`
+	GroupedUsage                    []CustomerProjectedChargeGroupedUsage `json:"grouped_usage,omitempty"`
+	PresentationBreakdowns          []PresentationBreakdown               `json:"presentation_breakdowns,omitempty"`
+	ProjectedPresentationBreakdowns []PresentationBreakdown               `json:"projected_presentation_breakdowns,omitempty"`
 }
 
 type CustomerPricingUnitDetails struct {
@@ -249,45 +257,51 @@ type CustomerPricingUnitDetails struct {
 }
 
 type CustomerChargeFilterUsage struct {
-	TotalAggregatedUnits string                      `json:"total_aggregated_units,omitempty"`
-	InvoiceDisplayName   string                      `json:"invoice_display_name,omitempty"`
-	Values               map[string]interface{}      `json:"value,omitempty"`
-	AmountCents          int                         `json:"amount_cents,omitempty"`
-	EventsCount          int                         `json:"events_count,omitempty"`
-	Units                string                      `json:"units,omitempty"`
-	PricingUnitDetails   *CustomerPricingUnitDetails `json:"pricing_unit_details,omitempty"`
+	TotalAggregatedUnits   string                      `json:"total_aggregated_units,omitempty"`
+	InvoiceDisplayName     string                      `json:"invoice_display_name,omitempty"`
+	Values                 map[string]interface{}      `json:"value,omitempty"`
+	AmountCents            int                         `json:"amount_cents,omitempty"`
+	EventsCount            int                         `json:"events_count,omitempty"`
+	Units                  string                      `json:"units,omitempty"`
+	PricingUnitDetails     *CustomerPricingUnitDetails `json:"pricing_unit_details,omitempty"`
+	PresentationBreakdowns []PresentationBreakdown     `json:"presentation_breakdowns,omitempty"`
 }
 
 type CustomerProjectedChargeFilterUsage struct {
-	InvoiceDisplayName   string                      `json:"invoice_display_name,omitempty"`
-	Values               map[string]interface{}      `json:"value,omitempty"`
-	AmountCents          int                         `json:"amount_cents,omitempty"`
-	ProjectedAmountCents int                         `json:"projected_amount_cents,omitempty"`
-	EventsCount          int                         `json:"events_count,omitempty"`
-	Units                string                      `json:"units,omitempty"`
-	ProjectedUnits       string                      `json:"projected_units,omitempty"`
-	PricingUnitDetails   *CustomerPricingUnitDetails `json:"pricing_unit_details,omitempty"`
+	InvoiceDisplayName              string                      `json:"invoice_display_name,omitempty"`
+	Values                          map[string]interface{}      `json:"value,omitempty"`
+	AmountCents                     int                         `json:"amount_cents,omitempty"`
+	ProjectedAmountCents            int                         `json:"projected_amount_cents,omitempty"`
+	EventsCount                     int                         `json:"events_count,omitempty"`
+	Units                           string                      `json:"units,omitempty"`
+	ProjectedUnits                  string                      `json:"projected_units,omitempty"`
+	PricingUnitDetails              *CustomerPricingUnitDetails `json:"pricing_unit_details,omitempty"`
+	PresentationBreakdowns          []PresentationBreakdown     `json:"presentation_breakdowns,omitempty"`
+	ProjectedPresentationBreakdowns []PresentationBreakdown     `json:"projected_presentation_breakdowns,omitempty"`
 }
 
 type CustomerChargeGroupedUsage struct {
-	TotalAggregatedUnits string                      `json:"total_aggregated_units,omitempty"`
-	AmountCents          int                         `json:"amount_cents,omitempty"`
-	EventsCount          int                         `json:"events_count,omitempty"`
-	Units                string                      `json:"units,omitempty"`
-	GroupedBy            map[string]interface{}      `json:"grouped_by,omitempty"`
-	Filters              []CustomerChargeFilterUsage `json:"filters,omitempty"`
-	PricingUnitDetails   *CustomerPricingUnitDetails `json:"pricing_unit_details,omitempty"`
+	TotalAggregatedUnits   string                      `json:"total_aggregated_units,omitempty"`
+	AmountCents            int                         `json:"amount_cents,omitempty"`
+	EventsCount            int                         `json:"events_count,omitempty"`
+	Units                  string                      `json:"units,omitempty"`
+	GroupedBy              map[string]interface{}      `json:"grouped_by,omitempty"`
+	Filters                []CustomerChargeFilterUsage `json:"filters,omitempty"`
+	PricingUnitDetails     *CustomerPricingUnitDetails `json:"pricing_unit_details,omitempty"`
+	PresentationBreakdowns []PresentationBreakdown     `json:"presentation_breakdowns,omitempty"`
 }
 
 type CustomerProjectedChargeGroupedUsage struct {
-	AmountCents          int                         `json:"amount_cents,omitempty"`
-	ProjectedAmountCents int                         `json:"projected_amount_cents,omitempty"`
-	EventsCount          int                         `json:"events_count,omitempty"`
-	Units                string                      `json:"units,omitempty"`
-	ProjectedUnits       string                      `json:"projected_units,omitempty"`
-	GroupedBy            map[string]interface{}      `json:"grouped_by,omitempty"`
-	Filters              []CustomerChargeFilterUsage `json:"filters,omitempty"`
-	PricingUnitDetails   *CustomerPricingUnitDetails `json:"pricing_unit_details,omitempty"`
+	AmountCents                     int                                  `json:"amount_cents,omitempty"`
+	ProjectedAmountCents            int                                  `json:"projected_amount_cents,omitempty"`
+	EventsCount                     int                                  `json:"events_count,omitempty"`
+	Units                           string                               `json:"units,omitempty"`
+	ProjectedUnits                  string                               `json:"projected_units,omitempty"`
+	GroupedBy                       map[string]interface{}               `json:"grouped_by,omitempty"`
+	Filters                         []CustomerProjectedChargeFilterUsage `json:"filters,omitempty"`
+	PricingUnitDetails              *CustomerPricingUnitDetails          `json:"pricing_unit_details,omitempty"`
+	PresentationBreakdowns          []PresentationBreakdown              `json:"presentation_breakdowns,omitempty"`
+	ProjectedPresentationBreakdowns []PresentationBreakdown              `json:"projected_presentation_breakdowns,omitempty"`
 }
 
 type CustomerUsage struct {
@@ -335,6 +349,7 @@ type CustomerUsageInput struct {
 	BillableMetricCode     string            `json:"billable_metric_code,omitempty"`
 	Group                  map[string]string `json:"group,omitempty"`
 	FullUsage              bool              `json:"full_usage,omitempty"`
+	FilterByPresentation   []string          `json:"filter_by_presentation,omitempty"`
 
 	// Deprecated: Use ChargeID instead.
 	FilterByChargeID string `json:"filter_by_charge_id,omitempty"`
@@ -517,40 +532,46 @@ func (cr *CustomerRequest) Update(ctx context.Context, customerInput *CustomerIn
 func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID string, customerUsageInput *CustomerUsageInput) (*CustomerUsage, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "current_usage")
 
-	queryParams := map[string]string{
-		"external_subscription_id": customerUsageInput.ExternalSubscriptionID,
-		"apply_taxes":              strconv.FormatBool(customerUsageInput.ApplyTaxes),
-	}
+	urlValues := url.Values{}
+	urlValues.Set("external_subscription_id", customerUsageInput.ExternalSubscriptionID)
+	urlValues.Set("apply_taxes", strconv.FormatBool(customerUsageInput.ApplyTaxes))
 
 	if customerUsageInput.ChargeID != "" {
-		queryParams["charge_id"] = customerUsageInput.ChargeID
+		urlValues.Set("charge_id", customerUsageInput.ChargeID)
 	}
 	if customerUsageInput.ChargeCode != "" {
-		queryParams["charge_code"] = customerUsageInput.ChargeCode
+		urlValues.Set("charge_code", customerUsageInput.ChargeCode)
 	}
 	if customerUsageInput.BillableMetricCode != "" {
-		queryParams["billable_metric_code"] = customerUsageInput.BillableMetricCode
+		urlValues.Set("billable_metric_code", customerUsageInput.BillableMetricCode)
 	}
 	for k, v := range customerUsageInput.Group {
-		queryParams[fmt.Sprintf("group[%s]", k)] = v
+		urlValues.Set(fmt.Sprintf("group[%s]", k), v)
 	}
 	if customerUsageInput.FilterByChargeID != "" {
-		queryParams["filter_by_charge_id"] = customerUsageInput.FilterByChargeID
+		urlValues.Set("filter_by_charge_id", customerUsageInput.FilterByChargeID)
 	}
 	if customerUsageInput.FilterByChargeCode != "" {
-		queryParams["filter_by_charge_code"] = customerUsageInput.FilterByChargeCode
+		urlValues.Set("filter_by_charge_code", customerUsageInput.FilterByChargeCode)
 	}
 	for k, v := range customerUsageInput.FilterByGroup {
-		queryParams[fmt.Sprintf("filter_by_group[%s]", k)] = v
+		urlValues.Set(fmt.Sprintf("filter_by_group[%s]", k), v)
 	}
 	if customerUsageInput.FullUsage {
-		queryParams["full_usage"] = "true"
+		urlValues.Set("full_usage", "true")
+	}
+	if customerUsageInput.FilterByPresentation != nil {
+		filterByPresentation, err := json.Marshal(customerUsageInput.FilterByPresentation)
+		if err != nil {
+			return nil, &Error{Err: err}
+		}
+		urlValues.Set("filter_by_presentation", string(filterByPresentation))
 	}
 
 	clientRequest := &ClientRequest{
-		Path:        subPath,
-		QueryParams: queryParams,
-		Result:      &CustomerUsageResult{},
+		Path:      subPath,
+		UrlValues: urlValues,
+		Result:    &CustomerUsageResult{},
 	}
 
 	result, clientErr := cr.client.Get(ctx, clientRequest)
