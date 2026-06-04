@@ -302,11 +302,15 @@ func (c *Client) Post(ctx context.Context, cr *ClientRequest) (interface{}, *Err
 
 func (c *Client) PostWithoutResult(ctx context.Context, cr *ClientRequest) *Error {
 	resp, retryErr := c.executeWithRetry(ctx, func() (*resty.Response, error) {
-		return c.HttpClient.R().
+		request := c.HttpClient.R().
 			SetContext(ctx).
-			SetError(&Error{}).
-			SetBody(cr.Body).
-			Post(cr.Path)
+			SetError(&Error{})
+
+		if cr.Body != nil {
+			request.SetBody(cr.Body)
+		}
+
+		return request.Post(cr.Path)
 	})
 	if retryErr != nil {
 		return &Error{Err: retryErr}
