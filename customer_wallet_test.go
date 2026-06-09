@@ -46,6 +46,7 @@ var mockCustomerWalletResponse = `{
 			"transaction_metadata": [],
 			"transaction_name": "Recurring Transaction Rule",
 			"ignore_paid_top_up_limits": false,
+			"grants_target_top_up": true,
 			"payment_method": {
 				"payment_method_type": "card",
 				"payment_method_id": "pm_rule_123"
@@ -116,6 +117,7 @@ var mockCustomerWalletListResponse = `{
 			"transaction_metadata": [],
 			"transaction_name": "Recurring Transaction Rule",
 			"ignore_paid_top_up_limits": false,
+			"grants_target_top_up": true,
 			"payment_method": {
 				"payment_method_type": "card",
 				"payment_method_id": "pm_rule_123"
@@ -204,7 +206,8 @@ func TestCustomerWallet_Create(t *testing.T) {
 							"method": "fixed",
 							"expiration_at": "2026-12-31T23:59:59Z",
 							"transaction_name": "Recurring Transaction Rule",
-							"ignore_paid_top_up_limits": true
+							"ignore_paid_top_up_limits": true,
+							"grants_target_top_up": true
 						}
 					],
 					"applies_to": {
@@ -239,6 +242,7 @@ func TestCustomerWallet_Create(t *testing.T) {
 					ExpirationAt:          Ptr(time.Date(2026, 12, 31, 23, 59, 59, 0, time.UTC)),
 					TransactionName:       "Recurring Transaction Rule",
 					IgnorePaidTopUpLimits: Ptr(true),
+					GrantsTargetTopUp:     Ptr(true),
 				},
 			},
 			AppliesTo: AppliesTo{
@@ -267,6 +271,7 @@ func TestCustomerWallet_Create(t *testing.T) {
 		c.Assert(result.RecurringTransactionRules[0].Interval, qt.Equals, "monthly")
 		c.Assert(result.RecurringTransactionRules[0].TransactionName, qt.Equals, "Recurring Transaction Rule")
 		c.Assert(result.RecurringTransactionRules[0].IgnorePaidTopUpLimits, qt.Equals, false)
+		c.Assert(result.RecurringTransactionRules[0].GrantsTargetTopUp, qt.DeepEquals, Ptr(true))
 		c.Assert(result.RecurringTransactionRules[0].ExpirationAt, qt.DeepEquals, Ptr(time.Date(2026, 12, 31, 23, 59, 59, 0, time.UTC)))
 		c.Assert(result.AppliesTo.FeeTypes, qt.DeepEquals, []string{"charge"})
 		c.Assert(result.AppliesTo.BillableMetricCodes, qt.DeepEquals, []string{"bm1"})
@@ -458,6 +463,50 @@ func TestCustomerWallet_Update(t *testing.T) {
 		c.Assert(result.BalanceCents, qt.Equals, 20000)
 		c.Assert(result.Status, qt.Equals, Status("active"))
 		c.Assert(result.Currency, qt.Equals, Currency("USD"))
+	})
+
+	t.Run("When updating a target rule that grants top-up credits", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("PUT").
+			MatchPath("/api/v1/customers/customer_id/wallets/wallet_code").
+			MatchJSONBody(`{
+				"wallet": {
+					"name": "updated wallet name",
+					"applies_to": {},
+					"recurring_transaction_rules": [
+						{
+							"lago_id": "00000000-0000-0000-0000-000000000000",
+							"trigger": "interval",
+							"interval": "monthly",
+							"method": "target",
+							"target_ongoing_balance": "200.00",
+							"grants_target_top_up": true
+						}
+					]
+				}
+			}`).
+			MockResponse(mockCustomerWalletResponse)
+		defer server.Close()
+
+		result, err := server.Client().CustomerWallet().Update(context.Background(), "customer_id", "wallet_code", &WalletInput{
+			Name: "updated wallet name",
+			RecurringTransactionRules: []RecurringTransactionRuleInput{
+				{
+					Trigger:              "interval",
+					Interval:             "monthly",
+					Method:               "target",
+					TargetOngoingBalance: "200.00",
+					GrantsTargetTopUp:    Ptr(true),
+				},
+			},
+		})
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result, qt.IsNotNil)
+		c.Assert(len(result.RecurringTransactionRules), qt.Equals, 1)
+		c.Assert(result.RecurringTransactionRules[0].GrantsTargetTopUp, qt.DeepEquals, Ptr(true))
 	})
 }
 

@@ -31,6 +31,7 @@ type RecurringTransactionRuleInput struct {
 	TransactionMetadata              []WalletTransactionMetadata `json:"transaction_metadata,omitempty"`
 	TransactionName                  string                      `json:"transaction_name,omitempty"`
 	IgnorePaidTopUpLimits            *bool                       `json:"ignore_paid_top_up_limits,omitempty"`
+	GrantsTargetTopUp                *bool                       `json:"grants_target_top_up,omitempty"`
 	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
 	InvoiceCustomSection             *InvoiceCustomSectionInput  `json:"invoice_custom_section,omitempty"`
 }
@@ -52,6 +53,7 @@ type RecurringTransactionRuleResponse struct {
 	TransactionMetadata              []WalletTransactionMetadata   `json:"transaction_metadata,omitempty"`
 	TransactionName                  string                        `json:"transaction_name,omitempty"`
 	IgnorePaidTopUpLimits            bool                          `json:"ignore_paid_top_up_limits"`
+	GrantsTargetTopUp                *bool                         `json:"grants_target_top_up,omitempty"`
 	PaymentMethod                    *PaymentMethodInput           `json:"payment_method,omitempty"`
 	AppliedInvoiceCustomSections     []AppliedInvoiceCustomSection `json:"applied_invoice_custom_sections,omitempty"`
 }
