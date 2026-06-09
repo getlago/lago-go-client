@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	qt "github.com/frankban/quicktest"
+	"github.com/google/uuid"
 
 	. "github.com/getlago/lago-go-client"
 	lt "github.com/getlago/lago-go-client/testing"
@@ -351,6 +352,107 @@ var mockCustomerCheckoutUrlResponse = map[string]any{
 		"payment_provider_code": "Stripe Provider",
 		"checkout_url":          "https://example.com",
 	},
+}
+
+var mockCustomerCreateResponse = `{
+	"customer": {
+		"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+		"external_id": "CUSTOMER_1"
+	}
+}`
+
+func TestCustomerRequest_Create(t *testing.T) {
+	t.Run("When integration_customers has no id, the placeholder UUID is omitted", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/customers").
+			MatchJSONBody(`{
+				"customer": {
+					"external_id": "CUSTOMER_1",
+					"billing_configuration": {
+						"subscription_invoice_issuing_date_anchor": null,
+						"subscription_invoice_issuing_date_adjustment": null
+					},
+					"shipping_address": {},
+					"integration_customers": [
+						{
+							"external_customer_id": "netsuite_123",
+							"integration_type": "netsuite",
+							"integration_code": "netsuite_integration",
+							"sync_with_provider": true
+						}
+					]
+				}
+			}`).
+			MockResponse(mockCustomerCreateResponse)
+		defer server.Close()
+
+		result, err := server.Client().Customer().Create(context.Background(), &CustomerInput{
+			ExternalID: "CUSTOMER_1",
+			IntegrationCustomers: []IntegrationCustomer{
+				{
+					ExternalCustomerId: "netsuite_123",
+					IntegrationType:    IntegrationNetsuite,
+					IntegrationCode:    "netsuite_integration",
+					SyncWithProvider:   true,
+				},
+			},
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result, qt.DeepEquals, &Customer{
+			LagoID:     uuid.MustParse("1a901a90-1a90-1a90-1a90-1a901a901a90"),
+			ExternalID: "CUSTOMER_1",
+		})
+	})
+
+	t.Run("When integration_customers includes a real id, it is sent", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/customers").
+			MatchJSONBody(`{
+				"customer": {
+					"external_id": "CUSTOMER_1",
+					"billing_configuration": {
+						"subscription_invoice_issuing_date_anchor": null,
+						"subscription_invoice_issuing_date_adjustment": null
+					},
+					"shipping_address": {},
+					"integration_customers": [
+						{
+							"id": "2b902b90-2b90-2b90-2b90-2b902b902b90",
+							"external_customer_id": "netsuite_123",
+							"integration_type": "netsuite",
+							"integration_code": "netsuite_integration",
+							"sync_with_provider": true
+						}
+					]
+				}
+			}`).
+			MockResponse(mockCustomerCreateResponse)
+		defer server.Close()
+
+		result, err := server.Client().Customer().Create(context.Background(), &CustomerInput{
+			ExternalID: "CUSTOMER_1",
+			IntegrationCustomers: []IntegrationCustomer{
+				{
+					LagoID:             uuid.MustParse("2b902b90-2b90-2b90-2b90-2b902b902b90"),
+					ExternalCustomerId: "netsuite_123",
+					IntegrationType:    IntegrationNetsuite,
+					IntegrationCode:    "netsuite_integration",
+					SyncWithProvider:   true,
+				},
+			},
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result, qt.DeepEquals, &Customer{
+			LagoID:     uuid.MustParse("1a901a90-1a90-1a90-1a90-1a901a901a90"),
+			ExternalID: "CUSTOMER_1",
+		})
+	})
 }
 
 func TestCustomerRequest_GetInvoiceList(t *testing.T) {
