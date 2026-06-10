@@ -50,7 +50,7 @@ type AddOn struct {
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"amount_currency,omitempty"`
 
-	Taxes []Tax `json:"tax,omitempty"`
+	Taxes []Tax `json:"taxes,omitempty"`
 
 	CreatedAt time.Time `json:"created_at,omitempty"`
 }

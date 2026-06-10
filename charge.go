@@ -48,7 +48,7 @@ type Charge struct {
 	AppliedPricingUnit   *AppliedPricingUnit    `json:"applied_pricing_unit,omitempty"`
 	AcceptsTargetWallet  *bool                  `json:"accepts_target_wallet,omitempty"`
 
-	Taxes []Tax `json:"tax,omitempty"`
+	Taxes []Tax `json:"taxes,omitempty"`
 }
 
 // Standalone charge CRUD types
