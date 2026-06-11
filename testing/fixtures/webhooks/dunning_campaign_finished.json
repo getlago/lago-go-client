@@ -6,6 +6,12 @@
     "customer_external_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
     "dunning_campaign_code": "Campaign_Code",
     "overdue_balance_cents": 100,
-    "overdue_balance_currency": "EUR"
+    "overdue_balance_currency": "EUR",
+    "overdue_balances": [
+      {
+        "amount_cents": 100,
+        "currency": "EUR"
+      }
+    ]
   }
 }

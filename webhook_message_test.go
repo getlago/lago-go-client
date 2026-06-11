@@ -119,8 +119,11 @@ var tests = []struct {
 	{
 		fixture: "dunning_campaign_finished",
 		test: func(object any) bool {
-			_, ok := object.(*DunningCampaign)
-			return ok
+			dunningCampaign, ok := object.(*DunningCampaign)
+			return ok &&
+				len(dunningCampaign.OverdueBalances) == 1 &&
+				dunningCampaign.OverdueBalances[0].AmountCents == 100 &&
+				dunningCampaign.OverdueBalances[0].Currency == EUR
 		},
 	},
 	{

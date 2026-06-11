@@ -383,6 +383,7 @@ func TestWallet_GetList(t *testing.T) {
 
 		result, err := server.Client().Wallet().GetList(context.Background(), &WalletListInput{
 			ExternalCustomerID: "12345",
+			Currency:           USD,
 			PerPage:            Ptr(10),
 			Page:               Ptr(1),
 		})
