@@ -206,6 +206,20 @@ type IntegrationCustomer struct {
 	SyncWithProvider   bool            `json:"sync_with_provider,omitempty"`
 }
 
+func (ic IntegrationCustomer) MarshalJSON() ([]byte, error) {
+	type Alias IntegrationCustomer
+	out := &struct {
+		Alias
+		LagoID *uuid.UUID `json:"id,omitempty"`
+	}{
+		Alias: Alias(ic),
+	}
+	if ic.LagoID != uuid.Nil {
+		out.LagoID = &ic.LagoID
+	}
+	return json.Marshal(out)
+}
+
 type IntegrationCustomersResponse struct {
 	LagoID             uuid.UUID       `json:"lago_id,omitempty"`
 	ExternalCustomerId string          `json:"external_customer_id,omitempty"`
