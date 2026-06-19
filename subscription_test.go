@@ -37,6 +37,19 @@ var mockSubscriptionResponse = `{
     "on_termination_credit_note": "skip",
     "on_termination_invoice": "skip",
     "consolidate_invoice": true,
+    "activated_at": "2022-08-08T00:00:00Z",
+    "cancellation_reason": "payment_failed",
+    "activation_rules": [
+      {
+        "lago_id": "3c903c90-3c90-3c90-3c90-3c903c903c90",
+        "type": "payment",
+        "timeout_hours": 48,
+        "status": "pending",
+        "expires_at": "2022-08-10T00:00:00Z",
+        "created_at": "2022-08-08T00:00:00Z",
+        "updated_at": "2022-08-08T00:00:00Z"
+      }
+    ],
     "payment_method": {
       "payment_method_type": "card",
       "payment_method_id": "pm_123456"
@@ -452,6 +465,12 @@ func TestSubscriptionRequest_CreateWithPaymentMethod(t *testing.T) {
 		c.Assert(subscription.AppliedInvoiceCustomSections[0].InvoiceCustomSection.LagoId.String(), qt.Equals, "2b902b90-2b90-2b90-2b90-2b902b902b90")
 		c.Assert(subscription.AppliedInvoiceCustomSections[0].InvoiceCustomSection.Name, qt.Equals, "Section Name")
 		c.Assert(subscription.AppliedInvoiceCustomSections[0].InvoiceCustomSection.Code, qt.Equals, "section_code")
+		c.Assert(subscription.CancellationReason, qt.Equals, SubscriptionCancellationReasonPaymentFailed)
+		c.Assert(subscription.ActivatedAt, qt.IsNotNil)
+		c.Assert(subscription.ActivationRules, qt.HasLen, 1)
+		c.Assert(subscription.ActivationRules[0].Type, qt.Equals, SubscriptionActivationRuleTypePayment)
+		c.Assert(subscription.ActivationRules[0].TimeoutHours, qt.Equals, 48)
+		c.Assert(subscription.ActivationRules[0].Status, qt.Equals, SubscriptionActivationRuleStatusPending)
 	})
 }
 
