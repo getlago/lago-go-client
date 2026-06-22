@@ -2,8 +2,9 @@ package lago
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
+
+	"github.com/google/go-querystring/query"
 )
 
 type CustomerWalletRequest struct {
@@ -39,20 +40,15 @@ func (cwr *CustomerWalletRequest) Get(ctx context.Context, customerExternalID st
 func (cwr *CustomerWalletRequest) GetList(ctx context.Context, customerExternalID string, walletListInput *WalletListInput) (*WalletResult, *Error) {
 	subPath := fmt.Sprintf("%s/%s/%s", "customers", customerExternalID, "wallets")
 
-	jsonQueryParams, err := json.Marshal(walletListInput)
+	urlValues, err := query.Values(walletListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
 
-	queryParams := make(map[string]string)
-	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
-		return nil, &Error{Err: err}
-	}
-
 	clientRequest := &ClientRequest{
-		Path:        subPath,
-		QueryParams: queryParams,
-		Result:      &WalletResult{},
+		Path:      subPath,
+		UrlValues: urlValues,
+		Result:    &WalletResult{},
 	}
 
 	result, clientErr := cwr.client.Get(ctx, clientRequest)

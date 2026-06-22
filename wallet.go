@@ -2,10 +2,10 @@ package lago
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
+	"github.com/google/go-querystring/query"
 	"github.com/google/uuid"
 )
 
@@ -94,9 +94,10 @@ type WalletInput struct {
 }
 
 type WalletListInput struct {
-	PerPage            *int   `json:"per_page,omitempty,string"`
-	Page               *int   `json:"page,omitempty,string"`
-	ExternalCustomerID string `json:"external_customer_id,omitempty"`
+	PerPage            *int     `url:"per_page,omitempty"`
+	Page               *int     `url:"page,omitempty"`
+	ExternalCustomerID string   `url:"external_customer_id,omitempty"`
+	BillingEntityCodes []string `url:"billing_entity_codes[],omitempty"`
 }
 
 type WalletResult struct {
@@ -173,20 +174,15 @@ func (bmr *WalletRequest) Get(ctx context.Context, walletID string) (*Wallet, *E
 }
 
 func (bmr *WalletRequest) GetList(ctx context.Context, walletListInput *WalletListInput) (*WalletResult, *Error) {
-	jsonQueryParams, err := json.Marshal(walletListInput)
+	urlValues, err := query.Values(walletListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
 
-	queryParams := make(map[string]string)
-	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
-		return nil, &Error{Err: err}
-	}
-
 	clientRequest := &ClientRequest{
-		Path:        "wallets",
-		QueryParams: queryParams,
-		Result:      &WalletResult{},
+		Path:      "wallets",
+		UrlValues: urlValues,
+		Result:    &WalletResult{},
 	}
 
 	result, clientErr := bmr.client.Get(ctx, clientRequest)
