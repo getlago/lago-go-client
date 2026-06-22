@@ -100,6 +100,7 @@ type SubscriptionInput struct {
 	PaymentMethod        *PaymentMethodInput        `json:"payment_method,omitempty"`
 	InvoiceCustomSection *InvoiceCustomSectionInput `json:"invoice_custom_section,omitempty"`
 	ConsolidateInvoice   *bool                      `json:"consolidate_invoice,omitempty"`
+	BillingEntityCode    string                     `json:"billing_entity_code,omitempty"`
 }
 
 type SubscriptionsInput struct {
@@ -121,6 +122,7 @@ type SubscriptionListInput struct {
 	PerPage            *int                 `url:"per_page,omitempty"`
 	Page               *int                 `url:"page,omitempty"`
 	Status             []SubscriptionStatus `url:"status[],omitempty"`
+	BillingEntityCodes []string             `url:"billing_entity_codes[],omitempty"`
 }
 
 type Subscription struct {
@@ -128,6 +130,7 @@ type Subscription struct {
 	LagoCustomerID     uuid.UUID `json:"lago_customer_id"`
 	ExternalCustomerID string    `json:"external_customer_id"`
 	ExternalID         string    `json:"external_id"`
+	BillingEntityCode  string    `json:"billing_entity_code,omitempty"`
 
 	PlanCode string `json:"plan_code"`
 
