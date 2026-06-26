@@ -2,10 +2,10 @@ package lago
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
+	"github.com/google/go-querystring/query"
 	"github.com/google/uuid"
 )
 
@@ -20,11 +20,12 @@ type PaymentRequestResult struct {
 }
 
 type PaymentRequestListInput struct {
-	PerPage *int `json:"per_page,omitempty,string"`
-	Page    *int `json:"page,omitempty,string"`
+	PerPage *int `url:"per_page,omitempty"`
+	Page    *int `url:"page,omitempty"`
 
-	ExternalCustomerID string `json:"external_customer_id,omitempty"`
-	PaymentStatus      string `json:"payment_status,omitempty"`
+	ExternalCustomerID string   `url:"external_customer_id,omitempty"`
+	PaymentStatus      string   `url:"payment_status,omitempty"`
+	BillingEntityCodes []string `url:"billing_entity_codes[],omitempty"`
 }
 
 type PaymentRequest struct {
@@ -76,20 +77,15 @@ func (adr *PaymentRequestRequest) Get(ctx context.Context, paymentRequestID uuid
 }
 
 func (ir *PaymentRequestRequest) GetList(ctx context.Context, paymentRequestListInput *PaymentRequestListInput) (*PaymentRequestResult, *Error) {
-	jsonQueryParams, err := json.Marshal(paymentRequestListInput)
+	urlValues, err := query.Values(paymentRequestListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
 
-	queryParams := make(map[string]string)
-	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
-		return nil, &Error{Err: err}
-	}
-
 	clientRequest := &ClientRequest{
-		Path:        "payment_requests",
-		QueryParams: queryParams,
-		Result:      &PaymentRequestResult{},
+		Path:      "payment_requests",
+		UrlValues: urlValues,
+		Result:    &PaymentRequestResult{},
 	}
 
 	result, clientErr := ir.client.Get(ctx, clientRequest)

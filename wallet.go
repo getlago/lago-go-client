@@ -2,10 +2,10 @@ package lago
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
+	"github.com/google/go-querystring/query"
 	"github.com/google/uuid"
 )
 
@@ -90,12 +90,14 @@ type WalletInput struct {
 	Metadata                         map[string]string               `json:"metadata,omitempty"`
 	PaymentMethod                    *PaymentMethodInput             `json:"payment_method,omitempty"`
 	InvoiceCustomSection             *InvoiceCustomSectionInput      `json:"invoice_custom_section,omitempty"`
+	BillingEntityCode                string                          `json:"billing_entity_code,omitempty"`
 }
 
 type WalletListInput struct {
-	PerPage            *int   `json:"per_page,omitempty,string"`
-	Page               *int   `json:"page,omitempty,string"`
-	ExternalCustomerID string `json:"external_customer_id,omitempty"`
+	PerPage            *int     `url:"per_page,omitempty"`
+	Page               *int     `url:"page,omitempty"`
+	ExternalCustomerID string   `url:"external_customer_id,omitempty"`
+	BillingEntityCodes []string `url:"billing_entity_codes[],omitempty"`
 }
 
 type WalletResult struct {
@@ -132,6 +134,7 @@ type Wallet struct {
 	LastConsumedCreditAt             time.Time                          `json:"last_consumed_credit_at,omitempty"`
 	TerminatedAt                     time.Time                          `json:"terminated_at,omitempty"`
 	RecurringTransactionRules        []RecurringTransactionRuleResponse `json:"recurring_transaction_rules,omitempty"`
+	BillingEntityCode                string                             `json:"billing_entity_code,omitempty"`
 	OngoingBalanceCents              int                                `json:"ongoing_balance_cents,omitempty"`
 	OngoingUsageBalanceCents         int                                `json:"ongoing_usage_balance_cents,omitempty"`
 	CreditsOngoingBalance            string                             `json:"credits_ongoing_balance,omitempty"`
@@ -171,20 +174,15 @@ func (bmr *WalletRequest) Get(ctx context.Context, walletID string) (*Wallet, *E
 }
 
 func (bmr *WalletRequest) GetList(ctx context.Context, walletListInput *WalletListInput) (*WalletResult, *Error) {
-	jsonQueryParams, err := json.Marshal(walletListInput)
+	urlValues, err := query.Values(walletListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
 
-	queryParams := make(map[string]string)
-	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
-		return nil, &Error{Err: err}
-	}
-
 	clientRequest := &ClientRequest{
-		Path:        "wallets",
-		QueryParams: queryParams,
-		Result:      &WalletResult{},
+		Path:      "wallets",
+		UrlValues: urlValues,
+		Result:    &WalletResult{},
 	}
 
 	result, clientErr := bmr.client.Get(ctx, clientRequest)
