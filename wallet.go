@@ -98,7 +98,7 @@ type WalletListInput struct {
 	Page               *int     `url:"page,omitempty"`
 	ExternalCustomerID string   `url:"external_customer_id,omitempty"`
 	BillingEntityCodes []string `url:"billing_entity_codes[],omitempty"`
-	Currency           string `json:"currency,omitempty"`
+	Currency           Currency `url:"currency,omitempty"`
 }
 
 type WalletResult struct {

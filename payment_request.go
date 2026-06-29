@@ -26,7 +26,7 @@ type PaymentRequestListInput struct {
 	ExternalCustomerID string   `url:"external_customer_id,omitempty"`
 	PaymentStatus      string   `url:"payment_status,omitempty"`
 	BillingEntityCodes []string `url:"billing_entity_codes[],omitempty"`
-	Currency           string `json:"currency,omitempty"`
+	Currency           Currency `url:"currency,omitempty"`
 }
 
 type PaymentRequest struct {
