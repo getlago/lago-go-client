@@ -27,14 +27,29 @@ var mockBatchEventsResponse = map[string]any{
 			"external_subscription_id": "sub_1234",
 			"created_at":               "2025-07-03T15:35:22Z",
 		},
+		{
+			// ClickHouse events store: lago_id is a composite string, not a UUID
+			"lago_id":                    "1a901a90-1a90-1a90-1a90-1a901a901a90-sub_1234-event_5678-1751549700",
+			"transaction_id":             "event_5678",
+			"lago_customer_id":           nil,
+			"code":                       "bm_code",
+			"timestamp":                  "2025-07-03T15:35:00Z",
+			"precise_total_amount_cents": "100",
+			"properties": map[string]any{
+				"value": "100",
+			},
+			"lago_subscription_id":     nil,
+			"external_subscription_id": "sub_1234",
+			"created_at":               "2025-07-03T15:35:22Z",
+		},
 	},
 }
 
 func assertBatchEventListResponse(c *qt.C, result []Event) {
-	c.Assert(result, qt.HasLen, 1)
+	c.Assert(result, qt.HasLen, 2)
 
 	event := result[0]
-	c.Assert(event.LagoID.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
+	c.Assert(event.LagoID, qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
 	c.Assert(event.Code, qt.Equals, "bm_code")
 	c.Assert(event.Timestamp.Format(time.RFC3339), qt.Equals, "2025-07-03T15:35:00Z")
 	c.Assert(event.PreciseTotalAmountCents, qt.Equals, "100")
@@ -44,6 +59,11 @@ func assertBatchEventListResponse(c *qt.C, result []Event) {
 	c.Assert(event.LagoSubscriptionID, qt.IsNil)
 	c.Assert(event.ExternalSubscriptionID, qt.Equals, "sub_1234")
 	c.Assert(event.CreatedAt.Format(time.RFC3339), qt.Equals, "2025-07-03T15:35:22Z")
+
+	// Composite lago_id from the ClickHouse events store must unmarshal without error
+	clickhouseEvent := result[1]
+	c.Assert(clickhouseEvent.LagoID, qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90-sub_1234-event_5678-1751549700")
+	c.Assert(clickhouseEvent.TransactionID, qt.Equals, "event_5678")
 }
 
 func TestEventRequest_Batch(t *testing.T) {
