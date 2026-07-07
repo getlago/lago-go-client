@@ -48,7 +48,9 @@ type EventResult struct {
 }
 
 type Event struct {
-	LagoID                  *uuid.UUID             `json:"lago_id,omitempty"`
+	// LagoID is an opaque identifier. It is a UUID for organizations on the
+	// Postgres events store, but a composite string on the ClickHouse store.
+	LagoID                  string                 `json:"lago_id,omitempty"`
 	TransactionID           string                 `json:"transaction_id"`
 	LagoCustomerID          *uuid.UUID             `json:"lago_customer_id,omitempty"`
 	Code                    string                 `json:"code,omitempty"`
