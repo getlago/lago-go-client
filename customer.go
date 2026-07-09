@@ -153,6 +153,7 @@ type CustomerListInput struct {
 	Page    *int `url:"page,omitempty,string"`
 
 	SearchTerm                 string                    `url:"search_term,omitempty"`
+	ExternalID                 string                    `url:"external_id,omitempty"`
 	Countries                  []string                  `url:"countries[],omitempty"`
 	States                     []string                  `url:"states[],omitempty"`
 	Zipcodes                   []string                  `url:"zipcodes[],omitempty"`
@@ -435,8 +436,9 @@ type CustomerSubscriptionListInput struct {
 	PerPage *int `url:"per_page,omitempty"`
 	Page    *int `url:"page,omitempty"`
 
-	PlanCode string               `url:"plan_code,omitempty"`
-	Status   []SubscriptionStatus `url:"status[],omitempty"`
+	PlanCode   string               `url:"plan_code,omitempty"`
+	ExternalID string               `url:"external_id,omitempty"`
+	Status     []SubscriptionStatus `url:"status[],omitempty"`
 }
 
 type Customer struct {

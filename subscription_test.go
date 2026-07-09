@@ -276,6 +276,266 @@ var mockSubscriptionResponse = `{
   }
 }`
 
+var mockSubscriptionListResponse = `{
+  "subscriptions": [
+		{
+			"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			"external_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+			"lago_customer_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			"external_customer_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+			"billing_time": "anniversary",
+			"name": "Repository A",
+			"plan_code": "premium",
+			"plan_amount_cents": 10000,
+			"plan_amount_currency": "USD",
+			"status": "terminated",
+			"created_at": "2022-08-08T00:00:00Z",
+			"canceled_at": "2022-09-14T16:35:31Z",
+			"started_at": "2022-08-08T00:00:00Z",
+			"ending_at": "2022-10-08T00:00:00Z",
+			"subscription_at": "2022-08-08T00:00:00Z",
+			"terminated_at": "2022-09-14T16:35:31Z",
+			"previous_plan_code": null,
+			"next_plan_code": null,
+			"downgrade_plan_date": "2022-04-30",
+			"trial_ended_at": "2022-08-08T00:00:00Z",
+			"on_termination_credit_note": "skip",
+			"on_termination_invoice": "skip",
+			"consolidate_invoice": true,
+			"payment_method": {
+				"payment_method_type": "card",
+				"payment_method_id": "pm_123456"
+			},
+			"current_billing_period_started_at": "2022-08-08T00:00:00Z",
+			"current_billing_period_ending_at": "2022-09-08T00:00:00Z",
+			"applied_invoice_custom_sections": [
+				{
+					"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+					"invoice_custom_section_id": "2b902b90-2b90-2b90-2b90-2b902b902b90",
+					"created_at": "2022-08-08T00:00:00Z",
+					"invoice_custom_section": {
+						"lago_id": "2b902b90-2b90-2b90-2b90-2b902b902b90",
+						"code": "section_code",
+						"name": "Section Name",
+						"description": "Section description",
+						"details": "Section details",
+						"display_name": "Display Name"
+					}
+				}
+			],
+			"plan": {
+				"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+				"name": "Startup",
+				"invoice_display_name": "Startup plan",
+				"created_at": "2023-06-27T19:43:42Z",
+				"code": "startup",
+				"interval": "monthly",
+				"description": "",
+				"amount_cents": 10000,
+				"amount_currency": "USD",
+				"trial_period": 5,
+				"pay_in_advance": true,
+				"bill_charges_monthly": null,
+				"minimum_commitment": {
+					"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+					"plan_code": "premium",
+					"amount_cents": 100000,
+					"invoice_display_name": "Minimum Commitment (C1)",
+					"interval": "monthly",
+					"created_at": "2022-04-29T08:59:51Z",
+					"updated_at": "2022-04-29T08:59:51Z",
+					"taxes": [
+						{
+							"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+							"name": "TVA",
+							"code": "french_standard_vat",
+							"description": "French standard VAT",
+							"rate": 20,
+							"applied_to_organization": true,
+							"created_at": "2023-07-06T14:35:58Z"
+						}
+					]
+				},
+				"charges": [
+					{
+						"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a91",
+						"lago_billable_metric_id": "1a901a90-1a90-1a90-1a90-1a901a901a91",
+						"billable_metric_code": "requests",
+						"created_at": "2023-06-27T19:43:42Z",
+						"charge_model": "package",
+						"invoiceable": true,
+						"invoice_display_name": "Setup",
+						"pay_in_advance": false,
+						"regroup_paid_fees": null,
+						"prorated": false,
+						"min_amount_cents": 3000,
+						"properties": {
+							"amount": "30",
+							"free_units": 100,
+							"package_size": 1000
+						},
+						"filters": []
+					},
+					{
+						"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a92",
+						"lago_billable_metric_id": "1a901a90-1a90-1a90-1a90-1a901a901a92",
+						"billable_metric_code": "cpu",
+						"created_at": "2023-06-27T19:43:42Z",
+						"charge_model": "graduated",
+						"invoiceable": true,
+						"invoice_display_name": "Setup",
+						"pay_in_advance": false,
+						"prorated": false,
+						"min_amount_cents": 0,
+						"properties": {
+							"graduated_ranges": [
+								{
+									"from_value": 0,
+									"to_value": 10,
+									"flat_amount": "10",
+									"per_unit_amount": "0.5"
+								},
+								{
+									"from_value": 11,
+									"to_value": null,
+									"flat_amount": "0",
+									"per_unit_amount": "0.4"
+								}
+							]
+						},
+						"filters": []
+					},
+					{
+						"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a93",
+						"lago_billable_metric_id": "1a901a90-1a90-1a90-1a90-1a901a901a93",
+						"billable_metric_code": "seats",
+						"created_at": "2023-06-27T19:43:42Z",
+						"charge_model": "standard",
+						"invoiceable": true,
+						"invoice_display_name": "Setup",
+						"pay_in_advance": true,
+						"prorated": false,
+						"min_amount_cents": 0,
+						"properties": {},
+						"filters": [
+							{
+								"invoice_display_name": "Europe",
+								"properties": {
+									"amount": "10"
+								},
+								"values": {
+									"region": [
+										"Europe"
+									]
+								}
+							},
+							{
+								"invoice_display_name": "USA",
+								"properties": {
+									"amount": "5"
+								},
+								"values": {
+									"region": [
+										"USA"
+									]
+								}
+							},
+							{
+								"invoice_display_name": "Africa",
+								"properties": {
+									"amount": "8"
+								},
+								"values": {
+									"region": [
+										"Africa"
+									]
+								}
+							}
+						]
+					},
+					{
+						"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a94",
+						"lago_billable_metric_id": "1a901a90-1a90-1a90-1a90-1a901a901a94",
+						"billable_metric_code": "storage",
+						"created_at": "2023-06-27T19:43:42Z",
+						"charge_model": "volume",
+						"invoiceable": true,
+						"invoice_display_name": "Setup",
+						"pay_in_advance": false,
+						"prorated": false,
+						"min_amount_cents": 0,
+						"properties": {
+							"volume_ranges": [
+								{
+									"from_value": 0,
+									"to_value": 100,
+									"flat_amount": "0",
+									"per_unit_amount": "0"
+								},
+								{
+									"from_value": 101,
+									"to_value": null,
+									"flat_amount": "0",
+									"per_unit_amount": "0.5"
+								}
+							]
+						},
+						"filters": []
+					},
+					{
+						"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a95",
+						"lago_billable_metric_id": "1a901a90-1a90-1a90-1a90-1a901a901a95",
+						"billable_metric_code": "payments",
+						"created_at": "2023-06-27T19:43:42Z",
+						"charge_model": "percentage",
+						"invoiceable": false,
+						"invoice_display_name": "Setup",
+						"pay_in_advance": true,
+						"regroup_paid_fees": "invoice",
+						"prorated": false,
+						"min_amount_cents": 0,
+						"properties": {
+							"rate": "1",
+							"fixed_amount": "0.5",
+							"free_units_per_events": 5,
+							"free_units_per_total_aggregation": "500"
+						},
+						"filters": []
+					}
+				],
+				"taxes": [
+					{
+						"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+						"name": "TVA",
+						"code": "french_standard_vat",
+						"description": "French standard VAT",
+						"rate": 20,
+						"applied_to_organization": true,
+						"created_at": "2023-07-06T14:35:58Z"
+					}
+				],
+				"usage_thresholds": [
+					{
+						"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+						"threshold_display_name": "Threshold 1",
+						"amount_cents": 10000,
+						"recurring": true,
+						"created_at": "2023-06-27T19:43:42Z",
+						"updated_at": "2023-06-27T19:43:42Z"
+					}
+				]
+			}
+		}
+	],
+	"meta": {
+		"current_page": 1,
+		"next_page": 0,
+		"prev_page": 0,
+		"total_pages": 1,
+		"total_count": 1
+	}
+}`
+
 func assertSubscriptionTerminateResponse(c *qt.C, subscription *Subscription) {
 	c.Assert(subscription.OnTerminationCreditNote, qt.Equals, OnTerminationCreditNoteSkip)
 	c.Assert(subscription.OnTerminationInvoice, qt.Equals, OnTerminationInvoiceSkip)
@@ -595,5 +855,71 @@ func TestSubscriptionRequest_UpdateWithPaymentMethod(t *testing.T) {
 		c.Assert(subscription.PaymentMethod, qt.IsNotNil)
 		c.Assert(subscription.PaymentMethod.PaymentMethodType, qt.Equals, "card")
 		c.Assert(subscription.PaymentMethod.PaymentMethodID, qt.Equals, "pm_123456")
+	})
+}
+
+func TestSubscriptionRequest_GetList(t *testing.T) {
+	t.Run("When the server is not reachable", func(t *testing.T) {
+		c := qt.New(t)
+
+		client := New().SetBaseURL("http://localhost:88888").SetApiKey("test_api_key")
+		result, err := client.Subscription().GetList(context.Background(), SubscriptionListInput{})
+		c.Assert(result, qt.IsNil)
+		c.Assert(err.Error(), qt.Equals, `{"status":0,"error":"","code":"","err":"Get \"http://localhost:88888/api/v1/subscriptions\": dial tcp: address 88888: invalid port"}`)
+	})
+
+	t.Run("When no parameters are provided", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/subscriptions").
+			MatchQuery("").
+			MockResponse(mockSubscriptionListResponse)
+		defer server.Close()
+
+		result, err := server.Client().Subscription().GetList(context.Background(), SubscriptionListInput{})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.Subscriptions, qt.HasLen, 1)
+		c.Assert(result.Meta.CurrentPage, qt.Equals, 1)
+		c.Assert(result.Meta.TotalCount, qt.Equals, 1)
+
+		firstSubscription := result.Subscriptions[0]
+		c.Assert(firstSubscription.ExternalID, qt.Equals, "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba")
+	})
+
+	t.Run("When all parameters are provided including search_term", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/subscriptions").
+			MatchQuery("per_page=5" +
+				"&page=1" +
+				"&external_id=5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba" +
+				"&external_customer_id=CUSTOMER_1" +
+				"&plan_code=premium" +
+				"&status[]=active").
+			MockResponse(mockSubscriptionListResponse)
+		defer server.Close()
+
+		perPage := 5
+		page := 1
+
+		result, err := server.Client().Subscription().GetList(context.Background(), SubscriptionListInput{
+			PerPage:            &perPage,
+			Page:               &page,
+			ExternalID:         "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+			ExternalCustomerID: "CUSTOMER_1",
+			PlanCode:           "premium",
+			Status:             []SubscriptionStatus{SubscriptionStatusActive},
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.Subscriptions, qt.HasLen, 1)
+		c.Assert(result.Meta.CurrentPage, qt.Equals, 1)
+		c.Assert(result.Meta.TotalCount, qt.Equals, 1)
+
+		firstSubscription := result.Subscriptions[0]
+		c.Assert(firstSubscription.ExternalID, qt.Equals, "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba")
 	})
 }

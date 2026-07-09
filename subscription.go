@@ -159,6 +159,7 @@ type SubscriptionTerminateInput struct {
 }
 
 type SubscriptionListInput struct {
+	ExternalID         string               `url:"external_id,omitempty"`
 	ExternalCustomerID string               `url:"external_customer_id,omitempty"`
 	PlanCode           string               `url:"plan_code,omitempty"`
 	Currency           Currency             `url:"currency,omitempty"`

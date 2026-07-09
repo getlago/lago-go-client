@@ -855,17 +855,18 @@ func TestCustomerRequest_GetSubscriptionList(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("GET").
 			MatchPath("/api/v1/customers/CUSTOMER_1/subscriptions").
-			MatchQuery("per_page=10&page=1&plan_code=premium&status[]=active&status[]=terminated").
+			MatchQuery("per_page=10&page=1&external_id=5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba&plan_code=premium&status[]=active&status[]=terminated").
 			MockResponse(mockCustomerSubscriptionListResponse)
 		defer server.Close()
 
 		perPage := 10
 		page := 1
 		result, err := server.Client().Customer().GetSubscriptionList(context.Background(), "CUSTOMER_1", &CustomerSubscriptionListInput{
-			PerPage:  &perPage,
-			Page:     &page,
-			PlanCode: "premium",
-			Status:   []SubscriptionStatus{SubscriptionStatusActive, SubscriptionStatusTerminated},
+			PerPage:    &perPage,
+			Page:       &page,
+			ExternalID: "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+			PlanCode:   "premium",
+			Status:     []SubscriptionStatus{SubscriptionStatusActive, SubscriptionStatusTerminated},
 		})
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result.Subscriptions, qt.HasLen, 1)
@@ -922,6 +923,7 @@ func TestCustomerRequest_GetList(t *testing.T) {
 			MatchQuery("per_page=5" +
 				"&page=1" +
 				"&search_term=acme" +
+				"&external_id=CUSTOMER_1" +
 				"&countries[]=US" +
 				"&countries[]=CA" +
 				"&states[]=CA" +
@@ -951,6 +953,7 @@ func TestCustomerRequest_GetList(t *testing.T) {
 			PerPage:                    &perPage,
 			Page:                       &page,
 			SearchTerm:                 "acme",
+			ExternalID:                 "CUSTOMER_1",
 			Countries:                  []string{"US", "CA"},
 			States:                     []string{"CA", "NY"},
 			Zipcodes:                   []string{"91364", "94102"},
