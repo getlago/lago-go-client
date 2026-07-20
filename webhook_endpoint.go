@@ -130,10 +130,14 @@ func (wer *WebhookEndpointRequest) Create(ctx context.Context, webhookEndpointIn
 
 func (wer *WebhookEndpointRequest) Update(ctx context.Context, webhookEndpointInput *WebhookEndpointInput, webhookEndpointID string) (*WebhookEndpoint, *Error) {
 	subPath := fmt.Sprintf("%s/%s", "webhook_endpoints", webhookEndpointID)
+	webhookEndpointParams := &WebhookEndpointParams{
+		WebhookEndpointInput: webhookEndpointInput,
+	}
+
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &WebhookEndpointResult{},
-		Body:   webhookEndpointInput,
+		Body:   webhookEndpointParams,
 	}
 
 	result, err := wer.client.Put(ctx, clientRequest)
