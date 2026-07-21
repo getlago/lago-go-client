@@ -142,6 +142,7 @@ type SubscriptionInput struct {
 	InvoiceCustomSection *InvoiceCustomSectionInput        `json:"invoice_custom_section,omitempty"`
 	ConsolidateInvoice   *bool                             `json:"consolidate_invoice,omitempty"`
 	BillingEntityCode    string                            `json:"billing_entity_code,omitempty"`
+	PurchaseOrderNumber  *string                           `json:"purchase_order_number,omitempty"`
 	ActivationRules      []SubscriptionActivationRuleInput `json:"activation_rules,omitempty"`
 }
 
@@ -190,6 +191,7 @@ type Subscription struct {
 	OnTerminationCreditNote OnTerminationCreditNote `json:"on_termination_credit_note,omitempty"`
 	OnTerminationInvoice    OnTerminationInvoice    `json:"on_termination_invoice,omitempty"`
 	ConsolidateInvoice      bool                    `json:"consolidate_invoice"`
+	PurchaseOrderNumber     *string                 `json:"purchase_order_number,omitempty"`
 
 	PreviousPlanCode  string `json:"previous_plan_code"`
 	NextPlanCode      string `json:"next_plan_code"`
