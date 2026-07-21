@@ -30,6 +30,7 @@ var mockWalletResponse = `{
 		"balance_cents": 10000,
 		"paid_top_up_max_amount_cents": 1000,
 		"paid_top_up_min_amount_cents": 200,
+		"purchase_order_number": "PO-123",
 		"expiration_at": "2022-07-07T23:59:59Z",
 		"created_at": "2022-04-29T08:59:51Z",
 		"recurring_transaction_rules": [{
@@ -48,6 +49,7 @@ var mockWalletResponse = `{
 			"invoice_requires_successful_payment": false,
 			"transaction_metadata": [],
 			"transaction_name": "Recurring Transaction Rule",
+			"purchase_order_number": "PO-RULE-123",
 			"ignore_paid_top_up_limits": false,
 			"grants_target_top_up": true,
 			"payment_method": {
@@ -184,6 +186,9 @@ func TestWallet_Create(t *testing.T) {
 	t.Run("When the server returns a successful response", func(t *testing.T) {
 		c := qt.New(t)
 
+		purchaseOrderNumber := "PO-123"
+		rulePurchaseOrderNumber := "PO-RULE-123"
+
 		server := lt.NewMockServer(c).
 			MatchMethod("POST").
 			MatchPath("/api/v1/wallets").
@@ -200,6 +205,7 @@ func TestWallet_Create(t *testing.T) {
 					"expiration_at": "2022-07-07T23:59:59Z",
 					"paid_top_up_max_amount_cents": 1000,
 					"paid_top_up_min_amount_cents": 200,
+					"purchase_order_number": "PO-123",
 					"recurring_transaction_rules": [
 						{
 							"paid_credits": "105.00",
@@ -211,6 +217,7 @@ func TestWallet_Create(t *testing.T) {
 							"method": "fixed",
 							"expiration_at": "2026-12-31T23:59:59Z",
 							"transaction_name": "Recurring Transaction Rule",
+							"purchase_order_number": "PO-RULE-123",
 							"ignore_paid_top_up_limits": true,
 							"grants_target_top_up": true
 						}
@@ -236,6 +243,7 @@ func TestWallet_Create(t *testing.T) {
 			ExpirationAt:            Ptr(time.Date(2022, 7, 7, 23, 59, 59, 0, time.UTC)),
 			PaidTopUpMaxAmountCents: Ptr(int(1000)),
 			PaidTopUpMinAmountCents: Ptr(int(200)),
+			PurchaseOrderNumber:     &purchaseOrderNumber,
 			RecurringTransactionRules: []RecurringTransactionRuleInput{
 				{
 					PaidCredits:           "105.00",
@@ -249,6 +257,7 @@ func TestWallet_Create(t *testing.T) {
 					TransactionName:       "Recurring Transaction Rule",
 					IgnorePaidTopUpLimits: Ptr(true),
 					GrantsTargetTopUp:     Ptr(true),
+					PurchaseOrderNumber:   &rulePurchaseOrderNumber,
 				},
 			},
 			AppliesTo: AppliesTo{
@@ -272,12 +281,14 @@ func TestWallet_Create(t *testing.T) {
 		c.Assert(*result.PaidTopUpMaxAmountCents, qt.Equals, int(1000))
 		c.Assert(result.PaidTopUpMinAmountCents, qt.IsNotNil)
 		c.Assert(*result.PaidTopUpMinAmountCents, qt.Equals, int(200))
+		c.Assert(result.PurchaseOrderNumber, qt.DeepEquals, Ptr("PO-123"))
 		c.Assert(len(result.RecurringTransactionRules), qt.Equals, 1)
 		c.Assert(result.RecurringTransactionRules[0].Trigger, qt.Equals, "interval")
 		c.Assert(result.RecurringTransactionRules[0].Interval, qt.Equals, "monthly")
 		c.Assert(result.RecurringTransactionRules[0].TransactionName, qt.Equals, "Recurring Transaction Rule")
 		c.Assert(result.RecurringTransactionRules[0].IgnorePaidTopUpLimits, qt.Equals, false)
 		c.Assert(result.RecurringTransactionRules[0].GrantsTargetTopUp, qt.DeepEquals, Ptr(true))
+		c.Assert(result.RecurringTransactionRules[0].PurchaseOrderNumber, qt.DeepEquals, Ptr("PO-RULE-123"))
 		c.Assert(result.RecurringTransactionRules[0].ExpirationAt, qt.DeepEquals, Ptr(time.Date(2026, 12, 31, 23, 59, 59, 0, time.UTC)))
 		c.Assert(result.AppliesTo.FeeTypes, qt.DeepEquals, []string{"charge"})
 		c.Assert(result.AppliesTo.BillableMetricCodes, qt.DeepEquals, []string{"bm1"})

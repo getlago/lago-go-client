@@ -37,6 +37,7 @@ var mockWalletTransactionListResponse = `{
 					"value": "test"
 				}],
 				"name": "Test Transaction",
+				"purchase_order_number": "PO-123",
 				"payment_method": {
 					"payment_method_type": "card",
 					"payment_method_id": "pm_wt_123"
@@ -76,6 +77,8 @@ func TestWalletTransactionRequest_Create(t *testing.T) {
 	t.Run("When sending all the parameters", func(t *testing.T) {
 		c := qt.New(t)
 
+		purchaseOrderNumber := "PO-123"
+
 		server := lt.NewMockServer(c).
 			MatchMethod("POST").
 			MatchPath("/api/v1/wallet_transactions").
@@ -86,6 +89,7 @@ func TestWalletTransactionRequest_Create(t *testing.T) {
 					"metadata":                            [{"key": "source", "value": "test"}],
 					"name":                                "Test Transaction",
 					"paid_credits":                        "50.00",
+					"purchase_order_number":               "PO-123",
 					"voided_credits":                      "0.00",
 					"wallet_id":                           "1a901a90-1a90-1a90-1a90-1a901a901a90"
 				}
@@ -100,6 +104,7 @@ func TestWalletTransactionRequest_Create(t *testing.T) {
 			GrantedCredits:                   "0.00",
 			VoidedCredits:                    "0.00",
 			InvoiceRequiresSuccessfulPayment: true,
+			PurchaseOrderNumber:              &purchaseOrderNumber,
 			Metadata: []WalletTransactionMetadata{
 				{Key: "source", Value: "test"},
 			},
@@ -123,6 +128,7 @@ func TestWalletTransactionRequest_Create(t *testing.T) {
 					RemainingCreditAmount:            Ptr("50.00"),
 					Priority:                         50,
 					InvoiceRequiresSuccessfulPayment: true,
+					PurchaseOrderNumber:              Ptr("PO-123"),
 					CreatedAt:                        time.Date(2024, 6, 1, 12, 0, 0, 0, time.UTC),
 					SettledAt:                        time.Date(2024, 6, 1, 12, 5, 0, 0, time.UTC),
 					FailedAt:                         time.Date(2024, 6, 1, 12, 10, 0, 0, time.UTC),
