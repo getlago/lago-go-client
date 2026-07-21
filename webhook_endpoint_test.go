@@ -15,6 +15,8 @@ var mockWebhookEndpointResponse = map[string]any{
 		"lago_organization_id": "2b902b90-2b90-2b90-2b90-2b902b902b90",
 		"webhook_url":          "https://example.com/webhook",
 		"signature_algo":       "jwt",
+		"name":                 "My Webhook Endpoint",
+		"event_types":          []string{"customer.created"},
 		"created_at":           "2025-01-01T10:00:00Z",
 	},
 }
@@ -26,16 +28,21 @@ func TestWebhookEndpointRequest_Create(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("POST").
 			MatchPath("/api/v1/webhook_endpoints").
-			MatchJSONBody(`{"webhook_endpoint":{"webhook_url":"https://example.com/webhook","signature_algo":"jwt"}}`).
+			MatchJSONBody(`{"webhook_endpoint":{"webhook_url":"https://example.com/webhook","signature_algo":"jwt","name":"My Webhook Endpoint","event_types":["customer.created"]}}`).
 			MockResponse(mockWebhookEndpointResponse)
 		defer server.Close()
 
+		name := "My Webhook Endpoint"
 		result, err := server.Client().WebhookEndpoint().Create(context.Background(), &WebhookEndpointInput{
 			WebhookURL:    "https://example.com/webhook",
 			SignatureAlgo: JWT,
+			Name:          &name,
+			EventTypes:    []string{"customer.created"},
 		})
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result.WebhookURL, qt.Equals, "https://example.com/webhook")
+		c.Assert(*result.Name, qt.Equals, "My Webhook Endpoint")
+		c.Assert(result.EventTypes, qt.DeepEquals, []string{"customer.created"})
 	})
 }
 
@@ -46,15 +53,20 @@ func TestWebhookEndpointRequest_Update(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("PUT").
 			MatchPath("/api/v1/webhook_endpoints/1a901a90-1a90-1a90-1a90-1a901a901a90").
-			MatchJSONBody(`{"webhook_endpoint":{"webhook_url":"https://example.com/webhook","signature_algo":"jwt"}}`).
+			MatchJSONBody(`{"webhook_endpoint":{"webhook_url":"https://example.com/webhook","signature_algo":"jwt","name":"My Webhook Endpoint","event_types":["customer.created"]}}`).
 			MockResponse(mockWebhookEndpointResponse)
 		defer server.Close()
 
+		name := "My Webhook Endpoint"
 		result, err := server.Client().WebhookEndpoint().Update(context.Background(), &WebhookEndpointInput{
 			WebhookURL:    "https://example.com/webhook",
 			SignatureAlgo: JWT,
+			Name:          &name,
+			EventTypes:    []string{"customer.created"},
 		}, "1a901a90-1a90-1a90-1a90-1a901a901a90")
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result.WebhookURL, qt.Equals, "https://example.com/webhook")
+		c.Assert(*result.Name, qt.Equals, "My Webhook Endpoint")
+		c.Assert(result.EventTypes, qt.DeepEquals, []string{"customer.created"})
 	})
 }

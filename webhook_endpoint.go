@@ -27,6 +27,8 @@ type WebhookEndpointParams struct {
 type WebhookEndpointInput struct {
 	WebhookURL    string        `json:"webhook_url,omitempty"`
 	SignatureAlgo SignatureAlgo `json:"signature_algo,omitempty"`
+	Name          *string       `json:"name,omitempty"`
+	EventTypes    []string      `json:"event_types,omitempty"`
 }
 
 type WebhookEndpointListInput struct {
@@ -45,6 +47,8 @@ type WebhookEndpoint struct {
 	LagoOrganizationID uuid.UUID     `json:"lago_organization_id,omitempty"`
 	WebhookURL         string        `json:"webhook_url,omitempty"`
 	SignatureAlgo      SignatureAlgo `json:"signature_algo,omitempty"`
+	Name               *string       `json:"name,omitempty"`
+	EventTypes         []string      `json:"event_types,omitempty"`
 	CreatedAt          time.Time     `json:"created_at,omitempty"`
 }
 
