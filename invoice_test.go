@@ -314,6 +314,32 @@ func TestInvoiceRequest_GetList(t *testing.T) {
 	})
 }
 
+func TestInvoiceRequest_Delete(t *testing.T) {
+	t.Run("When the server is not reachable", func(t *testing.T) {
+		c := qt.New(t)
+
+		client := New().SetBaseURL("http://localhost:88888").SetApiKey("test_api_key")
+		result, err := client.Invoice().Delete(context.Background(), "1a901a90-1a90-1a90-1a90-1a901a901a90")
+		c.Assert(result, qt.IsNil)
+		c.Assert(err != nil, qt.IsTrue)
+	})
+
+	t.Run("With an invoiceID in the request", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("DELETE").
+			MatchPath("/api/v1/invoices/1a901a90-1a90-1a90-1a90-1a901a901a90").
+			MockResponse(map[string]any{"invoice": mockInvoice})
+		defer server.Close()
+
+		result, err := server.Client().Invoice().Delete(context.Background(), "1a901a90-1a90-1a90-1a90-1a901a901a90")
+
+		c.Assert(err == nil, qt.IsTrue)
+		assertInvoiceResponse(c, result)
+	})
+}
+
 func TestInvoiceRequest_PaymentUrl(t *testing.T) {
 	t.Run("When the server is not reachable", func(t *testing.T) {
 		c := qt.New(t)

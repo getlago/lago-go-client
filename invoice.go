@@ -29,6 +29,7 @@ const (
 	InvoiceStatusFailed    InvoiceStatus = "failed"
 	InvoiceStatusVoided    InvoiceStatus = "voided"
 	InvoiceStatusPending   InvoiceStatus = "pending"
+	InvoiceStatusDeleted   InvoiceStatus = "deleted"
 )
 
 const (
@@ -531,6 +532,27 @@ func (ir *InvoiceRequest) LoseDispute(ctx context.Context, invoiceID string) (*I
 	}
 
 	return nil, nil
+}
+
+func (ir *InvoiceRequest) Delete(ctx context.Context, invoiceID string) (*Invoice, *Error) {
+	subPath := fmt.Sprintf("%s/%s", "invoices", invoiceID)
+
+	clientRequest := &ClientRequest{
+		Path:   subPath,
+		Result: &InvoiceResult{},
+	}
+
+	result, err := ir.client.Delete(ctx, clientRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	invoiceResult, ok := result.(*InvoiceResult)
+	if !ok {
+		return nil, &ErrorTypeAssert
+	}
+
+	return invoiceResult.Invoice, nil
 }
 
 // We have Invoice as a possible return to be consitent with other endpoints, but no Invoice will be returned.
