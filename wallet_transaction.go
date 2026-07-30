@@ -64,6 +64,7 @@ type WalletTransactionInput struct {
 	InvoiceRequiresSuccessfulPayment bool                        `json:"invoice_requires_successful_payment,omitempty"`
 	Metadata                         []WalletTransactionMetadata `json:"metadata,omitempty"`
 	IgnorePaidTopUpLimits            bool                        `json:"ignore_paid_top_up_limits,omitempty"`
+	PurchaseOrderNumber              *string                     `json:"purchase_order_number,omitempty"`
 	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
 	InvoiceCustomSection             *InvoiceCustomSectionInput  `json:"invoice_custom_section,omitempty"`
 }
@@ -94,6 +95,7 @@ type WalletTransaction struct {
 	RemainingCreditAmount            *string                       `json:"remaining_credit_amount,omitempty"`
 	Priority                         int                           `json:"priority,omitempty"`
 	InvoiceRequiresSuccessfulPayment bool                          `json:"invoice_requires_successful_payment,omitempty"`
+	PurchaseOrderNumber              *string                       `json:"purchase_order_number,omitempty"`
 	CreatedAt                        time.Time                     `json:"created_at,omitempty"`
 	SettledAt                        time.Time                     `json:"settled_at,omitempty"`
 	FailedAt                         time.Time                     `json:"failed_at,omitempty"`

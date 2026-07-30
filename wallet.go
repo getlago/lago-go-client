@@ -32,6 +32,7 @@ type RecurringTransactionRuleInput struct {
 	TransactionName                  string                      `json:"transaction_name,omitempty"`
 	IgnorePaidTopUpLimits            *bool                       `json:"ignore_paid_top_up_limits,omitempty"`
 	GrantsTargetTopUp                *bool                       `json:"grants_target_top_up,omitempty"`
+	PurchaseOrderNumber              *string                     `json:"purchase_order_number,omitempty"`
 	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
 	InvoiceCustomSection             *InvoiceCustomSectionInput  `json:"invoice_custom_section,omitempty"`
 }
@@ -54,6 +55,7 @@ type RecurringTransactionRuleResponse struct {
 	TransactionName                  string                        `json:"transaction_name,omitempty"`
 	IgnorePaidTopUpLimits            bool                          `json:"ignore_paid_top_up_limits"`
 	GrantsTargetTopUp                *bool                         `json:"grants_target_top_up,omitempty"`
+	PurchaseOrderNumber              *string                       `json:"purchase_order_number,omitempty"`
 	PaymentMethod                    *PaymentMethodInput           `json:"payment_method,omitempty"`
 	AppliedInvoiceCustomSections     []AppliedInvoiceCustomSection `json:"applied_invoice_custom_sections,omitempty"`
 }
@@ -93,6 +95,7 @@ type WalletInput struct {
 	PaymentMethod                    *PaymentMethodInput             `json:"payment_method,omitempty"`
 	InvoiceCustomSection             *InvoiceCustomSectionInput      `json:"invoice_custom_section,omitempty"`
 	BillingEntityCode                string                          `json:"billing_entity_code,omitempty"`
+	PurchaseOrderNumber              *string                         `json:"purchase_order_number,omitempty"`
 }
 
 type WalletListInput struct {
@@ -148,6 +151,7 @@ type Wallet struct {
 	Metadata                         map[string]string                  `json:"metadata,omitempty"`
 	PaymentMethod                    *PaymentMethodInput                `json:"payment_method,omitempty"`
 	AppliedInvoiceCustomSections     []AppliedInvoiceCustomSection      `json:"applied_invoice_custom_sections,omitempty"`
+	PurchaseOrderNumber              *string                            `json:"purchase_order_number,omitempty"`
 }
 
 func (c *Client) Wallet() *WalletRequest {

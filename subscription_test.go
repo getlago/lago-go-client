@@ -37,6 +37,7 @@ var mockSubscriptionResponse = `{
     "on_termination_credit_note": "skip",
     "on_termination_invoice": "skip",
     "consolidate_invoice": true,
+    "purchase_order_number": "PO-123",
     "activated_at": "2022-08-08T00:00:00Z",
     "cancellation_reason": "payment_failed",
     "activation_rules": [
@@ -420,6 +421,7 @@ func TestSubscriptionRequest_CreateWithPaymentMethod(t *testing.T) {
 		c := qt.New(t)
 
 		consolidate := true
+		purchaseOrderNumber := "PO-123"
 
 		server := lt.NewMockServer(c).
 			MatchMethod("POST").
@@ -435,7 +437,8 @@ func TestSubscriptionRequest_CreateWithPaymentMethod(t *testing.T) {
 						"payment_method_type": "card",
 						"payment_method_id": "pm_123456"
 					},
-					"consolidate_invoice": true
+					"consolidate_invoice": true,
+					"purchase_order_number": "PO-123"
 				}
 			}`).
 			MockResponse(mockSubscriptionResponse)
@@ -451,7 +454,8 @@ func TestSubscriptionRequest_CreateWithPaymentMethod(t *testing.T) {
 				PaymentMethodType: "card",
 				PaymentMethodID:   "pm_123456",
 			},
-			ConsolidateInvoice: &consolidate,
+			ConsolidateInvoice:  &consolidate,
+			PurchaseOrderNumber: &purchaseOrderNumber,
 		})
 
 		c.Assert(err == nil, qt.IsTrue)
@@ -459,6 +463,7 @@ func TestSubscriptionRequest_CreateWithPaymentMethod(t *testing.T) {
 		c.Assert(subscription.PaymentMethod.PaymentMethodType, qt.Equals, "card")
 		c.Assert(subscription.PaymentMethod.PaymentMethodID, qt.Equals, "pm_123456")
 		c.Assert(subscription.ConsolidateInvoice, qt.IsTrue)
+		c.Assert(subscription.PurchaseOrderNumber, qt.DeepEquals, Ptr("PO-123"))
 		c.Assert(subscription.AppliedInvoiceCustomSections, qt.HasLen, 1)
 		c.Assert(subscription.AppliedInvoiceCustomSections[0].LagoId.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
 		c.Assert(subscription.AppliedInvoiceCustomSections[0].InvoiceCustomSectionId.String(), qt.Equals, "2b902b90-2b90-2b90-2b90-2b902b902b90")
