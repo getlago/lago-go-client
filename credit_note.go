@@ -75,14 +75,15 @@ type CreditNoteListInput struct {
 	AmountFrom int `url:"amount_from,omitempty,string"`
 	AmountTo   int `url:"amount_to,omitempty,string"`
 
-	SearchTerm       string                 `url:"search_term,omitempty"`
-	BillingEntityIDs []uuid.UUID            `url:"billing_entity_ids[],omitempty"`
-	CreditStatus     CreditNoteCreditStatus `url:"credit_status,omitempty"`
-	Currency         Currency               `url:"currency,omitempty"`
-	InvoiceNumber    string                 `url:"invoice_number,omitempty"`
-	Reason           CreditNoteReason       `url:"reason,omitempty"`
-	RefundStatus     CreditNoteRefundStatus `url:"refund_status,omitempty"`
-	SelfBilled       *bool                  `url:"self_billed,omitempty,string"`
+	SearchTerm          string                 `url:"search_term,omitempty"`
+	BillingEntityIDs    []uuid.UUID            `url:"billing_entity_ids[],omitempty"`
+	CreditStatus        CreditNoteCreditStatus `url:"credit_status,omitempty"`
+	Currency            Currency               `url:"currency,omitempty"`
+	InvoiceNumber       string                 `url:"invoice_number,omitempty"`
+	PurchaseOrderNumber string                 `url:"purchase_order_number,omitempty"`
+	Reason              CreditNoteReason       `url:"reason,omitempty"`
+	RefundStatus        CreditNoteRefundStatus `url:"refund_status,omitempty"`
+	SelfBilled          *bool                  `url:"self_billed,omitempty,string"`
 }
 
 type CreditNoteItem struct {
@@ -113,14 +114,15 @@ type CreditNoteErrorDetails struct {
 }
 
 type CreditNote struct {
-	LagoID            uuid.UUID        `json:"lago_id,omitempty"`
-	SequentialID      int              `json:"sequential_id,omitempty"`
-	BillingEntityCode string           `json:"billing_entity_code,omitempty"`
-	Number            string           `json:"number,omitempty"`
-	LagoInvoiceID     uuid.UUID        `json:"lago_invoice_id,omitempty"`
-	InvoiceNumber     string           `json:"invoice_number,omitempty"`
-	Reason            CreditNoteReason `json:"reason,omitempty"`
-	Description       string           `json:"description,omitempty"`
+	LagoID              uuid.UUID        `json:"lago_id,omitempty"`
+	SequentialID        int              `json:"sequential_id,omitempty"`
+	BillingEntityCode   string           `json:"billing_entity_code,omitempty"`
+	Number              string           `json:"number,omitempty"`
+	LagoInvoiceID       uuid.UUID        `json:"lago_invoice_id,omitempty"`
+	InvoiceNumber       string           `json:"invoice_number,omitempty"`
+	PurchaseOrderNumber *string          `json:"purchase_order_number,omitempty"`
+	Reason              CreditNoteReason `json:"reason,omitempty"`
+	Description         string           `json:"description,omitempty"`
 
 	SelfBilled   bool                   `json:"self_billed,omitempty"`
 	CreditStatus CreditNoteCreditStatus `json:"credit_status,omitempty"`

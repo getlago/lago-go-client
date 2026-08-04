@@ -99,6 +99,7 @@ type InvoiceInput struct {
 type InvoiceOneOffInput struct {
 	ExternalCustomerId   string                     `json:"external_customer_id,omitempty"`
 	Currency             string                     `json:"currency,omitempty"`
+	PurchaseOrderNumber  *string                    `json:"purchase_order_number,omitempty"`
 	Fees                 []InvoiceFeesInput         `json:"fees,omitempty"`
 	SkipPsp              bool                       `json:"skip_psp,omitempty"`
 	PaymentMethod        *PaymentMethodInput        `json:"payment_method,omitempty"`
@@ -141,9 +142,10 @@ type InvoiceListInput struct {
 	AmountFrom *int `url:"amount_from,omitempty"`
 	AmountTo   *int `url:"amount_to,omitempty"`
 
-	SearchTerm       string      `url:"search_term,omitempty"`
-	BillingEntityIDs []uuid.UUID `url:"billing_entity_ids[],omitempty"`
-	Currency         Currency    `url:"currency,omitempty"`
+	SearchTerm          string      `url:"search_term,omitempty"`
+	BillingEntityIDs    []uuid.UUID `url:"billing_entity_ids[],omitempty"`
+	Currency            Currency    `url:"currency,omitempty"`
+	PurchaseOrderNumber string      `url:"purchase_order_number,omitempty"`
 
 	Metadata *InvoiceListInputMetadata `url:"metadata,omitempty"`
 }
@@ -206,6 +208,7 @@ type Invoice struct {
 	BillingEntityCode string    `json:"billing_entity_code,omitempty"`
 	Number            string    `json:"number,omitempty"`
 
+	PurchaseOrderNumber  *string   `json:"purchase_order_number,omitempty"`
 	IssuingDate          string    `json:"issuing_date,omitempty"`
 	PaymentDisputeLostAt time.Time `json:"payment_dispute_lost_at,omitempty"`
 	PaymentDueDate       string    `json:"payment_due_date,omitempty"`
