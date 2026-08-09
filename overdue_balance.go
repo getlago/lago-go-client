@@ -3,6 +3,9 @@ package lago
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"math/big"
+	"strconv"
 )
 
 type OverdueBalanceRequest struct {
@@ -24,6 +27,45 @@ type OverdueBalance struct {
 	Month          string   `json:"month,omitempty"`
 	AmountCents    int      `json:"amount_cents,omitempty"`
 	AmountCurrency Currency `json:"currency,omitempty"`
+}
+
+func (o *OverdueBalance) UnmarshalJSON(data []byte) error {
+	type overdueBalanceAlias OverdueBalance
+
+	decoded := struct {
+		AmountCents json.RawMessage `json:"amount_cents"`
+		*overdueBalanceAlias
+	}{
+		overdueBalanceAlias: (*overdueBalanceAlias)(o),
+	}
+
+	if err := json.Unmarshal(data, &decoded); err != nil {
+		return err
+	}
+
+	if len(decoded.AmountCents) == 0 || string(decoded.AmountCents) == "null" {
+		return nil
+	}
+
+	amountCents := string(decoded.AmountCents)
+	if decoded.AmountCents[0] == '"' {
+		if err := json.Unmarshal(decoded.AmountCents, &amountCents); err != nil {
+			return err
+		}
+	}
+
+	rational, ok := new(big.Rat).SetString(amountCents)
+	if !ok || !rational.IsInt() {
+		return fmt.Errorf("amount_cents must be a whole number: %q", amountCents)
+	}
+
+	value, err := strconv.ParseInt(rational.Num().String(), 10, 0)
+	if err != nil {
+		return fmt.Errorf("invalid amount_cents %q: %w", amountCents, err)
+	}
+
+	o.AmountCents = int(value)
+	return nil
 }
 
 func (c *Client) OverdueBalance() *OverdueBalanceRequest {
