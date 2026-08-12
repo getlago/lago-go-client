@@ -5,14 +5,27 @@
   "wallet_transaction": {
     "lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
     "lago_wallet_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "lago_invoice_id": "2b902b90-2b90-2b90-2b90-2b902b902b90",
+    "lago_credit_note_id": null,
+    "lago_voided_invoice_id": null,
     "status": "settled",
     "source": "manual",
     "transaction_status": "purchased",
     "transaction_type": "inbound",
     "amount": "10",
     "credit_amount": "10",
+    "remaining_amount_cents": 1000,
+    "remaining_credit_amount": "10.0",
+    "priority": 50,
+    "invoice_requires_successful_payment": false,
     "settled_at": "2022-04-29T08:59:51Z",
     "created_at": "2022-04-29T08:59:51Z",
-    "name": "Transaction Name"
+    "metadata": [],
+    "name": "Transaction Name",
+    "payment_method": {
+      "payment_method_id": null,
+      "payment_method_type": null
+    },
+    "applied_invoice_custom_sections": []
   }
 }
