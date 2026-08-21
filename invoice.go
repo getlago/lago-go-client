@@ -235,6 +235,7 @@ type Invoice struct {
 	NetPaymentTerm                      int  `json:"net_payment_term,omitempty"`
 
 	FileURL       string                    `json:"file_url,omitempty"`
+	WebURL        string                    `json:"web_url,omitempty"`
 	Metadata      []InvoiceMetadataResponse `json:"metadata,omitempty"`
 	VersionNumber int                       `json:"version_number,omitempty"`
 

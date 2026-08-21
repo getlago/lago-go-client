@@ -38,6 +38,7 @@ var mockInvoice = map[string]any{
 	"version_number":                          3,
 	"self_billed":                             false,
 	"file_url":                                "https://getlago.com/invoice/file",
+	"web_url":                                 "https://app.getlago.com/acme/customer/1a901a90-1a90-1a90-1a90-1a901a901a90/invoice/2b012b01-2b01-2b01-2b01-2b012b012b01/overview",
 	"created_at":                              "2022-04-29T08:59:51Z",
 	"updated_at":                              "2022-04-29T08:59:51Z",
 	"customer": map[string]any{
@@ -201,6 +202,7 @@ func assertInvoiceResponse(c *qt.C, result *Invoice) {
 	c.Assert(result.ProgressiveBillingCreditAmountCents, qt.Equals, 0)
 	c.Assert(result.NetPaymentTerm, qt.Equals, 30)
 	c.Assert(result.FileURL, qt.Equals, "https://getlago.com/invoice/file")
+	c.Assert(result.WebURL, qt.Equals, "https://app.getlago.com/acme/customer/1a901a90-1a90-1a90-1a90-1a901a901a90/invoice/2b012b01-2b01-2b01-2b01-2b012b012b01/overview")
 	c.Assert(result.VersionNumber, qt.Equals, 3)
 
 	c.Assert(result.Metadata, qt.HasLen, 1)
