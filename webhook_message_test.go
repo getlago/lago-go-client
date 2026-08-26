@@ -260,6 +260,49 @@ var tests = []struct {
 		},
 	},
 	{
+		fixture: "order_created",
+		test: func(object any) bool {
+			order, ok := object.(*Order)
+			// The billing snapshot is omitted from the webhook payloads, being a heavy blob.
+			return ok && order.BillingSnapshot == nil
+		},
+	},
+	{
+		fixture: "order_executed",
+		test: func(object any) bool {
+			_, ok := object.(*Order)
+			return ok
+		},
+	},
+	{
+		fixture: "order_form_created",
+		test: func(object any) bool {
+			_, ok := object.(*OrderForm)
+			return ok
+		},
+	},
+	{
+		fixture: "order_form_expired",
+		test: func(object any) bool {
+			_, ok := object.(*OrderForm)
+			return ok
+		},
+	},
+	{
+		fixture: "order_form_signed",
+		test: func(object any) bool {
+			_, ok := object.(*OrderForm)
+			return ok
+		},
+	},
+	{
+		fixture: "order_form_voided",
+		test: func(object any) bool {
+			_, ok := object.(*OrderForm)
+			return ok
+		},
+	},
+	{
 		fixture: "payment_provider_error",
 		test: func(object any) bool {
 			_, ok := object.(*PaymentProviderError)
@@ -320,6 +363,28 @@ var tests = []struct {
 		test: func(object any) bool {
 			_, ok := object.(*Plan)
 			return ok
+		},
+	},
+	{
+		fixture: "quote_approved",
+		test: func(object any) bool {
+			quote, ok := object.(*QuoteWithVersion)
+			return ok && quote.Version != nil
+		},
+	},
+	{
+		fixture: "quote_created",
+		test: func(object any) bool {
+			quote, ok := object.(*QuoteWithVersion)
+			return ok && quote.Version != nil
+		},
+	},
+	{
+		fixture: "quote_voided",
+		test: func(object any) bool {
+			quote, ok := object.(*QuoteWithVersion)
+			// The version named by the event is not necessarily the current one.
+			return ok && quote.Version != nil && quote.Version.Status == QuoteVersionStatusVoided
 		},
 	},
 	{

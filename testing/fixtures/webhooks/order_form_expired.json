@@ -1,0 +1,21 @@
+{
+  "webhook_type": "order_form.expired",
+  "object_type": "order_form",
+  "organization_id": "3c123c12-3c12-3c12-3c12-3c123c123c12",
+  "order_form": {
+    "lago_id": "aa11aa11-aa11-aa11-aa11-aa11aa11aa11",
+    "number": "OF-2026-0001",
+    "status": "expired",
+    "void_reason": "expired",
+    "expires_at": "2026-06-30T23:59:59Z",
+    "signed_at": null,
+    "voided_at": "2026-07-01T00:00:00Z",
+    "signed_document_url": null,
+    "lago_organization_id": "3c123c12-3c12-3c12-3c12-3c123c123c12",
+    "lago_customer_id": "2b012b01-2b01-2b01-2b01-2b012b012b01",
+    "lago_quote_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+    "lago_quote_version_id": "4d234d23-4d23-4d23-4d23-4d234d234d23",
+    "created_at": "2026-04-29T08:59:51Z",
+    "updated_at": "2026-07-01T00:00:00Z"
+  }
+}
