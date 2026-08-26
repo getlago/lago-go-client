@@ -8,9 +8,12 @@ import (
 	qt "github.com/frankban/quicktest"
 	. "github.com/getlago/lago-go-client"
 	lt "github.com/getlago/lago-go-client/testing"
+	"github.com/google/uuid"
 )
 
 const orderID = "cc33cc33-cc33-cc33-cc33-cc33cc33cc33"
+const orderCustomerID = "2b012b01-2b01-2b01-2b01-2b012b012b01"
+const orderOwnerID = "5e345e34-5e34-5e34-5e34-5e345e345e34"
 
 var orderBillingSnapshotMock = map[string]interface{}{
 	"plans": []map[string]interface{}{
@@ -208,6 +211,8 @@ func TestOrderRequest_GetList(t *testing.T) {
 				"execution_mode[]":    []string{"execute_in_lago"},
 				"order_form_number[]": []string{"OF-2026-0001"},
 				"quote_number[]":      []string{"QT-2026-0001"},
+				"customer_id[]":       []string{orderCustomerID},
+				"owner_id[]":          []string{orderOwnerID},
 				"search_term":         "OR-2026",
 			}).
 			MockResponse(OrderGetListMockResponse)
@@ -219,6 +224,8 @@ func TestOrderRequest_GetList(t *testing.T) {
 			ExecutionMode:   []OrderExecutionMode{OrderExecutionModeExecuteInLago},
 			OrderFormNumber: []string{"OF-2026-0001"},
 			QuoteNumber:     []string{"QT-2026-0001"},
+			CustomerIDs:     []uuid.UUID{uuid.MustParse(orderCustomerID)},
+			OwnerIDs:        []uuid.UUID{uuid.MustParse(orderOwnerID)},
 			SearchTerm:      "OR-2026",
 		})
 

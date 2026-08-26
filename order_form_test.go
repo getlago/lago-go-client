@@ -8,9 +8,12 @@ import (
 	qt "github.com/frankban/quicktest"
 	. "github.com/getlago/lago-go-client"
 	lt "github.com/getlago/lago-go-client/testing"
+	"github.com/google/uuid"
 )
 
 const orderFormID = "aa11aa11-aa11-aa11-aa11-aa11aa11aa11"
+const orderFormCustomerID = "2b012b01-2b01-2b01-2b01-2b012b012b01"
+const orderFormOwnerID = "5e345e34-5e34-5e34-5e34-5e345e345e34"
 
 var OrderFormGetMockResponse = map[string]interface{}{
 	"order_form": map[string]interface{}{
@@ -151,6 +154,8 @@ func TestOrderFormRequest_GetList(t *testing.T) {
 				"status[]":       []string{"generated", "signed"},
 				"number[]":       []string{"OF-2026-0001"},
 				"quote_number[]": []string{"QT-2026-0001"},
+				"customer_id[]":  []string{orderFormCustomerID},
+				"owner_id[]":     []string{orderFormOwnerID},
 				"search_term":    "OF-2026",
 				"expires_at_to":  "2026-12-31T23:59:59Z",
 			}).
@@ -161,6 +166,8 @@ func TestOrderFormRequest_GetList(t *testing.T) {
 			Status:      []OrderFormStatus{OrderFormStatusGenerated, OrderFormStatusSigned},
 			Number:      []string{"OF-2026-0001"},
 			QuoteNumber: []string{"QT-2026-0001"},
+			CustomerIDs: []uuid.UUID{uuid.MustParse(orderFormCustomerID)},
+			OwnerIDs:    []uuid.UUID{uuid.MustParse(orderFormOwnerID)},
 			SearchTerm:  "OF-2026",
 			ExpiresAtTo: "2026-12-31T23:59:59Z",
 		})

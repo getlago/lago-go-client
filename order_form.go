@@ -28,13 +28,6 @@ const (
 	OrderFormVoidReasonInvalid OrderFormVoidReason = "invalid"
 )
 
-type OrderExecutionMode string
-
-const (
-	OrderExecutionModeExecuteInLago OrderExecutionMode = "execute_in_lago"
-	OrderExecutionModeOrderOnly     OrderExecutionMode = "order_only"
-)
-
 type OrderFormRequest struct {
 	client *Client
 }
@@ -158,7 +151,7 @@ func (ofr *OrderFormRequest) MarkAsSigned(ctx context.Context, orderFormID strin
 		clientRequest.Body = &OrderFormMarkAsSignedParams{OrderForm: markAsSignedInput}
 	}
 
-	return ofr.postAndUnwrap(ctx, clientRequest)
+	return ofr.unwrap(ofr.client.Post(ctx, clientRequest))
 }
 
 // Void voids a generated order form, cascading to the quote version it was generated from.
@@ -169,17 +162,12 @@ func (ofr *OrderFormRequest) Void(ctx context.Context, orderFormID string) (*Ord
 		Result: &OrderFormResult{},
 	}
 
-	return ofr.postAndUnwrap(ctx, clientRequest)
+	return ofr.unwrap(ofr.client.PostWithoutBody(ctx, clientRequest))
 }
 
-func (ofr *OrderFormRequest) postAndUnwrap(ctx context.Context, clientRequest *ClientRequest) (*OrderForm, *Error) {
-	result, err := ofr.client.Post(ctx, clientRequest)
+func (ofr *OrderFormRequest) unwrap(result interface{}, err *Error) (*OrderForm, *Error) {
 	if err != nil {
 		return nil, err
-	}
-
-	if result == nil {
-		return nil, nil
 	}
 
 	orderFormResult, ok := result.(*OrderFormResult)

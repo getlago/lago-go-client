@@ -19,6 +19,13 @@ const (
 	OrderStatusFailed   OrderStatus = "failed"
 )
 
+type OrderExecutionMode string
+
+const (
+	OrderExecutionModeExecuteInLago OrderExecutionMode = "execute_in_lago"
+	OrderExecutionModeOrderOnly     OrderExecutionMode = "order_only"
+)
+
 type OrderRequest struct {
 	client *Client
 }
@@ -158,13 +165,12 @@ func (or *OrderRequest) Execute(ctx context.Context, orderID string, executeInpu
 		clientRequest.Body = &OrderExecuteParams{Order: executeInput}
 	}
 
-	result, err := or.client.Post(ctx, clientRequest)
+	return or.unwrap(or.client.Post(ctx, clientRequest))
+}
+
+func (or *OrderRequest) unwrap(result interface{}, err *Error) (*Order, *Error) {
 	if err != nil {
 		return nil, err
-	}
-
-	if result == nil {
-		return nil, nil
 	}
 
 	orderResult, ok := result.(*OrderResult)

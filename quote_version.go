@@ -150,7 +150,7 @@ func (qvr *QuoteVersionRequest) Approve(ctx context.Context, quoteVersionID stri
 		clientRequest.Body = approveInput
 	}
 
-	return qvr.postAndUnwrap(ctx, clientRequest)
+	return qvr.unwrap(qvr.client.Post(ctx, clientRequest))
 }
 
 // Void voids a draft version, which makes it definitive.
@@ -161,7 +161,7 @@ func (qvr *QuoteVersionRequest) Void(ctx context.Context, quoteVersionID string)
 		Result: &QuoteVersionResult{},
 	}
 
-	return qvr.postAndUnwrap(ctx, clientRequest)
+	return qvr.unwrap(qvr.client.PostWithoutBody(ctx, clientRequest))
 }
 
 // Clone copies a version into a new draft version of the same quote.
@@ -172,17 +172,12 @@ func (qvr *QuoteVersionRequest) Clone(ctx context.Context, quoteVersionID string
 		Result: &QuoteVersionResult{},
 	}
 
-	return qvr.postAndUnwrap(ctx, clientRequest)
+	return qvr.unwrap(qvr.client.PostWithoutBody(ctx, clientRequest))
 }
 
-func (qvr *QuoteVersionRequest) postAndUnwrap(ctx context.Context, clientRequest *ClientRequest) (*QuoteVersion, *Error) {
-	result, err := qvr.client.Post(ctx, clientRequest)
+func (qvr *QuoteVersionRequest) unwrap(result interface{}, err *Error) (*QuoteVersion, *Error) {
 	if err != nil {
 		return nil, err
-	}
-
-	if result == nil {
-		return nil, nil
 	}
 
 	quoteVersionResult, ok := result.(*QuoteVersionResult)

@@ -8,7 +8,10 @@ import (
 	qt "github.com/frankban/quicktest"
 	. "github.com/getlago/lago-go-client"
 	lt "github.com/getlago/lago-go-client/testing"
+	"github.com/google/uuid"
 )
+
+const quoteOwnerID = "5e345e34-5e34-5e34-5e34-5e345e345e34"
 
 var quoteCurrentVersionMock = map[string]interface{}{
 	"lago_id":              "4d234d23-4d23-4d23-4d23-4d234d234d23",
@@ -133,21 +136,25 @@ func TestQuoteRequest_GetList(t *testing.T) {
 			MatchMethod("GET").
 			MatchPath("/api/v1/quotes").
 			MatchQuery(map[string]interface{}{
-				"status[]":     []string{"draft", "approved"},
-				"order_type[]": []string{"one_off"},
-				"number[]":     []string{"QT-2026-0001"},
-				"from_date":    "2026-01-01",
-				"to_date":      "2026-12-31",
+				"status[]":               []string{"draft", "approved"},
+				"order_type[]":           []string{"one_off"},
+				"number[]":               []string{"QT-2026-0001"},
+				"owner_id[]":             []string{quoteOwnerID},
+				"external_customer_id[]": []string{"ext_customer_1"},
+				"from_date":              "2026-01-01",
+				"to_date":                "2026-12-31",
 			}).
 			MockResponse(QuoteGetListMockResponse)
 		defer server.Close()
 
 		result, err := server.Client().Quote().GetList(context.Background(), &QuoteListInput{
-			Status:    []QuoteVersionStatus{QuoteVersionStatusDraft, QuoteVersionStatusApproved},
-			OrderType: []QuoteOrderType{QuoteOrderTypeOneOff},
-			Number:    []string{"QT-2026-0001"},
-			FromDate:  "2026-01-01",
-			ToDate:    "2026-12-31",
+			Status:             []QuoteVersionStatus{QuoteVersionStatusDraft, QuoteVersionStatusApproved},
+			OrderType:          []QuoteOrderType{QuoteOrderTypeOneOff},
+			Number:             []string{"QT-2026-0001"},
+			OwnerIDs:           []uuid.UUID{uuid.MustParse(quoteOwnerID)},
+			ExternalCustomerID: []string{"ext_customer_1"},
+			FromDate:           "2026-01-01",
+			ToDate:             "2026-12-31",
 		})
 
 		c.Assert(err == nil, qt.IsTrue)

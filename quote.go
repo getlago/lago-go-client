@@ -44,6 +44,24 @@ type Quote struct {
 	Owners []QuoteOwner `json:"owners,omitempty"`
 }
 
+// QuoteWithVersion is the payload of the quote lifecycle webhooks. It names the version the event
+// happened to, which is not necessarily the current version of the quote: a quote.voided triggered
+// by a clone names the version that was voided, while the quote already carries its replacement.
+// Unlike Quote, it carries no owners.
+type QuoteWithVersion struct {
+	LagoID             uuid.UUID      `json:"lago_id,omitempty"`
+	Number             string         `json:"number,omitempty"`
+	OrderType          QuoteOrderType `json:"order_type,omitempty"`
+	LagoCustomerID     uuid.UUID      `json:"lago_customer_id,omitempty"`
+	LagoSubscriptionID *uuid.UUID     `json:"lago_subscription_id,omitempty"`
+	LagoOrganizationID uuid.UUID      `json:"lago_organization_id,omitempty"`
+	CreatedAt          time.Time      `json:"created_at,omitempty"`
+	UpdatedAt          time.Time      `json:"updated_at,omitempty"`
+
+	// The Content and BillingItems of the version are omitted; retrieve the version to get them.
+	Version *QuoteVersion `json:"version,omitempty"`
+}
+
 type QuoteListInput struct {
 	PerPage *int `url:"per_page,omitempty"`
 	Page    *int `url:"page,omitempty"`
