@@ -1,7 +1,9 @@
 package lago
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"time"
@@ -96,18 +98,36 @@ type Metadata struct {
 	TotalCount  int `json:"total_count,omitempty"`
 }
 
+// unmarshalJSON decodes a JSON response body into v, tolerating an empty body.
+//
+// Endpoints processing their work asynchronously answer 200 with an empty body
+// and an application/json content type. The default decoder rejects those with
+// "unexpected end of JSON input", so a body holding nothing but whitespace is
+// treated as "nothing to decode" and leaves v untouched. Whitespace is trimmed
+// because servers and proxies in front of them may flush a trailing newline
+// rather than a strictly zero-length body.
+func unmarshalJSON(data []byte, v interface{}) error {
+	if len(bytes.TrimSpace(data)) == 0 {
+		return nil
+	}
+
+	return json.Unmarshal(data, v)
+}
+
 func New() *Client {
 	url := fmt.Sprintf("%s%s", baseURL, apiPath)
 
 	restyClient := resty.New().
 		SetBaseURL(url).
 		SetHeader("Content-Type", "application/json").
-		SetHeader("User-Agent", "lago-go-client github.com/getlago/lago-go-client/v1")
+		SetHeader("User-Agent", "lago-go-client github.com/getlago/lago-go-client/v1").
+		SetJSONUnmarshaler(unmarshalJSON)
 
 	ingestRestyClient := resty.New().
 		SetBaseURL(url).
 		SetHeader("Content-Type", "application/json").
-		SetHeader("User-Agent", "lago-go-client github.com/getlago/lago-go-client/v1")
+		SetHeader("User-Agent", "lago-go-client github.com/getlago/lago-go-client/v1").
+		SetJSONUnmarshaler(unmarshalJSON)
 
 	retryPolicy := DefaultRetryPolicy()
 
@@ -186,6 +206,12 @@ func (c *Client) handleErrorResponse(resp *resty.Response) *Error {
 	errObj, ok := resp.Error().(*Error)
 	if !ok {
 		return &ErrorTypeAssert
+	}
+
+	// An error response can come with an empty body, in which case nothing was
+	// decoded into errObj and the HTTP status is the only context available.
+	if errObj.HTTPStatusCode == 0 {
+		errObj.HTTPStatusCode = resp.StatusCode()
 	}
 
 	if resp.StatusCode() == 429 {

@@ -427,7 +427,7 @@ func TestCreditNoteRequest_Download(t *testing.T) {
 		assertCreditNoteResponse(c, result)
 	})
 
-	t.Run("When Download returns an empty response", func(t *testing.T) {
+	t.Run("When the file generation is enqueued and the body is empty", func(t *testing.T) {
 		c := qt.New(t)
 
 		creditNoteUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
@@ -435,12 +435,12 @@ func TestCreditNoteRequest_Download(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("POST").
 			MatchPath("/api/v1/credit_notes/1a901a90-1a90-1a90-1a90-1a901a901a90/download").
-			MockResponse(nil)
+			MockEmptyResponse()
 		defer server.Close()
 
 		result, err := server.Client().CreditNote().Download(context.Background(), creditNoteUUID)
 		c.Assert(err == nil, qt.IsTrue)
-		c.Assert(result == nil, qt.IsTrue)
+		c.Assert(result, qt.IsNil)
 	})
 }
 
