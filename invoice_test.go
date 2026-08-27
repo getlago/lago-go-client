@@ -348,6 +348,37 @@ func TestInvoiceRequest_Download(t *testing.T) {
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result, qt.IsNil)
 	})
+
+	t.Run("When the file generation is enqueued and the body holds only whitespace", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/invoices/1a901a90-1a90-1a90-1a90-1a901a901a90/download").
+			MockResponse("\n")
+		defer server.Close()
+
+		result, err := server.Client().Invoice().Download(context.Background(), "1a901a90-1a90-1a90-1a90-1a901a901a90")
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result, qt.IsNil)
+	})
+
+	t.Run("When the invoice is not found and the error body is empty", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/invoices/1a901a90-1a90-1a90-1a90-1a901a901a90/download").
+			MockEmptyResponseWithCode(404)
+		defer server.Close()
+
+		result, err := server.Client().Invoice().Download(context.Background(), "1a901a90-1a90-1a90-1a90-1a901a901a90")
+
+		c.Assert(result, qt.IsNil)
+		c.Assert(err, qt.IsNotNil)
+		c.Assert(err.HTTPStatusCode, qt.Equals, 404)
+	})
 }
 
 func TestInvoiceRequest_Delete(t *testing.T) {

@@ -174,6 +174,10 @@ func (m *MockServer) MockEmptyResponse() *MockServer {
 	return m.MockResponse("")
 }
 
+func (m *MockServer) MockEmptyResponseWithCode(statusCode int) *MockServer {
+	return m.MockResponseWithCode(statusCode, "")
+}
+
 func (m *MockServer) MockResponseWithCode(statusCode int, mockResponse interface{}) *MockServer {
 	m.statusCode = statusCode
 	m.mockResponse = mockResponse

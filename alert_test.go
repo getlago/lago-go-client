@@ -235,7 +235,7 @@ func TestAlertRequest_DeleteAll(t *testing.T) {
 		server := lt.NewMockServer(c).
 			MatchMethod("DELETE").
 			MatchPath("/api/v1/subscriptions/sub_1234/alerts").
-			MockResponse(nil)
+			MockEmptyResponse()
 		defer server.Close()
 
 		err := server.Client().Alert().DeleteAll(context.Background(), "sub_1234")
@@ -346,7 +346,7 @@ func TestAlertRequest_DeleteAllWithStatus(t *testing.T) {
 			MatchMethod("DELETE").
 			MatchPath("/api/v1/subscriptions/sub_1234/alerts").
 			MatchQuery(map[string]string{"subscription_status": "pending"}).
-			MockResponse(nil)
+			MockEmptyResponse()
 		defer server.Close()
 
 		err := server.Client().Alert().DeleteAll(context.Background(), "sub_1234", "pending")

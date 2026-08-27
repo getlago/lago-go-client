@@ -1,6 +1,7 @@
 package lago
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -101,10 +102,12 @@ type Metadata struct {
 //
 // Endpoints processing their work asynchronously answer 200 with an empty body
 // and an application/json content type. The default decoder rejects those with
-// "unexpected end of JSON input", so an empty body is treated as "nothing to
-// decode" and leaves v untouched.
+// "unexpected end of JSON input", so a body holding nothing but whitespace is
+// treated as "nothing to decode" and leaves v untouched. Whitespace is trimmed
+// because servers and proxies in front of them may flush a trailing newline
+// rather than a strictly zero-length body.
 func unmarshalJSON(data []byte, v interface{}) error {
-	if len(data) == 0 {
+	if len(bytes.TrimSpace(data)) == 0 {
 		return nil
 	}
 
