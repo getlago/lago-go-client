@@ -157,9 +157,10 @@ type Fee struct {
 	FailedAt    time.Time `json:"failed_at,omitempty"`
 	RefundedAt  time.Time `json:"refunded_at,omitempty"`
 
-	Item               FeeItem             `json:"item,omitempty"`
-	AppliedTaxes       []FeeAppliedTax     `json:"applied_taxes,omitempty"`
-	PricingUnitDetails *PricingUnitDetails `json:"pricing_unit_details,omitempty"`
+	Item                   FeeItem                 `json:"item,omitempty"`
+	AppliedTaxes           []FeeAppliedTax         `json:"applied_taxes,omitempty"`
+	PricingUnitDetails     *PricingUnitDetails     `json:"pricing_unit_details,omitempty"`
+	PresentationBreakdowns []PresentationBreakdown `json:"presentation_breakdowns,omitempty"`
 }
 
 func (c *Client) Fee() *FeeRequest {

@@ -23,6 +23,15 @@ type AppliedPricingUnit struct {
 	ConversionRate float64 `json:"conversion_rate,omitempty"`
 }
 
+type ChargePresentationGroupKeyOptions struct {
+	DisplayInInvoice bool `json:"display_in_invoice,omitempty"`
+}
+
+type ChargePresentationGroupKey struct {
+	Value   string                            `json:"value,omitempty"`
+	Options ChargePresentationGroupKeyOptions `json:"options,omitempty"`
+}
+
 type ChargeFilter struct {
 	InvoiceDisplayName string                 `json:"invoice_display_name,omitempty"`
 	Properties         map[string]interface{} `json:"properties,omitempty"`
