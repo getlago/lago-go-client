@@ -14,6 +14,7 @@ type InvoiceType string
 type InvoiceStatus string
 type InvoicePaymentStatus string
 type InvoiceCreditItemType string
+type InvoiceSettlementType string
 
 const (
 	SubscriptionInvoiceType       InvoiceType = "subscription"
@@ -21,6 +22,7 @@ const (
 	CreditInvoiceType             InvoiceType = "credit"
 	OneOffInvoiceType             InvoiceType = "one_off"
 	ProgressiveBillingInvoiceType InvoiceType = "progressive_billing"
+	AdvanceChargesInvoiceType     InvoiceType = "advance_charges"
 )
 
 const (
@@ -42,6 +44,11 @@ const (
 	InvoiceCreditItemCoupon     InvoiceCreditItemType = "coupon"
 	InvoiceCreditItemCreditNote InvoiceCreditItemType = "credit_note"
 	InvoiceCreditItemInvoice    InvoiceCreditItemType = "invoice"
+)
+
+const (
+	InvoiceSettlementPayment    InvoiceSettlementType = "payment"
+	InvoiceSettlementCreditNote InvoiceSettlementType = "credit_note"
 )
 
 type InvoiceRequest struct {
@@ -142,10 +149,11 @@ type InvoiceListInput struct {
 	AmountFrom *int `url:"amount_from,omitempty"`
 	AmountTo   *int `url:"amount_to,omitempty"`
 
-	SearchTerm          string      `url:"search_term,omitempty"`
-	BillingEntityIDs    []uuid.UUID `url:"billing_entity_ids[],omitempty"`
-	Currency            Currency    `url:"currency,omitempty"`
-	PurchaseOrderNumber string      `url:"purchase_order_number,omitempty"`
+	SearchTerm          string                  `url:"search_term,omitempty"`
+	BillingEntityCodes  []string                `url:"billing_entity_codes[],omitempty"`
+	Settlements         []InvoiceSettlementType `url:"settlements[],omitempty"`
+	Currency            Currency                `url:"currency,omitempty"`
+	PurchaseOrderNumber string                  `url:"purchase_order_number,omitempty"`
 
 	Metadata *InvoiceListInputMetadata `url:"metadata,omitempty"`
 }
@@ -208,11 +216,13 @@ type Invoice struct {
 	BillingEntityCode string    `json:"billing_entity_code,omitempty"`
 	Number            string    `json:"number,omitempty"`
 
-	PurchaseOrderNumber  *string   `json:"purchase_order_number,omitempty"`
-	IssuingDate          string    `json:"issuing_date,omitempty"`
-	PaymentDisputeLostAt time.Time `json:"payment_dispute_lost_at,omitempty"`
-	PaymentDueDate       string    `json:"payment_due_date,omitempty"`
-	PaymentOverdue       bool      `json:"payment_overdue,omitempty"`
+	PurchaseOrderNumber  *string    `json:"purchase_order_number,omitempty"`
+	IssuingDate          string     `json:"issuing_date,omitempty"`
+	PaymentDisputeLostAt time.Time  `json:"payment_dispute_lost_at,omitempty"`
+	PaymentDueDate       string     `json:"payment_due_date,omitempty"`
+	PaymentOverdue       bool       `json:"payment_overdue,omitempty"`
+	SelfBilled           bool       `json:"self_billed,omitempty"`
+	VoidedAt             *time.Time `json:"voided_at,omitempty"`
 
 	InvoiceType   InvoiceType          `json:"invoice_type,omitempty"`
 	Status        InvoiceStatus        `json:"status,omitempty"`
@@ -228,6 +238,8 @@ type Invoice struct {
 	SubTotalIncludingTaxesAmountCents   int  `json:"sub_total_including_taxes_amount_cents,omitempty"`
 	TotalAmountCents                    int  `json:"total_amount_cents,omitempty"`
 	TotalDueAmountCents                 int  `json:"total_due_amount_cents,omitempty"`
+	TotalPaidAmountCents                int  `json:"total_paid_amount_cents,omitempty"`
+	TotalOffsettedCreditNoteAmountCents int  `json:"total_offsetted_credit_note_amount_cents,omitempty"`
 	PrepaidCreditAmountCents            int  `json:"prepaid_credit_amount_cents,omitempty"`
 	PrepaidGrantedCreditAmountCents     *int `json:"prepaid_granted_credit_amount_cents,omitempty"`
 	PrepaidPurchasedCreditAmountCents   *int `json:"prepaid_purchased_credit_amount_cents,omitempty"`
@@ -235,6 +247,7 @@ type Invoice struct {
 	NetPaymentTerm                      int  `json:"net_payment_term,omitempty"`
 
 	FileURL       string                    `json:"file_url,omitempty"`
+	XMLURL        string                    `json:"xml_url,omitempty"`
 	WebURL        string                    `json:"web_url,omitempty"`
 	Metadata      []InvoiceMetadataResponse `json:"metadata,omitempty"`
 	VersionNumber int                       `json:"version_number,omitempty"`
