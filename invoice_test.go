@@ -9,38 +9,42 @@ import (
 	lt "github.com/getlago/lago-go-client/testing"
 
 	qt "github.com/frankban/quicktest"
-	"github.com/google/uuid"
 )
 
 var mockInvoice = map[string]any{
-	"lago_id":                                 "1a901a90-1a90-1a90-1a90-1a901a901a90",
-	"billing_entity_code":                     "acme_corp",
-	"sequential_id":                           2,
-	"number":                                  "LAG-1234-001-002",
-	"issuing_date":                            "2022-04-30",
-	"payment_dispute_lost_at":                 "2022-09-14T16:35:31Z",
-	"payment_due_date":                        "2022-04-30",
-	"payment_overdue":                         true,
-	"net_payment_term":                        30,
-	"invoice_type":                            "subscription",
-	"status":                                  "finalized",
-	"payment_status":                          "succeeded",
-	"currency":                                "EUR",
-	"fees_amount_cents":                       100,
-	"coupons_amount_cents":                    10,
-	"credit_notes_amount_cents":               10,
-	"sub_total_excluding_taxes_amount_cents":  100,
-	"taxes_amount_cents":                      20,
-	"sub_total_including_taxes_amount_cents":  120,
-	"prepaid_credit_amount_cents":             0,
-	"progressive_billing_credit_amount_cents": 0,
-	"total_amount_cents":                      100,
-	"version_number":                          3,
-	"self_billed":                             false,
-	"file_url":                                "https://getlago.com/invoice/file",
-	"web_url":                                 "https://app.getlago.com/acme/customer/1a901a90-1a90-1a90-1a90-1a901a901a90/invoice/2b012b01-2b01-2b01-2b01-2b012b012b01/overview",
-	"created_at":                              "2022-04-29T08:59:51Z",
-	"updated_at":                              "2022-04-29T08:59:51Z",
+	"lago_id":                                  "1a901a90-1a90-1a90-1a90-1a901a901a90",
+	"billing_entity_code":                      "acme_corp",
+	"sequential_id":                            2,
+	"number":                                   "LAG-1234-001-002",
+	"issuing_date":                             "2022-04-30",
+	"payment_dispute_lost_at":                  "2022-09-14T16:35:31Z",
+	"payment_due_date":                         "2022-04-30",
+	"payment_overdue":                          true,
+	"net_payment_term":                         30,
+	"invoice_type":                             "subscription",
+	"status":                                   "finalized",
+	"payment_status":                           "succeeded",
+	"currency":                                 "EUR",
+	"fees_amount_cents":                        100,
+	"coupons_amount_cents":                     10,
+	"credit_notes_amount_cents":                10,
+	"sub_total_excluding_taxes_amount_cents":   100,
+	"taxes_amount_cents":                       20,
+	"sub_total_including_taxes_amount_cents":   120,
+	"prepaid_credit_amount_cents":              0,
+	"progressive_billing_credit_amount_cents":  0,
+	"total_amount_cents":                       100,
+	"total_due_amount_cents":                   40,
+	"total_paid_amount_cents":                  60,
+	"total_offsetted_credit_note_amount_cents": 10,
+	"version_number":                           3,
+	"self_billed":                              true,
+	"file_url":                                 "https://getlago.com/invoice/file",
+	"xml_url":                                  "https://getlago.com/invoice/file.xml",
+	"voided_at":                                "2022-09-14T16:35:31Z",
+	"web_url":                                  "https://app.getlago.com/acme/customer/1a901a90-1a90-1a90-1a90-1a901a901a90/invoice/2b012b01-2b01-2b01-2b01-2b012b012b01/overview",
+	"created_at":                               "2022-04-29T08:59:51Z",
+	"updated_at":                               "2022-04-29T08:59:51Z",
 	"customer": map[string]any{
 		"lago_id":                      "1a901a90-1a90-1a90-1a90-1a901a901a90",
 		"sequential_id":                1,
@@ -186,6 +190,8 @@ func assertInvoiceResponse(c *qt.C, result *Invoice) {
 	c.Assert(result.PaymentDisputeLostAt.Format(time.RFC3339), qt.Equals, "2022-09-14T16:35:31Z")
 	c.Assert(result.PaymentDueDate, qt.Equals, "2022-04-30")
 	c.Assert(result.PaymentOverdue, qt.Equals, true)
+	c.Assert(result.SelfBilled, qt.Equals, true)
+	c.Assert(result.VoidedAt.Format(time.RFC3339), qt.Equals, "2022-09-14T16:35:31Z")
 	c.Assert(result.InvoiceType, qt.Equals, InvoiceType("subscription"))
 	c.Assert(result.Status, qt.Equals, InvoiceStatus("finalized"))
 	c.Assert(result.PaymentStatus, qt.Equals, InvoicePaymentStatus("succeeded"))
@@ -197,11 +203,14 @@ func assertInvoiceResponse(c *qt.C, result *Invoice) {
 	c.Assert(result.SubTotalExcludingTaxesAmountCents, qt.Equals, 100)
 	c.Assert(result.SubTotalIncludingTaxesAmountCents, qt.Equals, 120)
 	c.Assert(result.TotalAmountCents, qt.Equals, 100)
-	c.Assert(result.TotalDueAmountCents, qt.Equals, 0)
+	c.Assert(result.TotalDueAmountCents, qt.Equals, 40)
+	c.Assert(result.TotalPaidAmountCents, qt.Equals, 60)
+	c.Assert(result.TotalOffsettedCreditNoteAmountCents, qt.Equals, 10)
 	c.Assert(result.PrepaidCreditAmountCents, qt.Equals, 0)
 	c.Assert(result.ProgressiveBillingCreditAmountCents, qt.Equals, 0)
 	c.Assert(result.NetPaymentTerm, qt.Equals, 30)
 	c.Assert(result.FileURL, qt.Equals, "https://getlago.com/invoice/file")
+	c.Assert(result.XMLURL, qt.Equals, "https://getlago.com/invoice/file.xml")
 	c.Assert(result.WebURL, qt.Equals, "https://app.getlago.com/acme/customer/1a901a90-1a90-1a90-1a90-1a901a901a90/invoice/2b012b01-2b01-2b01-2b01-2b012b012b01/overview")
 	c.Assert(result.VersionNumber, qt.Equals, 3)
 
@@ -263,33 +272,30 @@ func TestInvoiceRequest_GetList(t *testing.T) {
 			MatchMethod("GET").
 			MatchPath("/api/v1/invoices").
 			MatchQuery(map[string]interface{}{
-				"per_page":              "10",
-				"page":                  "1",
-				"external_customer_id":  "CUSTOMER_1",
-				"invoice_type":          "subscription",
-				"status":                "finalized",
-				"payment_status":        "succeeded",
-				"issuing_date_from":     "2022-09-14T00:00:00Z",
-				"issuing_date_to":       "2022-09-14T23:59:59Z",
-				"amount_from":           "10",
-				"amount_to":             "1000",
-				"search_term":           "credit",
-				"billing_entity_ids[]":  []string{"1a901a90-1a90-1a90-1a90-1a901a901a90", "1a901a90-1a90-1a90-1a90-1a901a901a91"},
-				"currency":              "EUR",
-				"payment_overdue":       "true",
-				"partially_paid":        "true",
-				"self_billed":           "false",
-				"payment_dispute_lost":  "true",
-				"metadata[key1]":        "10",
-				"metadata[key2]":        "value2",
-				"purchase_order_number": "PO-123",
+				"per_page":               "10",
+				"page":                   "1",
+				"external_customer_id":   "CUSTOMER_1",
+				"invoice_type":           "subscription",
+				"status":                 "finalized",
+				"payment_status":         "succeeded",
+				"issuing_date_from":      "2022-09-14T00:00:00Z",
+				"issuing_date_to":        "2022-09-14T23:59:59Z",
+				"amount_from":            "10",
+				"amount_to":              "1000",
+				"search_term":            "credit",
+				"billing_entity_codes[]": []string{"acme_corp", "foo_bar"},
+				"settlements[]":          []string{"payment", "credit_note"},
+				"currency":               "EUR",
+				"payment_overdue":        "true",
+				"partially_paid":         "true",
+				"self_billed":            "false",
+				"payment_dispute_lost":   "true",
+				"metadata[key1]":         "10",
+				"metadata[key2]":         "value2",
+				"purchase_order_number":  "PO-123",
 			}).
 			MockResponse(mockInvoiceListResponse)
 		defer server.Close()
-
-		// selfBilled := false
-		entityUUID, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a90")
-		entityUUID2, _ := uuid.Parse("1a901a90-1a90-1a90-1a90-1a901a901a91")
 
 		result, err := server.Client().Invoice().GetList(context.Background(), &InvoiceListInput{
 			PerPage:             Ptr(10),
@@ -303,7 +309,8 @@ func TestInvoiceRequest_GetList(t *testing.T) {
 			AmountFrom:          Ptr(10),
 			AmountTo:            Ptr(1000),
 			SearchTerm:          "credit",
-			BillingEntityIDs:    []uuid.UUID{entityUUID, entityUUID2},
+			BillingEntityCodes:  []string{"acme_corp", "foo_bar"},
+			Settlements:         []InvoiceSettlementType{InvoiceSettlementPayment, InvoiceSettlementCreditNote},
 			Currency:            EUR,
 			PaymentOverdue:      Ptr(true),
 			PartiallyPaid:       Ptr(true),

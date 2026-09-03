@@ -13,6 +13,7 @@ type CreditNoteCreditStatus string
 type CreditNoteRefundStatus string
 type CreditNoteReason string
 type CreditNoteErrorCode string
+type CreditNoteType string
 
 const (
 	CreditNoteCreditStatusAvailable CreditNoteCreditStatus = "available"
@@ -33,6 +34,12 @@ const (
 	CreditNoteReasonOrderCancellation     CreditNoteReason = "order_cancellation"
 	CreditNoteReasonFraudulentCharge      CreditNoteReason = "fraudulent_charge"
 	CreditNoteReasonOther                 CreditNoteReason = "other"
+)
+
+const (
+	CreditNoteTypeCredit CreditNoteType = "credit"
+	CreditNoteTypeRefund CreditNoteType = "refund"
+	CreditNoteTypeOffset CreditNoteType = "offset"
 )
 
 const (
@@ -76,7 +83,7 @@ type CreditNoteListInput struct {
 	AmountTo   int `url:"amount_to,omitempty,string"`
 
 	SearchTerm          string                 `url:"search_term,omitempty"`
-	BillingEntityIDs    []uuid.UUID            `url:"billing_entity_ids[],omitempty"`
+	BillingEntityCodes  []string               `url:"billing_entity_codes[],omitempty"`
 	CreditStatus        CreditNoteCreditStatus `url:"credit_status,omitempty"`
 	Currency            Currency               `url:"currency,omitempty"`
 	InvoiceNumber       string                 `url:"invoice_number,omitempty"`
@@ -84,6 +91,7 @@ type CreditNoteListInput struct {
 	Reason              CreditNoteReason       `url:"reason,omitempty"`
 	RefundStatus        CreditNoteRefundStatus `url:"refund_status,omitempty"`
 	SelfBilled          *bool                  `url:"self_billed,omitempty,string"`
+	Types               []CreditNoteType       `url:"types[],omitempty"`
 }
 
 type CreditNoteItem struct {
