@@ -2,10 +2,10 @@ package lago
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
 
+	"github.com/google/go-querystring/query"
 	"github.com/google/uuid"
 )
 
@@ -20,11 +20,25 @@ type PaymentResult struct {
 }
 
 type PaymentListInput struct {
-	PerPage *int `json:"per_page,omitempty,string"`
-	Page    *int `json:"page,omitempty,string"`
+	PerPage *int `json:"per_page,omitempty,string" url:"per_page,omitempty"`
+	Page    *int `json:"page,omitempty,string" url:"page,omitempty"`
 
-	ExternalCustomerID string `json:"external_customer_id,omitempty"`
-	InvoiceID          string `json:"invoice_id,omitempty"`
+	ExternalCustomerID  string   `json:"external_customer_id,omitempty" url:"external_customer_id,omitempty"`
+	InvoiceID           string   `json:"invoice_id,omitempty" url:"invoice_id,omitempty"`
+	PaymentStatus       []string `json:"payment_status,omitempty" url:"payment_status[],omitempty"`
+	PaymentStatuses     []string `json:"payment_statuses,omitempty" url:"payment_statuses[],omitempty"`
+	AmountFrom          *int64   `json:"amount_from,omitempty" url:"amount_from,omitempty"`
+	AmountTo            *int64   `json:"amount_to,omitempty" url:"amount_to,omitempty"`
+	ReceiptNumber       string   `json:"receipt_number,omitempty" url:"receipt_number,omitempty"`
+	CreatedAtFrom       string   `json:"created_at_from,omitempty" url:"created_at_from,omitempty"`
+	CreatedAtTo         string   `json:"created_at_to,omitempty" url:"created_at_to,omitempty"`
+	PaymentProviderType []string `json:"payment_provider_type,omitempty" url:"payment_provider_type[],omitempty"`
+	PaymentMethodType   []string `json:"payment_method_type,omitempty" url:"payment_method_type[],omitempty"`
+	Currency            Currency `json:"currency,omitempty" url:"currency,omitempty"`
+	InvoiceNumber       string   `json:"invoice_number,omitempty" url:"invoice_number,omitempty"`
+	PaymentType         []string `json:"payment_type,omitempty" url:"payment_type[],omitempty"`
+	PayableType         []string `json:"payable_type,omitempty" url:"payable_type[],omitempty"`
+	SearchTerm          string   `json:"search_term,omitempty" url:"search_term,omitempty"`
 }
 
 type NextAction struct {
@@ -90,20 +104,15 @@ func (adr *ManualPaymentRequest) Get(ctx context.Context, paymentID string) (*Pa
 }
 
 func (ir *ManualPaymentRequest) GetList(ctx context.Context, paymentListInput *PaymentListInput) (*PaymentResult, *Error) {
-	jsonQueryParams, err := json.Marshal(paymentListInput)
+	urlValues, err := query.Values(paymentListInput)
 	if err != nil {
 		return nil, &Error{Err: err}
 	}
 
-	queryParams := make(map[string]string)
-	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
-		return nil, &Error{Err: err}
-	}
-
 	clientRequest := &ClientRequest{
-		Path:        "payments",
-		QueryParams: queryParams,
-		Result:      &PaymentResult{},
+		Path:      "payments",
+		UrlValues: urlValues,
+		Result:    &PaymentResult{},
 	}
 
 	result, clientErr := ir.client.Get(ctx, clientRequest)
