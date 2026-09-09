@@ -29,8 +29,8 @@ func TestPaymentListFilters(t *testing.T) {
 				"payment_status[]": {"succeeded", "failed"}, "payment_statuses[]": {"pending"},
 				"amount_from": {"0"}, "amount_to": {"9223372036854775807"}, "receipt_number": {"Rcpt & +/#1"},
 				"created_at_from": {"2026-09-01"}, "created_at_to": {"2026-09-07"},
-				"payment_provider_type[]": {"stripe", "gocardless"}, "payment_method_type[]": {"card", "sepa_debit"},
-				"currency": {"EUR"}, "invoice_number": {"LAG & +/#2"}, "payment_type[]": {"manual", "provider"},
+				"payment_provider_type[]": {"stripe", "gocardless"}, "currency": {"EUR"},
+				"invoice_number": {"LAG & +/#2"}, "payment_type[]": {"manual", "provider"},
 				"payable_type[]": {"Invoice", "PaymentRequest"}, "search_term": {"pi_3 & +/#"},
 			}
 			path := "/api/v1/payments"
@@ -54,14 +54,14 @@ func TestPaymentListFilters(t *testing.T) {
 				result, err = client.Customer().GetPaymentList(context.Background(), "cust_1", &CustomerPaymentListInput{
 					Page: &page, PerPage: &perPage, InvoiceID: want.Get("invoice_id"), PaymentStatus: want["payment_status[]"], PaymentStatuses: want["payment_statuses[]"],
 					AmountFrom: &from, AmountTo: &to, ReceiptNumber: want.Get("receipt_number"), CreatedAtFrom: want.Get("created_at_from"), CreatedAtTo: want.Get("created_at_to"),
-					PaymentProviderType: want["payment_provider_type[]"], PaymentMethodType: want["payment_method_type[]"], Currency: Currency("EUR"), InvoiceNumber: want.Get("invoice_number"),
+					PaymentProviderType: want["payment_provider_type[]"], Currency: Currency("EUR"), InvoiceNumber: want.Get("invoice_number"),
 					PaymentType: want["payment_type[]"], PayableType: want["payable_type[]"], SearchTerm: want.Get("search_term"),
 				})
 			} else {
 				result, err = client.Payment().GetList(context.Background(), &PaymentListInput{
 					Page: &page, PerPage: &perPage, ExternalCustomerID: "cust_1", InvoiceID: want.Get("invoice_id"), PaymentStatus: want["payment_status[]"], PaymentStatuses: want["payment_statuses[]"],
 					AmountFrom: &from, AmountTo: &to, ReceiptNumber: want.Get("receipt_number"), CreatedAtFrom: want.Get("created_at_from"), CreatedAtTo: want.Get("created_at_to"),
-					PaymentProviderType: want["payment_provider_type[]"], PaymentMethodType: want["payment_method_type[]"], Currency: Currency("EUR"), InvoiceNumber: want.Get("invoice_number"),
+					PaymentProviderType: want["payment_provider_type[]"], Currency: Currency("EUR"), InvoiceNumber: want.Get("invoice_number"),
 					PaymentType: want["payment_type[]"], PayableType: want["payable_type[]"], SearchTerm: want.Get("search_term"),
 				})
 			}

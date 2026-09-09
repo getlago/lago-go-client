@@ -33,7 +33,6 @@ type PaymentListInput struct {
 	CreatedAtFrom       string   `json:"created_at_from,omitempty" url:"created_at_from,omitempty"`
 	CreatedAtTo         string   `json:"created_at_to,omitempty" url:"created_at_to,omitempty"`
 	PaymentProviderType []string `json:"payment_provider_type,omitempty" url:"payment_provider_type[],omitempty"`
-	PaymentMethodType   []string `json:"payment_method_type,omitempty" url:"payment_method_type[],omitempty"`
 	Currency            Currency `json:"currency,omitempty" url:"currency,omitempty"`
 	InvoiceNumber       string   `json:"invoice_number,omitempty" url:"invoice_number,omitempty"`
 	PaymentType         []string `json:"payment_type,omitempty" url:"payment_type[],omitempty"`

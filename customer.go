@@ -422,7 +422,6 @@ type CustomerPaymentListInput struct {
 	CreatedAtFrom       string   `url:"created_at_from,omitempty"`
 	CreatedAtTo         string   `url:"created_at_to,omitempty"`
 	PaymentProviderType []string `url:"payment_provider_type[],omitempty"`
-	PaymentMethodType   []string `url:"payment_method_type[],omitempty"`
 	Currency            Currency `url:"currency,omitempty"`
 	InvoiceNumber       string   `url:"invoice_number,omitempty"`
 	PaymentType         []string `url:"payment_type[],omitempty"`
