@@ -429,7 +429,20 @@ type CustomerPaymentListInput struct {
 	PerPage *int `url:"per_page,omitempty,string"`
 	Page    *int `url:"page,omitempty,string"`
 
-	InvoiceID string `url:"invoice_id,omitempty"`
+	InvoiceID           string   `url:"invoice_id,omitempty"`
+	PaymentStatus       []string `url:"payment_status[],omitempty"`
+	PaymentStatuses     []string `url:"payment_statuses[],omitempty"`
+	AmountFrom          *int64   `url:"amount_from,omitempty"`
+	AmountTo            *int64   `url:"amount_to,omitempty"`
+	ReceiptNumber       string   `url:"receipt_number,omitempty"`
+	CreatedAtFrom       string   `url:"created_at_from,omitempty"`
+	CreatedAtTo         string   `url:"created_at_to,omitempty"`
+	PaymentProviderType []string `url:"payment_provider_type[],omitempty"`
+	Currency            Currency `url:"currency,omitempty"`
+	InvoiceNumber       string   `url:"invoice_number,omitempty"`
+	PaymentType         []string `url:"payment_type[],omitempty"`
+	PayableType         []string `url:"payable_type[],omitempty"`
+	SearchTerm          string   `url:"search_term,omitempty"`
 }
 
 type CustomerPaymentRequestListInput struct {
