@@ -120,6 +120,7 @@ const (
 	SZL Currency = "SZL"
 	THB Currency = "THB"
 	TJS Currency = "TJS"
+	TND Currency = "TND"
 	TOP Currency = "TOP"
 	TRY Currency = "TRY"
 	TTD Currency = "TTD"
