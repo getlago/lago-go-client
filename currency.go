@@ -117,6 +117,7 @@ const (
 	SOS Currency = "SOS"
 	SRD Currency = "SRD"
 	STD Currency = "STD"
+	SYP Currency = "SYP"
 	SZL Currency = "SZL"
 	THB Currency = "THB"
 	TJS Currency = "TJS"
