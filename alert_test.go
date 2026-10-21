@@ -2,7 +2,9 @@ package lago_test
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
+	"time"
 
 	qt "github.com/frankban/quicktest"
 	. "github.com/getlago/lago-go-client"
@@ -351,5 +353,94 @@ func TestAlertRequest_DeleteAllWithStatus(t *testing.T) {
 
 		err := server.Client().Alert().DeleteAll(context.Background(), "sub_1234", "pending")
 		c.Assert(err == nil, qt.IsTrue)
+	})
+}
+
+func TestResolvedAlert_Unmarshal(t *testing.T) {
+	t.Run("When the alert is attached to a subscription", func(t *testing.T) {
+		c := qt.New(t)
+
+		payload := `{
+			"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			"lago_organization_id": "2b902b90-2b90-2b90-2b90-2b902b902b90",
+			"lago_alert_id": "3c903c90-3c90-3c90-3c90-3c903c903c90",
+			"lago_subscription_id": "4d904d90-4d90-4d90-4d90-4d904d904d90",
+			"external_subscription_id": "sub_1234567890",
+			"lago_wallet_id": null,
+			"external_customer_id": "cust_1234567890",
+			"billable_metric_code": "storage_usage",
+			"alert_type": "billable_metric_current_usage_amount",
+			"alert_code": "storage_threshold_alert",
+			"alert_name": "Storage Usage Alert",
+			"current_value": "700.0",
+			"previous_value": "1200.0",
+			"recovered_thresholds": [
+				{"code": "warn", "value": "1000.0", "recurring": false, "notify_on": ["triggered", "resolved"]}
+			],
+			"in_alarm_thresholds": ["warning"],
+			"fully_resolved": false,
+			"reason": "recovered",
+			"resolved_at": "2025-05-19T10:04:21Z"
+		}`
+
+		var resolved ResolvedAlert
+		err := json.Unmarshal([]byte(payload), &resolved)
+		c.Assert(err, qt.IsNil)
+
+		c.Assert(resolved.LagoID.String(), qt.Equals, "1a901a90-1a90-1a90-1a90-1a901a901a90")
+		c.Assert(resolved.LagoAlertID.String(), qt.Equals, "3c903c90-3c90-3c90-3c90-3c903c903c90")
+		c.Assert(resolved.LagoSubscriptionID.String(), qt.Equals, "4d904d90-4d90-4d90-4d90-4d904d904d90")
+		c.Assert(*resolved.ExternalSubscriptionID, qt.Equals, "sub_1234567890")
+		c.Assert(resolved.LagoWalletID, qt.IsNil)
+		c.Assert(resolved.ExternalCustomerID, qt.Equals, "cust_1234567890")
+		c.Assert(*resolved.BillableMetricCode, qt.Equals, "storage_usage")
+		c.Assert(resolved.AlertType, qt.Equals, BillableMetricCurrentUsageAmountAlertType)
+		c.Assert(*resolved.AlertName, qt.Equals, "Storage Usage Alert")
+		c.Assert(resolved.CurrentValue, qt.Equals, "700.0")
+		c.Assert(resolved.PreviousValue, qt.Equals, "1200.0")
+		c.Assert(resolved.RecoveredThresholds, qt.HasLen, 1)
+		c.Assert(resolved.RecoveredThresholds[0].NotifyOn, qt.DeepEquals, []string{"triggered", "resolved"})
+		c.Assert(resolved.InAlarmThresholds, qt.DeepEquals, []string{"warning"})
+		c.Assert(resolved.FullyResolved, qt.IsFalse)
+		c.Assert(resolved.Reason, qt.Equals, AlertResolutionReasonRecovered)
+		c.Assert(resolved.ResolvedAt.Format(time.RFC3339), qt.Equals, "2025-05-19T10:04:21Z")
+	})
+
+	t.Run("When the alert is attached to a wallet", func(t *testing.T) {
+		c := qt.New(t)
+
+		payload := `{
+			"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			"lago_organization_id": "2b902b90-2b90-2b90-2b90-2b902b902b90",
+			"lago_alert_id": "3c903c90-3c90-3c90-3c90-3c903c903c90",
+			"lago_subscription_id": null,
+			"external_subscription_id": null,
+			"lago_wallet_id": "5e905e90-5e90-5e90-5e90-5e905e905e90",
+			"external_customer_id": "cust_1234567890",
+			"billable_metric_code": null,
+			"alert_type": "wallet_balance_amount",
+			"alert_code": "wallet_balance_alert",
+			"alert_name": null,
+			"current_value": "50.0",
+			"previous_value": "10.0",
+			"recovered_thresholds": [],
+			"in_alarm_thresholds": [],
+			"fully_resolved": true,
+			"reason": "threshold_removed",
+			"resolved_at": "2025-05-19T10:04:21Z"
+		}`
+
+		var resolved ResolvedAlert
+		err := json.Unmarshal([]byte(payload), &resolved)
+		c.Assert(err, qt.IsNil)
+
+		c.Assert(resolved.LagoSubscriptionID, qt.IsNil)
+		c.Assert(resolved.ExternalSubscriptionID, qt.IsNil)
+		c.Assert(resolved.LagoWalletID.String(), qt.Equals, "5e905e90-5e90-5e90-5e90-5e905e905e90")
+		c.Assert(resolved.BillableMetricCode, qt.IsNil)
+		c.Assert(resolved.AlertName, qt.IsNil)
+		c.Assert(resolved.AlertType, qt.Equals, WalletBalanceAmountAlertType)
+		c.Assert(resolved.FullyResolved, qt.IsTrue)
+		c.Assert(resolved.Reason, qt.Equals, AlertResolutionReasonThresholdRemoved)
 	})
 }
