@@ -21,9 +21,12 @@ type AttributedUsageInput struct {
 	// GroupBy is the code of the usage attribution type to group the usage by.
 	GroupBy string
 	// Filters maps usage attribution type codes to the values to filter on.
-	Filters         map[string][]string
-	FromDatetime    string
-	ToDatetime      string
+	// Each filter must have at least one value.
+	Filters      map[string][]string
+	FromDatetime string
+	ToDatetime   string
+	// ChargeCodes restricts the usage to the given charges. A nil slice selects
+	// all charges; an empty non-nil slice is rejected.
 	ChargeCodes     []string
 	SplitChargeCode string
 	SearchTerm      string
@@ -51,8 +54,8 @@ type AttributedUsage struct {
 }
 
 type AttributedUsageAggregate struct {
-	AmountCents        int                          `json:"amount_cents"`
-	PreciseAmountCents string                       `json:"precise_amount_cents,omitempty"`
+	AmountCents        *int                         `json:"amount_cents"`
+	PreciseAmountCents *string                      `json:"precise_amount_cents"`
 	EventsCount        int                          `json:"events_count"`
 	ChargesUsage       []AttributedUsageChargeUsage `json:"charges_usage,omitempty"`
 }
@@ -71,8 +74,8 @@ type AttributedUsageChargeUsage struct {
 	ChargeFilterValues             map[string][]string `json:"charge_filter_values,omitempty"`
 	ChargeFilterInvoiceDisplayName *string             `json:"charge_filter_invoice_display_name,omitempty"`
 	Units                          string              `json:"units,omitempty"`
-	AmountCents                    int                 `json:"amount_cents"`
-	PreciseAmountCents             string              `json:"precise_amount_cents,omitempty"`
+	AmountCents                    *int                `json:"amount_cents"`
+	PreciseAmountCents             *string             `json:"precise_amount_cents"`
 	EventsCount                    int                 `json:"events_count"`
 }
 
@@ -84,6 +87,9 @@ func (cr *CustomerRequest) AttributedUsage(ctx context.Context, externalCustomer
 	urlValues.Set("group_by", attributedUsageInput.GroupBy)
 
 	for k, values := range attributedUsageInput.Filters {
+		if len(values) == 0 {
+			return nil, &Error{Err: fmt.Errorf("attributed usage filter %q requires at least one value", k)}
+		}
 		for _, v := range values {
 			urlValues.Add(fmt.Sprintf("filters[%s][]", k), v)
 		}
@@ -93,6 +99,9 @@ func (cr *CustomerRequest) AttributedUsage(ctx context.Context, externalCustomer
 	}
 	if attributedUsageInput.ToDatetime != "" {
 		urlValues.Set("to_datetime", attributedUsageInput.ToDatetime)
+	}
+	if attributedUsageInput.ChargeCodes != nil && len(attributedUsageInput.ChargeCodes) == 0 {
+		return nil, &Error{Err: fmt.Errorf("attributed usage charge codes require at least one value")}
 	}
 	for _, code := range attributedUsageInput.ChargeCodes {
 		urlValues.Add("charge_codes[]", code)

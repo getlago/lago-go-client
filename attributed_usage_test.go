@@ -42,8 +42,8 @@ var mockAttributedUsageResponse = map[string]any{
 			},
 		},
 		"unattributed": map[string]any{
-			"amount_cents":         0,
-			"precise_amount_cents": "0.0",
+			"amount_cents":         nil,
+			"precise_amount_cents": nil,
 			"events_count":         0,
 			"charges_usage":        []map[string]any{},
 		},
@@ -74,6 +74,27 @@ func TestCustomerRequest_AttributedUsage(t *testing.T) {
 		})
 		c.Assert(result, qt.IsNil)
 		c.Assert(err, qt.IsNotNil)
+	})
+
+	t.Run("When a filter or the charge codes are empty", func(t *testing.T) {
+		c := qt.New(t)
+
+		client := New().SetBaseURL("http://localhost:88888").SetApiKey("test_api_key")
+		result, err := client.Customer().AttributedUsage(context.Background(), "cust_1234", &AttributedUsageInput{
+			ExternalSubscriptionID: "sub_1234",
+			GroupBy:                "team",
+			Filters:                map[string][]string{"model": {}},
+		})
+		c.Assert(result, qt.IsNil)
+		c.Assert(err.Err, qt.ErrorMatches, `attributed usage filter "model" requires at least one value`)
+
+		result, err = client.Customer().AttributedUsage(context.Background(), "cust_1234", &AttributedUsageInput{
+			ExternalSubscriptionID: "sub_1234",
+			GroupBy:                "team",
+			ChargeCodes:            []string{},
+		})
+		c.Assert(result, qt.IsNil)
+		c.Assert(err.Err, qt.ErrorMatches, "attributed usage charge codes require at least one value")
 	})
 
 	t.Run("When all parameters are provided", func(t *testing.T) {
@@ -125,7 +146,7 @@ func TestCustomerRequest_AttributedUsage(t *testing.T) {
 		c.Assert(usage.Rows, qt.HasLen, 1)
 		c.Assert(usage.Rows[0].Value, qt.Equals, "eng")
 		c.Assert(usage.Rows[0].Rank, qt.Equals, 1)
-		c.Assert(usage.Rows[0].PreciseAmountCents, qt.Equals, "75000.5")
+		c.Assert(*usage.Rows[0].PreciseAmountCents, qt.Equals, "75000.5")
 		c.Assert(usage.Rows[0].ChargesUsage, qt.HasLen, 1)
 
 		chargeUsage := usage.Rows[0].ChargesUsage[0]
@@ -134,10 +155,12 @@ func TestCustomerRequest_AttributedUsage(t *testing.T) {
 		c.Assert(chargeUsage.ChargeFilterValues, qt.DeepEquals, map[string][]string{"model": {"opus"}})
 		c.Assert(*chargeUsage.ChargeFilterInvoiceDisplayName, qt.Equals, "Opus")
 		c.Assert(chargeUsage.Units, qt.Equals, "1000.0")
-		c.Assert(chargeUsage.AmountCents, qt.Equals, 50001)
+		c.Assert(*chargeUsage.AmountCents, qt.Equals, 50001)
 
+		c.Assert(usage.Unattributed.AmountCents, qt.IsNil)
+		c.Assert(usage.Unattributed.PreciseAmountCents, qt.IsNil)
 		c.Assert(usage.Unattributed.EventsCount, qt.Equals, 0)
-		c.Assert(usage.Totals.AmountCents, qt.Equals, 75001)
+		c.Assert(*usage.Totals.AmountCents, qt.Equals, 75001)
 		c.Assert(result.Meta.TotalCount, qt.Equals, 1)
 	})
 }
