@@ -928,3 +928,19 @@ func TestSubscriptionRequest_GetList(t *testing.T) {
 		c.Assert(firstSubscription.ExternalID, qt.Equals, "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba")
 	})
 }
+
+func TestSubscriptionRequest_GetFixedCharge(t *testing.T) {
+	c := qt.New(t)
+
+	server := lt.NewMockServer(c).
+		MatchMethod("GET").
+		MatchPath("/api/v1/subscriptions/sub-123/fixed_charges/licenses").
+		MockResponse(map[string]any{
+			"fixed_charge": map[string]any{"code": "licenses", "units": "3.0"},
+		})
+	defer server.Close()
+
+	result, err := server.Client().Subscription().GetFixedCharge(context.Background(), "sub-123", "licenses")
+	c.Assert(err == nil, qt.IsTrue)
+	c.Assert(result.Units, qt.Equals, "3.0")
+}
