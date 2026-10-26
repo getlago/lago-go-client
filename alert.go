@@ -21,6 +21,14 @@ const (
 	WalletCreditsOngoingBalanceAlertType      AlertType = "wallet_credits_ongoing_balance"
 )
 
+type AlertResolutionReason string
+
+const (
+	AlertResolutionReasonRecovered        AlertResolutionReason = "recovered"
+	AlertResolutionReasonThresholdUpdated AlertResolutionReason = "threshold_updated"
+	AlertResolutionReasonThresholdRemoved AlertResolutionReason = "threshold_removed"
+)
+
 type AlertRequest struct {
 	client *Client
 }
@@ -53,9 +61,10 @@ type AlertListInput struct {
 }
 
 type AlertThreshold struct {
-	Code      string `json:"code,omitempty"`
-	Value     string `json:"value"`
-	Recurring bool   `json:"recurring,omitempty"`
+	Code      string   `json:"code,omitempty"`
+	Value     string   `json:"value"`
+	Recurring bool     `json:"recurring,omitempty"`
+	NotifyOn  []string `json:"notify_on,omitempty"`
 }
 
 type Alert struct {
@@ -89,6 +98,28 @@ type TriggeredAlert struct {
 	LastProcessedAt        *time.Time       `json:"last_processed_at"`
 	CrossedThresholds      []AlertThreshold `json:"crossed_thresholds"`
 	TriggeredAt            time.Time        `json:"triggered_at"`
+}
+
+// ResolvedAlert Object returned by the alert.resolved webhook.
+type ResolvedAlert struct {
+	LagoID                 uuid.UUID             `json:"lago_id"`
+	LagoOrganizationID     uuid.UUID             `json:"lago_organization_id"`
+	LagoAlertID            uuid.UUID             `json:"lago_alert_id"`
+	LagoSubscriptionID     *uuid.UUID            `json:"lago_subscription_id"`
+	ExternalSubscriptionID *string               `json:"external_subscription_id"`
+	LagoWalletID           *uuid.UUID            `json:"lago_wallet_id"`
+	ExternalCustomerID     string                `json:"external_customer_id"`
+	BillableMetricCode     *string               `json:"billable_metric_code"`
+	AlertType              AlertType             `json:"alert_type"`
+	AlertCode              string                `json:"alert_code"`
+	AlertName              *string               `json:"alert_name"`
+	CurrentValue           string                `json:"current_value"`
+	PreviousValue          string                `json:"previous_value"`
+	RecoveredThresholds    []AlertThreshold      `json:"recovered_thresholds"`
+	InAlarmThresholds      []string              `json:"in_alarm_thresholds"`
+	FullyResolved          bool                  `json:"fully_resolved"`
+	Reason                 AlertResolutionReason `json:"reason"`
+	ResolvedAt             time.Time             `json:"resolved_at"`
 }
 
 func (c *Client) Alert() *AlertRequest {
