@@ -45,7 +45,7 @@ type FixedCharge struct {
 	PayInAdvance       bool                   `json:"pay_in_advance"`
 	Prorated           bool                   `json:"prorated"`
 	Properties         *FixedChargeProperties `json:"properties"`
-	Units              float64                `json:"units"`
+	Units              string                 `json:"units"`
 	LagoParentID       *uuid.UUID             `json:"lago_parent_id,omitempty"`
 	Taxes              []Tax                  `json:"taxes,omitempty"`
 }
