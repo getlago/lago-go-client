@@ -452,6 +452,27 @@ func TestWalletTransactionRequest_GetList(t *testing.T) {
 		c.Assert(result.WalletTransactions, qt.HasLen, 1)
 	})
 
+	t.Run("When several metadata filters are provided", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/wallets/1a901a90-1a90-1a90-1a90-1a901a901a90/wallet_transactions").
+			MatchQuery("wallet_id=1a901a90-1a90-1a90-1a90-1a901a901a90" +
+				"&metadata[a]=1" +
+				"&metadata[b]=2").
+			MockResponse(mockWalletTransactionListResponse)
+		defer server.Close()
+
+		result, err := server.Client().WalletTransaction().GetList(context.Background(), &WalletTransactionListInput{
+			WalletID: "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			Metadata: WalletTransactionListInputMetadata{"a": "1", "b": "2"},
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.WalletTransactions, qt.HasLen, 1)
+		c.Assert(result.WalletTransactions[0].LagoID, qt.Equals, uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"))
+	})
+
 	t.Run("When the metadata filter is empty", func(t *testing.T) {
 		c := qt.New(t)
 
