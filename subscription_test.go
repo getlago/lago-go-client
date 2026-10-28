@@ -3,6 +3,7 @@ package lago_test
 import (
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 
 	qt "github.com/frankban/quicktest"
@@ -967,6 +968,33 @@ func TestSubscriptionRequest_UpdateWithProgressiveBilling(t *testing.T) {
 
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(subscription.ProgressiveBillingDisabled, qt.IsTrue)
+	})
+}
+
+func TestSubscriptionRequest_GetProgressiveBillingDisabled(t *testing.T) {
+	t.Run("When the response has progressive_billing_disabled false or missing", func(t *testing.T) {
+		responses := map[string]string{
+			"false":   strings.Replace(mockSubscriptionResponse, `"progressive_billing_disabled": true,`, `"progressive_billing_disabled": false,`, 1),
+			"missing": strings.Replace(mockSubscriptionResponse, `"progressive_billing_disabled": true,`, "", 1),
+		}
+
+		for title, response := range responses {
+			t.Run(title, func(t *testing.T) {
+				c := qt.New(t)
+				c.Assert(response, qt.Not(qt.Equals), mockSubscriptionResponse)
+
+				server := lt.NewMockServer(c).
+					MatchMethod("GET").
+					MatchPath("/api/v1/subscriptions/my_sub_1").
+					MockResponse(response)
+				defer server.Close()
+
+				subscription, err := server.Client().Subscription().Get(context.Background(), "my_sub_1")
+
+				c.Assert(err == nil, qt.IsTrue)
+				c.Assert(subscription.ProgressiveBillingDisabled, qt.IsFalse)
+			})
+		}
 	})
 }
 
