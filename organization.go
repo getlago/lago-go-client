@@ -3,6 +3,8 @@ package lago
 import (
 	"context"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type OrganizationDocumentNumbering string
@@ -41,6 +43,8 @@ type OrganizationBillingConfiguration struct {
 
 type OrganizationInput struct {
 	Name string `json:"name,omitempty"`
+	// Slug is stripped and lowercased by the API.
+	Slug string `json:"slug,omitempty"`
 
 	Email                     string                        `json:"email,omitempty"`
 	AddressLine1              string                        `json:"address_line1,omitempty"`
@@ -69,7 +73,9 @@ type OrganizationResult struct {
 }
 
 type Organization struct {
-	Name string `json:"name,omitempty"`
+	LagoID uuid.UUID `json:"lago_id"`
+	Name   string    `json:"name,omitempty"`
+	Slug   string    `json:"slug"`
 
 	Email                     string                        `json:"email,omitempty"`
 	AddressLine1              string                        `json:"address_line1,omitempty"`
