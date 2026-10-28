@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/url"
 	"time"
 
+	"github.com/google/go-querystring/query"
 	"github.com/google/uuid"
 )
 
@@ -37,13 +39,24 @@ type WalletTransactionRequest struct {
 	client *Client
 }
 
+type WalletTransactionListInputMetadata map[string]string
+
+func (m WalletTransactionListInputMetadata) EncodeValues(key string, values *url.Values) error {
+	for k, v := range m {
+		metadataKey := fmt.Sprintf("metadata[%s]", k)
+		values.Set(metadataKey, fmt.Sprintf("%v", v))
+	}
+	return nil
+}
+
 type WalletTransactionListInput struct {
-	PerPage           *int                    `json:"per_page,omitempty,string"`
-	Page              *int                    `json:"page,omitempty,string"`
-	WalletID          string                  `json:"wallet_id,omitempty"`
-	Status            WalletTransactionStatus `json:"status,omitempty"`
-	TransactionStatus TransactionStatus       `json:"transaction_status,omitempty"`
-	TransactionType   TransactionType         `json:"transaction_type,omitempty"`
+	PerPage           *int                               `url:"per_page,omitempty"`
+	Page              *int                               `url:"page,omitempty"`
+	WalletID          string                             `url:"wallet_id,omitempty"`
+	Status            WalletTransactionStatus            `url:"status,omitempty"`
+	TransactionStatus TransactionStatus                  `url:"transaction_status,omitempty"`
+	TransactionType   TransactionType                    `url:"transaction_type,omitempty"`
+	Metadata          WalletTransactionListInputMetadata `url:"metadata,omitempty"`
 }
 
 type WalletTransactionPaginationInput struct {
@@ -67,6 +80,9 @@ type WalletTransactionInput struct {
 	PurchaseOrderNumber              *string                     `json:"purchase_order_number,omitempty"`
 	PaymentMethod                    *PaymentMethodInput         `json:"payment_method,omitempty"`
 	InvoiceCustomSection             *InvoiceCustomSectionInput  `json:"invoice_custom_section,omitempty"`
+	// Priority is accepted by the API from 1 to 50.
+	Priority            *int    `json:"priority,omitempty"`
+	VoidedTransactionID *string `json:"voided_transaction_id,omitempty"`
 }
 
 type WalletTransactionMetadata struct {
@@ -169,21 +185,16 @@ func (wtr *WalletTransactionRequest) Create(ctx context.Context, walletTransacti
 }
 
 func (wtr *WalletTransactionRequest) GetList(ctx context.Context, walletTransactionListInput *WalletTransactionListInput) (*WalletTransactionResult, *Error) {
-	jsonQueryParams, err := json.Marshal(walletTransactionListInput)
+	urlValues, err := query.Values(walletTransactionListInput)
 	if err != nil {
-		return nil, &Error{Err: err}
-	}
-
-	queryParams := make(map[string]string)
-	if err = json.Unmarshal(jsonQueryParams, &queryParams); err != nil {
 		return nil, &Error{Err: err}
 	}
 
 	subPath := fmt.Sprintf("%s/%s/%s", "wallets", walletTransactionListInput.WalletID, "wallet_transactions")
 	clientRequest := &ClientRequest{
-		Path:        subPath,
-		QueryParams: queryParams,
-		Result:      &WalletTransactionResult{},
+		Path:      subPath,
+		UrlValues: urlValues,
+		Result:    &WalletTransactionResult{},
 	}
 
 	result, clientErr := wtr.client.Get(ctx, clientRequest)
