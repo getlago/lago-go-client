@@ -118,11 +118,15 @@ type Plan struct {
 	Charges                 []Charge           `json:"charges,omitempty"`
 	FixedCharges            []FixedCharge      `json:"fixed_charges,omitempty"`
 	MinimumCommitment       *MinimumCommitment `json:"minimum_commitment"`
+	TrialPeriod             *float32           `json:"trial_period"`
+	PendingDeletion         bool               `json:"pending_deletion"`
+	CreatedAt               time.Time          `json:"created_at"`
 
-	Taxes           []Tax             `json:"taxes,omitempty"`
-	UsageThresholds []UsageThreshold  `json:"usage_thresholds,omitempty"`
-	Entitlements    []PlanEntitlement `json:"entitlements,omitempty"`
-	Metadata        map[string]string `json:"metadata,omitempty"`
+	Taxes                     []Tax                      `json:"taxes,omitempty"`
+	UsageThresholds           []UsageThreshold           `json:"usage_thresholds,omitempty"`
+	ApplicableUsageThresholds []ApplicableUsageThreshold `json:"applicable_usage_thresholds,omitempty"`
+	Entitlements              []PlanEntitlement          `json:"entitlements,omitempty"`
+	Metadata                  map[string]string          `json:"metadata,omitempty"`
 }
 
 func (c *Client) Plan() *PlanRequest {
