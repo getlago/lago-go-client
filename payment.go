@@ -38,18 +38,26 @@ type RedirectToURL struct {
 }
 
 type Payment struct {
-	LagoID             uuid.UUID   `json:"lago_id,omitempty"`
-	AmountCurrency     Currency    `json:"amount_currency,omitempty"`
-	AmountCents        int         `json:"amount_cents,omitempty"`
-	PaymentStatus      string      `json:"payment_status,omitempty"`
-	Type               string      `json:"type,omitempty"`
-	Reference          string      `json:"reference,omitempty"`
-	ExternalPaymentID  string      `json:"external_payment_id,omitempty"`
-	CreatedAt          time.Time   `json:"created_at,omitempty"`
-	InvoiceIds         []string    `json:"invoice_ids,omitempty"`
-	InvoiceNumbers     []string    `json:"invoice_numbers,omitempty"`
-	ExternalCustomerID string      `json:"external_customer_id,omitempty"`
-	NextAction         *NextAction `json:"next_action,omitempty"`
+	LagoID              uuid.UUID   `json:"lago_id,omitempty"`
+	LagoCustomerID      uuid.UUID   `json:"lago_customer_id"`
+	LagoPayableID       uuid.UUID   `json:"lago_payable_id"`
+	PayableType         string      `json:"payable_type"`
+	AmountCurrency      Currency    `json:"amount_currency,omitempty"`
+	AmountCents         int         `json:"amount_cents,omitempty"`
+	Status              string      `json:"status"`
+	PaymentStatus       string      `json:"payment_status,omitempty"`
+	Type                string      `json:"type,omitempty"`
+	Reference           string      `json:"reference,omitempty"`
+	PaymentProviderCode *string     `json:"payment_provider_code"`
+	PaymentProviderType *string     `json:"payment_provider_type"`
+	ProviderPaymentID   *string     `json:"provider_payment_id"`
+	ProviderCustomerID  *string     `json:"provider_customer_id"`
+	ExternalPaymentID   string      `json:"external_payment_id,omitempty"`
+	CreatedAt           time.Time   `json:"created_at,omitempty"`
+	InvoiceIds          []string    `json:"invoice_ids,omitempty"`
+	InvoiceNumbers      []string    `json:"invoice_numbers,omitempty"`
+	ExternalCustomerID  string      `json:"external_customer_id,omitempty"`
+	NextAction          *NextAction `json:"next_action,omitempty"`
 }
 
 type PaymentParams struct {
