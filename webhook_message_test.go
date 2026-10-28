@@ -523,3 +523,23 @@ func TestWebhookMessage_ParseWebhook_InvalidObjectJSON(t *testing.T) {
 
 	c.Assert(err, qt.IsNotNil)
 }
+
+func TestWebhookMessage_ParseWebhook_AlertTriggered(t *testing.T) {
+	c := qt.New(t)
+
+	jsonData, err := os.ReadFile("testing/fixtures/webhooks/alert_triggered.json")
+	c.Assert(err, qt.IsNil)
+
+	msg, err := ParseWebhook(jsonData)
+	c.Assert(err, qt.IsNil)
+
+	triggered, ok := msg.Object.(*TriggeredAlert)
+	c.Assert(ok, qt.IsTrue)
+	c.Assert(*triggered.ExternalSubscriptionID, qt.Equals, "ext-id")
+	c.Assert(triggered.LagoWalletID, qt.IsNil)
+	c.Assert(triggered.ExternalCustomerID, qt.Equals, "cust-ext-id")
+	c.Assert(triggered.AlertType, qt.Equals, CurrentUsageAmountAlertType)
+	c.Assert(triggered.CrossedThresholds, qt.HasLen, 2)
+	c.Assert(*triggered.CrossedThresholds[1].Code, qt.Equals, "repeat")
+	c.Assert(triggered.CrossedThresholds[1].Recurring, qt.IsTrue)
+}
