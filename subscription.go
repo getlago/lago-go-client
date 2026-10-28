@@ -144,6 +144,12 @@ type SubscriptionInput struct {
 	BillingEntityCode    string                            `json:"billing_entity_code,omitempty"`
 	PurchaseOrderNumber  *string                           `json:"purchase_order_number,omitempty"`
 	ActivationRules      []SubscriptionActivationRuleInput `json:"activation_rules,omitempty"`
+	// ProgressiveBillingDisabled is a pointer so that false can be sent.
+	ProgressiveBillingDisabled *bool `json:"progressive_billing_disabled,omitempty"`
+	// UsageThresholds are the subscription's own progressive billing thresholds.
+	// On create, the API rejects them together with PlanOverrides.UsageThresholds.
+	// An empty slice is not sent.
+	UsageThresholds []UsageThresholdInput `json:"usage_thresholds,omitempty"`
 }
 
 type SubscriptionsInput struct {
@@ -193,6 +199,8 @@ type Subscription struct {
 	OnTerminationInvoice    OnTerminationInvoice    `json:"on_termination_invoice,omitempty"`
 	ConsolidateInvoice      bool                    `json:"consolidate_invoice"`
 	PurchaseOrderNumber     *string                 `json:"purchase_order_number,omitempty"`
+
+	ProgressiveBillingDisabled bool `json:"progressive_billing_disabled"`
 
 	PreviousPlanCode  string `json:"previous_plan_code"`
 	NextPlanCode      string `json:"next_plan_code"`
