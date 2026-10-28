@@ -29,10 +29,13 @@ type AttributedUsageInput struct {
 	// all charges; an empty non-nil slice is rejected.
 	ChargeCodes     []string
 	SplitChargeCode string
-	SearchTerm      string
-	Basis           AttributedUsageBasis
-	Page            *int
-	PerPage         *int
+	// SplitFiltersOffset selects the page of the split charge's filters,
+	// returned 10 at a time.
+	SplitFiltersOffset *int
+	SearchTerm         string
+	Basis              AttributedUsageBasis
+	Page               *int
+	PerPage            *int
 }
 
 type AttributedUsageResult struct {
@@ -48,6 +51,7 @@ type AttributedUsage struct {
 	FromDatetime           string                   `json:"from_datetime,omitempty"`
 	ToDatetime             string                   `json:"to_datetime,omitempty"`
 	Currency               Currency                 `json:"currency,omitempty"`
+	SplitFiltersCount      *int                     `json:"split_filters_count"`
 	Rows                   []AttributedUsageRow     `json:"rows,omitempty"`
 	Unattributed           AttributedUsageAggregate `json:"unattributed,omitempty"`
 	Totals                 AttributedUsageAggregate `json:"totals,omitempty"`
@@ -108,6 +112,9 @@ func (cr *CustomerRequest) AttributedUsage(ctx context.Context, externalCustomer
 	}
 	if attributedUsageInput.SplitChargeCode != "" {
 		urlValues.Set("split_charge_code", attributedUsageInput.SplitChargeCode)
+	}
+	if attributedUsageInput.SplitFiltersOffset != nil {
+		urlValues.Set("split_filters_offset", strconv.Itoa(*attributedUsageInput.SplitFiltersOffset))
 	}
 	if attributedUsageInput.SearchTerm != "" {
 		urlValues.Set("search_term", attributedUsageInput.SearchTerm)

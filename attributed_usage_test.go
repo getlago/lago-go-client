@@ -18,6 +18,7 @@ var mockAttributedUsageResponse = map[string]any{
 		"from_datetime":            "2026-09-01T00:00:00Z",
 		"to_datetime":              "2026-09-30T23:59:59Z",
 		"currency":                 "EUR",
+		"split_filters_count":      12,
 		"rows": []map[string]any{
 			{
 				"value":                "eng",
@@ -112,6 +113,7 @@ func TestCustomerRequest_AttributedUsage(t *testing.T) {
 				"to_datetime":              "2026-09-30T23:59:59Z",
 				"charge_codes[]":           []string{"tokens_charge", "seats_charge"},
 				"split_charge_code":        "tokens_charge",
+				"split_filters_offset":     "10",
 				"search_term":              "eng",
 				"basis":                    "amount",
 				"page":                     "2",
@@ -120,7 +122,7 @@ func TestCustomerRequest_AttributedUsage(t *testing.T) {
 			MockResponse(mockAttributedUsageResponse)
 		defer server.Close()
 
-		page, perPage := 2, 50
+		splitFiltersOffset, page, perPage := 10, 2, 50
 		result, err := server.Client().Customer().AttributedUsage(context.Background(), "cust_1234", &AttributedUsageInput{
 			ExternalSubscriptionID: "sub_1234",
 			GroupBy:                "team",
@@ -128,14 +130,15 @@ func TestCustomerRequest_AttributedUsage(t *testing.T) {
 				"department": {"rnd"},
 				"model":      {"opus", "haiku"},
 			},
-			FromDatetime:    "2026-09-01T00:00:00Z",
-			ToDatetime:      "2026-09-30T23:59:59Z",
-			ChargeCodes:     []string{"tokens_charge", "seats_charge"},
-			SplitChargeCode: "tokens_charge",
-			SearchTerm:      "eng",
-			Basis:           AttributedUsageBasisAmount,
-			Page:            &page,
-			PerPage:         &perPage,
+			FromDatetime:       "2026-09-01T00:00:00Z",
+			ToDatetime:         "2026-09-30T23:59:59Z",
+			ChargeCodes:        []string{"tokens_charge", "seats_charge"},
+			SplitChargeCode:    "tokens_charge",
+			SplitFiltersOffset: &splitFiltersOffset,
+			SearchTerm:         "eng",
+			Basis:              AttributedUsageBasisAmount,
+			Page:               &page,
+			PerPage:            &perPage,
 		})
 		c.Assert(err == nil, qt.IsTrue)
 
@@ -143,6 +146,7 @@ func TestCustomerRequest_AttributedUsage(t *testing.T) {
 		c.Assert(usage.ExternalSubscriptionID, qt.Equals, "sub_1234")
 		c.Assert(usage.Basis, qt.Equals, AttributedUsageBasisAmount)
 		c.Assert(usage.Currency, qt.Equals, EUR)
+		c.Assert(*usage.SplitFiltersCount, qt.Equals, 12)
 		c.Assert(usage.Rows, qt.HasLen, 1)
 		c.Assert(usage.Rows[0].Value, qt.Equals, "eng")
 		c.Assert(usage.Rows[0].Rank, qt.Equals, 1)
