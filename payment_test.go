@@ -17,7 +17,7 @@ func mockPayment(providerFields map[string]any) map[string]any {
 		"payable_type":         "Invoice",
 		"amount_cents":         1200,
 		"amount_currency":      "EUR",
-		"status":               "succeeded",
+		"status":               "processing",
 		"payment_status":       "succeeded",
 		"type":                 "provider",
 		"reference":            "REF-123456",
@@ -53,7 +53,7 @@ func assertPaymentFields(c *qt.C, payment *Payment) {
 	c.Assert(payment.LagoCustomerID.String(), qt.Equals, "2b902b90-2b90-2b90-2b90-2b902b902b90")
 	c.Assert(payment.LagoPayableID.String(), qt.Equals, "3c903c90-3c90-3c90-3c90-3c903c903c90")
 	c.Assert(payment.PayableType, qt.Equals, "Invoice")
-	c.Assert(payment.Status, qt.Equals, "succeeded")
+	c.Assert(payment.Status, qt.Equals, "processing")
 	c.Assert(payment.PaymentStatus, qt.Equals, "succeeded")
 }
 
