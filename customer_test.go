@@ -24,6 +24,8 @@ var mockCustomerGetResponse = `{
 		"firstname": "John",
 		"lastname": "Doe",
 		"customer_type": "company",
+		"account_type": "partner",
+		"external_salesforce_id": "SF_001",
 		"email": "customer@example.com",
 		"address_line1": "5230 Penfield Ave",
 		"address_line2": null,
@@ -530,6 +532,41 @@ func TestCustomerRequest_Create(t *testing.T) {
 					SyncWithProvider:   true,
 				},
 			},
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result, qt.DeepEquals, &Customer{
+			LagoID:     uuid.MustParse("1a901a90-1a90-1a90-1a90-1a901a901a90"),
+			ExternalID: "CUSTOMER_1",
+		})
+	})
+
+	t.Run("When account_type, external_salesforce_id and logo_url are set, they are sent", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/customers").
+			MatchJSONBody(`{
+				"customer": {
+					"external_id": "CUSTOMER_1",
+					"account_type": "partner",
+					"external_salesforce_id": "SF_001",
+					"logo_url": "https://getlago.com/logo.png",
+					"billing_configuration": {
+						"subscription_invoice_issuing_date_anchor": null,
+						"subscription_invoice_issuing_date_adjustment": null
+					},
+					"shipping_address": {}
+				}
+			}`).
+			MockResponse(mockCustomerCreateResponse)
+		defer server.Close()
+
+		result, err := server.Client().Customer().Create(context.Background(), &CustomerInput{
+			ExternalID:           "CUSTOMER_1",
+			AccountType:          CustomerAccountTypePartner,
+			ExternalSalesforceID: "SF_001",
+			LogoURL:              "https://getlago.com/logo.png",
 		})
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result, qt.DeepEquals, &Customer{
@@ -1274,5 +1311,29 @@ func TestCustomerRequest_Get(t *testing.T) {
 		c.Assert(result.ErrorDetails, qt.HasLen, 1)
 		c.Assert(result.ErrorDetails[0].ErrorCode, qt.Equals, "tax_error")
 		c.Assert(result.ErrorDetails[0].Details["tax_error"], qt.DeepEquals, []any{"customerAddressCouldNotResolve: Service failure"})
+		c.Assert(result.AccountType, qt.Equals, CustomerAccountTypePartner)
+		c.Assert(*result.ExternalSalesforceID, qt.Equals, "SF_001")
+	})
+
+	t.Run("When external_salesforce_id is null", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/customers/CUSTOMER_1").
+			MockResponse(`{
+				"customer": {
+					"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+					"external_id": "CUSTOMER_1",
+					"account_type": "customer",
+					"external_salesforce_id": null
+				}
+			}`)
+		defer server.Close()
+
+		result, err := server.Client().Customer().Get(context.Background(), "CUSTOMER_1")
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.AccountType, qt.Equals, CustomerAccountTypeCustomer)
+		c.Assert(result.ExternalSalesforceID, qt.IsNil)
 	})
 }
