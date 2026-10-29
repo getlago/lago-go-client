@@ -22,6 +22,12 @@ type UsageThreshold struct {
 	UpdatedAt            time.Time `json:"updated_at"`
 }
 
+type ApplicableUsageThreshold struct {
+	ThresholdDisplayName *string `json:"threshold_display_name"`
+	AmountCents          int     `json:"amount_cents"`
+	Recurring            bool    `json:"recurring"`
+}
+
 type AppliedUsageThreshold struct {
 	LifetimeUsageAmountCents int            `json:"lifetime_usage_amount_cents"`
 	CreatedAt                time.Time      `json:"created_at"`

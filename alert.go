@@ -15,10 +15,18 @@ const (
 	BillableMetricCurrentUsageAmountAlertType AlertType = "billable_metric_current_usage_amount"
 	BillableMetricCurrentUsageUnitsAlertType  AlertType = "billable_metric_current_usage_units"
 	LifetimeUsageAmountAlertType              AlertType = "lifetime_usage_amount"
+	BillableMetricLifetimeUsageUnitsAlertType AlertType = "billable_metric_lifetime_usage_units"
 	WalletBalanceAmountAlertType              AlertType = "wallet_balance_amount"
 	WalletCreditsBalanceAlertType             AlertType = "wallet_credits_balance"
 	WalletOngoingBalanceAmountAlertType       AlertType = "wallet_ongoing_balance_amount"
 	WalletCreditsOngoingBalanceAlertType      AlertType = "wallet_credits_ongoing_balance"
+)
+
+type AlertDirection string
+
+const (
+	IncreasingAlertDirection AlertDirection = "increasing"
+	DecreasingAlertDirection AlertDirection = "decreasing"
 )
 
 type AlertResolutionReason string
@@ -71,8 +79,12 @@ type Alert struct {
 	LagoID                 uuid.UUID        `json:"lago_id"`
 	LagoOrganizationID     uuid.UUID        `json:"lago_organization_id"`
 	SubscriptionExternalID string           `json:"subscription_external_id"`
+	ExternalSubscriptionID *string          `json:"external_subscription_id"`
+	LagoWalletID           *uuid.UUID       `json:"lago_wallet_id"`
+	WalletCode             *string          `json:"wallet_code"`
 	BillableMetric         BillableMetric   `json:"billable_metric,omitempty"`
 	AlertType              AlertType        `json:"alert_type"`
+	Direction              AlertDirection   `json:"direction,omitempty"`
 	Code                   string           `json:"code"`
 	Name                   string           `json:"name,omitempty"`
 	PreviousValue          string           `json:"previous_value,omitempty"`
@@ -81,23 +93,33 @@ type Alert struct {
 	CreatedAt              time.Time        `json:"created_at,omitempty"`
 }
 
+// AlertCrossedThreshold is an item of crossed_thresholds in the alert.triggered webhook.
+// Code is nil for a recurring threshold that has no code.
+type AlertCrossedThreshold struct {
+	Code      *string `json:"code"`
+	Value     string  `json:"value"`
+	Recurring bool    `json:"recurring"`
+}
+
 // TriggeredAlert Object returned by the alert.triggered webhook.
 type TriggeredAlert struct {
-	LagoID                 uuid.UUID        `json:"lago_id,omitempty"`
-	LagoOrganizationID     uuid.UUID        `json:"lago_organization_id"`
-	LagoAlertID            uuid.UUID        `json:"lago_alert_id"`
-	LagoSubscriptionID     uuid.UUID        `json:"lago_subscription_id"`
-	SubscriptionExternalID string           `json:"subscription_external_id"`
-	CustomerExternalID     string           `json:"customer_external_id"`
-	BillableMetricCode     string           `json:"billable_metric_code,omitempty"`
-	AlertType              AlertType        `json:"alert_type"`
-	AlertCode              string           `json:"alert_code"`
-	AlertName              string           `json:"alert_name,omitempty"`
-	CurrentValue           string           `json:"current_value"`
-	PreviousValue          string           `json:"previous_value"`
-	LastProcessedAt        *time.Time       `json:"last_processed_at"`
-	CrossedThresholds      []AlertThreshold `json:"crossed_thresholds"`
-	TriggeredAt            time.Time        `json:"triggered_at"`
+	LagoID                 uuid.UUID               `json:"lago_id,omitempty"`
+	LagoOrganizationID     uuid.UUID               `json:"lago_organization_id"`
+	LagoAlertID            uuid.UUID               `json:"lago_alert_id"`
+	LagoSubscriptionID     uuid.UUID               `json:"lago_subscription_id"`
+	ExternalSubscriptionID *string                 `json:"external_subscription_id"`
+	LagoWalletID           *uuid.UUID              `json:"lago_wallet_id"`
+	ExternalCustomerID     string                  `json:"external_customer_id"`
+	SubscriptionExternalID string                  `json:"subscription_external_id"`
+	CustomerExternalID     string                  `json:"customer_external_id"`
+	BillableMetricCode     string                  `json:"billable_metric_code,omitempty"`
+	AlertType              AlertType               `json:"alert_type"`
+	AlertCode              string                  `json:"alert_code"`
+	AlertName              string                  `json:"alert_name,omitempty"`
+	CurrentValue           string                  `json:"current_value"`
+	PreviousValue          string                  `json:"previous_value"`
+	CrossedThresholds      []AlertCrossedThreshold `json:"crossed_thresholds"`
+	TriggeredAt            time.Time               `json:"triggered_at"`
 }
 
 // ResolvedAlert Object returned by the alert.resolved webhook.

@@ -3,6 +3,7 @@ package lago_test
 import (
 	"context"
 	"fmt"
+	"strings"
 	"testing"
 
 	qt "github.com/frankban/quicktest"
@@ -37,6 +38,7 @@ var mockSubscriptionResponse = `{
     "on_termination_credit_note": "skip",
     "on_termination_invoice": "skip",
     "consolidate_invoice": true,
+    "progressive_billing_disabled": true,
     "purchase_order_number": "PO-123",
     "activated_at": "2022-08-08T00:00:00Z",
     "cancellation_reason": "payment_failed",
@@ -860,6 +862,139 @@ func TestSubscriptionRequest_UpdateWithPaymentMethod(t *testing.T) {
 		c.Assert(subscription.PaymentMethod, qt.IsNotNil)
 		c.Assert(subscription.PaymentMethod.PaymentMethodType, qt.Equals, "card")
 		c.Assert(subscription.PaymentMethod.PaymentMethodID, qt.Equals, "pm_123456")
+	})
+}
+
+func TestSubscriptionRequest_CreateWithProgressiveBilling(t *testing.T) {
+	t.Run("When creating a subscription with progressive billing disabled set to false and usage thresholds", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/subscriptions").
+			MatchJSONBody(`{
+				"subscription": {
+					"external_customer_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+					"plan_code": "premium",
+					"external_id": "my_sub_1",
+					"name": "Repository A",
+					"progressive_billing_disabled": false,
+					"usage_thresholds": [
+						{
+							"amount_cents": 10000,
+							"threshold_display_name": "First threshold",
+							"recurring": false
+						},
+						{
+							"amount_cents": 5000,
+							"recurring": true
+						}
+					]
+				}
+			}`).
+			MockResponse(mockSubscriptionResponse)
+		defer server.Close()
+
+		progressiveBillingDisabled := false
+		subscription, err := server.Client().Subscription().Create(context.Background(), &SubscriptionInput{
+			ExternalCustomerID:         "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+			PlanCode:                   "premium",
+			ExternalID:                 "my_sub_1",
+			Name:                       "Repository A",
+			ProgressiveBillingDisabled: &progressiveBillingDisabled,
+			UsageThresholds: []UsageThresholdInput{
+				{AmountCents: 10000, ThresholdDisplayName: "First threshold", Recurring: false},
+				{AmountCents: 5000, Recurring: true},
+			},
+		})
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(subscription.ProgressiveBillingDisabled, qt.IsTrue)
+	})
+
+	t.Run("When creating a subscription with an empty usage thresholds slice", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/subscriptions").
+			MatchJSONBody(`{
+				"subscription": {
+					"external_customer_id": "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+					"plan_code": "premium",
+					"external_id": "my_sub_1",
+					"name": "Repository A"
+				}
+			}`).
+			MockResponse(mockSubscriptionResponse)
+		defer server.Close()
+
+		subscription, err := server.Client().Subscription().Create(context.Background(), &SubscriptionInput{
+			ExternalCustomerID: "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba",
+			PlanCode:           "premium",
+			ExternalID:         "my_sub_1",
+			Name:               "Repository A",
+			UsageThresholds:    []UsageThresholdInput{},
+		})
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(subscription.ExternalID, qt.Equals, "5eb02857-a71e-4ea2-bcf9-57d3a41bc6ba")
+	})
+}
+
+func TestSubscriptionRequest_UpdateWithProgressiveBilling(t *testing.T) {
+	t.Run("When updating a subscription with progressive billing disabled set to true", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("PUT").
+			MatchPath("/api/v1/subscriptions/my_sub_1").
+			MatchJSONBody(`{
+				"subscription": {
+					"external_id": "my_sub_1",
+					"name": "Repository A",
+					"progressive_billing_disabled": true
+				}
+			}`).
+			MockResponse(mockSubscriptionResponse)
+		defer server.Close()
+
+		progressiveBillingDisabled := true
+		subscription, err := server.Client().Subscription().Update(context.Background(), &SubscriptionInput{
+			ExternalID:                 "my_sub_1",
+			Name:                       "Repository A",
+			ProgressiveBillingDisabled: &progressiveBillingDisabled,
+		})
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(subscription.ProgressiveBillingDisabled, qt.IsTrue)
+	})
+}
+
+func TestSubscriptionRequest_GetProgressiveBillingDisabled(t *testing.T) {
+	t.Run("When the response has progressive_billing_disabled false or missing", func(t *testing.T) {
+		responses := map[string]string{
+			"false":   strings.Replace(mockSubscriptionResponse, `"progressive_billing_disabled": true,`, `"progressive_billing_disabled": false,`, 1),
+			"missing": strings.Replace(mockSubscriptionResponse, `"progressive_billing_disabled": true,`, "", 1),
+		}
+
+		for title, response := range responses {
+			t.Run(title, func(t *testing.T) {
+				c := qt.New(t)
+				c.Assert(response, qt.Not(qt.Equals), mockSubscriptionResponse)
+
+				server := lt.NewMockServer(c).
+					MatchMethod("GET").
+					MatchPath("/api/v1/subscriptions/my_sub_1").
+					MockResponse(response)
+				defer server.Close()
+
+				subscription, err := server.Client().Subscription().Get(context.Background(), "my_sub_1")
+
+				c.Assert(err == nil, qt.IsTrue)
+				c.Assert(subscription.ProgressiveBillingDisabled, qt.IsFalse)
+			})
+		}
 	})
 }
 

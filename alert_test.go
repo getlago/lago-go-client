@@ -7,6 +7,8 @@ import (
 	"time"
 
 	qt "github.com/frankban/quicktest"
+	"github.com/google/uuid"
+
 	. "github.com/getlago/lago-go-client"
 	lt "github.com/getlago/lago-go-client/testing"
 )
@@ -16,7 +18,11 @@ var mockAlertResponse = map[string]any{
 		"lago_id":                  "1a901a90-1a90-1a90-1a90-1a901a901a90",
 		"lago_organization_id":     "2b902b90-2b90-2b90-2b90-2b902b902b90",
 		"subscription_external_id": "sub_1234",
+		"external_subscription_id": "sub_1234",
+		"lago_wallet_id":           "5e905e90-5e90-5e90-5e90-5e905e905e90",
+		"wallet_code":              "main_wallet",
 		"alert_type":               "current_usage_amount",
+		"direction":                "decreasing",
 		"code":                     "usage_alert",
 		"name":                     "Usage Alert",
 		"previous_value":           "0.0",
@@ -99,6 +105,42 @@ func TestAlertRequest_Get(t *testing.T) {
 		c.Assert(result.AlertType, qt.Equals, CurrentUsageAmountAlertType)
 		c.Assert(result.Thresholds, qt.HasLen, 1)
 		c.Assert(result.Thresholds[0].Value, qt.Equals, "1000.0")
+		c.Assert(*result.ExternalSubscriptionID, qt.Equals, "sub_1234")
+		c.Assert(result.Direction, qt.Equals, DecreasingAlertDirection)
+		c.Assert(result.LagoWalletID.String(), qt.Equals, "5e905e90-5e90-5e90-5e90-5e905e905e90")
+		c.Assert(*result.WalletCode, qt.Equals, "main_wallet")
+	})
+
+	t.Run("When the alert is a billable metric lifetime usage units alert", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/subscriptions/sub_1234/alerts/units_alert").
+			MockResponse(map[string]any{
+				"alert": map[string]any{
+					"lago_id":                  "1a901a90-1a90-1a90-1a90-1a901a901a90",
+					"lago_organization_id":     "2b902b90-2b90-2b90-2b90-2b902b902b90",
+					"subscription_external_id": "sub_1234",
+					"external_subscription_id": "sub_1234",
+					"lago_wallet_id":           nil,
+					"wallet_code":              nil,
+					"alert_type":               "billable_metric_lifetime_usage_units",
+					"direction":                "increasing",
+					"code":                     "units_alert",
+					"previous_value":           "0.0",
+					"thresholds":               []map[string]any{},
+					"created_at":               "2025-03-20T10:00:00Z",
+				},
+			})
+		defer server.Close()
+
+		result, err := server.Client().Alert().Get(context.Background(), "sub_1234", "units_alert")
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.AlertType, qt.Equals, BillableMetricLifetimeUsageUnitsAlertType)
+		c.Assert(result.Direction, qt.Equals, IncreasingAlertDirection)
+		c.Assert(result.LagoWalletID, qt.IsNil)
+		c.Assert(result.WalletCode, qt.IsNil)
 	})
 }
 
@@ -442,5 +484,97 @@ func TestResolvedAlert_Unmarshal(t *testing.T) {
 		c.Assert(resolved.AlertType, qt.Equals, WalletBalanceAmountAlertType)
 		c.Assert(resolved.FullyResolved, qt.IsTrue)
 		c.Assert(resolved.Reason, qt.Equals, AlertResolutionReasonThresholdRemoved)
+	})
+}
+
+func TestTriggeredAlert_Unmarshal(t *testing.T) {
+	t.Run("When the alert is attached to a subscription", func(t *testing.T) {
+		c := qt.New(t)
+
+		payload := `{
+			"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			"lago_organization_id": "2b902b90-2b90-2b90-2b90-2b902b902b90",
+			"lago_alert_id": "3c903c90-3c90-3c90-3c90-3c903c903c90",
+			"lago_subscription_id": "4d904d90-4d90-4d90-4d90-4d904d904d90",
+			"external_subscription_id": "ext-id",
+			"lago_wallet_id": null,
+			"external_customer_id": "cust-ext-id",
+			"billable_metric_code": null,
+			"alert_name": "General Alert",
+			"alert_code": "first",
+			"alert_type": "current_usage_amount",
+			"current_value": "3000.0",
+			"previous_value": "1000.0",
+			"crossed_thresholds": [
+				{"code": "warn", "value": "2000.0", "recurring": false},
+				{"code": "repeat", "value": "2500.0", "recurring": true}
+			],
+			"triggered_at": "2000-01-01T12:00:00Z",
+			"subscription_external_id": "ext-id",
+			"customer_external_id": "cust-ext-id"
+		}`
+
+		var triggered TriggeredAlert
+		err := json.Unmarshal([]byte(payload), &triggered)
+		c.Assert(err, qt.IsNil)
+
+		c.Assert(triggered.LagoSubscriptionID.String(), qt.Equals, "4d904d90-4d90-4d90-4d90-4d904d904d90")
+		c.Assert(*triggered.ExternalSubscriptionID, qt.Equals, "ext-id")
+		c.Assert(triggered.LagoWalletID, qt.IsNil)
+		c.Assert(triggered.ExternalCustomerID, qt.Equals, "cust-ext-id")
+		c.Assert(triggered.SubscriptionExternalID, qt.Equals, "ext-id")
+		c.Assert(triggered.CustomerExternalID, qt.Equals, "cust-ext-id")
+		c.Assert(triggered.AlertType, qt.Equals, CurrentUsageAmountAlertType)
+		c.Assert(triggered.AlertName, qt.Equals, "General Alert")
+		c.Assert(triggered.TriggeredAt, qt.Equals, time.Date(2000, 1, 1, 12, 0, 0, 0, time.UTC))
+		c.Assert(triggered.CrossedThresholds, qt.HasLen, 2)
+		c.Assert(*triggered.CrossedThresholds[0].Code, qt.Equals, "warn")
+		c.Assert(triggered.CrossedThresholds[0].Value, qt.Equals, "2000.0")
+		c.Assert(triggered.CrossedThresholds[0].Recurring, qt.IsFalse)
+		c.Assert(*triggered.CrossedThresholds[1].Code, qt.Equals, "repeat")
+		c.Assert(triggered.CrossedThresholds[1].Value, qt.Equals, "2500.0")
+		c.Assert(triggered.CrossedThresholds[1].Recurring, qt.IsTrue)
+	})
+
+	t.Run("When the alert is attached to a wallet", func(t *testing.T) {
+		c := qt.New(t)
+
+		payload := `{
+			"lago_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			"lago_organization_id": "2b902b90-2b90-2b90-2b90-2b902b902b90",
+			"lago_alert_id": "3c903c90-3c90-3c90-3c90-3c903c903c90",
+			"lago_subscription_id": null,
+			"external_subscription_id": null,
+			"lago_wallet_id": "5e905e90-5e90-5e90-5e90-5e905e905e90",
+			"external_customer_id": "wallet-cust-ext-id",
+			"billable_metric_code": null,
+			"alert_name": null,
+			"alert_code": "wallet-alert",
+			"alert_type": "wallet_balance_amount",
+			"current_value": "50.0",
+			"previous_value": "100.0",
+			"crossed_thresholds": [
+				{"code": null, "value": "60.0", "recurring": true}
+			],
+			"triggered_at": "2000-01-01T12:00:00Z",
+			"subscription_external_id": null,
+			"customer_external_id": "wallet-cust-ext-id"
+		}`
+
+		var triggered TriggeredAlert
+		err := json.Unmarshal([]byte(payload), &triggered)
+		c.Assert(err, qt.IsNil)
+
+		c.Assert(triggered.LagoSubscriptionID, qt.Equals, uuid.Nil)
+		c.Assert(triggered.ExternalSubscriptionID, qt.IsNil)
+		c.Assert(triggered.LagoWalletID.String(), qt.Equals, "5e905e90-5e90-5e90-5e90-5e905e905e90")
+		c.Assert(triggered.ExternalCustomerID, qt.Equals, "wallet-cust-ext-id")
+		c.Assert(triggered.BillableMetricCode, qt.Equals, "")
+		c.Assert(triggered.AlertName, qt.Equals, "")
+		c.Assert(triggered.AlertType, qt.Equals, WalletBalanceAmountAlertType)
+		c.Assert(triggered.CrossedThresholds, qt.HasLen, 1)
+		c.Assert(triggered.CrossedThresholds[0].Code, qt.IsNil)
+		c.Assert(triggered.CrossedThresholds[0].Value, qt.Equals, "60.0")
+		c.Assert(triggered.CrossedThresholds[0].Recurring, qt.IsTrue)
 	})
 }

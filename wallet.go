@@ -96,6 +96,8 @@ type WalletInput struct {
 	InvoiceCustomSection             *InvoiceCustomSectionInput      `json:"invoice_custom_section,omitempty"`
 	BillingEntityCode                string                          `json:"billing_entity_code,omitempty"`
 	PurchaseOrderNumber              *string                         `json:"purchase_order_number,omitempty"`
+	// TransactionPriority is read by the API on wallet creation only, and ignored on update.
+	TransactionPriority *int `json:"transaction_priority,omitempty"`
 }
 
 type WalletListInput struct {

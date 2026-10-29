@@ -7,22 +7,29 @@
     "lago_organization_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
     "lago_alert_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
     "lago_subscription_id": "1a901a90-1a90-1a90-1a90-1a901a901a90",
-    "subscription_external_id": "subscription_1234",
-    "customer_external_id": "customer_1234",
-    "billable_metric_code": "bm_code",
-    "alert_type": "UsageMonitoring::CurrentUsageAmountAlert",
-    "alert_code": "alert",
-    "alert_name": "Usage Alert",
-    "current_value": "150",
-    "previous_value": "100",
-    "last_processed_at": "2022-04-29T08:59:51Z",
+    "external_subscription_id": "ext-id",
+    "lago_wallet_id": null,
+    "external_customer_id": "cust-ext-id",
+    "billable_metric_code": null,
+    "alert_name": "General Alert",
+    "alert_code": "first",
+    "alert_type": "current_usage_amount",
+    "current_value": "3000.0",
+    "previous_value": "1000.0",
     "crossed_thresholds": [
       {
-        "code": "threshold_1",
-        "value": "100",
+        "code": "warn",
+        "value": "2000.0",
         "recurring": false
+      },
+      {
+        "code": "repeat",
+        "value": "2500.0",
+        "recurring": true
       }
     ],
-    "triggered_at": "2022-04-29T08:59:51Z"
+    "triggered_at": "2000-01-01T12:00:00Z",
+    "subscription_external_id": "ext-id",
+    "customer_external_id": "cust-ext-id"
   }
 }

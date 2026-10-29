@@ -88,6 +88,7 @@ type BillingEntity struct {
 	DocumentLocale                           string                                       `json:"document_locale,omitempty"`
 	Taxes                                    []Tax                                        `json:"taxes,omitempty"`
 	SelectedInvoiceCustomSections            []InvoiceCustomSection                       `json:"selected_invoice_custom_sections,omitempty"`
+	Einvoicing                               bool                                         `json:"einvoicing"`
 }
 
 type BillingEntityCreateInput struct {
@@ -113,6 +114,7 @@ type BillingEntityCreateInput struct {
 	EuTaxManagement           bool                              `json:"eu_tax_management,omitempty"`
 	BillingConfiguration      BillingEntityBillingConfiguration `json:"billing_configuration,omitempty"`
 	LogoBase64                string                            `json:"logo,omitempty"`
+	Einvoicing                *bool                             `json:"einvoicing,omitempty"`
 }
 
 type BillingEntityUpdateInput struct {
@@ -139,6 +141,7 @@ type BillingEntityUpdateInput struct {
 	LogoBase64                string                            `json:"logo,omitempty"`
 	TaxCodes                  []string                          `json:"tax_codes,omitempty"`
 	InvoiceCustomSectionCodes []string                          `json:"invoice_custom_section_codes,omitempty"`
+	Einvoicing                *bool                             `json:"einvoicing,omitempty"`
 }
 
 func (c *Client) BillingEntity() *BillingEntityRequest {

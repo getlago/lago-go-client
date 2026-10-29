@@ -293,6 +293,39 @@ func TestWallet_Create(t *testing.T) {
 		c.Assert(result.AppliesTo.FeeTypes, qt.DeepEquals, []string{"charge"})
 		c.Assert(result.AppliesTo.BillableMetricCodes, qt.DeepEquals, []string{"bm1"})
 	})
+
+	t.Run("When transaction_priority is provided", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("POST").
+			MatchPath("/api/v1/wallets").
+			MatchJSONBody(`{
+				"wallet": {
+					"external_customer_id": "12345",
+					"rate_amount": "1.00",
+					"currency": "USD",
+					"paid_credits": "100.00",
+					"transaction_priority": 5,
+					"applies_to": {},
+					"recurring_transaction_rules": null
+				}
+			}`).
+			MockResponse(mockWalletResponse)
+		defer server.Close()
+
+		result, err := server.Client().Wallet().Create(context.Background(), &WalletInput{
+			ExternalCustomerID:  "12345",
+			RateAmount:          "1.00",
+			Currency:            USD,
+			PaidCredits:         "100.00",
+			TransactionPriority: Ptr(5),
+		})
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result, qt.IsNotNil)
+		c.Assert(result.LagoID, qt.Equals, uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"))
+	})
 }
 
 func TestWallet_Get(t *testing.T) {

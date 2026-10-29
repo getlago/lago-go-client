@@ -14,7 +14,9 @@ import (
 
 var mockOrganizationResponse = `{
 	"organization": {
+		"lago_id": "a1b2c3d4-e5f6-7890-1234-56789abcdef0",
 		"name": "Lago",
+		"slug": "lago",
 		"email": "billing@getlago.com",
 		"address_line1": "123 Main Street",
 		"address_line2": "Suite 100",
@@ -132,7 +134,9 @@ func TestOrganization_Update(t *testing.T) {
 
 		c.Assert(err == nil, qt.IsTrue)
 		c.Assert(result, qt.IsNotNil)
+		c.Assert(result.LagoID, qt.Equals, uuid.MustParse("a1b2c3d4-e5f6-7890-1234-56789abcdef0"))
 		c.Assert(result.Name, qt.Equals, "Lago")
+		c.Assert(result.Slug, qt.Equals, "lago")
 		c.Assert(result.Email, qt.Equals, "billing@getlago.com")
 		c.Assert(result.AddressLine1, qt.Equals, "123 Main Street")
 		c.Assert(result.AddressLine2, qt.Equals, "Suite 100")
@@ -164,6 +168,25 @@ func TestOrganization_Update(t *testing.T) {
 		c.Assert(result.Taxes[0].Description, qt.Equals, "Standard VAT")
 		c.Assert(result.Taxes[0].AppliedToOrganization, qt.Equals, true)
 		c.Assert(result.CreatedAt, qt.Equals, time.Date(2022, 4, 29, 8, 59, 51, 0, time.UTC))
+	})
+
+	t.Run("Sends slug when set", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("PUT").
+			MatchPath("/api/v1/organizations").
+			MatchJSONBody(`{"organization":{"name":"Lago","slug":"lago","billing_configuration":{}}}`).
+			MockResponse(mockOrganizationResponse)
+		defer server.Close()
+
+		result, err := server.Client().Organization().Update(context.Background(), &OrganizationInput{
+			Name: "Lago",
+			Slug: "lago",
+		})
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.Slug, qt.Equals, "lago")
 	})
 
 	t.Run("When the server returns an error response", func(t *testing.T) {

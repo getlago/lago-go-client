@@ -49,6 +49,13 @@ const (
 	IndividualCustomerType CustomerType = "individual"
 )
 
+type CustomerAccountType string
+
+const (
+	CustomerAccountTypeCustomer CustomerAccountType = "customer"
+	CustomerAccountTypePartner  CustomerAccountType = "partner"
+)
+
 type ProviderPaymentMethodType string
 
 const (
@@ -113,6 +120,9 @@ type CustomerInput struct {
 	Firstname                 string                            `json:"firstname,omitempty"`
 	Lastname                  string                            `json:"lastname,omitempty"`
 	CustomerType              CustomerType                      `json:"customer_type,omitempty"`
+	AccountType               CustomerAccountType               `json:"account_type,omitempty"`
+	ExternalSalesforceID      string                            `json:"external_salesforce_id,omitempty"`
+	LogoURL                   string                            `json:"logo_url,omitempty"`
 	Email                     string                            `json:"email,omitempty"`
 	AddressLine1              string                            `json:"address_line1,omitempty"`
 	AddressLine2              string                            `json:"address_line2,omitempty"`
@@ -467,6 +477,8 @@ type Customer struct {
 	Firstname                 string                         `json:"firstname,omitempty"`
 	Lastname                  string                         `json:"lastname,omitempty"`
 	CustomerType              string                         `json:"customer_type,omitempty"`
+	AccountType               CustomerAccountType            `json:"account_type,omitempty"`
+	ExternalSalesforceID      *string                        `json:"external_salesforce_id"`
 	Email                     string                         `json:"email,omitempty"`
 	AddressLine1              string                         `json:"address_line1,omitempty"`
 	AddressLine2              string                         `json:"address_line2,omitempty"`

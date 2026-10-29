@@ -89,8 +89,10 @@ func TestWalletTransactionRequest_Create(t *testing.T) {
 					"metadata":                            [{"key": "source", "value": "test"}],
 					"name":                                "Test Transaction",
 					"paid_credits":                        "50.00",
+					"priority":                            10,
 					"purchase_order_number":               "PO-123",
 					"voided_credits":                      "0.00",
+					"voided_transaction_id":               "c1c2d3d4-e5f6-7890-1234-56789abcdef0",
 					"wallet_id":                           "1a901a90-1a90-1a90-1a90-1a901a901a90"
 				}
 			}`).
@@ -105,6 +107,8 @@ func TestWalletTransactionRequest_Create(t *testing.T) {
 			VoidedCredits:                    "0.00",
 			InvoiceRequiresSuccessfulPayment: true,
 			PurchaseOrderNumber:              &purchaseOrderNumber,
+			Priority:                         Ptr(10),
+			VoidedTransactionID:              Ptr("c1c2d3d4-e5f6-7890-1234-56789abcdef0"),
 			Metadata: []WalletTransactionMetadata{
 				{Key: "source", Value: "test"},
 			},
@@ -369,5 +373,121 @@ func TestWalletTransactionRequest_Fundings(t *testing.T) {
 		c.Assert(result.WalletTransactionFundings[0].WalletTransaction.TransactionType, qt.Equals, TransactionType("inbound"))
 		c.Assert(result.Meta.CurrentPage, qt.Equals, 1)
 		c.Assert(result.Meta.TotalCount, qt.Equals, 1)
+	})
+}
+
+func TestWalletTransactionRequest_GetList(t *testing.T) {
+	t.Run("When only the wallet ID is provided", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/wallets/1a901a90-1a90-1a90-1a90-1a901a901a90/wallet_transactions").
+			MatchQuery("wallet_id=1a901a90-1a90-1a90-1a90-1a901a901a90").
+			MockResponse(mockWalletTransactionListResponse)
+		defer server.Close()
+
+		result, err := server.Client().WalletTransaction().GetList(context.Background(), &WalletTransactionListInput{
+			WalletID: "1a901a90-1a90-1a90-1a90-1a901a901a90",
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.WalletTransactions, qt.HasLen, 1)
+		c.Assert(result.WalletTransactions[0].LagoID, qt.Equals, uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"))
+		c.Assert(result.Meta.TotalCount, qt.Equals, 1)
+	})
+
+	t.Run("When all the existing filters are provided", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/wallets/1a901a90-1a90-1a90-1a90-1a901a901a90/wallet_transactions").
+			MatchQuery("wallet_id=1a901a90-1a90-1a90-1a90-1a901a901a90" +
+				"&per_page=5" +
+				"&page=2" +
+				"&status=settled" +
+				"&transaction_status=granted" +
+				"&transaction_type=inbound").
+			MockResponse(mockWalletTransactionListResponse)
+		defer server.Close()
+
+		result, err := server.Client().WalletTransaction().GetList(context.Background(), &WalletTransactionListInput{
+			WalletID:          "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			PerPage:           Ptr(5),
+			Page:              Ptr(2),
+			Status:            WalletTransactionStatusSettled,
+			TransactionStatus: Granted,
+			TransactionType:   Inbound,
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.WalletTransactions, qt.HasLen, 1)
+	})
+	t.Run("When a metadata filter is provided with the existing filters", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/wallets/1a901a90-1a90-1a90-1a90-1a901a901a90/wallet_transactions").
+			MatchQuery("wallet_id=1a901a90-1a90-1a90-1a90-1a901a901a90" +
+				"&per_page=5" +
+				"&page=2" +
+				"&status=settled" +
+				"&transaction_status=granted" +
+				"&transaction_type=inbound" +
+				"&metadata[k]=v" +
+				"&metadata[source]=test").
+			MockResponse(mockWalletTransactionListResponse)
+		defer server.Close()
+
+		result, err := server.Client().WalletTransaction().GetList(context.Background(), &WalletTransactionListInput{
+			WalletID:          "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			PerPage:           Ptr(5),
+			Page:              Ptr(2),
+			Status:            WalletTransactionStatusSettled,
+			TransactionStatus: Granted,
+			TransactionType:   Inbound,
+			Metadata:          WalletTransactionListInputMetadata{"k": "v", "source": "test"},
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.WalletTransactions, qt.HasLen, 1)
+	})
+
+	t.Run("When several metadata filters are provided", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/wallets/1a901a90-1a90-1a90-1a90-1a901a901a90/wallet_transactions").
+			MatchQuery("wallet_id=1a901a90-1a90-1a90-1a90-1a901a901a90" +
+				"&metadata[a]=1" +
+				"&metadata[b]=2").
+			MockResponse(mockWalletTransactionListResponse)
+		defer server.Close()
+
+		result, err := server.Client().WalletTransaction().GetList(context.Background(), &WalletTransactionListInput{
+			WalletID: "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			Metadata: WalletTransactionListInputMetadata{"a": "1", "b": "2"},
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.WalletTransactions, qt.HasLen, 1)
+		c.Assert(result.WalletTransactions[0].LagoID, qt.Equals, uuid.MustParse("b1b2c3d4-e5f6-7890-1234-56789abcdef0"))
+	})
+
+	t.Run("When the metadata filter is empty", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("GET").
+			MatchPath("/api/v1/wallets/1a901a90-1a90-1a90-1a90-1a901a901a90/wallet_transactions").
+			MatchQuery("wallet_id=1a901a90-1a90-1a90-1a90-1a901a901a90").
+			MockResponse(mockWalletTransactionListResponse)
+		defer server.Close()
+
+		result, err := server.Client().WalletTransaction().GetList(context.Background(), &WalletTransactionListInput{
+			WalletID: "1a901a90-1a90-1a90-1a90-1a901a901a90",
+			Metadata: WalletTransactionListInputMetadata{},
+		})
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result.WalletTransactions, qt.HasLen, 1)
 	})
 }
