@@ -102,7 +102,8 @@ type Organization struct {
 
 	Taxes []Tax `json:"taxes,omitempty"`
 
-	CreatedAt time.Time `json:"created_at,omitempty"`
+	CreatedAt   time.Time    `json:"created_at,omitempty"`
+	PaymentTerm *PaymentTerm `json:"payment_term"`
 }
 
 func (c *Client) Organization() *OrganizationRequest {
