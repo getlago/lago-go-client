@@ -150,6 +150,7 @@ type SubscriptionInput struct {
 	// On create, the API rejects them together with PlanOverrides.UsageThresholds.
 	// An empty slice is not sent.
 	UsageThresholds []UsageThresholdInput `json:"usage_thresholds,omitempty"`
+	PaymentTerm     *PaymentTerm          `json:"payment_term,omitempty"`
 }
 
 type SubscriptionsInput struct {
@@ -225,6 +226,7 @@ type Subscription struct {
 
 	CancellationReason SubscriptionCancellationReason `json:"cancellation_reason,omitempty"`
 	ActivationRules    []SubscriptionActivationRule   `json:"activation_rules,omitempty"`
+	PaymentTerm        *PaymentTerm                   `json:"payment_term"`
 }
 
 func (c *Client) Subscription() *SubscriptionRequest {
