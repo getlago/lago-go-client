@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
-	"strings"
 	"time"
 
 	"github.com/go-resty/resty/v2"
@@ -71,7 +70,6 @@ func (c *Client) emitRateLimitInfo(resp *resty.Response) {
 const baseURL string = "https://api.getlago.com"
 const baseIngestURL string = "https://ingest.getlago.com"
 const apiPath string = "/api/v1/"
-const apiV2Path string = "/api/v2/"
 
 type Client struct {
 	BaseUrl          string
@@ -201,14 +199,6 @@ func (c *Client) SetBaseIngestUrl(url string) *Client {
 	return c
 }
 
-// apiV2URL returns the absolute URL of a v2 API path. It replaces the v1 path
-// of the HTTP client base URL, which resty stores without its trailing slash.
-func (c *Client) apiV2URL(path string) string {
-	host := strings.TrimSuffix(c.HttpClient.BaseURL, strings.TrimSuffix(apiPath, "/"))
-
-	return host + apiV2Path + path
-}
-
 // handleErrorResponse converts an error HTTP response into the appropriate error type.
 // For 429 responses, it returns a RateLimitError with parsed rate limit headers.
 // For all other errors, it returns the standard Error type.
@@ -232,7 +222,6 @@ func (c *Client) handleErrorResponse(resp *resty.Response) *Error {
 			Message:        rlErr.Message,
 			ErrorCode:      rlErr.ErrorCode,
 			ErrorDetail:    rlErr.ErrorDetail,
-			Details:        errObj.Details,
 		}
 	}
 

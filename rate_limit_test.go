@@ -477,27 +477,3 @@ func TestLoggingRateLimitObserver_DefaultThresholds(t *testing.T) {
 	observer(&RateLimitInfo{Limit: intPtr(100), Remaining: intPtr(15)}) // 85%
 	c.Assert(strings.Contains(buf.String(), "85%"), qt.IsTrue)
 }
-
-func TestClientRateLimitKeepsV2Details(t *testing.T) {
-	c := qt.New(t)
-
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("x-ratelimit-reset", "1")
-		w.WriteHeader(http.StatusTooManyRequests)
-		_, _ = w.Write([]byte(`{"code":"too_many_requests","details":[{"code":"rate_limited","field":"api_key"}]}`))
-	}))
-	defer server.Close()
-
-	client := New().SetBaseURL(server.URL).SetApiKey("test_api_key").SetRetryPolicy(nil)
-
-	_, err := client.WebhookEndpointV2().Get(context.Background(), "1a901a90-1a90-1a90-1a90-1a901a901a90")
-	c.Assert(err, qt.Not(qt.IsNil))
-	c.Assert(err.HTTPStatusCode, qt.Equals, http.StatusTooManyRequests)
-	c.Assert(err.ErrorCode, qt.Equals, "too_many_requests")
-	c.Assert(err.Details, qt.DeepEquals, []ErrorDetailV2{{Code: "rate_limited", Field: "api_key"}})
-
-	rlErr, ok := err.Err.(*RateLimitError)
-	c.Assert(ok, qt.IsTrue)
-	c.Assert(*rlErr.Reset, qt.Equals, 1)
-}
