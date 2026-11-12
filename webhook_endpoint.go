@@ -12,8 +12,9 @@ import (
 type SignatureAlgo string
 
 const (
-	JWT  SignatureAlgo = "jwt"
-	HMac SignatureAlgo = "hmac"
+	JWT              SignatureAlgo = "jwt"
+	HMac             SignatureAlgo = "hmac"
+	StandardWebhooks SignatureAlgo = "standard_webhooks"
 )
 
 type WebhookEndpointRequest struct {
@@ -49,7 +50,19 @@ type WebhookEndpoint struct {
 	SignatureAlgo      SignatureAlgo `json:"signature_algo,omitempty"`
 	Name               *string       `json:"name,omitempty"`
 	EventTypes         []string      `json:"event_types,omitempty"`
-	CreatedAt          time.Time     `json:"created_at,omitempty"`
+	// SigningKeys holds the `whsec_` secrets of a `standard_webhooks` endpoint,
+	// oldest first. The API returns them on create, update and show to an API
+	// key with write access, so it is empty on list and delete responses.
+	SigningKeys []WebhookEndpointSigningKey `json:"signing_keys,omitempty"`
+	CreatedAt   time.Time                   `json:"created_at,omitempty"`
+}
+
+// WebhookEndpointSigningKey is a secret used to sign Standard Webhooks
+// deliveries. Pass SecretKey to VerifyStandardWebhook.
+type WebhookEndpointSigningKey struct {
+	LagoID    uuid.UUID `json:"lago_id,omitempty"`
+	SecretKey string    `json:"secret_key,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
 }
 
 func (c *Client) WebhookEndpoint() *WebhookEndpointRequest {

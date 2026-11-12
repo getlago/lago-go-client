@@ -9,8 +9,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	jwt "github.com/golang-jwt/jwt/v5"
+	standardwebhooks "github.com/standard-webhooks/standard-webhooks/libraries/go"
 )
 
 type WebhookRequest struct {
@@ -130,4 +132,41 @@ func (wr *WebhookRequest) ValidateBody(ctx context.Context, signature string, bo
 	} else {
 		return false, err
 	}
+}
+
+// VerifyStandardWebhook checks that a delivery sent by a webhook endpoint
+// whose SignatureAlgo is StandardWebhooks was signed by Lago.
+//
+// The secret is a `whsec_` signing key from WebhookEndpoint.SigningKeys. The
+// headers are those of the incoming request, and the payload must be the raw
+// request body bytes, read before any JSON decoding. A delivery whose
+// webhook-timestamp is more than 5 minutes in the past or in the future is
+// rejected. It returns nil when the delivery is valid.
+//
+// See https://www.standardwebhooks.com for the specification.
+func VerifyStandardWebhook(secret string, headers http.Header, payload []byte) error {
+	key, err := base64.StdEncoding.DecodeString(strings.TrimPrefix(secret, "whsec_"))
+	if err != nil {
+		return fmt.Errorf("standard webhooks: the signing secret is not valid base64: %w", err)
+	}
+	if len(key) == 0 {
+		return errors.New("standard webhooks: the signing secret is empty")
+	}
+
+	for _, header := range []string{
+		standardwebhooks.HeaderWebhookID,
+		standardwebhooks.HeaderWebhookTimestamp,
+		standardwebhooks.HeaderWebhookSignature,
+	} {
+		if headers.Get(header) == "" {
+			return fmt.Errorf("standard webhooks: the %s header is missing", header)
+		}
+	}
+
+	webhook, err := standardwebhooks.NewWebhookRaw(key)
+	if err != nil {
+		return err
+	}
+
+	return webhook.Verify(payload, headers)
 }

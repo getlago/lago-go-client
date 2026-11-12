@@ -136,3 +136,43 @@ func TestError_Details(t *testing.T) {
 		})
 	}
 }
+
+func TestError_V2Details(t *testing.T) {
+	t.Run("Decodes the v2 code and details", func(t *testing.T) {
+		errObj := &Error{}
+		input := `{"code":"validation_errors","details":[{"code":"value_is_invalid","field":"signature_algo","meta":{"allowed_values":["jwt","hmac","standard_webhooks"]}}]}`
+		if err := json.Unmarshal([]byte(input), errObj); err != nil {
+			t.Fatalf("got error %s", err.Error())
+		}
+
+		if errObj.ErrorCode != "validation_errors" {
+			t.Errorf("got code %q, but expected validation_errors", errObj.ErrorCode)
+		}
+		if errObj.ErrorDetail != nil {
+			t.Errorf("got error_details %v, but expected nil", errObj.ErrorDetail)
+		}
+		if len(errObj.Details) != 1 || errObj.Details[0].Code != "value_is_invalid" || errObj.Details[0].Field != "signature_algo" {
+			t.Fatalf("got details %+v", errObj.Details)
+		}
+		allowed, ok := errObj.Details[0].Meta["allowed_values"].([]any)
+		if !ok || len(allowed) != 3 || allowed[2] != "standard_webhooks" {
+			t.Errorf("got allowed_values %v", errObj.Details[0].Meta["allowed_values"])
+		}
+	})
+
+	t.Run("Leaves Details nil and the Error string unchanged for a v1 body", func(t *testing.T) {
+		errObj := &Error{}
+		input := `{"status":422,"error":"Unprocessable Entity","code":"validation_errors","error_details":{"transaction_id":["value_already_exist"]}}`
+		if err := json.Unmarshal([]byte(input), errObj); err != nil {
+			t.Fatalf("got error %s", err.Error())
+		}
+
+		if errObj.Details != nil {
+			t.Errorf("got details %+v, but expected nil", errObj.Details)
+		}
+		want := `{"status":422,"error":"Unprocessable Entity","code":"validation_errors","error_details":{"transaction_id":["value_already_exist"]}}`
+		if got := errObj.Error(); got != want {
+			t.Errorf("got %s, but expected %s", got, want)
+		}
+	})
+}

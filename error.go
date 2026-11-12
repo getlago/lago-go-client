@@ -84,6 +84,19 @@ type Error struct {
 	ErrorCode      string `json:"code"`
 
 	ErrorDetail *ErrorDetail `json:"error_details,omitempty"`
+
+	// Details holds the `details` list of a v2 error response. It is nil for
+	// v1 responses, which use ErrorDetail instead.
+	Details []ErrorDetailV2 `json:"details,omitempty"`
+}
+
+// ErrorDetailV2 is one item of the `details` list of a v2 error response,
+// such as a `value_is_invalid` code on a field, with its `allowed_values`
+// in Meta.
+type ErrorDetailV2 struct {
+	Code  string         `json:"code"`
+	Field string         `json:"field"`
+	Meta  map[string]any `json:"meta,omitempty"`
 }
 
 func (e Error) Error() string {
