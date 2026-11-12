@@ -56,6 +56,48 @@ func main() {
 
 For detailed usage, refer to the [lago API reference](https://doc.getlago.com/api-reference/intro).
 
+### Verifying Standard Webhooks deliveries
+
+A webhook endpoint created with `SignatureAlgo: lago.StandardWebhooks` signs its deliveries as the [Standard Webhooks](https://www.standardwebhooks.com) specification describes. Its `SigningKeys` hold the `whsec_` secrets, returned when you create, update or get the endpoint with an API key that has write access.
+
+`lago.VerifyStandardWebhook` checks a delivery with one of these secrets. Pass it the raw request body bytes, before any JSON decoding. It rejects a delivery whose `webhook-timestamp` is more than 5 minutes in the past or in the future.
+
+```go
+package main
+
+import (
+	"io"
+	"log"
+	"net/http"
+
+	lago "github.com/getlago/lago-go-client"
+)
+
+func main() {
+	secret := "whsec_..." // a SecretKey from the endpoint's SigningKeys
+
+	http.HandleFunc("/webhooks/lago", func(w http.ResponseWriter, r *http.Request) {
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			http.Error(w, "cannot read body", http.StatusBadRequest)
+			return
+		}
+
+		if err := lago.VerifyStandardWebhook(secret, r.Header, body); err != nil {
+			http.Error(w, "invalid signature", http.StatusBadRequest)
+			return
+		}
+
+		// The delivery is from Lago: decode body and handle the event.
+		w.WriteHeader(http.StatusOK)
+	})
+
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatalf("Error starting the server: %v", err)
+	}
+}
+```
+
 ## Development
 
 ### Prerequisites
