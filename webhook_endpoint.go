@@ -58,7 +58,7 @@ type WebhookEndpoint struct {
 }
 
 // WebhookEndpointSigningKey is a secret used to sign Standard Webhooks
-// deliveries. Pass SecretKey to VerifyStandardWebhook.
+// deliveries.
 type WebhookEndpointSigningKey struct {
 	LagoID    uuid.UUID `json:"lago_id,omitempty"`
 	SecretKey string    `json:"secret_key,omitempty"`
