@@ -29,7 +29,7 @@ type UsageListInput struct {
 	CustomerType              UsageCustomerType        `json:"customer_type,omitempty,string"`
 	FromDate                  string                   `json:"from_date,omitempty"`
 	ToDate                    string                   `json:"to_date,omitempty"`
-	IsBillableMetricRecurring bool                     `json:"is_billable_metric_recurring,omitempty"`
+	IsBillableMetricRecurring bool                     `json:"is_billable_metric_recurring,omitempty,string"`
 	TimeGranularity           UsageTimeGranularityType `json:"time_granularity,omitempty"`
 	ExternalCustomerID        string                   `json:"external_customer_id,omitempty"`
 	ExternalSubscriptionID    string                   `json:"external_subscription_id,omitempty"`
