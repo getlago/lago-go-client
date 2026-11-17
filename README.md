@@ -56,6 +56,10 @@ func main() {
 
 For detailed usage, refer to the [lago API reference](https://doc.getlago.com/api-reference/intro).
 
+### Standard Webhooks
+
+Webhook endpoints created with `SignatureAlgo: lago.StandardWebhooks` sign their messages with [Standard Webhooks](https://www.standardwebhooks.com). These messages are verified with the official Standard Webhooks library for Go and the endpoint's signing key from `SigningKeys`.
+
 ## Development
 
 ### Prerequisites
