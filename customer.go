@@ -558,7 +558,7 @@ func (cr *CustomerRequest) Update(ctx context.Context, customerInput *CustomerIn
 }
 
 func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID string, customerUsageInput *CustomerUsageInput) (*CustomerUsage, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "current_usage")
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", url.PathEscape(externalCustomerID), "current_usage")
 
 	urlValues := url.Values{}
 	urlValues.Set("external_subscription_id", customerUsageInput.ExternalSubscriptionID)
@@ -616,7 +616,7 @@ func (cr *CustomerRequest) CurrentUsage(ctx context.Context, externalCustomerID 
 }
 
 func (cr *CustomerRequest) PastUsage(ctx context.Context, externalCustomerID string, customerPastUsageInput *CustomerPastUsageInput) (*CustomerPastUsageResult, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "past_usage")
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", url.PathEscape(externalCustomerID), "past_usage")
 
 	jsonQueryParams, err := json.Marshal(customerPastUsageInput)
 	if err != nil {
@@ -648,7 +648,7 @@ func (cr *CustomerRequest) PastUsage(ctx context.Context, externalCustomerID str
 }
 
 func (cr *CustomerRequest) PortalUrl(ctx context.Context, externalCustomerID string) (*CustomerPortalUrl, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "portal_url")
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", url.PathEscape(externalCustomerID), "portal_url")
 
 	clientRequest := &ClientRequest{
 		Path:   subPath,
@@ -669,7 +669,7 @@ func (cr *CustomerRequest) PortalUrl(ctx context.Context, externalCustomerID str
 }
 
 func (cr *CustomerRequest) CheckoutUrl(ctx context.Context, externalCustomerID string) (*CustomerCheckoutUrl, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "checkout_url")
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", url.PathEscape(externalCustomerID), "checkout_url")
 
 	clientRequest := &ClientRequest{
 		Path:   subPath,
@@ -690,7 +690,7 @@ func (cr *CustomerRequest) CheckoutUrl(ctx context.Context, externalCustomerID s
 }
 
 func (cr *CustomerRequest) Delete(ctx context.Context, externalCustomerID string) (*Customer, *Error) {
-	subPath := fmt.Sprintf("%s/%s", "customers", externalCustomerID)
+	subPath := fmt.Sprintf("%s/%s", "customers", url.PathEscape(externalCustomerID))
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &CustomerResult{},
@@ -710,7 +710,7 @@ func (cr *CustomerRequest) Delete(ctx context.Context, externalCustomerID string
 }
 
 func (cr *CustomerRequest) Get(ctx context.Context, externalCustomerID string) (*Customer, *Error) {
-	subPath := fmt.Sprintf("%s/%s", "customers", externalCustomerID)
+	subPath := fmt.Sprintf("%s/%s", "customers", url.PathEscape(externalCustomerID))
 	clientRequest := &ClientRequest{
 		Path:   subPath,
 		Result: &CustomerResult{},
@@ -754,7 +754,7 @@ func (cr *CustomerRequest) GetList(ctx context.Context, customerListInput *Custo
 }
 
 func (cr *CustomerRequest) ProjectedUsage(ctx context.Context, externalCustomerID string, customerUsageInput *CustomerUsageInput) (*CustomerProjectedUsage, *Error) {
-	subPath := fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "projected_usage")
+	subPath := fmt.Sprintf("%s/%s/%s", "customers", url.PathEscape(externalCustomerID), "projected_usage")
 
 	queryParams := map[string]string{
 		"external_subscription_id": customerUsageInput.ExternalSubscriptionID,
@@ -792,7 +792,7 @@ func (cr *CustomerRequest) GetWalletList(ctx context.Context, externalCustomerID
 	}
 
 	clientRequest := &ClientRequest{
-		Path:        fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "wallets"),
+		Path:        fmt.Sprintf("%s/%s/%s", "customers", url.PathEscape(externalCustomerID), "wallets"),
 		QueryParams: queryParams,
 		Result:      &WalletResult{},
 	}
@@ -817,7 +817,7 @@ func (cr *CustomerRequest) GetInvoiceList(ctx context.Context, externalCustomerI
 	}
 
 	clientRequest := &ClientRequest{
-		Path:      fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "invoices"),
+		Path:      fmt.Sprintf("%s/%s/%s", "customers", url.PathEscape(externalCustomerID), "invoices"),
 		UrlValues: urlValues,
 		Result:    &InvoiceResult{},
 	}
@@ -842,7 +842,7 @@ func (cr *CustomerRequest) GetCreditNoteList(ctx context.Context, externalCustom
 	}
 
 	clientRequest := &ClientRequest{
-		Path:      fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "credit_notes"),
+		Path:      fmt.Sprintf("%s/%s/%s", "customers", url.PathEscape(externalCustomerID), "credit_notes"),
 		UrlValues: urlValues,
 		Result:    &CreditNoteResult{},
 	}
@@ -867,7 +867,7 @@ func (cr *CustomerRequest) GetPaymentList(ctx context.Context, externalCustomerI
 	}
 
 	clientRequest := &ClientRequest{
-		Path:      fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "payments"),
+		Path:      fmt.Sprintf("%s/%s/%s", "customers", url.PathEscape(externalCustomerID), "payments"),
 		UrlValues: urlValues,
 		Result:    &PaymentResult{},
 	}
@@ -892,7 +892,7 @@ func (cr *CustomerRequest) GetPaymentRequestList(ctx context.Context, externalCu
 	}
 
 	clientRequest := &ClientRequest{
-		Path:      fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "payment_requests"),
+		Path:      fmt.Sprintf("%s/%s/%s", "customers", url.PathEscape(externalCustomerID), "payment_requests"),
 		UrlValues: urlValues,
 		Result:    &PaymentRequestResult{},
 	}
@@ -917,7 +917,7 @@ func (cr *CustomerRequest) GetAppliedCouponList(ctx context.Context, externalCus
 	}
 
 	clientRequest := &ClientRequest{
-		Path:      fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "applied_coupons"),
+		Path:      fmt.Sprintf("%s/%s/%s", "customers", url.PathEscape(externalCustomerID), "applied_coupons"),
 		UrlValues: urlValues,
 		Result:    &AppliedCouponResult{},
 	}
@@ -942,7 +942,7 @@ func (cr *CustomerRequest) GetSubscriptionList(ctx context.Context, externalCust
 	}
 
 	clientRequest := &ClientRequest{
-		Path:      fmt.Sprintf("%s/%s/%s", "customers", externalCustomerID, "subscriptions"),
+		Path:      fmt.Sprintf("%s/%s/%s", "customers", url.PathEscape(externalCustomerID), "subscriptions"),
 		UrlValues: urlValues,
 		Result:    &SubscriptionResult{},
 	}
