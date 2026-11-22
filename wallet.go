@@ -96,6 +96,7 @@ type WalletInput struct {
 	InvoiceCustomSection             *InvoiceCustomSectionInput      `json:"invoice_custom_section,omitempty"`
 	BillingEntityCode                string                          `json:"billing_entity_code,omitempty"`
 	PurchaseOrderNumber              *string                         `json:"purchase_order_number,omitempty"`
+	PaymentTerm                      *PaymentTerm                    `json:"payment_term,omitempty"`
 	// TransactionPriority is read by the API on wallet creation only, and ignored on update.
 	TransactionPriority *int `json:"transaction_priority,omitempty"`
 }
@@ -154,6 +155,7 @@ type Wallet struct {
 	PaymentMethod                    *PaymentMethodInput                `json:"payment_method,omitempty"`
 	AppliedInvoiceCustomSections     []AppliedInvoiceCustomSection      `json:"applied_invoice_custom_sections,omitempty"`
 	PurchaseOrderNumber              *string                            `json:"purchase_order_number,omitempty"`
+	PaymentTerm                      *PaymentTerm                       `json:"payment_term"`
 }
 
 func (c *Client) Wallet() *WalletRequest {

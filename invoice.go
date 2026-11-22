@@ -111,6 +111,7 @@ type InvoiceOneOffInput struct {
 	SkipPsp              bool                       `json:"skip_psp,omitempty"`
 	PaymentMethod        *PaymentMethodInput        `json:"payment_method,omitempty"`
 	InvoiceCustomSection *InvoiceCustomSectionInput `json:"invoice_custom_section,omitempty"`
+	PaymentTerm          *PaymentTerm               `json:"payment_term,omitempty"`
 }
 
 type RetryPaymentParams struct {
@@ -125,6 +126,7 @@ type InvoicePreviewInput struct {
 	Customer          *CustomerInput      `json:"customer,omitempty"`
 	Subscriptions     *SubscriptionsInput `json:"subscriptions,omitempty"`
 	BillingEntityCode string              `json:"billing_entity_code,omitempty"`
+	PaymentTerm       *PaymentTerm        `json:"payment_term,omitempty"`
 }
 
 type InvoiceListInputMetadata map[string]any
@@ -262,6 +264,7 @@ type Invoice struct {
 	AppliedTaxes                 []InvoiceAppliedTax                  `json:"applied_taxes,omitempty"`
 	ErrorDetails                 []InvoiceErrorDetail                 `json:"error_details,omitempty"`
 	AppliedUsageThreshold        []AppliedUsageThreshold              `json:"applied_usage_threshold,omitempty"`
+	PaymentTerm                  *PaymentTerm                         `json:"payment_term"`
 }
 
 type InvoicePaymentDetails struct {

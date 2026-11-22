@@ -146,6 +146,7 @@ type CustomerInput struct {
 	FinalizeZeroAmountInvoice FinalizeZeroAmountInvoice         `json:"finalize_zero_amount_invoice,omitempty"`
 	SkipInvoiceCustomSections bool                              `json:"skip_invoice_custom_sections,omitempty"`
 	InvoiceCustomSectionCodes []string                          `json:"invoice_custom_section_codes,omitempty"`
+	PaymentTerm               *PaymentTerm                      `json:"payment_term,omitempty"`
 }
 
 type CustomerListInputMetadata map[string]string
@@ -507,8 +508,9 @@ type Customer struct {
 	ApplicableInvoiceCustomSections []InvoiceCustomSection `json:"applicable_invoice_custom_sections,omitempty"`
 	ErrorDetails                    []CustomerErrorDetail  `json:"error_details,omitempty"`
 
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	CreatedAt   time.Time    `json:"created_at,omitempty"`
+	UpdatedAt   time.Time    `json:"updated_at,omitempty"`
+	PaymentTerm *PaymentTerm `json:"payment_term"`
 }
 
 type CustomerErrorDetail struct {
