@@ -84,6 +84,7 @@ type WalletInput struct {
 	ExpirationAt                     *time.Time                      `json:"expiration_at,omitempty"`
 	ExternalCustomerID               string                          `json:"external_customer_id,omitempty"`
 	InvoiceRequiresSuccessfulPayment bool                            `json:"invoice_requires_successful_payment,omitempty"`
+	InvoiceUsageOnExpiration         *bool                           `json:"invoice_usage_on_expiration,omitempty"`
 	TransactionMetadata              []WalletTransactionMetadata     `json:"transaction_metadata,omitempty"`
 	TransactionName                  string                          `json:"transaction_name,omitempty"`
 	RecurringTransactionRules        []RecurringTransactionRuleInput `json:"recurring_transaction_rules"`
@@ -136,6 +137,7 @@ type Wallet struct {
 	BalanceCents                     int                                `json:"balance_cents,omitempty"`
 	ConsumedCredits                  string                             `json:"consumed_credits,omitempty"`
 	InvoiceRequiresSuccessfulPayment bool                               `json:"invoice_requires_successful_payment,omitempty"`
+	InvoiceUsageOnExpiration         bool                               `json:"invoice_usage_on_expiration,omitempty"`
 	CreatedAt                        time.Time                          `json:"created_at,omitempty"`
 	ExpirationAt                     time.Time                          `json:"expiration_at,omitempty"`
 	LastBalanceSyncAt                time.Time                          `json:"last_balance_sync_at,omitempty"`
