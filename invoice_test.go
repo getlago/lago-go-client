@@ -33,6 +33,7 @@ var mockInvoice = map[string]any{
 	"sub_total_including_taxes_amount_cents":   120,
 	"prepaid_credit_amount_cents":              0,
 	"progressive_billing_credit_amount_cents":  0,
+	"progressive_billing_trigger":              "usage_threshold",
 	"total_amount_cents":                       100,
 	"total_due_amount_cents":                   40,
 	"total_paid_amount_cents":                  60,
@@ -208,6 +209,7 @@ func assertInvoiceResponse(c *qt.C, result *Invoice) {
 	c.Assert(result.TotalOffsettedCreditNoteAmountCents, qt.Equals, 10)
 	c.Assert(result.PrepaidCreditAmountCents, qt.Equals, 0)
 	c.Assert(result.ProgressiveBillingCreditAmountCents, qt.Equals, 0)
+	c.Assert(result.ProgressiveBillingTrigger, qt.DeepEquals, Ptr(InvoiceProgressiveBillingTriggerUsageThreshold))
 	c.Assert(result.NetPaymentTerm, qt.Equals, 30)
 	c.Assert(result.FileURL, qt.Equals, "https://getlago.com/invoice/file")
 	c.Assert(result.XMLURL, qt.Equals, "https://getlago.com/invoice/file.xml")

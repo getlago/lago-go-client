@@ -31,6 +31,7 @@ var mockWalletResponse = `{
 		"paid_top_up_max_amount_cents": 1000,
 		"paid_top_up_min_amount_cents": 200,
 		"purchase_order_number": "PO-123",
+		"invoice_usage_on_expiration": true,
 		"expiration_at": "2022-07-07T23:59:59Z",
 		"created_at": "2022-04-29T08:59:51Z",
 		"recurring_transaction_rules": [{
@@ -206,6 +207,7 @@ func TestWallet_Create(t *testing.T) {
 					"paid_top_up_max_amount_cents": 1000,
 					"paid_top_up_min_amount_cents": 200,
 					"purchase_order_number": "PO-123",
+					"invoice_usage_on_expiration": true,
 					"recurring_transaction_rules": [
 						{
 							"paid_credits": "105.00",
@@ -232,18 +234,19 @@ func TestWallet_Create(t *testing.T) {
 		defer server.Close()
 
 		result, err := server.Client().Wallet().Create(context.Background(), &WalletInput{
-			ExternalCustomerID:      "12345",
-			RateAmount:              "1.00",
-			Name:                    "wallet name",
-			Code:                    Ptr("wallet_code"),
-			Priority:                Ptr(int(30)),
-			PaidCredits:             "100.00",
-			GrantedCredits:          "100.00",
-			TransactionName:         "wallet transaction name",
-			ExpirationAt:            Ptr(time.Date(2022, 7, 7, 23, 59, 59, 0, time.UTC)),
-			PaidTopUpMaxAmountCents: Ptr(int(1000)),
-			PaidTopUpMinAmountCents: Ptr(int(200)),
-			PurchaseOrderNumber:     &purchaseOrderNumber,
+			ExternalCustomerID:       "12345",
+			RateAmount:               "1.00",
+			Name:                     "wallet name",
+			Code:                     Ptr("wallet_code"),
+			Priority:                 Ptr(int(30)),
+			PaidCredits:              "100.00",
+			GrantedCredits:           "100.00",
+			TransactionName:          "wallet transaction name",
+			ExpirationAt:             Ptr(time.Date(2022, 7, 7, 23, 59, 59, 0, time.UTC)),
+			PaidTopUpMaxAmountCents:  Ptr(int(1000)),
+			PaidTopUpMinAmountCents:  Ptr(int(200)),
+			PurchaseOrderNumber:      &purchaseOrderNumber,
+			InvoiceUsageOnExpiration: Ptr(true),
 			RecurringTransactionRules: []RecurringTransactionRuleInput{
 				{
 					PaidCredits:           "105.00",
@@ -275,6 +278,7 @@ func TestWallet_Create(t *testing.T) {
 		c.Assert(result.ExternalCustomerID, qt.Equals, "12345")
 		c.Assert(result.RateAmount, qt.Equals, "1.00")
 		c.Assert(result.CreditsBalance, qt.Equals, "100.00")
+		c.Assert(result.InvoiceUsageOnExpiration, qt.IsTrue)
 		c.Assert(result.Status, qt.Equals, Status("active"))
 		c.Assert(result.Currency, qt.Equals, Currency("USD"))
 		c.Assert(result.PaidTopUpMaxAmountCents, qt.IsNotNil)
@@ -554,6 +558,32 @@ func TestWallet_Update(t *testing.T) {
 		c.Assert(result, qt.IsNotNil)
 		c.Assert(len(result.RecurringTransactionRules), qt.Equals, 1)
 		c.Assert(result.RecurringTransactionRules[0].GrantsTargetTopUp, qt.DeepEquals, Ptr(true))
+	})
+
+	t.Run("When turning off invoicing usage on expiration", func(t *testing.T) {
+		c := qt.New(t)
+
+		server := lt.NewMockServer(c).
+			MatchMethod("PUT").
+			MatchPath("/api/v1/wallets/wallet_id").
+			MatchJSONBody(`{
+				"wallet": {
+					"name": "updated wallet name",
+					"applies_to": {},
+					"recurring_transaction_rules": null,
+					"invoice_usage_on_expiration": false
+				}
+			}`).
+			MockResponse(mockWalletResponse)
+		defer server.Close()
+
+		result, err := server.Client().Wallet().Update(context.Background(), &WalletInput{
+			Name:                     "updated wallet name",
+			InvoiceUsageOnExpiration: Ptr(false),
+		}, "wallet_id")
+
+		c.Assert(err == nil, qt.IsTrue)
+		c.Assert(result, qt.IsNotNil)
 	})
 }
 
